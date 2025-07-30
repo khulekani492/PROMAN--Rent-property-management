@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class configs {
       public  static Connection established_connection(){
-          String url = "jdbc:sqlite3:Mastende.db";
+          String url = "jdbc:sqlite:Mastende.db";
           try {
                return DriverManager.getConnection(url);
           } catch (SQLException e) {
