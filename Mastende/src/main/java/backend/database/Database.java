@@ -1,6 +1,6 @@
 package backend.database;
 
-
+//TODO updateTenet, tenant_row create property owner schema
 import java.sql.*;
 
 public class Database {
