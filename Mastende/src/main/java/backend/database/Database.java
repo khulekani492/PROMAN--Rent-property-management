@@ -29,8 +29,19 @@ public class Database {
                     FOREIGN KEY(rentedRoom) REFERENCES tenants(room_no)
                 );
                 """;
+
+            String insertTenants = """
+    INSERT INTO tenants (name, move_in, move_out, employment) VALUES
+    ('Alice Johnson', '2023-01-15', NULL, 'Software Engineer'),
+    ('Bob Smith', '2022-11-01', '2023-08-31', 'Teacher'),
+    ('Charlie Brown', '2023-03-10', NULL, 'Accountant'),
+    ('Diana Prince', '2022-12-20', NULL, 'Nurse'),
+    ('Ethan Hunt', '2023-05-01', NULL, 'Security Specialist');
+""";
             stmt.execute(schematenants);
             stmt.execute(schemaRoomstatus);
+
+            stmt.execute(insertTenants);
 
         } catch (SQLException e) {
             e.printStackTrace();
