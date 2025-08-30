@@ -30,6 +30,7 @@ public class Database {
         }
 
     }
+
     public void roomStatus(String name,int room_no, int move_in_date,String employment_status){
         //step 1 query total room the owner has
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -37,7 +38,7 @@ public class Database {
         {
             stmt.execute("PRAGMA foreign_keys = ON;");
 
-            // UPDATING THE NAME OF A TENENT INSIDE A ROOM
+            // UPDATING Tenet name
             String tenant_name = """
                     UPDATE tenants SET name = ? WHERE room_no = ?
                     """;
@@ -46,7 +47,34 @@ public class Database {
                 pstmt.setInt(2, room_no);
                 pstmt.executeUpdate();
             }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
 
+            String updateMoveindate = """
+                    UPDATE tenants SET move_in = ? WHERE room_no = ?
+                    """;
+            try (PreparedStatement pstm = conn.prepareStatement(updateMoveindate)){
+                pstm.setInt(1,move_in_date);
+                pstm.setInt(2,room_no);
+
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
+
+
+            String employment = """
+                    UPDATE tenants SET move_in = ? WHERE room_no = ?
+                    """;
+            try (PreparedStatement pstm = conn.prepareStatement(employment)){
+                pstm.setString(1,employment_status);
+                pstm.setInt(2,room_no);
+
+            }
+            catch (SQLException e){
+                e.printStackTrace();
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
