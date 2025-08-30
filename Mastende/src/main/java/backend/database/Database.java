@@ -5,32 +5,53 @@ import java.sql.*;
 
 public class Database {
     private static final String DB_URL = "jdbc:sqlite:rentalRooms.db";
-    private  static  final Connection conn;
 
-    static {
-        try {
-            conn = DriverManager.getConnection(DB_URL);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public void newTenants(int room_numbers){
+    public void numberofRooms(int room_numbers){
         //step 1 query total room the owner has
-        String queryTotalRooms = "SELECT number_of_rooms FROM owner_property";
-        int total_num = Integer.parseInt(queryTotalRooms);
-
-        String tenant_row = """
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement())
+        {
+            stmt.execute("PRAGMA foreign_keys = ON;");
+            String tenant_row = """
                     INSERT INTO tenants (name,move_in,move_out,employment) VALUES
                     (null,null,null,null)
                     """;
 
-        //step 2 create the amount of rows in database according to room numbers
-        for(int room = 0; room < total_num;room++){
+            String queryTotalRooms = "SELECT number_of_rooms FROM residence";
+            int total_num = Integer.parseInt(queryTotalRooms);
 
+            //step 2 create the amount of rows in database according to room numbers
+            for(int room = 0; room < total_num;room++){
+                stmt.execute(tenant_row);
+            }
 
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+    }
+    public void roomStatus(String name,int room_no, int move_in_date,String employment_status){
+        //step 1 query total room the owner has
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement())
+        {
+            stmt.execute("PRAGMA foreign_keys = ON;");
+
+            // UPDATING THE NAME OF A TENENT INSIDE A ROOM
+            String tenant_name = """
+                    UPDATE tenants SET name = ? WHERE room_no = ?
+                    """;
+            try (PreparedStatement pstmt = conn.prepareStatement(tenant_name)) {
+                pstmt.setString(1, name);
+                pstmt.setInt(2, room_no);
+                pstmt.executeUpdate();
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void main(String srgs[]) throws SQLException {
@@ -58,8 +79,20 @@ public class Database {
                 );
                 """;
 
+            String propertyschema = """
+       CREATE TABLE IF NOT EXISTS residence (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        property_name TEXT NOT NULL,
+        number_of_rooms INTEGER NOT NULL,
+        rent INTEGER NOT NULL,
+        address TEXT
+    );
+""";
+
+
             stmt.execute(schematenants);
             stmt.execute(schemaRoomstatus);
+            stmt.execute(propertyschema);
 
 
             String dummtest = """
