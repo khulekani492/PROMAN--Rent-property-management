@@ -73,6 +73,7 @@ public class Data implements Property {
         }
     }
 
+
     /**
      * Update room status for a tenant.
      */
