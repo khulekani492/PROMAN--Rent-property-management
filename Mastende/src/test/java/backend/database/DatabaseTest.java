@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +21,7 @@ public class DatabaseTest {
 
     @Test
     public void testSchema() throws SQLException {
+
         dummyconnection = new Data(D_URL);
         String sql = "SELECT COUNT(*) AS total FROM tenants";
         dummyconnection.numberofRooms(5);
@@ -37,25 +40,33 @@ public class DatabaseTest {
 
     }
 
-//    String name, int room_no, int move_in_date, String employment_status
 
 
     @Test
     public  void  testTenantname() throws SQLException {
         dummyconnection  = new Data(D_URL);
-        dummyconnection.roomStatus("Khulekani", 2, 12072024, "yes");
+        dummyconnection.roomStatus("Khulekani", 2, "2024-07-12", "yes");
         // Verify after insert
         try (Connection coon = DriverManager.getConnection(D_URL)){
             Statement stmt = coon.createStatement();{
                 String sql = "SELECT name FROM tenants where room_no = 2";
+
                 ResultSet rs =  stmt.executeQuery(sql);
                 String igama = rs.getString("name");
+
                 try{
                     System.out.printf(igama);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
+
                 }
                 assertEquals("Khulekani",igama );
+                ResultSet date = stmt.executeQuery("SELECT move_in FROM tenants where room_no = 2");
+                String movInStr = date.getString("move_in");
+
+
+                assertEquals("2024-07-12",movInStr);
+
             }
 
         }
