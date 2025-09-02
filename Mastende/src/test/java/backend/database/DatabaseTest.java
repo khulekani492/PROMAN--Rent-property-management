@@ -15,6 +15,8 @@ public class DatabaseTest {
     private Data dummyconnection;
     private static final String D_URL = "jdbc:sqlite:sandle.db";
 
+
+
     @Test
     public void testSchema() throws SQLException {
         dummyconnection = new Data(D_URL);
@@ -40,19 +42,23 @@ public class DatabaseTest {
 
     @Test
     public  void  testTenantname() throws SQLException {
+        dummyconnection  = new Data(D_URL);
         dummyconnection.roomStatus("Khulekani", 2, 12072024, "yes");
         // Verify after insert
-
         try (Connection coon = DriverManager.getConnection(D_URL)){
             Statement stmt = coon.createStatement();{
                 String sql = "SELECT name FROM tenants where room_no = 2";
-//                ResultSet =  stmt.execute(sql);
+                ResultSet rs =  stmt.executeQuery(sql);
+                String igama = rs.getString("name");
+                try{
+                    System.out.printf(igama);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                assertEquals("Khulekani",igama );
             }
 
         }
     }
-
-
-
 
 }
