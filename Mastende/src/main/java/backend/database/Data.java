@@ -77,7 +77,7 @@ public class Data implements Property {
     /**
      * Update room status for a tenant.
      */
-    public void roomStatus(String name, int room_no, int move_in_date, String employment_status) {
+    public void roomStatus(String name, int room_no, String move_in_date, String employment_status) {
         try (Statement stmt = conn.createStatement()) {
                 stmt.execute("PRAGMA foreign_keys = ON;");
             String tenantName = "UPDATE tenants SET name = ? WHERE room_no = ?";
@@ -89,7 +89,7 @@ public class Data implements Property {
 
             String updateMoveIn = "UPDATE tenants SET move_in = ? WHERE room_no = ?";
             try (PreparedStatement pstm = conn.prepareStatement(updateMoveIn)) {
-                pstm.setInt(1, move_in_date);
+                pstm.setString(1, move_in_date);
                 pstm.setInt(2, room_no);
                 pstm.executeUpdate();
             }
@@ -114,7 +114,7 @@ public class Data implements Property {
         try {
             Data db = new Data("jdbc:sqlite:rentalRooms.db");
             db.numberofRooms(5);
-            db.roomStatus("Khule", 1, 20250101, "Employed");
+//            db.roomStatus("Khule", 1, 20250101, "Employed");
         } catch (SQLException e) {
             e.printStackTrace();
         }
