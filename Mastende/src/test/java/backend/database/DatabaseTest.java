@@ -18,6 +18,19 @@ public class DatabaseTest {
     private static final String D_URL = "jdbc:sqlite:sandle.db";
 
 
+    public  void dropTable(){
+        try (Connection conn = DriverManager.getConnection(D_URL)){
+            Statement stmt = conn.createStatement();
+            String deleteTab= """
+                    DROP TABLE IF EXISTS tenants
+                    """;
+            stmt.execute(deleteTab);
+
+        } catch (Exception e){
+            throw new RuntimeException(e);
+
+        }
+    }
 
     @Test
     public void testSchema() throws SQLException {
@@ -41,7 +54,6 @@ public class DatabaseTest {
     }
 
 
-
     @Test
     public  void  testTenantname() throws SQLException {
         dummyconnection  = new Data(D_URL);
@@ -61,11 +73,15 @@ public class DatabaseTest {
 
                 }
                 assertEquals("Khulekani",igama );
+
+                //Test the db upddate date table
                 ResultSet date = stmt.executeQuery("SELECT move_in FROM tenants where room_no = 2");
                 String movInStr = date.getString("move_in");
-
-
                 assertEquals("2024-07-12",movInStr);
+
+
+                ResultSet employment = stmt.executeQuery("SELECT move_in FROM tenants where room_no = 2");
+                String status = date.getString("move_in");
 
             }
 
