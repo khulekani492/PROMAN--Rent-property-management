@@ -25,7 +25,8 @@ public class Data implements Property {
                     name TEXT,
                     move_in DATE,
                     move_out DATE,
-                    employment VARCHAR(30)
+                    employment VARCHAR(30),
+                    cell_number TEXT
                 );
             """;
 
@@ -112,7 +113,7 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:rentalRooms.db");
+            Data db = new Data("jdbc:sqlite:mastede.db");
             db.numberofRooms(5);
 //            db.roomStatus("Khule", 1, 20250101, "Employed");
         } catch (SQLException e) {
