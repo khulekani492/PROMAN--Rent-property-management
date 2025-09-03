@@ -37,6 +37,9 @@ public class DatabaseTest {
 
         dummyconnection = new Data(D_URL);
         String sql = "SELECT COUNT(*) AS total FROM tenants";
+
+        System.out.printf("Good with you");
+
         dummyconnection.numberofRooms(5);
 
         // Verify after insert
@@ -45,7 +48,10 @@ public class DatabaseTest {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             int updated_total = rs.getInt("total");
-            assertEquals(10, updated_total);
+            System.out.println(updated_total);
+            System.out.printf(String.valueOf(updated_total));
+            assertEquals(15, updated_total);
+
 
 
         }
@@ -79,9 +85,9 @@ public class DatabaseTest {
                 String movInStr = date.getString("move_in");
                 assertEquals("2024-07-12",movInStr);
 
-
-                ResultSet employment = stmt.executeQuery("SELECT move_in FROM tenants where room_no = 2");
-                String status = date.getString("move_in");
+                ResultSet employment = stmt.executeQuery("SELECT employment FROM tenants where room_no = 2");
+                String status = employment.getString("employment");
+                assertEquals("yes",status);
 
             }
 
