@@ -31,6 +31,11 @@
             <artifactId>javalin</artifactId>
             <version>6.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin-rendering</artifactId>
+            <version>6.7.0</version>
+        </dependency>
 
         <!-- JUnit 5 (Jupiter) for testing -->
         <dependency>
