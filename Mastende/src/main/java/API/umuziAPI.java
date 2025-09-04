@@ -33,16 +33,17 @@ public class umuziAPI {
             config.fileRenderer(new JavalinThymeleaf());
         });
 
-        app.get("/property", ctx -> {
-            //extract value number_of_fields
-            // pass to the numberOfRooms to generate the table
-//            conn.numberofRooms();
-            //https://javalin.io/documentation#context
-            //respond data = {"helle":"wemama"}
+        app.get("/sign_up", ctx -> {
+
+            //take from the form the id and put the information to the residence_table
+            //respond ok or error in jsom
             ctx.render("/templates/hello.html", Map.of("name", "Mkhulex"));
         });
 
         app.get("/tenants", ctx -> {
+
+            // take from the form the id and put the information to the tenants table
+            // respond ok or error js
             ctx.render("/templates/sign_up.html");
         });
 
