@@ -1,25 +1,27 @@
 package API;
 
+//import com.mitchellbosecke.pebble.PebbleEngine;
+//import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
+import io.javalin.rendering.template.JavalinThymeleaf;
 
 import java.sql.SQLException;
 import java.util.Map;
 
 public class umuziAPI {
     public static Javalin startServer(int port) throws SQLException {
-//        apiHandler letsconnectDAO = new apiHandler();
         // Create a new Javalin app
-        Javalin app = Javalin.create();
-
+        Javalin app = Javalin.create(config -> {
+            config.staticFiles.add("/young", Location.CLASSPATH);
+            config.fileRenderer(new JavalinThymeleaf());
+        });
         /**
          * GET /world
          * Returns all stored worlds as JSON.
          */
-        app.get("/property", ctx -> {
-
-
-//            String result = String.valueOf(letsconnectDAO.restoreWorldNoname());
-//            ctx.json(result);   // return JSON directly
+        app.get("/eish", ctx -> {
+            ctx.render("/templates/hello.html", Map.of("name", "Mkhulex"));
         });
 
         /**
@@ -29,14 +31,8 @@ public class umuziAPI {
          */
         app.get("/world/tenants", ctx -> {
             String name = ctx.pathParam("name");
-
-
         });
 
-        app.post("/robot/{name}", ctx -> {
-
-
-        });
         app.start(port);
         return app;
     }
