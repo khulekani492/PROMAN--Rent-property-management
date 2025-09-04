@@ -15,7 +15,9 @@ public class umuziAPI {
          * GET /world
          * Returns all stored worlds as JSON.
          */
-        app.get("/world", ctx -> {
+        app.get("/property", ctx -> {
+
+
 //            String result = String.valueOf(letsconnectDAO.restoreWorldNoname());
 //            ctx.json(result);   // return JSON directly
         });
@@ -25,7 +27,7 @@ public class umuziAPI {
          * Returns a specific world by its name.
          * If the world is not found, returns HTTP 404 with an error message.
          */
-        app.get("/world/{name}", ctx -> {
+        app.get("/world/tenants", ctx -> {
             String name = ctx.pathParam("name");
 
 
