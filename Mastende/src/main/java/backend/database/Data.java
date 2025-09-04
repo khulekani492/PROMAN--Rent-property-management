@@ -21,64 +21,56 @@ public class Data implements Property {
 
             String tenantsTable = """
                 CREATE TABLE IF NOT EXISTS tenants (
-                    room_no INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    landlord_residence INTEGER NOT NULL,
                     name TEXT,
                     move_in DATE,
                     move_out DATE,
                     employment VARCHAR(30),
-                    cell_number TEXT
-                );
-            """;
-
-            String occupiedRoomsTable = """
-                CREATE TABLE IF NOT EXISTS occupied_rooms (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    rentedRoom INT NOT NULL,
-                    paymentDate DATE NOT NULL,
-                    debt INT NULL,
-                    period INT NOT NULL,
-                    FOREIGN KEY(rentedRoom) REFERENCES tenants(room_no)
+                    cell_number TEXT,
+                    pay_day TEXT,
+                    room_number INTEGER,
+                    FOREIGN KEY (landlord_residence) REFERENCES residence(id)
                 );
             """;
 
             String residenceTable = """
                 CREATE TABLE IF NOT EXISTS residence (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    property_name TEXT NOT NULL,
+                    property_name TEXT UNIQUE NOT NULL,
                     number_of_rooms INTEGER NOT NULL,
                     rent INTEGER NOT NULL,
-                    address TEXT
+                    address TEXT,
+                    contact TEXT
                 );
             """;
-
             stmt.execute(tenantsTable);
-            stmt.execute(occupiedRoomsTable);
             stmt.execute(residenceTable);
         }
     }
 
     @Override
-    public void numberofRooms(int room_numbers) throws SQLException {
-        String sql = "INSERT INTO tenants (name, move_in, move_out, employment) VALUES (null, null, null, null)";
-
-        try (Statement stmt = conn.createStatement()) {
-
-            conn.setAutoCommit(false);
-            for (int i = 0; i < room_numbers; i++) {
-                stmt.execute(sql);
-            }
-            conn.commit();
-
-        } catch (SQLException e) {
-            throw e; // rollback not needed, connection closes anyway
-        }
-    }
+//    public void numberofRooms(int room_numbers) throws SQLException {
+//        String sql = "INSERT INTO tenants (name, move_in, move_out, employment,cell_number) VALUES (null, null, null, null,null)";
+//
+//        try (Statement stmt = conn.createStatement()) {
+//
+//            conn.setAutoCommit(false);
+//            for (int i = 0; i < room_numbers; i++) {
+//                stmt.execute(sql);
+//            }
+//            conn.commit();
+//
+//        } catch (SQLException e) {
+//            throw e; // rollback not needed, connection closes anyway
+//        }
+//    }
 
 
     /**
      * Update room status for a tenant.
      */
-    public void roomStatus(String name, int room_no, String move_in_date, String employment_status) {
+    public void roomStatus(String name, int room_no, String move_in_date, String employment_status, String cellphone,String pay_day) {
         try (Statement stmt = conn.createStatement()) {
                 stmt.execute("PRAGMA foreign_keys = ON;");
             String tenantName = "UPDATE tenants SET name = ? WHERE room_no = ?";
@@ -101,6 +93,19 @@ public class Data implements Property {
                 pstm.setInt(2, room_no);
                 pstm.executeUpdate();
             }
+            String cellphoneNo = "UPDATE tenants SET cell_number = ? WHERE room_no = ?";
+            try (PreparedStatement pstm = conn.prepareStatement(cellphoneNo)) {
+                pstm.setString(1,  cellphone);
+                pstm.setInt(2, room_no);
+                pstm.executeUpdate();
+            }
+            String rent_date = "UPDATE tenants SET pay_day = ? WHERE room_no = ?";
+            try (PreparedStatement pstm = conn.prepareStatement(rent_date)) {
+                pstm.setString(1,  pay_day);
+                pstm.setInt(2, room_no);
+                pstm.executeUpdate();
+            }
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,8 +118,8 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:mastede.db");
-            db.numberofRooms(5);
+            Data db = new Data("jdbc:sqlite:property.db");
+            //db.numberofRooms(5);
 //            db.roomStatus("Khule", 1, 20250101, "Employed");
         } catch (SQLException e) {
             e.printStackTrace();
