@@ -13,7 +13,7 @@ public class umuziAPI {
     public static Javalin startServer(int port) throws SQLException {
         // Create a new Javalin app
         Javalin app = Javalin.create(config -> {
-            config.staticFiles.add("/young", Location.CLASSPATH);
+            config.staticFiles.add("/public", Location.CLASSPATH);
             config.fileRenderer(new JavalinThymeleaf());
         });
         /**
