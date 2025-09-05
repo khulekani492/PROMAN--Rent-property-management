@@ -26,18 +26,31 @@ public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
         // Create a new Javalin app
         // private Data accessDatabase;
+
+//        Data dbConnector = new Data();
         Javalin app = Javalin.create(config -> {
-            //config.staticFiles.add("/public", Location.CLASSPATH);
-
-
             config.fileRenderer(new JavalinThymeleaf());
         });
 
-        app.get("/sign_up", ctx -> {
+        app.post("/sign_up", ctx -> {
+
+            String propertyName = ctx.formParam("property_name");
+
+            String numberOfRooms = ctx.formParam("number_of_rooms");
+            String rent = ctx.formParam("rent");
+            String address = ctx.formParam("address");
+            String contact = ctx.formParam("contact");
+            System.out.println("Property: " + propertyName);
+            System.out.println("Rooms: " + numberOfRooms);
+            System.out.println("Rent: " + rent);
+            System.out.println("Address: " + address);
+            System.out.println("Contact: " + contact);
+
+
 
             //take from the form the id and put the information to the residence_table
             //respond ok or error in jsom
-            ctx.render("/templates/hello.html", Map.of("name", "Mkhulex"));
+            ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
         });
 
         app.get("/tenants", ctx -> {
