@@ -1,10 +1,97 @@
-<h2>Check your reservation:</h2>
-<form method="get" action="/check-reservation">
-    Choose day
-    <select name="day">
-        <option value="saturday">Saturday</option>
-        <option value="sunday">Sunday</option>
-    </select>
-    <br>
-    <button>Submit</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Form</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background: #f4f6f9;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+
+        .form-container {
+          background: #fff;
+          padding: 25px;
+          border-radius: 10px;
+          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+          width: 100%;
+          max-width: 400px;
+        }
+
+        h2 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #333;
+        }
+
+        label {
+          font-weight: bold;
+          margin-top: 10px;
+          display: block;
+          color: #444;
+        }
+
+        input, textarea, button {
+          width: 100%;
+          padding: 10px;
+          margin-top: 5px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 14px;
+        }
+
+        textarea {
+          resize: none;
+        }
+
+        button {
+          background: #007bff;
+          color: #fff;
+          font-weight: bold;
+          cursor: pointer;
+          margin-top: 15px;
+          transition: background 0.3s;
+        }
+
+        button:hover {
+          background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Mastende.</h2>
+    <form action="http://localhost:7070/sign_up" method="POST">
+
+        <!-- Property Name -->
+        <label for="property_name">Property Name:</label>
+        <input type="text" id="property_name" name="property_name" required>
+
+        <!-- Number of Rooms -->
+        <label for="number_of_rooms">Number of Rooms:</label>
+        <input type="number" id="number_of_rooms" name="number_of_rooms" min="1" required>
+
+        <!-- Rent -->
+        <label for="rent">Rent (per month):</label>
+        <input type="number" id="rent" name="rent" step="0.01" required>
+
+        <!-- Address -->
+        <label for="address">Address:</label>
+        <textarea id="address" name="address" rows="3" required></textarea>
+
+        <!-- Contact -->
+        <label for="contact">Contact Number:</label>
+        <input type="tel" id="contact" name="contact" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+
+        <!-- Submit -->
+        <button type="submit">Submit</button>
+    </form>
+</div>
+</body>
+</html>
