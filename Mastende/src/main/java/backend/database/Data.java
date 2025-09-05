@@ -50,6 +50,24 @@ public class Data implements Property {
     }
 
     @Override
+    public void addProperty_info(String property_name, String number_of_rooms, String rent, String address, String contact) {
+        String propertySQL = """
+                INSERT INTO residence (property_name,number_of_rooms,rent,address,contact) VALUES (?,?,?,?,?)
+              """;
+        try (PreparedStatement pstmt = conn.prepareStatement(propertySQL)) {
+            pstmt.setString(1, property_name);
+            pstmt.setString(2, number_of_rooms);
+            pstmt.setString(3, rent);
+            pstmt.setString(4, address);
+            pstmt.setString(5, contact);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
 //    public void numberofRooms(int room_numbers) throws SQLException {
 //        String sql = "INSERT INTO tenants (name, move_in, move_out, employment,cell_number) VALUES (null, null, null, null,null)";
 //
