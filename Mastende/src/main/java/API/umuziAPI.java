@@ -24,10 +24,7 @@ public class umuziAPI {
 
 
     public  static Javalin startServer(int port) throws SQLException {
-        // Create a new Javalin app
-        // private Data accessDatabase;
-
-//        Data dbConnector = new Data();
+        Data dbConnector = new Data("jdbc:sqlite:property.db");
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
@@ -40,6 +37,7 @@ public class umuziAPI {
             String rent = ctx.formParam("rent");
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
+            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
             System.out.println("Property: " + propertyName);
             System.out.println("Rooms: " + numberOfRooms);
             System.out.println("Rent: " + rent);
@@ -57,7 +55,7 @@ public class umuziAPI {
 
             // take from the form the id and put the information to the tenants table
             // respond ok or error js
-            ctx.render("/templates/sign_up.html");
+            ctx.render("/templates/property_form.html");
         });
 
         app.start(port);
