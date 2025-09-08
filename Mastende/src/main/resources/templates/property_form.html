@@ -92,6 +92,38 @@
         <!-- Submit -->
         <button type="submit">Submit</button>
     </form>
+    <form action="http://localhost:7070/sign_up" method="POST">
+        <label for="name">Name:</label>
+        <input type="name" id="name" name="number_of_rooms" min="1" required>
+
+        <!-- Rent -->
+        <label for="move_in">MOVE_IN:</label>
+        <input type="date" id="move_in" name="move_in" required>
+
+        <!-- Address -->
+        <!-- Contact -->
+        <label for="employment">employment:</label>
+        <input type="checkbox" id="employment" name="agree" value="yes" required>
+
+        <label for="cell_number">Phone number:</label>
+        <input type="tel" id="cell_number" name="contact" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678"  required>
+
+        <label for="pay_day">Phone number:</label>
+        <input type="date" id="pay_day" name="pay_day" required>
+
+        <label for="room">Select a quantity:</label>
+        <select name="room" id="room">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+
+
+        <!-- Submit -->
+        <button type="submit">Submit</button>
+    </form>
 </div>
 </body>
 </html>
