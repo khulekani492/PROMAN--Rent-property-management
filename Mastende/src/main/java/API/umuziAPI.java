@@ -48,7 +48,7 @@ public class umuziAPI {
 
             //take from the form the id and put the information to the residence_table
             //respond ok or error in jsom
-            ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
+            //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
         });
 
         app.get("/tenants", ctx -> {
@@ -57,6 +57,7 @@ public class umuziAPI {
             // respond ok or error js
             ctx.render("/templates/property_form.html");
         });
+
 
         app.start(port);
         return app;
