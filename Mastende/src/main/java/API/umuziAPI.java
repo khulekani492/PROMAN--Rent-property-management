@@ -51,6 +51,28 @@ public class umuziAPI {
             //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
         });
 
+        app.post("/addtenants", ctx -> {
+            //TODO GET THE TENANTS FORmParam,make landlord name global
+            String propertyName = ctx.formParam("property_name");
+
+            String numberOfRooms = ctx.formParam("number_of_rooms");
+            String rent = ctx.formParam("rent");
+            String address = ctx.formParam("address");
+            String contact = ctx.formParam("contact");
+            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
+            System.out.println("Property: " + propertyName);
+            System.out.println("Rooms: " + numberOfRooms);
+            System.out.println("Rent: " + rent);
+            System.out.println("Address: " + address);
+            System.out.println("Contact: " + contact);
+
+
+
+            //take from the form the id and put the information to the residence_table
+            //respond ok or error in jsom
+            //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
+        });
+
         app.get("/tenants", ctx -> {
 
             // take from the form the id and put the information to the tenants table
