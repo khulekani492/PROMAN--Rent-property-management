@@ -67,24 +67,6 @@ public class Data implements Property {
     }
 
 
-    @Override
-//    public void numberofRooms(int room_numbers) throws SQLException {
-//        String sql = "INSERT INTO tenants (name, move_in, move_out, employment,cell_number) VALUES (null, null, null, null,null)";
-//
-//        try (Statement stmt = conn.createStatement()) {
-//
-//            conn.setAutoCommit(false);
-//            for (int i = 0; i < room_numbers; i++) {
-//                stmt.execute(sql);
-//            }
-//            conn.commit();
-//
-//        } catch (SQLException e) {
-//            throw e; // rollback not needed, connection closes anyway
-//        }
-//    }
-
-
     /**
      * Update room status for a tenant.
      */
