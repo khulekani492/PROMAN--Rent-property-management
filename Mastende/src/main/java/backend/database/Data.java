@@ -67,6 +67,26 @@ public class Data implements Property {
     }
 
 
+    public void addNewtenant(String landlord_residence,String name, String move_in, String move_out, String employment, String cell_number, String pay_day,int room_number) {
+        String propertySQL = """
+                INSERT INTO tenants (landlord_residence,name,move_in,move_out,employment,cell_number,pay_day,room_number) VALUES (?,?,?,?,?,?,?,?)
+              """;
+        try (PreparedStatement pstmt = conn.prepareStatement(propertySQL)) {
+            pstmt.setString(1, landlord_residence);
+            pstmt.setString(2, name);
+            pstmt.setString(3, move_in);
+            pstmt.setString(4, move_out);
+            pstmt.setString(5, employment);
+            pstmt.setString(6, cell_number);
+            pstmt.setString(7,pay_day);
+            pstmt.setInt(8,room_number);
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Update room status for a tenant.
      */
