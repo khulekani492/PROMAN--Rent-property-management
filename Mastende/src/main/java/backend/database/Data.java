@@ -21,7 +21,7 @@ public class Data implements Property {
 
             String tenantsTable = """
                 CREATE TABLE IF NOT EXISTS tenants (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     landlord_residence INTEGER NOT NULL,
                     name TEXT,
                     move_in DATE,
@@ -36,7 +36,7 @@ public class Data implements Property {
 
             String residenceTable = """
                 CREATE TABLE IF NOT EXISTS residence (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     property_name TEXT UNIQUE NOT NULL,
                     number_of_rooms INTEGER NOT NULL,
                     rent INTEGER NOT NULL,
