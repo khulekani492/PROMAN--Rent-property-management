@@ -52,8 +52,8 @@ public class umuziAPI {
         });
 
         app.post("/addtenants", ctx -> {
-            //TODO GET THE TENANTS FORmParam,make landlord name global
-            String name = ctx.formParam("tenant_name");
+            //TODO FIX NULL VALUES
+            String name = ctx.formParam("tenant_name"); //returns null
 
             String moveIn = ctx.formParam("move_in");
             String employment = ctx.formParam("employment");
