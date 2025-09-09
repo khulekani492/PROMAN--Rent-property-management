@@ -53,7 +53,7 @@ public class umuziAPI {
 
         app.post("/addtenants", ctx -> {
             //TODO GET THE TENANTS FORmParam,make landlord name global
-            String name = ctx.formParam("name");
+            String name = ctx.formParam("tenant_name");
 
             String moveIn = ctx.formParam("move_in");
             String employment = ctx.formParam("employment");
@@ -62,11 +62,11 @@ public class umuziAPI {
             String room = ctx.formParam("room");
 
 //            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
-            System.out.println("Property: " + name);
-            System.out.println("Rooms: " + moveIn);
-            System.out.println("Rent: " + employment);
-            System.out.println("Address: " + cell_number);
-            System.out.println("Contact: " + payday);
+            System.out.println("name: " + name);
+            System.out.println("move_in date: " + moveIn);
+            System.out.println("employment status: " + employment);
+            System.out.println("payday  " + payday);
+            System.out.println("Contact: " + cell_number);
             System.out.println("room: " + room);
 
 
