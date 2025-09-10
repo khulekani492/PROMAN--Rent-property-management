@@ -35,11 +35,11 @@ public class umuziAPI {
             dbConnector.setPropertyname(propertyName);
             System.out.println(dbConnector.getPropertyname());
 
-            String numberOfRooms = ctx.formParam("number_of_rooms");
-            String rent = ctx.formParam("rent");
+            int numberOfRooms =  Integer.parseInt( ctx.formParam("number_of_rooms")) ;
+            int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
-            //dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
+            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
             System.out.println("Property: " + propertyName);
             System.out.println("Rooms: " + numberOfRooms);
             System.out.println("Rent: " + rent);
@@ -50,20 +50,21 @@ public class umuziAPI {
         });
 
         app.post("/addtenants", ctx -> {
-
-            System.out.println(dbConnector.getPropertyname());
-            String name = ctx.formParam("tenant_name"); //returns null
-
+            String propertName = dbConnector.getPropertyname();
+            int residenceid = dbConnector.landlordid(propertName);
+            System.out.println(residenceid +"helps");
+            System.out.println(propertName);
+            String name = ctx.formParam("tenant_name");
             String moveIn = ctx.formParam("move_in");
-            String employment = ctx.formParam("employment");
+            String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
             String payday = ctx.formParam("pay_day");
-            String room = ctx.formParam("room");
+            int room = Integer.parseInt(ctx.formParam("room"));
+            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room);
 
-//            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
             System.out.println("name: " + name);
             System.out.println("move_in date: " + moveIn);
-            System.out.println("employment status: " + employment);
+            System.out.println("employment status: " + employment_status);
             System.out.println("payday  " + payday);
             System.out.println("Contact: " + cell_number);
             System.out.println("room: " + room);
