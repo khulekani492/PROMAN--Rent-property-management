@@ -100,10 +100,19 @@
         <label for="move_in">MOVE_IN:</label>
         <input type="date" id="move_in" name="move_in" required>
 
-        <!-- Address -->
-        <!-- Contact -->
-        <label for="employment">employment:</label>
-        <input type="checkbox" id="employment" name="agree" value="yes" required>
+
+<!--        <input type="radio" id="yes" name="employment" value="yes" required>-->
+<!--        <label for="yes">Yes</label><br>-->
+        <label>Employment</label>
+        <label style="display: inline-flex; align-items: center; margin-right: 15px;">
+            <input type="radio" name="employment" value="yes" required>
+            <span style="margin-left: 5px;">Yes</span>
+        </label>
+
+        <label style="display: inline-flex; align-items: center;">
+            <input type="radio" name="employment" value="no">
+            <span style="margin-left: 5px;">No</span>
+        </label>
 
         <label for="cell_number">Phone number:</label>
         <input type="tel" id="cell_number" name="contact" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678"  required>
