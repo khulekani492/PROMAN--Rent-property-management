@@ -58,7 +58,6 @@
           margin-top: 15px;
           transition: background 0.3s;
         }
-
         button:hover {
           background: #0056b3;
         }
@@ -70,8 +69,8 @@
     <form action="http://localhost:7070/sign_up" method="POST">
 
         <!-- Property Name -->
-        <label for="tenant_name">Property Name:</label>
-        <input type="text" id="tenant_name" name="tenant_name" required>
+        <label for="name">Property Name:</label>
+        <input type="text" id="name" name="tenant_name" required>
 
         <!-- Number of Rooms -->
         <label for="number_of_rooms">Number of Rooms:</label>
@@ -93,8 +92,9 @@
         <button type="submit">Submit</button>
     </form>
     <form action="http://localhost:7070/addtenants" method="POST">
-        <label for="name">Name:</label>
-        <input type="name" id="name" name="number_of_rooms" min="1" required>
+
+        <label for="tenant_name">Name:</label>
+        <input type="text" id="tenant_name" name="tenant_name" required>
 
         <!-- Rent -->
         <label for="move_in">MOVE_IN:</label>
