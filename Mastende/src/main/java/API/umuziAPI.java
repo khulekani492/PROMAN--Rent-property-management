@@ -48,9 +48,10 @@ public class umuziAPI {
 
             //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
         });
-
+//TODO [SQLITE_ERROR] SQL error or missing database (table tenants has no column named landlord_id)
         app.post("/addtenants", ctx -> {
             String propertName = dbConnector.getPropertyname();
+
             int residenceid = dbConnector.landlordid(propertName);
             System.out.println(residenceid +"helps");
             System.out.println(propertName);
