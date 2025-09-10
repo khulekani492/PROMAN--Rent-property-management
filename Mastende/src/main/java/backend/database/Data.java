@@ -5,6 +5,7 @@ import java.sql.*;
 // TODO: updateTenant, tenant_row, create property owner schema
 public class Data implements Property {
     private final Connection conn;
+    private String name;
 
     public Data(String db_url) throws SQLException {
         this.conn = DriverManager.getConnection(db_url);
@@ -66,6 +67,13 @@ public class Data implements Property {
         }
     }
 
+    public void setPropertyname(String name){
+        this.name = name;
+
+    }
+    public  String getPropertyname(){
+        return  name;
+    }
 
     public void addNewtenant(String landlord_residence,String name, String move_in, String move_out, String employment, String cell_number, String pay_day,int room_number) {
         String propertySQL = """
