@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class umuziAPI {
     private static final String D_URL = "jdbc:sqlite:apiData.db";
+
     private final Data conn;
 
     {
@@ -22,7 +23,6 @@ public class umuziAPI {
         }
     }
 
-
     public  static Javalin startServer(int port) throws SQLException {
         Data dbConnector = new Data("jdbc:sqlite:property.db");
         Javalin app = Javalin.create(config -> {
@@ -32,6 +32,8 @@ public class umuziAPI {
         app.post("/sign_up", ctx -> {
 
             String propertyName = ctx.formParam("property_name");
+            dbConnector.setPropertyname(propertyName);
+            System.out.println(dbConnector.getPropertyname());
 
             String numberOfRooms = ctx.formParam("number_of_rooms");
             String rent = ctx.formParam("rent");
@@ -44,15 +46,12 @@ public class umuziAPI {
             System.out.println("Address: " + address);
             System.out.println("Contact: " + contact);
 
-
-
-            //take from the form the id and put the information to the residence_table
-            //respond ok or error in jsom
             //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
         });
 
         app.post("/addtenants", ctx -> {
-            //TODO FIX NULL VALUES
+
+            System.out.println(dbConnector.getPropertyname());
             String name = ctx.formParam("tenant_name"); //returns null
 
             String moveIn = ctx.formParam("move_in");
@@ -68,11 +67,6 @@ public class umuziAPI {
             System.out.println("payday  " + payday);
             System.out.println("Contact: " + cell_number);
             System.out.println("room: " + room);
-
-
-
-            //take from the form the id and put the information to the residence_table
-            //respond ok or error in jsom
             //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
         });
 
