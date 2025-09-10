@@ -68,14 +68,15 @@ public class Data implements Property {
 
 
     @Override
-    public void addProperty_info(String property_name, String number_of_rooms, String rent, String address, String contact) {
+    public void addProperty_info(String property_name, int number_of_rooms, int rent, String address, String contact) {
         String propertySQL = """
-                INSERT INTO residence (property_name,number_of_rooms,rent,address,contact) VALUES (?,?,?,?,?)
-              """;
+            INSERT INTO residence (property_name, number_of_rooms, rent, address, contact)
+            VALUES (?, ?, ?, ?, ?)
+          """;
         try (PreparedStatement pstmt = conn.prepareStatement(propertySQL)) {
             pstmt.setString(1, property_name);
-            pstmt.setString(2, number_of_rooms);
-            pstmt.setString(3, rent);
+            pstmt.setInt(2, number_of_rooms);
+            pstmt.setInt(3, rent);
             pstmt.setString(4, address);
             pstmt.setString(5, contact);
             pstmt.executeUpdate();
@@ -91,26 +92,28 @@ public class Data implements Property {
     public  String getPropertyname(){
         return  name;
     }
-
-    public void addNewtenant(String landlord_residence,String name, String move_in, String move_out, String employment, String cell_number, String pay_day,int room_number) {
-        String propertySQL = """
-                INSERT INTO tenants (landlord_residence,name,move_in,move_out,employment,cell_number,pay_day,room_number) VALUES (?,?,?,?,?,?,?,?)
-              """;
-        try (PreparedStatement pstmt = conn.prepareStatement(propertySQL)) {
-            pstmt.setString(1, landlord_residence);
+    public void addNewtenant(int landlord_id, String name, String move_in, String move_out,
+                             String employment, String cell_number, String pay_day, int room_number) {
+        String tenantSQL = """
+            INSERT INTO tenants (landlord_id, name, move_in, move_out, employment, cell_number, pay_day, room_number)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          """;
+        try (PreparedStatement pstmt = conn.prepareStatement(tenantSQL)) {
+            pstmt.setInt(1, landlord_id);       // now matches INTEGER foreign key
             pstmt.setString(2, name);
             pstmt.setString(3, move_in);
             pstmt.setString(4, move_out);
             pstmt.setString(5, employment);
             pstmt.setString(6, cell_number);
-            pstmt.setString(7,pay_day);
-            pstmt.setInt(8,room_number);
+            pstmt.setString(7, pay_day);
+            pstmt.setInt(8, room_number);
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * Update room status for a tenant.
@@ -163,7 +166,7 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:propertyServices.db");
+            Data db = new Data("jdbc:sqlite:testru.db");
             //db.numberofRooms(5);
 //            db.roomStatus("Khule", 1, 20250101, "Employed");
         } catch (SQLException e) {
