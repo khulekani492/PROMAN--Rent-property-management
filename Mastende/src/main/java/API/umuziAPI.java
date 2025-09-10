@@ -37,7 +37,7 @@ public class umuziAPI {
             String rent = ctx.formParam("rent");
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
-            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
+            //dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
             System.out.println("Property: " + propertyName);
             System.out.println("Rooms: " + numberOfRooms);
             System.out.println("Rent: " + rent);
