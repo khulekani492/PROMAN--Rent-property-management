@@ -23,14 +23,14 @@ public class Data implements Property {
             String tenantsTable = """
                 CREATE TABLE IF NOT EXISTS tenants (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    landlord_residence INTEGER NOT NULL,
+                    landlord_residence TEXT NOT NULL,
                     name TEXT,
-                    move_in DATE,
+                    move_in DATE NOT NULL,
                     move_out DATE,
-                    employment VARCHAR(30),
-                    cell_number TEXT,
-                    pay_day TEXT,
-                    room_number INTEGER,
+                    employment NOT NULL,
+                    cell_number TEXT NOT NULL,
+                    pay_day TEXT NOT NULL,
+                    room_number INTEGER NOT NULL,
                     FOREIGN KEY (landlord_residence) REFERENCES residence(id)
                 );
             """;
@@ -146,7 +146,7 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:property.db");
+            Data db = new Data("jdbc:sqlite:propertyService.db");
             //db.numberofRooms(5);
 //            db.roomStatus("Khule", 1, 20250101, "Employed");
         } catch (SQLException e) {
