@@ -49,9 +49,24 @@ public class Data implements Property {
             stmt.execute(residenceTable);
         }
     }
-    public void landlordid(String name){
-
+    public Integer landlordid(String name) {
+        String reference_key = """
+        SELECT id FROM residence WHERE property_name = ?;
+    """;
+        try (PreparedStatement pstmt = conn.prepareStatement(reference_key)) {
+            pstmt.setString(1, name);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null; // if not found
     }
+
+
     @Override
     public void addProperty_info(String property_name, String number_of_rooms, String rent, String address, String contact) {
         String propertySQL = """
