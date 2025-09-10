@@ -21,35 +21,37 @@ public class Data implements Property {
             stmt.execute("PRAGMA foreign_keys = ON;");
 
             String tenantsTable = """
-                CREATE TABLE IF NOT EXISTS tenants (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    landlord_residence TEXT NOT NULL,
-                    name TEXT,
-                    move_in DATE NOT NULL,
-                    move_out DATE,
-                    employment NOT NULL,
-                    cell_number TEXT NOT NULL,
-                    pay_day TEXT NOT NULL,
-                    room_number INTEGER NOT NULL,
-                    FOREIGN KEY (landlord_residence) REFERENCES residence(id)
-                );
+                   CREATE TABLE IF NOT EXISTS tenants (
+                               id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                               landlord_id INTEGER NOT NULL,
+                               name TEXT,
+                               move_in DATE NOT NULL,
+                               move_out DATE,
+                               employment TEXT NOT NULL,
+                               cell_number TEXT NOT NULL,
+                               pay_day TEXT NOT NULL,
+                               room_number INTEGER NOT NULL,
+                               FOREIGN KEY (landlord_id) REFERENCES residence(id)
+                           );
             """;
 
             String residenceTable = """
-                CREATE TABLE IF NOT EXISTS residence (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    property_name TEXT UNIQUE NOT NULL,
-                    number_of_rooms INTEGER NOT NULL,
-                    rent INTEGER NOT NULL,
-                    address TEXT,
-                    contact TEXT
-                );
+                 CREATE TABLE IF NOT EXISTS residence (
+                             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                             property_name TEXT UNIQUE NOT NULL,
+                             number_of_rooms INTEGER NOT NULL,
+                             rent INTEGER NOT NULL,
+                             address TEXT,
+                             contact TEXT
+                         );
             """;
             stmt.execute(tenantsTable);
             stmt.execute(residenceTable);
         }
     }
+    public void landlordid(String name){
 
+    }
     @Override
     public void addProperty_info(String property_name, String number_of_rooms, String rent, String address, String contact) {
         String propertySQL = """
@@ -146,7 +148,7 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:propertyService.db");
+            Data db = new Data("jdbc:sqlite:propertyServices.db");
             //db.numberofRooms(5);
 //            db.roomStatus("Khule", 1, 20250101, "Employed");
         } catch (SQLException e) {
