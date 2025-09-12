@@ -24,17 +24,15 @@ public class umuziAPI {
     }
 
     public  static Javalin startServer(int port) throws SQLException {
-        Data dbConnector = new Data("jdbc:sqlite:property.db");
+        Data dbConnector = new Data("jdbc:sqlite:Severthem.db");
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
 
         app.post("/sign_up", ctx -> {
-
             String propertyName = ctx.formParam("property_name");
             dbConnector.setPropertyname(propertyName);
             System.out.println(dbConnector.getPropertyname());
-
             int numberOfRooms =  Integer.parseInt( ctx.formParam("number_of_rooms")) ;
             int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
@@ -53,8 +51,9 @@ public class umuziAPI {
             String propertName = dbConnector.getPropertyname();
 
             int residenceid = dbConnector.landlordid(propertName);
-            System.out.println(residenceid +"helps");
-            System.out.println(propertName);
+            //System.out.println(residenceid +"helps");
+
+            System.out.println(propertName + "name");
             String name = ctx.formParam("tenant_name");
             String moveIn = ctx.formParam("move_in");
             String employment_status = ctx.formParam("employment");
@@ -63,7 +62,7 @@ public class umuziAPI {
             int room = Integer.parseInt(ctx.formParam("room"));
             dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room);
 
-            System.out.println("name: " + name);
+            System.out.println("name: " + propertName);
             System.out.println("move_in date: " + moveIn);
             System.out.println("employment status: " + employment_status);
             System.out.println("payday  " + payday);
