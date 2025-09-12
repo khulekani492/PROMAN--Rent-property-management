@@ -92,6 +92,22 @@ public class Data implements Property {
     public  String getPropertyname(){
         return  name;
     }
+
+    public void landLordId(String name){
+        String sql = """
+         SELECT id
+         FROM residence
+        WHERE name = ?
+        """;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
     public void addNewtenant(int landlord_id, String name, String move_in, String move_out,
                              String employment, String cell_number, String pay_day, int room_number) {
         String tenantSQL = """
@@ -172,5 +188,8 @@ public class Data implements Property {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void numberofRooms(int i) {
     }
 }
