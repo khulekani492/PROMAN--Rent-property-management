@@ -83,13 +83,37 @@ public class umuziAPI {
             // respond ok or error js
             ctx.render("/templates/property_form.html");
         });
+        app.exception(SQLException.class, (e, ctx) -> {
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                ctx.status(400).json(Map.of(
+                        "error", "Property already exists",
+                        "field", "property_name"
+                ));
+            } else {
+                ctx.status(500).json(Map.of(
+                        "error", "Database error"
+                ));
+            }
+        });
+
 
         app.exception(Exception.class, (e, ctx) -> {
-            e.printStackTrace(); // keep logging internally
-            ctx.status(500).json(Map.of(
-                    "error", "Unexpected error occurred",
-                    "message",e.getLocalizedMessage()
-            ));
+            e.printStackTrace();
+            // keep logging internally
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                ctx.status(400).json(Map.of(
+                        "error", "Property already exists",
+                        "field", "property_name"
+                ));
+            } else {
+                ctx.status(500).json(Map.of(
+                        "error", "Database error"
+                ));
+            }
+//            ctx.status(500).json(Map.of(
+//                    "error", "Unexpected error occurred",
+//                    "message",e.getLocalizedMessage()
+//            ));
         });
 
 
