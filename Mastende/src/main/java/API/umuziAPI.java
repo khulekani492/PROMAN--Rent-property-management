@@ -31,12 +31,15 @@ public class umuziAPI {
 
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
+
+            //set the property_name
             dbConnector.setPropertyname(propertyName);
-            System.out.println(dbConnector.getPropertyname());
+
             int numberOfRooms =  Integer.parseInt( ctx.formParam("number_of_rooms")) ;
             int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
+
             dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
             System.out.println("Property: " + propertyName);
             System.out.println("Rooms: " + numberOfRooms);
@@ -44,31 +47,34 @@ public class umuziAPI {
             System.out.println("Address: " + address);
             System.out.println("Contact: " + contact);
 
-            //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
         });
-//TODO [SQLITE_ERROR] SQL error or missing database (table tenants has no column named landlord_id)
         app.post("/addtenants", ctx -> {
+
+            //Call the  getmethod() to get the name of  new user
             String propertName = dbConnector.getPropertyname();
 
-            int residenceid = dbConnector.landlordid(propertName);
-            //System.out.println(residenceid +"helps");
+            //Insert ID as a foreign key to the tenants table
+            int residenceid = dbConnector.landlordId(propertName);
 
-            System.out.println(propertName + "name");
+            //Access the form input --->  by accessing the value given to "name=value" in the frontEnd
             String name = ctx.formParam("tenant_name");
             String moveIn = ctx.formParam("move_in");
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
             String payday = ctx.formParam("pay_day");
             int room = Integer.parseInt(ctx.formParam("room"));
-            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room);
 
-            System.out.println("name: " + propertName);
-            System.out.println("move_in date: " + moveIn);
-            System.out.println("employment status: " + employment_status);
-            System.out.println("payday  " + payday);
-            System.out.println("Contact: " + cell_number);
-            System.out.println("room: " + room);
-            //  ctx.render("/templates/property_form.html", Map.of("name", "Mkhulex"));
+            //add tenant details to the table
+            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room);
+            ctx.json(Map.of("status","CREATED AN ACCOUNT"));
+
+
+//            System.out.println("name: " + propertName);
+//            System.out.println("move_in date: " + moveIn);
+//            System.out.println("employment status: " + employment_status);
+//            System.out.println("payday  " + payday);
+//            System.out.println("Contact: " + cell_number);
+//            System.out.println("room: " + room);
         });
 
         app.get("/tenants", ctx -> {
@@ -76,6 +82,14 @@ public class umuziAPI {
             // take from the form the id and put the information to the tenants table
             // respond ok or error js
             ctx.render("/templates/property_form.html");
+        });
+
+        app.exception(Exception.class, (e, ctx) -> {
+            e.printStackTrace(); // keep logging internally
+            ctx.status(500).json(Map.of(
+                    "error", "Unexpected error occurred",
+                    "message",e.getLocalizedMessage()
+            ));
         });
 
 
