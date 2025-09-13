@@ -31,6 +31,7 @@ public class Data implements Property {
                                cell_number TEXT NOT NULL,
                                pay_day TEXT NOT NULL,
                                room_number INTEGER NOT NULL,
+                               Room_price Text,
                                FOREIGN KEY (landlord_id) REFERENCES residence(id)
                            );
             """;
@@ -49,7 +50,7 @@ public class Data implements Property {
             stmt.execute(residenceTable);
         }
     }
-    public Integer landlordid(String name) {
+    public Integer landlordId(String name) {
         String reference_key = """
         SELECT id FROM residence WHERE property_name = ?;
     """;
@@ -93,26 +94,11 @@ public class Data implements Property {
         return  name;
     }
 
-    public void landLordId(String name){
-        String sql = """
-         SELECT id
-         FROM residence
-        WHERE name = ?
-        """;
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-
-    }
     public void addNewtenant(int landlord_id, String name, String move_in, String move_out,
-                             String employment, String cell_number, String pay_day, int room_number) {
+                             String employment, String cell_number, String pay_day, int room_number,String room_price) {
         String tenantSQL = """
-            INSERT INTO tenants (landlord_id, name, move_in, move_out, employment, cell_number, pay_day, room_number)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tenants (landlord_id, name, move_in, move_out, employment, cell_number, pay_day, room_number,Room_price)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)
           """;
         try (PreparedStatement pstmt = conn.prepareStatement(tenantSQL)) {
             pstmt.setInt(1, landlord_id);       // now matches INTEGER foreign key
@@ -123,6 +109,7 @@ public class Data implements Property {
             pstmt.setString(6, cell_number);
             pstmt.setString(7, pay_day);
             pstmt.setInt(8, room_number);
+            pstmt.setString(9,room_price);
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
