@@ -2,7 +2,7 @@ package backend.database;
 
 import java.sql.*;
 
-// TODO: updateTenant, tenant_row, create property owner schema
+// TODO: updateTenant
 public class Data implements Property {
     private final Connection conn;
     private String name;
