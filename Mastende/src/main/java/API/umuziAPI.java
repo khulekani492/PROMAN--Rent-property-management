@@ -11,20 +11,8 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public class umuziAPI {
-    private static final String D_URL = "jdbc:sqlite:apiData.db";
-
-    private final Data conn;
-
-    {
-        try {
-            conn = new Data(D_URL);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public  static Javalin startServer(int port) throws SQLException {
-        Data dbConnector = new Data("jdbc:sqlite:Severthem.db");
+        Data dbConnector = new Data("jdbc:sqlite:rental_property.db");
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
@@ -62,19 +50,14 @@ public class umuziAPI {
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
             String payday = ctx.formParam("pay_day");
+            String room_price = ctx.formParam("room_price");
+            System.out.println(room_price);
             int room = Integer.parseInt(ctx.formParam("room"));
 
             //add tenant details to the table
-            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room);
+            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room,room_price);
             ctx.json(Map.of("status","CREATED AN ACCOUNT"));
 
-
-//            System.out.println("name: " + propertName);
-//            System.out.println("move_in date: " + moveIn);
-//            System.out.println("employment status: " + employment_status);
-//            System.out.println("payday  " + payday);
-//            System.out.println("Contact: " + cell_number);
-//            System.out.println("room: " + room);
         });
 
         app.get("/tenants", ctx -> {
