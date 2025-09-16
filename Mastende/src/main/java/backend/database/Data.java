@@ -3,7 +3,7 @@ package backend.database;
 import java.sql.*;
 
 // TODO: updateTenant
-///Session Goal --> Complete.
+///Session Goal unique constraint from property_name Complete.
 public class Data implements Property {
     private final Connection conn;
     private String name;
@@ -33,6 +33,8 @@ public class Data implements Property {
                                pay_day TEXT NOT NULL,
                                room_number INTEGER NOT NULL,
                                Room_price Text,
+                               kin_name Text,
+                               kin_number Text,
                                FOREIGN KEY (landlord_id) REFERENCES residence(id)
                            );
             """;
@@ -96,10 +98,10 @@ public class Data implements Property {
     }
 
     public void addNewtenant(int landlord_id, String name, String move_in, String move_out,
-                             String employment, String cell_number, String pay_day, int room_number,String room_price) {
+                             String employment, String cell_number, String pay_day, int room_number,String room_price, String kin_name,String kin_number) {
         String tenantSQL = """
-            INSERT INTO tenants (landlord_id, name, move_in, move_out, employment, cell_number, pay_day, room_number,Room_price)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)
+            INSERT INTO tenants (landlord_id, name, move_in, move_out, employment, cell_number, pay_day, room_number,Room_price,kin_name,kin_number)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
           """;
         try (PreparedStatement pstmt = conn.prepareStatement(tenantSQL)) {
             pstmt.setInt(1, landlord_id);       // now matches INTEGER foreign key
@@ -111,6 +113,8 @@ public class Data implements Property {
             pstmt.setString(7, pay_day);
             pstmt.setInt(8, room_number);
             pstmt.setString(9,room_price);
+            pstmt.setString(10, kin_name);
+            pstmt.setString(11,kin_number);
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
