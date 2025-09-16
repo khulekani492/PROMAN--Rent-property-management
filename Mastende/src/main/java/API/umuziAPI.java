@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-        Data dbConnector = new Data("jdbc:sqlite:rental_property.db");
+        Data dbConnector = new Data("jdbc:sqlite:Rental_property.db");
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
@@ -78,7 +78,6 @@ public class umuziAPI {
                 ));
             }
         });
-
 
         app.exception(Exception.class, (e, ctx) -> {
             e.printStackTrace();

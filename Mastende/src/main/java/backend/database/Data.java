@@ -3,7 +3,7 @@ package backend.database;
 import java.sql.*;
 
 // TODO: updateTenant
-//Session Goal --> remove unique contraints constraint
+///Session Goal --> remove unique constraint from property_name
 public class Data implements Property {
     private final Connection conn;
     private String name;
@@ -40,7 +40,7 @@ public class Data implements Property {
             String residenceTable = """
                  CREATE TABLE IF NOT EXISTS residence (
                              id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                             property_name TEXT UNIQUE NOT NULL,
+                             property_name TEXT NOT NULL,
                              number_of_rooms INTEGER NOT NULL,
                              rent INTEGER NOT NULL,
                              address TEXT,
