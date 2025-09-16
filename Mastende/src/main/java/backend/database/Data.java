@@ -3,6 +3,7 @@ package backend.database;
 import java.sql.*;
 
 // TODO: updateTenant
+//Session Goal --> remove unique contraints constraint
 public class Data implements Property {
     private final Connection conn;
     private String name;
