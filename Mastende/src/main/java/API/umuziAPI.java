@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-        Data dbConnector = new Data("jdbc:sqlite:Rental_property.db");
+        Data dbConnector = new Data("jdbc:sqlite:smoked.db");
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
@@ -51,12 +51,13 @@ public class umuziAPI {
             String cell_number = ctx.formParam("cell_number");
             String payday = ctx.formParam("pay_day");
             String room_price = ctx.formParam("room_price");
-            System.out.println(room_price);
-            int room = Integer.parseInt(ctx.formParam("room"));
+            String kin_name = ctx.formParam("kin_name");
+            String kin_number = ctx.formParam("kin_number");
 
-            //add tenant details to the table
-            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room,room_price);
-            ctx.json(Map.of("status","CREATED AN ACCOUNT"));
+
+            int room = Integer.parseInt(ctx.formParam("room"));
+            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
+
 
         });
 
@@ -92,10 +93,7 @@ public class umuziAPI {
                         "error", "Database error"
                 ));
             }
-//            ctx.status(500).json(Map.of(
-//                    "error", "Unexpected error occurred",
-//                    "message",e.getLocalizedMessage()
-//            ));
+
         });
 
 
