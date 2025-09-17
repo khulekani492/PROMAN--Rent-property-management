@@ -3,8 +3,7 @@ package backend.database;
 import javax.naming.Context;
 import java.sql.*;
 
-// TODO: updateTenant
-///Session Goal unique constraint from property_name Complete.
+// TODO: updateTenant --> roomStatus complete,Next individual update method
 public class Data implements Property {
     private final Connection conn;
     private String name;
