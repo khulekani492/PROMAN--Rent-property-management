@@ -135,60 +135,46 @@ public class Data implements Property {
 
     }
 
-    public void roomStatus(String name, int room_no, String move_in_date, String employment_status, String cellphone,String pay_day,String room_price,String kin_name, String kin_number) {
-        try (Statement stmt = conn.createStatement()) {
-                stmt.execute("PRAGMA foreign_keys = ON;");
-            String tenantName = "UPDATE tenants SET name = ? WHERE room_no = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(tenantName)) {
-                pstmt.setString(1, name);
-                pstmt.setInt(2, room_no);
-                pstmt.executeUpdate();
-            }
+    public void roomStatus(String name,
+                           int room_no,
+                           String move_in_date,
+                           String employment_status,
+                           String cellphone,
+                           String pay_day,
+                           String room_price,
+                           String kin_name,
+                           String kin_number) {
+        String sql = """
+        UPDATE tenants
+        SET name = ?,
+            move_in = ?,
+            employment = ?,
+            cell_number = ?,
+            pay_day = ?,
+            room_price = ?,
+            kin_name = ?,
+            kin_number = ?
+        WHERE room_number = ?
+    """;
 
-            String updateMoveIn = "UPDATE tenants SET move_in = ? WHERE room_no = ?";
-            try (PreparedStatement pstm = conn.prepareStatement(updateMoveIn)) {
-                pstm.setString(1, move_in_date);
-                pstm.setInt(2, room_no);
-                pstm.executeUpdate();
-            }
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, move_in_date);
+            pstmt.setString(3, employment_status);
+            pstmt.setString(4, cellphone);
+            pstmt.setString(5, pay_day);
+            pstmt.setString(6, room_price);
+            pstmt.setString(7, kin_name);
+            pstmt.setString(8, kin_number);
+            pstmt.setInt(9, room_no);
+            pstmt.executeUpdate();
 
-            String employment = "UPDATE tenants SET employment = ? WHERE room_no = ?";
-            try (PreparedStatement pstm = conn.prepareStatement(employment)) {
-                pstm.setString(1, employment_status);
-                pstm.setInt(2, room_no);
-                pstm.executeUpdate();
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("No tenant found with room number: " + room_no);
+            } else {
+                System.out.println("Tenant updated successfully.");
             }
-            String cellphoneNo = "UPDATE tenants SET cell_number = ? WHERE room_no = ?";
-            try (PreparedStatement pstm = conn.prepareStatement(cellphoneNo)) {
-                pstm.setString(1,  cellphone);
-                pstm.setInt(2, room_no);
-                pstm.executeUpdate();
-            }
-            String rent_date = "UPDATE tenants SET pay_day = ? WHERE room_no = ?";
-            try (PreparedStatement pstm = conn.prepareStatement(rent_date)) {
-                pstm.setString(1,  pay_day);
-                pstm.setInt(2, room_no);
-                pstm.executeUpdate();
-            }
-            String roomPrice = "UPDATE tenants SET Room_price = ? WHERE room_no = ?";
-            try (PreparedStatement pstm = conn.prepareStatement(roomPrice)) {
-                pstm.setString(1,  room_price);
-                pstm.setInt(2, room_no);
-                pstm.executeUpdate();
-            }
-            String nextof_kin_name = "UPDATE tenants SET kin_name = ? WHERE room_no = ?";
-            try (PreparedStatement pstm = conn.prepareStatement(roomPrice)) {
-                pstm.setString(1,  kin_name);
-                pstm.setInt(2, room_no);
-                pstm.executeUpdate();
-            }
-            String nextof_kin_number = "UPDATE tenants SET kin_number = ? WHERE room_no = ?";
-            try (PreparedStatement pstm = conn.prepareStatement(roomPrice)) {
-                pstm.setString(1,  kin_number);
-                pstm.setInt(2, room_no);
-                pstm.executeUpdate();
-            }
-
 
 
         } catch (SQLException e) {
