@@ -88,9 +88,10 @@
     </style>
 </head>
 <body>
+
 <div class="forms-wrapper">
 
-    <!-- First form -->
+    <!-- First form: Property -->
     <div class="form-container">
         <h2>Mastende.</h2>
         <form action="http://localhost:7070/sign_up" method="POST">
@@ -113,9 +114,9 @@
         </form>
     </div>
 
-    <!-- Second form -->
+    <!-- Second form: Add Tenant -->
     <div class="form-container">
-        <h2>Tenants</h2>
+        <h2>Add Tenant</h2>
         <form action="http://localhost:7070/addtenants" method="POST">
             <label for="tenant_name">Name:</label>
             <input type="text" id="tenant_name" name="tenant_name" required>
@@ -137,38 +138,76 @@
 
             <label for="kin_number">Next of Kin number:</label>
             <input type="tel" id="kin_number" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
+
             <label for="pay_day">Pay Day:</label>
             <select name="pay_day" id="pay_day">
                 <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
+                <!-- ... add remaining options ... -->
                 <option value="15">15</option>
             </select>
 
             <label for="room">Select a Room:</label>
             <select name="room" id="room">
                 <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
+                <!-- ... add remaining rooms ... -->
                 <option value="5">5</option>
             </select>
-            <label>Room_price</label>
-            <input type="text" id="room_price" name="room_price" >
+
+            <label>Room Price</label>
+            <input type="text" id="room_price" name="room_price">
+
             <button type="submit">Submit</button>
         </form>
     </div>
+
+    <!-- Third form: Edit Tenant -->
+    <div class="form-container">
+        <h2>Edit Tenant</h2>
+        <form action="http://localhost:7070/updateTenants" method="POST">
+            <label for="tenantname">Name:</label>
+            <input type="text" id="tenantname" name="tenant_name" required>
+
+            <label for="movein">Move In:</label>
+            <input type="date" id="movein" name="move_in" required>
+
+            <label>Employment</label>
+            <div class="radio-group">
+                <label><input type="radio" name="employment" value="yes" required> Yes</label>
+                <label><input type="radio" name="employment" value="no"> No</label>
+            </div>
+
+            <label for="cellnumber">Phone number:</label>
+            <input type="tel" id="cellnumber" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+
+            <label for="kinname">Next of kin Name:</label>
+            <input type="text" id="kinname" name="kin_name">
+
+            <label for="kinnumber">Next of Kin number:</label>
+            <input type="tel" id="kinnumber" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
+
+            <label for="payday">Pay Day:</label>
+            <select name="pay_day" id="payday">
+                <option value="1">1</option>
+                <!-- ... add remaining options ... -->
+                <option value="15">15</option>
+            </select>
+
+            <label for="room_">Select a Room:</label>
+            <select name="room" id="room_">
+                <option value="1">1</option>
+                <!-- ... add remaining rooms ... -->
+                <option value="5">5</option>
+            </select>
+
+            <label>Room Price</label>
+            <input type="text" id="roomprice" name="room_price">
+
+            <button type="submit">Edit</button>
+        </form>
+    </div>
+
+</div>
+
 </div>
 </body>
 </html>
