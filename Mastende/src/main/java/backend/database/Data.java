@@ -128,8 +128,9 @@ public class Data implements Property {
      * Update room status for a tenant.
      */
     //Edit button
-    public void updateExistingUser(String new_information,String column ){
+    public void updatePropertyInfo(String new_information,String column ){
         //How to determine the type of data to be updated ---> api job it will pass in the new_information and column to be updates
+
 
 
     }
