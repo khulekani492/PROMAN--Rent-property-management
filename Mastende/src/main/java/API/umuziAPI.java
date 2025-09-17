@@ -4,6 +4,7 @@ package API;
 //import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import backend.database.Data;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinThymeleaf;
 
@@ -60,13 +61,24 @@ public class umuziAPI {
 
 
         });
+        app.post("/update_propertInfo",context -> {
+            //Get the instance of Data
 
+            //Get the form values
+
+            //Check what is being updated String name case switch(Sting parameter ==>) execute updateLandlord method and update the tenants info
+
+
+        });
         app.get("/tenants", ctx -> {
 
             // take from the form the id and put the information to the tenants table
             // respond ok or error js
             ctx.render("/templates/property_form.html");
         });
+
+
+
         app.exception(SQLException.class, (e, ctx) -> {
             if (e.getMessage().contains("UNIQUE constraint failed")) {
                 ctx.status(400).json(Map.of(
