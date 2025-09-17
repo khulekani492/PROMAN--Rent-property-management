@@ -62,10 +62,9 @@ public class umuziAPI {
 
 
         });
-        app.post("/update_propertInfo",ctx -> {
+        app.post("/updateTenants",ctx -> {
 
             ///Updating Previously occupied room with new tenant
-
             String propertName = dbConnector.getPropertyname();
             int residenceid = dbConnector.landlordId(propertName);
             String name = ctx.formParam("tenant_name");
@@ -78,7 +77,7 @@ public class umuziAPI {
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
-            dbConnector.roomStatus(residenceid, name,room,moveIn,employment_status,cell_number,payday,room_price,kin_name,kin_number );
+            dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,kin_name,kin_number );
 
 
             //Get the form values
