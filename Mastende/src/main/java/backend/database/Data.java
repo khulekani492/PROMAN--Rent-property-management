@@ -170,6 +170,25 @@ public class Data implements Property {
                 pstm.setInt(2, room_no);
                 pstm.executeUpdate();
             }
+            String roomPrice = "UPDATE tenants SET Room_price = ? WHERE room_no = ?";
+            try (PreparedStatement pstm = conn.prepareStatement(roomPrice)) {
+                pstm.setString(1,  room_price);
+                pstm.setInt(2, room_no);
+                pstm.executeUpdate();
+            }
+            String nextof_kin_name = "UPDATE tenants SET kin_name = ? WHERE room_no = ?";
+            try (PreparedStatement pstm = conn.prepareStatement(roomPrice)) {
+                pstm.setString(1,  kin_name);
+                pstm.setInt(2, room_no);
+                pstm.executeUpdate();
+            }
+            String nextof_kin_number = "UPDATE tenants SET kin_number = ? WHERE room_no = ?";
+            try (PreparedStatement pstm = conn.prepareStatement(roomPrice)) {
+                pstm.setString(1,  kin_number);
+                pstm.setInt(2, room_no);
+                pstm.executeUpdate();
+            }
+
 
 
         } catch (SQLException e) {
