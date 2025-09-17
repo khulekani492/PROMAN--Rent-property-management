@@ -66,7 +66,7 @@ public class umuziAPI {
 
             ///Updating Previously occupied room with new tenant
             String propertName = dbConnector.getPropertyname();
-            int residenceid = dbConnector.landlordId(propertName);
+           // int residenceid = dbConnector.landlordId(propertName);
             String name = ctx.formParam("tenant_name");
             String moveIn = ctx.formParam("move_in");
             String employment_status = ctx.formParam("employment");
@@ -110,7 +110,6 @@ public class umuziAPI {
 
         app.exception(Exception.class, (e, ctx) -> {
             e.printStackTrace();
-            // keep logging internally
             if (e.getMessage().contains("UNIQUE constraint failed")) {
                 ctx.status(400).json(Map.of(
                         "error", "Property already exists",
@@ -118,7 +117,8 @@ public class umuziAPI {
                 ));
             } else {
                 ctx.status(500).json(Map.of(
-                        "error", "Database error"
+                        "error", "Database error",
+                        "message",e.getMessage()
                 ));
             }
 
