@@ -51,18 +51,35 @@ public class umuziAPI {
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
             String payday = ctx.formParam("pay_day");
+            int room = Integer.parseInt(ctx.formParam("room"));
             String room_price = ctx.formParam("room_price");
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
 
-            int room = Integer.parseInt(ctx.formParam("room"));
+
             dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
 
 
         });
-        app.post("/update_propertInfo",context -> {
-            //Get the instance of Data
+        app.post("/update_propertInfo",ctx -> {
+
+            ///Updating Previously occupied room with new tenant
+
+            String propertName = dbConnector.getPropertyname();
+            int residenceid = dbConnector.landlordId(propertName);
+            String name = ctx.formParam("tenant_name");
+            String moveIn = ctx.formParam("move_in");
+            String employment_status = ctx.formParam("employment");
+            String cell_number = ctx.formParam("cell_number");
+            String payday = ctx.formParam("pay_day");
+            int room = Integer.parseInt(ctx.formParam("room"));
+            String room_price = ctx.formParam("room_price");
+            String kin_name = ctx.formParam("kin_name");
+            String kin_number = ctx.formParam("kin_number");
+
+            dbConnector.roomStatus(residenceid, name,room,moveIn,employment_status,cell_number,payday,room_price,kin_name,kin_number );
+
 
             //Get the form values
 
