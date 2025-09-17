@@ -135,7 +135,7 @@ public class Data implements Property {
 
     }
 
-    public void roomStatus(int residenceId, String name, int room_no, String move_in_date, String employment_status, String cellphone,String pay_day,String room_price,String kin_name, String kin_number) {
+    public void roomStatus(String name, int room_no, String move_in_date, String employment_status, String cellphone,String pay_day,String room_price,String kin_name, String kin_number) {
         try (Statement stmt = conn.createStatement()) {
                 stmt.execute("PRAGMA foreign_keys = ON;");
             String tenantName = "UPDATE tenants SET name = ? WHERE room_no = ?";
