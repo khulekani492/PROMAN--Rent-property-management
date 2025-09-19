@@ -124,8 +124,33 @@ public class Data implements Property {
 
 
     /**
-     * Update room status for a tenant.
+     * In case the user submit the same information twice this method is supposed to check
+     * if the row already exists
      */
+    public boolean rowExists(String property_name,int number_of_rooms, String address,String contact){
+
+        //Get property_name
+        //check if
+        String checkRow = """
+                SELECT 1 FROM residence WHERE property_name=? AND number_of_rooms=? AND address=? AND contact=? LIMIT 1""";
+        try (PreparedStatement pstmt = conn.prepareStatement(checkRow)) {
+            pstmt.setString(1, property_name);
+            pstmt.setInt(2, number_of_rooms);
+            pstmt.setString(3, address);
+            pstmt.setString(4, contact);
+            ResultSet rs = pstmt.executeQuery();
+            boolean exists = rs.next();
+            if (exists){
+                return true;
+            }else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+      return true;
+    };
+
     //Edit button
     public void updatePropertyInfo(String new_information,String column ){
         //How to determine the type of data to be updated ---> api job it will pass in the new_information and column to be updates
