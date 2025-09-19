@@ -28,7 +28,8 @@ public class umuziAPI {
             int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
-
+            boolean row_duplicate =  dbConnector.rowExists(propertyName,numberOfRooms,address,contact);
+            System.out.println(row_duplicate);
             dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
             System.out.println("Property: " + propertyName);
             System.out.println("Rooms: " + numberOfRooms);
