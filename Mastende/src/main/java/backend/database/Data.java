@@ -3,7 +3,7 @@ package backend.database;
 import javax.naming.Context;
 import java.sql.*;
 
-// TODO: updateTenant --> Next individual update method
+// TODAY: SESSION --> PREVENTING THE DATABASE FROM SAVING THE SAME DATA ADDING
 public class Data implements Property {
     private final Connection conn;
     private String name;
