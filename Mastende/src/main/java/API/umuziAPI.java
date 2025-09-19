@@ -28,9 +28,18 @@ public class umuziAPI {
             int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
-            boolean row_duplicate =  dbConnector.rowExists(propertyName,numberOfRooms,address,contact);
-            System.out.println(row_duplicate);
-            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
+
+            //Check if row does not exist already.
+            boolean row_duplicateCheck =  dbConnector.rowExists(propertyName,numberOfRooms,address,contact);
+            if(row_duplicateCheck){
+                ctx.status(400).json(Map.of(
+                        "error", "Row already exist",
+                        "message", "property information already exists"
+                ));
+            } else {
+                dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
+            }
+
             System.out.println("Property: " + propertyName);
             System.out.println("Rooms: " + numberOfRooms);
             System.out.println("Rent: " + rent);
