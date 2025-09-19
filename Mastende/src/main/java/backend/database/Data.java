@@ -21,6 +21,32 @@ public class Data implements Property {
 
             stmt.execute("PRAGMA foreign_keys = ON;");
 
+
+            String residenceTable = """
+                 CREATE TABLE IF NOT EXISTS residence (
+                             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                             property_name TEXT NOT NULL,
+                             number_of_rooms INTEGER NOT NULL,
+                             rent INTEGER NOT NULL,
+                             address TEXT,
+                             contact TEXT,
+                             mastedeUser INTEGER,
+                             FOREIGN KEY (mastedeUser) REFERENCES MastedeUsers(id)
+                             );
+            """;
+
+            String mastedeUsers = """
+                 CREATE TABLE IF NOT EXISTS MastedeUsers (
+                             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                             user_name TEXT NOT NULL,
+                             user_email TEXT,
+                             password INTEGER NOT NULL,
+                             residenceID INTEGER NULL,
+                             FOREIGN KEY (residenceID) REFERENCES residence(id)
+                         );
+            """;
+
+
             String tenantsTable = """
                    CREATE TABLE IF NOT EXISTS tenants (
                                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -39,16 +65,7 @@ public class Data implements Property {
                            );
             """;
 
-            String residenceTable = """
-                 CREATE TABLE IF NOT EXISTS residence (
-                             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                             property_name TEXT NOT NULL,
-                             number_of_rooms INTEGER NOT NULL,
-                             rent INTEGER NOT NULL,
-                             address TEXT,
-                             contact TEXT
-                         );
-            """;
+            stmt.execute(mastedeUsers);
             stmt.execute(tenantsTable);
             stmt.execute(residenceTable);
         }
@@ -220,7 +237,7 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:testru.db");
+            Data db = new Data("jdbc:sqlite:newOne.db");
             //db.numberofRooms(5);
 //            db.roomStatus("Khule", 1, 20250101, "Employed");
         } catch (SQLException e) {
