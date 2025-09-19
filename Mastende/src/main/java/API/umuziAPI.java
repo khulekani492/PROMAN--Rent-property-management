@@ -30,7 +30,7 @@ public class umuziAPI {
             String contact = ctx.formParam("contact");
 
             //Check if row does not exist already.
-            boolean row_duplicateCheck =  dbConnector.rowExists(propertyName,numberOfRooms,address,contact);
+            boolean row_duplicateCheck =  dbConnector.rowExist_InProperty(propertyName,numberOfRooms,address,contact);
             if(row_duplicateCheck){
                 ctx.status(400).json(Map.of(
                         "error", "Row already exist",
