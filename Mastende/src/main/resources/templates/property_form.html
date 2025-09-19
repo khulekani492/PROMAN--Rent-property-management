@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Form</title>
+    <title>Mastende System Forms</title>
     <style>
         body {
           font-family: Arial, sans-serif;
@@ -18,8 +18,8 @@
 
         .forms-wrapper {
           display: flex;
-          gap: 20px; /* space between forms */
-          flex-wrap: wrap; /* allows them to stack on small screens */
+          gap: 20px;
+          flex-wrap: wrap; /* stack on small screens */
         }
 
         .form-container {
@@ -70,17 +70,18 @@
           background: #0056b3;
         }
 
-        /* Radio inline */
         .radio-group {
           display: flex;
           gap: 15px;
           margin-top: 5px;
         }
+
         .radio-group label {
           display: flex;
           align-items: center;
           font-weight: normal;
         }
+
         .radio-group input {
           margin-right: 5px;
           width: auto;
@@ -91,12 +92,29 @@
 
 <div class="forms-wrapper">
 
-    <!-- First form: Property -->
+    <!-- Form 1: User Sign Up -->
     <div class="form-container">
-        <h2>Mastende.</h2>
+        <h2>User Sign Up</h2>
         <form action="http://localhost:7070/sign_up" method="POST">
-            <label for="name">Property Name:</label>
-            <input type="text" id="name" name="property_name" required>
+            <label for="user_name">User Name:</label>
+            <input type="text" id="user_name" name="user_name" required>
+
+            <label for="user_email">Email:</label>
+            <input type="email" id="user_email" name="user_email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <!-- Form 2: Add Property -->
+    <div class="form-container">
+        <h2>Add Property</h2>
+        <form action="http://localhost:7070/add_property" method="POST">
+            <label for="property_name">Property Name:</label>
+            <input type="text" id="property_name" name="property_name" required>
 
             <label for="number_of_rooms">Number of Rooms:</label>
             <input type="number" id="number_of_rooms" name="number_of_rooms" min="1" required>
@@ -110,11 +128,11 @@
             <label for="contact">Contact Number:</label>
             <input type="tel" id="contact" name="contact" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
 
-            <button type="submit">Submit</button>
+            <button type="submit">Save Property</button>
         </form>
     </div>
 
-    <!-- Second form: Add Tenant -->
+    <!-- Form 3: Add Tenant -->
     <div class="form-container">
         <h2>Add Tenant</h2>
         <form action="http://localhost:7070/addtenants" method="POST">
@@ -124,7 +142,7 @@
             <label for="move_in">Move In:</label>
             <input type="date" id="move_in" name="move_in" required>
 
-            <label>Employment</label>
+            <label>Employment:</label>
             <div class="radio-group">
                 <label><input type="radio" name="employment" value="yes" required> Yes</label>
                 <label><input type="radio" name="employment" value="no"> No</label>
@@ -133,34 +151,34 @@
             <label for="cell_number">Phone number:</label>
             <input type="tel" id="cell_number" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
 
-            <label for="kin_name">Next of kin Name:</label>
+            <label for="kin_name">Next of Kin Name:</label>
             <input type="text" id="kin_name" name="kin_name">
 
-            <label for="kin_number">Next of Kin number:</label>
+            <label for="kin_number">Next of Kin Number:</label>
             <input type="tel" id="kin_number" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
 
             <label for="pay_day">Pay Day:</label>
             <select name="pay_day" id="pay_day">
                 <option value="1">1</option>
-                <!-- ... add remaining options ... -->
                 <option value="15">15</option>
+                <option value="30">30</option>
             </select>
 
             <label for="room">Select a Room:</label>
             <select name="room" id="room">
                 <option value="1">1</option>
-                <!-- ... add remaining rooms ... -->
-                <option value="5">5</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
             </select>
 
-            <label>Room Price</label>
-            <input type="text" id="room_price" name="room_price">
+            <label for="room_price">Room Price:</label>
+            <input type="number" id="room_price" name="room_price" step="0.01">
 
-            <button type="submit">Submit</button>
+            <button type="submit">Add Tenant</button>
         </form>
     </div>
 
-    <!-- Third form: Edit Tenant -->
+    <!-- Form 4: Edit Tenant -->
     <div class="form-container">
         <h2>Edit Tenant</h2>
         <form action="http://localhost:7070/updateTenants" method="POST">
@@ -170,7 +188,7 @@
             <label for="movein">Move In:</label>
             <input type="date" id="movein" name="move_in" required>
 
-            <label>Employment</label>
+            <label>Employment:</label>
             <div class="radio-group">
                 <label><input type="radio" name="employment" value="yes" required> Yes</label>
                 <label><input type="radio" name="employment" value="no"> No</label>
@@ -179,34 +197,32 @@
             <label for="cellnumber">Phone number:</label>
             <input type="tel" id="cellnumber" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
 
-            <label for="kinname">Next of kin Name:</label>
+            <label for="kinname">Next of Kin Name:</label>
             <input type="text" id="kinname" name="kin_name">
 
-            <label for="kinnumber">Next of Kin number:</label>
+            <label for="kinnumber">Next of Kin Number:</label>
             <input type="tel" id="kinnumber" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
 
             <label for="payday">Pay Day:</label>
             <select name="pay_day" id="payday">
                 <option value="1">1</option>
-                <!-- ... add remaining options ... -->
                 <option value="15">15</option>
+                <option value="30">30</option>
             </select>
 
             <label for="room_">Select a Room:</label>
             <select name="room" id="room_">
                 <option value="1">1</option>
-                <!-- ... add remaining rooms ... -->
-                <option value="5">5</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
             </select>
 
-            <label>Room Price</label>
-            <input type="text" id="roomprice" name="room_price">
+            <label for="roomprice">Room Price:</label>
+            <input type="number" id="roomprice" name="room_price" step="0.01">
 
-            <button type="submit">Edit</button>
+            <button type="submit">Update Tenant</button>
         </form>
     </div>
-
-</div>
 
 </div>
 </body>
