@@ -3,7 +3,7 @@ package backend.database;
 import javax.naming.Context;
 import java.sql.*;
 
-// TODO: updateTenant --> roomStatus complete,Next individual update method
+// TODO: updateTenant --> Next individual update method
 public class Data implements Property {
     private final Connection conn;
     private String name;
@@ -127,7 +127,7 @@ public class Data implements Property {
      * In case the user submit the same information twice this method is supposed to check
      * if the row already exists
      */
-    public boolean rowExists(String property_name,int number_of_rooms, String address,String contact){
+    public boolean rowExist_InProperty(String property_name,int number_of_rooms, String address,String contact){
 
         //Get property_name
         //check if
@@ -150,6 +150,14 @@ public class Data implements Property {
         }
       return true;
     };
+
+
+    /**
+     * TODO create a boolean method that check if  the row already exist in tenants table
+     * rowExist_InTenants()
+     */
+
+
 
     //Edit button
     public void updatePropertyInfo(String new_information,String column ){
