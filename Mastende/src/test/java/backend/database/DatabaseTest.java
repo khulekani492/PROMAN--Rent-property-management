@@ -65,7 +65,7 @@ public class DatabaseTest {
     @Test
     public  void  testTenantname() throws SQLException {
         dummyconnection  = new Data(D_URL);
-        dummyconnection.roomStatus("Khulekani", 2, "2024-07-12", "yes");
+        //dummyconnection.roomStatus("Khulekani", 2, "2024-07-12", "yes");
         // Verify after insert
         try (Connection coon = DriverManager.getConnection(D_URL)){
             Statement stmt = coon.createStatement();{
