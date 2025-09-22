@@ -146,13 +146,19 @@ public class Data implements Property {
 
 
     public void addNewtenant(int landlord_id, String name, String move_in, String move_out,
-                             String employment, String cell_number, String pay_day, int room_number,String room_price, String kin_name,String kin_number) {
-          // get the mastedeUsers last row id to reference
+                             String employment, String cell_number, String pay_day, int room_number,
+                             String room_price,
+                             String kin_name,
+                             String kin_number) {
+          // get the mastedeUsers last row id to reference it as the foreign key
          int mastedeUser = getMastedeid();
+
+         //Set the debt to zero when a new tenant is first added
+         int  debt = 0;
 
         String tenantSQL = """
             INSERT INTO tenants (landlord_id, name, move_in, move_out, employment, cell_number, pay_day, room_number,Room_price,kin_name,kin_number,mastedeUser)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)
           """;
         try (PreparedStatement pstmt = conn.prepareStatement(tenantSQL)) {
             pstmt.setInt(1, landlord_id);       // now matches INTEGER foreign key
@@ -164,9 +170,10 @@ public class Data implements Property {
             pstmt.setString(7, pay_day);
             pstmt.setInt(8, room_number);
             pstmt.setString(9,room_price);
-            pstmt.setString(10, kin_name);
-            pstmt.setString(11,kin_number);
-            pstmt.setInt(12,mastedeUser);
+            pstmt.setInt(10,debt);
+            pstmt.setString(11, kin_name);
+            pstmt.setString(12,kin_number);
+            pstmt.setInt(13,mastedeUser);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
