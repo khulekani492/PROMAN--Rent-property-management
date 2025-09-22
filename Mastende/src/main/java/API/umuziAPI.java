@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-        Data dbConnector = new Data("jdbc:sqlite:smoked.db");
+        Data dbConnector = new Data("jdbc:sqlite:Mastede.db");
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
