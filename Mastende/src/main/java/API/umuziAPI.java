@@ -78,6 +78,8 @@ public class umuziAPI {
 
             int room = Integer.parseInt(ctx.formParam("room"));
             String room_price = ctx.formParam("room_price");
+
+            //LOGIC update debt column when month ends and payment is still not paid
             int tenantsdebt = Integer.parseInt( ctx.formParam("tenant_debt"));
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
