@@ -67,7 +67,7 @@ public class umuziAPI {
         });
         app.post("/updateTenants",ctx -> {
 
-            ///Updating Previously occupied room with new tenant
+            ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
             String propertName = dbConnector.getPropertyname();
            // int residenceid = dbConnector.landlordId(propertName);
             String name = ctx.formParam("tenant_name");
@@ -75,24 +75,18 @@ public class umuziAPI {
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
             String payday = ctx.formParam("pay_day");
+
             int room = Integer.parseInt(ctx.formParam("room"));
             String room_price = ctx.formParam("room_price");
+            int tenantsdebt = Integer.parseInt( ctx.formParam("tenant_debt"));
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
-            dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,kin_name,kin_number );
-
-
-            //Get the form values
-
-            //Check what is being updated String name case switch(Sting parameter ==>) execute updateLandlord method and update the tenants info
-
+            dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
 
         });
         app.get("/tenants", ctx -> {
 
-            // take from the form the id and put the information to the tenants table
-            // respond ok or error js
             ctx.render("/templates/property_form.html");
         });
 

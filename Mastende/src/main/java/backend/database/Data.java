@@ -125,11 +125,12 @@ public class Data implements Property {
         return  name;
     }
 
+
+    //Fetch the id number of the new user in order to insert it into other tables as a Foreign key
     public int getMastedeid() {
         String mastedeUser = """
         SELECT id FROM MastedeUsers ORDER BY created_at DESC LIMIT 1;
         """;
-
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(mastedeUser)) {
 
@@ -181,49 +182,6 @@ public class Data implements Property {
     }
 
 
-    /**
-     * In case the user submit the same information twice this method is supposed to check
-     * if the row already exists
-     */
-    public boolean rowExist_InProperty(String property_name,int number_of_rooms, String address,String contact){
-
-        //Get property_name
-        //check if
-        String checkRow = """
-                SELECT 1 FROM residence WHERE property_name=? AND number_of_rooms=? AND address=? AND contact=? LIMIT 1""";
-        try (PreparedStatement pstmt = conn.prepareStatement(checkRow)) {
-            pstmt.setString(1, property_name);
-            pstmt.setInt(2, number_of_rooms);
-            pstmt.setString(3, address);
-            pstmt.setString(4, contact);
-            ResultSet rs = pstmt.executeQuery();
-            boolean exists = rs.next();
-            if (exists){
-                return true;
-            }else {
-                return false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-      return true;
-    };
-
-
-    /**
-     * TODO create a boolean method that check if  the row already exist in tenants table
-     * rowExist_InTenants()
-     */
-
-
-
-    //Edit button
-    public void updatePropertyInfo(String new_information,String column ){
-        //How to determine the type of data to be updated ---> api job it will pass in the new_information and column to be updates
-
-
-
-    }
 
     public void roomStatus(String name,
                            int room_no,
@@ -232,6 +190,7 @@ public class Data implements Property {
                            String cellphone,
                            String pay_day,
                            String room_price,
+                           int debt,
                            String kin_name,
                            String kin_number) {
         String sql = """
@@ -242,6 +201,7 @@ public class Data implements Property {
             cell_number = ?,
             pay_day = ?,
             room_price = ?,
+            debt = ?,
             kin_name = ?,
             kin_number = ?
         WHERE room_number = ?
@@ -254,9 +214,10 @@ public class Data implements Property {
             pstmt.setString(4, cellphone);
             pstmt.setString(5, pay_day);
             pstmt.setString(6, room_price);
-            pstmt.setString(7, kin_name);
-            pstmt.setString(8, kin_number);
-            pstmt.setInt(9, room_no);
+            pstmt.setInt(7,debt);
+            pstmt.setString(9, kin_name);
+            pstmt.setString(9, kin_number);
+            pstmt.setInt(10, room_no);
             pstmt.executeUpdate();
 
             int rowsAffected = pstmt.executeUpdate();
