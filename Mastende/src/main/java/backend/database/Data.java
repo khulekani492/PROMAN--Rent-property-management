@@ -21,36 +21,35 @@ public class Data implements Property {
 
             stmt.execute("PRAGMA foreign_keys = ON;");
 
+            String mastedeUsers = """
+                 CREATE TABLE IF NOT EXISTS Users (
+                             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                             user_name TEXT NOT NULL,
+                             user_email TEXT,
+                             password INTEGER NOT NULL,
+                             propertyId INTEGER NULL,
+                             FOREIGN KEY (propertyId) REFERENCES property(id)
+                         );
+            """;
 
             String residenceTable = """
-                 CREATE TABLE IF NOT EXISTS residence (
+                 CREATE TABLE IF NOT EXISTS property (
                              id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                              property_name TEXT NOT NULL,
                              number_of_rooms INTEGER NOT NULL,
                              rent INTEGER NOT NULL,
                              address TEXT,
                              contact TEXT,
-                             mastedeUser INTEGER,
-                             FOREIGN KEY (mastedeUser) REFERENCES MastedeUsers(id)
+                             UserId INTEGER,
+                             FOREIGN KEY (UserId) REFERENCES Users(id)
                              );
-            """;
-
-            String mastedeUsers = """
-                 CREATE TABLE IF NOT EXISTS MastedeUsers (
-                             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                             user_name TEXT NOT NULL,
-                             user_email TEXT,
-                             password INTEGER NOT NULL,
-                             residenceID INTEGER NULL,
-                             FOREIGN KEY (residenceID) REFERENCES residence(id)
-                         );
             """;
 
 
             String tenantsTable = """
                    CREATE TABLE IF NOT EXISTS tenants (
                                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                               landlord_id INTEGER NOT NULL,
+                               propertyId INTEGER NOT NULL,
                                name TEXT,
                                move_in DATE NOT NULL,
                                move_out DATE,
@@ -59,15 +58,27 @@ public class Data implements Property {
                                pay_day TEXT NOT NULL,
                                room_number INTEGER NOT NULL,
                                Room_price Text,
+                               debt Text,
                                kin_name Text,
                                kin_number Text,
-                               FOREIGN KEY (landlord_id) REFERENCES residence(id)
+                               FOREIGN KEY (propertyId) REFERENCES property(id)
                            );
             """;
 
+            String grossIncome = """
+                   CREATE TABLE IF NOT EXISTS tenants (
+                               id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                               propertyId INTEGER NOT NULL,
+                               month_name TEXT,
+                               Profit TEXT,
+                               Loss TEXT,
+                               FOREIGN KEY (propertyId) REFERENCES Users(id)
+                           );
+            """;
             stmt.execute(mastedeUsers);
             stmt.execute(tenantsTable);
             stmt.execute(residenceTable);
+            stmt.execute(grossIncome);
         }
     }
     public Integer landlordId(String name) {
@@ -260,9 +271,7 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:newOne.db");
-            //db.numberofRooms(5);
-//            db.roomStatus("Khule", 1, 20250101, "Employed");
+            Data db = new Data("jdbc:sqlite:ThugCommon.db");
         } catch (SQLException e) {
             e.printStackTrace();
         }
