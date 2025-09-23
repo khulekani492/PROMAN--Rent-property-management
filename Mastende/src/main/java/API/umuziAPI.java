@@ -18,8 +18,7 @@ public class umuziAPI {
         Data dbConnector = new Data("jdbc:sqlite:Mastede.db");
 
         SQLiteDataSource sessionDb = new SQLiteDataSource();
-
-
+        sessionDb.setUrl("jdbc:sqlite:session");
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
