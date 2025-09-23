@@ -6,13 +6,20 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinThymeleaf;
+import org.sqlite.SQLiteDataSource;
 
+import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.Map;
 //Persistance session database
+
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
         Data dbConnector = new Data("jdbc:sqlite:Mastede.db");
+
+        SQLiteDataSource sessionDb = new SQLiteDataSource();
+
+
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
         });
