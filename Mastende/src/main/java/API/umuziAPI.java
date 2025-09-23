@@ -1,7 +1,6 @@
 package API;
 
-//import com.mitchellbosecke.pebble.PebbleEngine;
-//import com.mitchellbosecke.pebble.template.PebbleTemplate;
+
 import backend.database.Data;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -10,7 +9,7 @@ import io.javalin.rendering.template.JavalinThymeleaf;
 
 import java.sql.SQLException;
 import java.util.Map;
-
+//Persistance session database
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
         Data dbConnector = new Data("jdbc:sqlite:Mastede.db");
