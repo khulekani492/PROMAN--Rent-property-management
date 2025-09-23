@@ -14,7 +14,7 @@ import org.sqlite.SQLiteDataSource;
 import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.Map;
-//Persistance session database
+//TODO https://javalin.io/tutorials/jetty-session-handling
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
