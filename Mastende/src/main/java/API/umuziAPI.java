@@ -7,6 +7,7 @@ import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import org.eclipse.jetty.server.session.DatabaseAdaptor;
+import org.eclipse.jetty.server.session.JDBCSessionDataStoreFactory;
 import org.eclipse.jetty.websocket.api.Session;
 import org.sqlite.SQLiteDataSource;
 
@@ -25,6 +26,9 @@ public class umuziAPI {
         //Configured database with Jetty management
         DatabaseAdaptor dbAdptor = new DatabaseAdaptor();
         dbAdptor.setDatasource(sessionDb);
+
+        JDBCSessionDataStoreFactory storeFactory =  new JDBCSessionDataStoreFactory();
+        storeFactory.setDatabaseAdaptor(dbAdptor);
 
         Javalin app = Javalin.create(config -> {
             config.fileRenderer(new JavalinThymeleaf());
