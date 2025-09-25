@@ -33,6 +33,7 @@ public class umuziAPI {
             //email
             String email = ctx.formParam(("email"));
 
+            //https://github.com/verifalia/verifalia-java-sdk?tab=readme-ov-file
             //*verify email first before setting the sessionAttributes
             //password
             //* encrypt password before setting it   sessionAttributes
