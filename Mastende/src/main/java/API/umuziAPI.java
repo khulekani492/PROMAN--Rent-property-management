@@ -14,6 +14,7 @@ import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.Map;
 
+import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
 //TODO https://javalin.io/tutorials/jetty-session-handling
 
@@ -33,11 +34,14 @@ public class umuziAPI {
             String email = ctx.formParam(("email"));
 
             //*verify email first before setting the sessionAttributes
-            ctx.sessionAttribute("password", email);
-
             //password
             //* encrypt password before setting it   sessionAttributes
-            String password = ctx.formParam("passoword");
+            String password = ctx.formParam("password");
+            String hashedPassword = hashPassword(password);
+            ctx.sessionAttribute("password", hashedPassword);
+
+
+
 
 
 
