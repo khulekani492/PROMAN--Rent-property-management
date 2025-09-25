@@ -26,12 +26,32 @@ public class umuziAPI {
             config.fileRenderer(new JavalinThymeleaf());
         });
 
+        app.post("/user_sign_up", ctx ->{
+            String user_name = ctx.formParam("user_name");
+            ctx.sessionAttribute("user_name",user_name);
+            //email
+            String email = ctx.formParam(("email"));
+
+            //*verify email first before setting the sessionAttributes
+            ctx.sessionAttribute("password", email);
+
+            //password
+            //* encrypt password before setting it   sessionAttributes
+            String password = ctx.formParam("passoword");
+
+
+
+            ctx.result("hello" + ctx.sessionAttribute("user_name"));
+
+
+
+        });
+
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
 
             //set the property_name
             dbConnector.setPropertyname(propertyName);
-
             int numberOfRooms =  Integer.parseInt( ctx.formParam("number_of_rooms")) ;
             int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
