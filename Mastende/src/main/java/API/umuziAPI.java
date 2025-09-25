@@ -6,31 +6,23 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinThymeleaf;
-import org.eclipse.jetty.server.session.DatabaseAdaptor;
-import org.eclipse.jetty.server.session.JDBCSessionDataStoreFactory;
+import org.eclipse.jetty.server.session.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.sqlite.SQLiteDataSource;
 
 import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.Map;
+
+import static API.SessionUtil.fileSessionHandler;
 //TODO https://javalin.io/tutorials/jetty-session-handling
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
         Data dbConnector = new Data("jdbc:sqlite:Mastede.db");
 
-        SQLiteDataSource sessionDb = new SQLiteDataSource();
-        sessionDb.setUrl("jdbc:sqlite:session");
-
-        //Configured database with Jetty management
-        DatabaseAdaptor dbAdptor = new DatabaseAdaptor();
-        dbAdptor.setDatasource(sessionDb);
-
-        JDBCSessionDataStoreFactory storeFactory =  new JDBCSessionDataStoreFactory();
-        storeFactory.setDatabaseAdaptor(dbAdptor);
-
         Javalin app = Javalin.create(config -> {
+            config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
         });
 
