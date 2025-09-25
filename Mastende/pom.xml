@@ -42,15 +42,22 @@
             <version>2.17.2</version>
         </dependency>
 
+        <!-- Jetty 11 core (sessions are included) -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>11.0.15</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>11.0.15</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
-            <version>3.1.2.RELEASE</version> <!-- Use the latest stable version -->
+            <version>3.1.2.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -113,5 +120,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
