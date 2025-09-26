@@ -1,7 +1,12 @@
 package API;
 
+
 import com.verifalia.api.VerifaliaRestClient;
+import com.verifalia.api.emailvalidations.WaitingStrategy;
+import com.verifalia.api.exceptions.VerifaliaException;
 import com.verifalia.api.rest.security.ClientCertificateAuthenticationProvider;
+
+import com.verifalia.api.emailvalidations.models.Validation;
 
 import java.io.*;
 
@@ -29,11 +34,22 @@ public class readStoreKeys {
 
 
     public VerifaliaRestClient createClient() throws IOException {
-        File identityFile = copyResourceToTempFile("keystores/identity.jks", "identity");
-        File trustStoreFile = copyResourceToTempFile("keystores/truststore.jks", "truststore");
+        File identityFile = copyResourceToTempFile("keystore/identity.jks", "identity");
+        File trustStoreFile = copyResourceToTempFile("keystore/truststore.jks", "truststore");
 
         return new VerifaliaRestClient(
                 new ClientCertificateAuthenticationProvider(certAlias, password, identityFile, trustStoreFile)
         );
     }
+    public static void main(String[] args) {
+        InputStream is = readStoreKeys.class.getClassLoader()
+                .getResourceAsStream("keystores/identity.jks");
+
+        if (is == null) {
+            System.err.println("identity.jks NOT found in classpath!");
+        } else {
+            System.out.println("identity.jks loaded successfully!");
+        }
+    }
+
 }
