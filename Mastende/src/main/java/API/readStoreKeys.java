@@ -43,7 +43,7 @@ public class readStoreKeys {
     }
     public static void main(String[] args) {
         InputStream is = readStoreKeys.class.getClassLoader()
-                .getResourceAsStream("keystores/identity.jks");
+                .getResourceAsStream("keystore/identity.jks");
 
         if (is == null) {
             System.err.println("identity.jks NOT found in classpath!");
