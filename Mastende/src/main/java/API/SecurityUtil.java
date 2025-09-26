@@ -1,6 +1,7 @@
 package API;
 
 import org.mindrot.jbcrypt.BCrypt;
+import com.verifalia.api.VerifaliaRestClient;
 
 public class SecurityUtil {
     public static String hashPassword(String plainTextPassword) {
@@ -14,6 +15,12 @@ public class SecurityUtil {
         // BCrypt extracts the salt from the hashed password for verification.
         return BCrypt.checkpw(plainTextPassword, hashedPassword);
     }
+
+    public String verifaliaApi( String username, String password){
+        VerifaliaRestClient verifalia = new VerifaliaRestClient(username, password);
+
+      return  null;
+    };
 
     public static void main(String[] args) {
         String password = "mySecretPassword123";

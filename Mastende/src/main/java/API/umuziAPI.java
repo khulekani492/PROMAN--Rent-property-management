@@ -16,11 +16,15 @@ import java.util.Map;
 
 import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
+import com.verifalia.api.VerifaliaRestClient;
 //TODO https://javalin.io/tutorials/jetty-session-handling
+
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
         Data dbConnector = new Data("jdbc:sqlite:Mastede.db");
+        String username = "khzondojhb024@student.wethinkcode.co.za";
+        String passwordd = "khule@20ct15";
 
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
@@ -51,6 +55,7 @@ public class umuziAPI {
 
 
         });
+        app.post("https://api.verifalia.com/v2.4/email-validations", cxt ->{});
 
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
