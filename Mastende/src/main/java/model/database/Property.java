@@ -8,7 +8,7 @@ public interface Property {
 //                    String kin_name,String kin_number);
 
     void insert_information();
-    public Integer UniqueID();
+    public Integer UniqueID(String name);
 }
 
 
