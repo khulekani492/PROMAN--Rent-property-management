@@ -56,7 +56,7 @@ public class Data implements Property {
                                cell_number TEXT NOT NULL,
                                pay_day TEXT NOT NULL,
                                room_number INTEGER NOT NULL,
-                               Room_price Text,
+                               Room_price INTEGER,
                                debt Text,
                                kin_name Text,
                                kin_number Text,
