@@ -44,7 +44,7 @@ public class landlord extends connectionAcess implements Property{
            String insertUserSQL = """
                    INSERT INTO Users (user_name,user_email,password) VALUES (?,?,?)
                    """;
-           try (PreparedStatement pstm = connector.prepareStatement(insertUserSQL)){
+           try (PreparedStatement pstm = connection.prepareStatement(insertUserSQL)){
                pstm.setString(1,this.user_name);
                pstm.setString(2,this.user_email);
                pstm.setString(3,this.password);
@@ -69,7 +69,7 @@ public class landlord extends connectionAcess implements Property{
         String reference_key = """
         SELECT id FROM residence WHERE user_email = ?;
     """;
-        try (PreparedStatement pstmt = connector.prepareStatement(reference_key)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(reference_key)) {
             pstmt.setString(1, this.user_email);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
