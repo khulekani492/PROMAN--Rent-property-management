@@ -50,7 +50,7 @@ public class residence extends connectionAcess implements  Property{
         SELECT id FROM property WHERE userId = ?;
     """;
         try (PreparedStatement pstmt = connection.prepareStatement(reference_key)) {
-//            pstmt.setString(1, name);
+           pstmt.setInt(1, this.landlordId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
