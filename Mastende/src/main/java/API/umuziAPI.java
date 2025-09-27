@@ -1,22 +1,15 @@
 package API;
 
 
-import backend.database.Data;
+import model.database.Data;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
-import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinThymeleaf;
-import org.eclipse.jetty.server.session.*;
-import org.eclipse.jetty.websocket.api.Session;
-import org.sqlite.SQLiteDataSource;
 
-import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.Map;
 
 import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
-import com.verifalia.api.VerifaliaRestClient;
 //TODO https://javalin.io/tutorials/jetty-session-handling
 
 
