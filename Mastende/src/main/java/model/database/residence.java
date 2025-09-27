@@ -2,8 +2,8 @@ package model.database;
 
 import java.sql.Connection;
 
-public class residene extends connectionAcess implements  Property{
-    public residene(Connection connect) {
+public class residence extends connectionAcess implements  Property{
+    public residence(Connection connect) {
         super(connect);
     }
 
@@ -12,8 +12,11 @@ public class residene extends connectionAcess implements  Property{
 
     }
 
+
+
+
     @Override
-    public Integer UniqueID() {
+    public Integer UniqueID(String name) {
         return 0;
     }
 }
