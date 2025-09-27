@@ -76,4 +76,58 @@ public class Tenant extends  connectionAcess implements  Property{
     public Integer UniqueID() {
         return 0;
     }
+
+    public void roomStatus(String name,
+                           int room_no,
+                           String move_in_date,
+                           String employment_status,
+                           String cellphone,
+                           String pay_day,
+                           String room_price,
+                           int debt,
+                           String kin_name,
+                           String kin_number) {
+        String sql = """
+        UPDATE tenants
+        SET name = ?,
+            move_in = ?,
+            employment = ?,
+            cell_number = ?,
+            pay_day = ?,
+            room_price = ?,
+            debt = ?,
+            kin_name = ?,
+            kin_number = ?
+        WHERE room_number = ?
+    """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, move_in_date);
+            pstmt.setString(3, employment_status);
+            pstmt.setString(4, cellphone);
+            pstmt.setString(5, pay_day);
+            pstmt.setString(6, room_price);
+            pstmt.setInt(7,debt);
+            pstmt.setString(9, kin_name);
+            pstmt.setString(9, kin_number);
+            pstmt.setInt(10, room_no);
+            pstmt.executeUpdate();
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("No tenant found with room number: " + room_no);
+            } else {
+                System.out.println("Tenant updated successfully.");
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
 }
