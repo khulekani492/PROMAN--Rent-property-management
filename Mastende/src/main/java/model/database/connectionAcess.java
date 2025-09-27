@@ -4,9 +4,9 @@ import java.sql.Connection;
 
 public abstract class connectionAcess {
 
-    protected Connection connector;
+    protected Connection connection;
 
     public connectionAcess(Connection connect){
-        this.connector = connect;
+        this.connection = connect;
     }
 }
