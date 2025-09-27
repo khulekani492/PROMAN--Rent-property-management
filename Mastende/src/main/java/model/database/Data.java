@@ -2,7 +2,15 @@ package model.database;
 
 import java.sql.*;
 
-// TODAY: SESSION --> PREVENTING THE DATABASE FROM SAVING THE SAME DATA ADDING
+/**
+ * Removed the chunk of code that directly interacted with the database and
+ * adopted the Model-View-Controller (MVC) architecture. <br>
+ * <p>
+ * The Model now uses Data Access Objects (DAO) for database operations.
+ * This enforces separation of concerns, ensuring that each class handles a
+ * specific task and its related functionality, particularly data manipulation.
+ */
+
 public class Data implements Property {
     private final Connection conn;
     private String name;
