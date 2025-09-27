@@ -11,34 +11,32 @@ public class residence extends connectionAcess implements  Property{
     private final int rent;
     private final String address;
     private final String contact;
-    private Property landlordId;
+    private final int landlordId;
 
-    public residence(Connection connect, String property_name, int number_of_rooms,int rent,String address, String contact) {
+    public residence(Connection connect, String property_name, int number_of_rooms,int rent,String address, String contact,int landlordId) {
         super(connect);
         this.property_name = property_name;
         this.number_of_rooms = number_of_rooms;
         this.rent = rent;
         this.address = address;
         this.contact = contact;
+        this.landlordId = landlordId;
 
     }
 
     @Override
     public void insert_information() {
-//        landlordId = new landlord(connector);
-//
-//        int foreignKey = landlordId.UniqueID("email");
         String propertySQL = """
             INSERT INTO property (property_name, number_of_rooms, rent, address, contact,UserId)
             VALUES (?, ?, ?, ?, ?,?)
           """;
-        try (PreparedStatement pstmt = connector.prepareStatement(propertySQL)) {
-            pstmt.setString(1, property_name);
-            pstmt.setInt(2, number_of_rooms);
-            pstmt.setInt(3, rent);
-            pstmt.setString(4, address);
-            pstmt.setString(5, contact);
-//            pstmt.setInt(6,foreignKey);
+        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
+            pstmt.setString(1, this.property_name);
+            pstmt.setInt(2, this.number_of_rooms);
+            pstmt.setInt(3, this.rent);
+            pstmt.setString(4, this.address);
+            pstmt.setString(5, this.contact);
+            pstmt.setInt(6,this.landlordId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -51,7 +49,7 @@ public class residence extends connectionAcess implements  Property{
         String reference_key = """
         SELECT id FROM property WHERE userId = ?;
     """;
-        try (PreparedStatement pstmt = connector.prepareStatement(reference_key)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(reference_key)) {
 //            pstmt.setString(1, name);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
