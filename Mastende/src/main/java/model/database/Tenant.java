@@ -77,6 +77,13 @@ public class Tenant extends  connectionAcess implements  Property{
         return 0;
     }
 
+    /**
+     * Updates landlord tenant or room  information. <br>
+     * <p>
+     * This feature depends on the view layer for input, while the controller handles
+     * the logic of communicating with the database through the residence data access object
+     * to update the table information.
+     */
     public void updateRoomStatus(String name,
                            int room_no,
                            String move_in_date,
