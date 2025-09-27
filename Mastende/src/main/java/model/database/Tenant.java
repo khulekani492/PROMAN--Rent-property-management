@@ -13,7 +13,7 @@ public class Tenant extends  connectionAcess implements  Property{
     private final LocalDate moveOut;
     private final String employment;
     private final String cell_number;
-    private final String pay_day;
+    private final LocalDate pay_day;
     private final int room_number;
     private final int  room_price;
     private final int debt;
@@ -23,7 +23,7 @@ public class Tenant extends  connectionAcess implements  Property{
 
 
     public Tenant(Connection connect,int propertyId, String name, LocalDate moveInDate,LocalDate moveOut,String employment,String cell_number,
-                  String pay_day,int room_number,int room_price,int debt,String kin_name,String kin_number) {
+                  LocalDate pay_day,int room_number,int room_price,int debt,String kin_name,String kin_number) {
         super(connect);
         this.name = name;
         this.moveInDate = moveInDate;
@@ -49,6 +49,9 @@ public class Tenant extends  connectionAcess implements  Property{
              pstm.setString(2,this.name);
              pstm.setDate(3, Date.valueOf(this.moveInDate));
              pstm.setDate(4, Date.valueOf(this.moveOut));
+             pstm.setString(5,this.employment);
+             pstm.setString(6,this.cell_number);
+             pstm.setDate(7, Date.valueOf(this.pay_day));
              pstm.executeUpdate();
 
          }catch (SQLException e) {
