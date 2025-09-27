@@ -45,18 +45,11 @@ public class umuziAPI {
             String hashedPassword = hashPassword(password);
             ctx.sessionAttribute("password", hashedPassword);
 
-
-
-
-
-
             ctx.result("hello" + ctx.sessionAttribute("user_name"));
 
 
 
         });
-        app.post("https://api.verifalia.com/v2.4/email-validations", cxt ->{});
-
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
 
