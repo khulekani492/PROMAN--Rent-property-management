@@ -70,7 +70,7 @@ public class residence extends connectionAcess implements  Property{
      * to update the table information.
      */
 
-    public void addProperty_info(String property_name, int number_of_rooms, int rent, String address, String contact) {
+    public void updateProperty_info(String property_name, int number_of_rooms, int rent, String address, String contact) {
         String propertySQL = """
             INSERT INTO residence (property_name, number_of_rooms, rent, address, contact)
             VALUES (?, ?, ?, ?, ?)
