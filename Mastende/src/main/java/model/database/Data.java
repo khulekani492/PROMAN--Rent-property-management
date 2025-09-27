@@ -82,22 +82,7 @@ public class Data implements Property {
     }
 
 
-    public Integer landlordId(String name) {
-        String reference_key = """
-        SELECT id FROM residence WHERE property_name = ?;
-    """;
-        try (PreparedStatement pstmt = conn.prepareStatement(reference_key)) {
-            pstmt.setString(1, name);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null; // if not found
-    }
+
 
 
     public void addProperty_info(String property_name, int number_of_rooms, int rent, String address, String contact) {
@@ -111,70 +96,6 @@ public class Data implements Property {
             pstmt.setInt(3, rent);
             pstmt.setString(4, address);
             pstmt.setString(5, contact);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void setPropertyname(String name){
-        this.name = name;
-
-    }
-    public  String getPropertyname(){
-        return  name;
-    }
-
-
-    //Fetch the id number of the new user in order to insert it into other tables as a Foreign key
-    public int getMastedeid() {
-        String mastedeUser = """
-        SELECT id FROM MastedeUsers ORDER BY created_at DESC LIMIT 1;
-        """;
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(mastedeUser)) {
-
-            if (rs.next()) {
-                return rs.getInt("id"); // return the integer id
-            } else {
-                return -1; // return -1 if no record exists
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public void addNewtenant(int landlord_id, String name, String move_in, String move_out,
-                             String employment, String cell_number, String pay_day, int room_number,
-                             String room_price,
-                             String kin_name,
-                             String kin_number) {
-          // get the mastedeUsers last row id to reference it as the foreign key
-         int mastedeUser = getMastedeid();
-
-         //Set the debt to zero when a new tenant is first added
-         int  debt = 0;
-
-        String tenantSQL = """
-            INSERT INTO tenants (landlord_id, name, move_in, move_out, employment, cell_number, pay_day, room_number,Room_price,kin_name,kin_number,mastedeUser)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)
-          """;
-        try (PreparedStatement pstmt = conn.prepareStatement(tenantSQL)) {
-            pstmt.setInt(1, landlord_id);       // now matches INTEGER foreign key
-            pstmt.setString(2, name);
-            pstmt.setString(3, move_in);
-            pstmt.setString(4, move_out);
-            pstmt.setString(5, employment);
-            pstmt.setString(6, cell_number);
-            pstmt.setString(7, pay_day);
-            pstmt.setInt(8, room_number);
-            pstmt.setString(9,room_price);
-            pstmt.setInt(10,debt);
-            pstmt.setString(11, kin_name);
-            pstmt.setString(12,kin_number);
-            pstmt.setInt(13,mastedeUser);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

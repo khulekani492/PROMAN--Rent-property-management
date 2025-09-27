@@ -77,7 +77,7 @@ public class Tenant extends  connectionAcess implements  Property{
         return 0;
     }
 
-    public void roomStatus(String name,
+    public void updateRoomStatus(String name,
                            int room_no,
                            String move_in_date,
                            String employment_status,
