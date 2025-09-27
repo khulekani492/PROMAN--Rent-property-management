@@ -5,11 +5,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class appSchema extends connectionAcess {
+
     public appSchema(Connection connect) {
         super(connect);
     }
 
-    private void copySchema() throws SQLException {
+    private void applicationSchema() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
 
             stmt.execute("PRAGMA foreign_keys = ON;");
