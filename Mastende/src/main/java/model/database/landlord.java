@@ -26,9 +26,9 @@ import java.sql.SQLException;
  */
 
 public class landlord extends connectionAcess implements Property{
-   private String user_name;
-   private String user_email;
-   private  String password;
+   private final String user_name;
+   private final String user_email;
+   private final String password;
 
 
     public landlord(Connection connect,String user_name, String user_email, String password) {
