@@ -7,6 +7,6 @@ public abstract class connectionAcess {
     protected Connection connector;
 
     public connectionAcess(Connection connect){
-        this.connection = connect;
+        this.connector = connect;
     }
 }
