@@ -16,11 +16,7 @@ public class SecurityUtil {
         return BCrypt.checkpw(plainTextPassword, hashedPassword);
     }
 
-    public String verifaliaApi( String username, String password){
-        VerifaliaRestClient verifalia = new VerifaliaRestClient(username, password);
 
-      return  null;
-    };
 
     public static void main(String[] args) {
         String password = "mySecretPassword123";
