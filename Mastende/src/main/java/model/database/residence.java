@@ -6,11 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class residence extends connectionAcess implements  Property{
-    private String property_name;
-    private int number_of_rooms;
-    private int rent;
-    private String address;
-    private String contact;
+    private final String property_name;
+    private final int number_of_rooms;
+    private final int rent;
+    private final String address;
+    private final String contact;
     private Property landlordId;
 
     public residence(Connection connect, String property_name, int number_of_rooms,int rent,String address, String contact) {
