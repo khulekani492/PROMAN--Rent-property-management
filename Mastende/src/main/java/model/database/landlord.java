@@ -41,12 +41,12 @@ public class landlord extends connectionAcess implements Property{
 
 
     @Override
-    public Integer UniqueID(String name) {
+    public Integer UniqueID(String email_name) {
         String reference_key = """
         SELECT id FROM residence WHERE user_name = ?;
     """;
         try (PreparedStatement pstmt = connector.prepareStatement(reference_key)) {
-            pstmt.setString(1, name);
+            pstmt.setString(1, email_name);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
