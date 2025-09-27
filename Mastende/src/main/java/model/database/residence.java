@@ -61,5 +61,31 @@ public class residence extends connectionAcess implements  Property{
         }
         return null; // if not found
     }
+
+    /**
+     * Updates landlord property information. <br>
+     * <p>
+     * This feature depends on the view layer for input, while the controller handles
+     * the logic of communicating with the database through the residence data access object
+     * to update the table information.
+     */
+
+    public void addProperty_info(String property_name, int number_of_rooms, int rent, String address, String contact) {
+        String propertySQL = """
+            INSERT INTO residence (property_name, number_of_rooms, rent, address, contact)
+            VALUES (?, ?, ?, ?, ?)
+          """;
+        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
+            pstmt.setString(1, property_name);
+            pstmt.setInt(2, number_of_rooms);
+            pstmt.setInt(3, rent);
+            pstmt.setString(4, address);
+            pstmt.setString(5, contact);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
 
