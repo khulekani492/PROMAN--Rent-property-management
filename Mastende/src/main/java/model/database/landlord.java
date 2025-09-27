@@ -41,6 +41,17 @@ public class landlord extends connectionAcess implements Property{
 
     @Override
     public void insert_information() {
+           String insertUserSQL = """
+                   INSERT INTO Users (user_name,user_email,password) VALUES (?,?,?)
+                   """;
+           try (PreparedStatement pstm = connector.prepareStatement(insertUserSQL)){
+               pstm.setString(1,this.user_name);
+               pstm.setString(2,this.user_email);
+               pstm.setString(3,this.password);
+               pstm.executeUpdate();
+           }catch (SQLException e){
+               throw new RuntimeException();
+           }
 
 
     }
