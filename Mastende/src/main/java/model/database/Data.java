@@ -65,7 +65,7 @@ public class Data implements Property {
             """;
 
             String grossIncome = """
-                   CREATE TABLE IF NOT EXISTS tenants (
+                   CREATE TABLE IF NOT EXISTS gross_income (
                                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                                propertyId INTEGER NOT NULL,
                                month_name TEXT,
