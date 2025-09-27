@@ -1,6 +1,5 @@
-package backend.database;
+package model.database;
 
-import javax.naming.Context;
 import java.sql.*;
 
 // TODAY: SESSION --> PREVENTING THE DATABASE FROM SAVING THE SAME DATA ADDING
@@ -81,6 +80,8 @@ public class Data implements Property {
             stmt.execute(grossIncome);
         }
     }
+
+
     public Integer landlordId(String name) {
         String reference_key = """
         SELECT id FROM residence WHERE property_name = ?;
@@ -99,7 +100,6 @@ public class Data implements Property {
     }
 
 
-    @Override
     public void addProperty_info(String property_name, int number_of_rooms, int rent, String address, String contact) {
         String propertySQL = """
             INSERT INTO residence (property_name, number_of_rooms, rent, address, contact)
@@ -246,5 +246,15 @@ public class Data implements Property {
     }
 
     public void numberofRooms(int i) {
+    }
+
+    @Override
+    public void insert_information() {
+        System.out.println("Nigg");
+    }
+
+    @Override
+    public Integer UniqueID() {
+        return 0;
     }
 }
