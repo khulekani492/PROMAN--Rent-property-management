@@ -26,10 +26,16 @@ import java.sql.SQLException;
  */
 
 public class landlord extends connectionAcess implements Property{
-   private String DB_URL = "jdbc:sqlite:properties.db";
+   private String user_name;
+   private String user_email;
+   private  String password;
 
-    public landlord(Connection connect) {
+
+    public landlord(Connection connect,String user_name, String user_email, String password) {
         super(connect);
+        this.user_name = user_name;
+        this.user_email = user_email;
+        this.password = password;
     }
 
 
@@ -39,11 +45,19 @@ public class landlord extends connectionAcess implements Property{
 
     }
 
+    /**
+     * Get the unique ID using the user's email.
+     * <p>
+     * User emails are unique identifiers in their own right. For security,
+     * this helps narrow the issue of fetching the wrong ID for a user causing leakages.
+     * </p>
+     */
 
     @Override
-    public Integer UniqueID(String email_name) {
+    public Integer UniqueID() {
+        String email_name = this.user_email;
         String reference_key = """
-        SELECT id FROM residence WHERE user_name = ?;
+        SELECT id FROM residence WHERE user_email = ?;
     """;
         try (PreparedStatement pstmt = connector.prepareStatement(reference_key)) {
             pstmt.setString(1, email_name);

@@ -11,6 +11,7 @@ public class residence extends connectionAcess implements  Property{
     private int rent;
     private String address;
     private String contact;
+    private Property landlordId;
 
     public residence(Connection connect, String property_name, int number_of_rooms,int rent,String address, String contact) {
         super(connect);
@@ -24,9 +25,12 @@ public class residence extends connectionAcess implements  Property{
 
     @Override
     public void insert_information() {
+//        landlordId = new landlord(connector);
+//
+//        int foreignKey = landlordId.UniqueID("email");
         String propertySQL = """
             INSERT INTO property (property_name, number_of_rooms, rent, address, contact,UserId)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?,?)
           """;
         try (PreparedStatement pstmt = connector.prepareStatement(propertySQL)) {
             pstmt.setString(1, property_name);
@@ -34,6 +38,7 @@ public class residence extends connectionAcess implements  Property{
             pstmt.setInt(3, rent);
             pstmt.setString(4, address);
             pstmt.setString(5, contact);
+//            pstmt.setInt(6,foreignKey);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -42,12 +47,12 @@ public class residence extends connectionAcess implements  Property{
     }
 
     @Override
-    public Integer UniqueID(String name) {
+    public Integer UniqueID() {
         String reference_key = """
         SELECT id FROM property WHERE userId = ?;
     """;
         try (PreparedStatement pstmt = connector.prepareStatement(reference_key)) {
-            pstmt.setString(1, name);
+//            pstmt.setString(1, name);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");

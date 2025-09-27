@@ -8,12 +8,16 @@ import com.verifalia.api.rest.security.ClientCertificateAuthenticationProvider;
 
 import com.verifalia.api.emailvalidations.models.Validation;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.*;
+import java.security.KeyStore;
 
 public class readStoreKeys {
 
-    String certAlias = "khule";
-    String password = "khule@20ct15";
+    String certAlias = "1";
+    String password = "Khule@20ct15";
 
 //    Load the resource as a stream.
 //
@@ -42,14 +46,44 @@ public class readStoreKeys {
         );
     }
     public static void main(String[] args) {
-        InputStream is = readStoreKeys.class.getClassLoader()
-                .getResourceAsStream("keystore/identity.jks");
+        String keystorePath = "src/main/resources/keystore/identity.jks";
+        String truststorePath = "src/main/resources/keystore/truststore.jks";
+        String keystorePassword = "Khule@20ct15";  // Your keystore password
+        String alias = "1"; // your key alias
 
-        if (is == null) {
-            System.err.println("identity.jks NOT found in classpath!");
-        } else {
-            System.out.println("identity.jks loaded successfully!");
+        try {
+            // Load keystore
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(new FileInputStream(keystorePath), keystorePassword.toCharArray());
+
+            if (!keyStore.containsAlias(alias)) {
+                System.out.println("Alias '" + alias + "' not found!");
+            } else {
+                System.out.println("Alias '" + alias + "' found!");
+            }
+
+            // Load truststore
+            KeyStore trustStore = KeyStore.getInstance("JKS");
+            trustStore.load(new FileInputStream(truststorePath), keystorePassword.toCharArray());
+
+            // Initialize KeyManager and TrustManager
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(keyStore, keystorePassword.toCharArray());
+
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+            tmf.init(trustStore);
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+            System.out.println("SSLContext initialized successfully! Keystore and Truststore are usable.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to initialize SSLContext: " + e.getMessage());
         }
     }
+    }
 
-}
+
+

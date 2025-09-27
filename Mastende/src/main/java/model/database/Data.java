@@ -254,7 +254,7 @@ public class Data implements Property {
     }
 
     @Override
-    public Integer UniqueID(String name) {
+    public Integer UniqueID() {
         return 0;
     }
 
