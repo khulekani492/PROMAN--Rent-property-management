@@ -2,6 +2,7 @@ package model.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class residence extends connectionAcess implements  Property{
@@ -42,6 +43,20 @@ public class residence extends connectionAcess implements  Property{
 
     @Override
     public Integer UniqueID(String name) {
-        return 0;
+        String reference_key = """
+        SELECT id FROM property WHERE userId = ?;
+    """;
+        try (PreparedStatement pstmt = connector.prepareStatement(reference_key)) {
+            pstmt.setString(1, name);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null; // if not found
     }
 }
+
