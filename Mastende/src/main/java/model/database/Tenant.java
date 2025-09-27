@@ -5,9 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
-//Tenant class is responsible for inserting tenants information
-//propertyId is a foreign key that links the tenants to the property of the landlord
-//Constructor takes connection to the database and the tenant information and insert into the tenants table
+
 
 public class Tenant extends  connectionAcess implements  Property{
     private final int propertyId;
@@ -22,7 +20,13 @@ public class Tenant extends  connectionAcess implements  Property{
     private final int debt;
     private final String kin_name;
     private final String kin_number;
-
+    /**
+     * Tenant class is responsible for inserting tenant information into the database. <br>
+     * The {@code propertyId} acts as a foreign key that links the tenant to the landlord’s property. <br>
+     * <p>
+     * The constructor takes in a database {@link java.sql.Connection} along with tenant details,
+     * and inserts the data into the {@code tenants} table.
+     */
 
 
     public Tenant(Connection connect,int propertyId, String name, LocalDate moveInDate,LocalDate moveOut,String employment,String cell_number,
