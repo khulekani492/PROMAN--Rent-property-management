@@ -66,7 +66,7 @@ public class residence extends connectionAcess implements  Property{
      * Updates landlord property information. <br>
      * <p>
      * This feature depends on the view layer for input, while the controller handles
-     * the logic of communicating with the database through the residence data access object
+     * the logic of communicating with the database through the property table data access object
      * to update the table information.
      */
 
