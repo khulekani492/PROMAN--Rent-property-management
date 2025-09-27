@@ -3,7 +3,8 @@ package model.database;
 import java.sql.Connection;
 
 public abstract class connectionAcess {
-    protected Connection connection;
+
+    protected Connection connector;
 
     public connectionAcess(Connection connect){
         this.connection = connect;
