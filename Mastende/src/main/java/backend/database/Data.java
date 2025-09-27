@@ -26,7 +26,7 @@ public class Data implements Property {
                              id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                              user_name TEXT NOT NULL,
                              user_email TEXT,
-                             password INTEGER NOT NULL,
+                             password TEXT NOT NULL,
                              propertyId INTEGER NULL,
                              FOREIGN KEY (propertyId) REFERENCES property(id)
                          );
@@ -239,7 +239,7 @@ public class Data implements Property {
      */
     public static void main(String[] args) {
         try {
-            Data db = new Data("jdbc:sqlite:ThugCommon.db");
+            Data db = new Data("jdbc:sqlite:Thug.db");
         } catch (SQLException e) {
             e.printStackTrace();
         }
