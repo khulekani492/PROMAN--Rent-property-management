@@ -52,6 +52,11 @@ public class Tenant extends  connectionAcess implements  Property{
              pstm.setString(5,this.employment);
              pstm.setString(6,this.cell_number);
              pstm.setDate(7, Date.valueOf(this.pay_day));
+             pstm.setInt(8,this.room_number);
+             pstm.setInt(9,this.room_price);
+             pstm.setInt(10,this.debt);
+             pstm.setString(11,this.kin_name);
+             pstm.setString(12,this.kin_number);
              pstm.executeUpdate();
 
          }catch (SQLException e) {
