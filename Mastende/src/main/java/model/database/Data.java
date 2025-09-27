@@ -57,7 +57,7 @@ public class Data implements Property {
                                pay_day DATE NOT NULL,
                                room_number INTEGER NOT NULL,
                                Room_price INTEGER,
-                               debt Text,
+                               debt INTEGER,
                                kin_name Text,
                                kin_number Text,
                                FOREIGN KEY (propertyId) REFERENCES property(id)
