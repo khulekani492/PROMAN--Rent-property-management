@@ -43,7 +43,7 @@ public class landlord extends connectionAcess implements Property{
     @Override
     public Integer UniqueID(String name) {
         String reference_key = """
-        SELECT id FROM residence WHERE property_name = ?;
+        SELECT id FROM residence WHERE user_name = ?;
     """;
         try (PreparedStatement pstmt = connector.prepareStatement(reference_key)) {
             pstmt.setString(1, name);
