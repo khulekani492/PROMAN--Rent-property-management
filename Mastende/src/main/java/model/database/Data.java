@@ -8,7 +8,7 @@ import java.sql.*;
  * <p>
  * The Model now uses Data Access Objects (DAO) for database operations.
  * This enforces separation of concerns, ensuring that each class handles a
- * specific task and its related functionality, particularly data manipulation.
+ * specific task and its related functionality, particularly data manipulation. DAO
  */
 
 public class Data implements Property {
