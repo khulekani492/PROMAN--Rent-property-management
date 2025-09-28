@@ -42,7 +42,7 @@ public class landlord extends connectionAcess implements Property{
     @Override
     public void insert_information() {
            String insertUserSQL = """
-                   INSERT INTO Users (user_name,user_email,password) VALUES (?,?,?)
+                   INSERT OR IGNORE INTO Users (user_name,user_email,password) VALUES (?,?,?)
                    """;
            try (PreparedStatement pstm = connection.prepareStatement(insertUserSQL)){
                pstm.setString(1,this.user_name);
@@ -67,7 +67,7 @@ public class landlord extends connectionAcess implements Property{
     @Override
     public Integer UniqueID() {
         String reference_key = """
-        SELECT id FROM residence WHERE user_email = ?;
+        SELECT id FROM Users WHERE user_email = ?;
     """;
         try (PreparedStatement pstmt = connection.prepareStatement(reference_key)) {
             pstmt.setString(1, this.user_email);
