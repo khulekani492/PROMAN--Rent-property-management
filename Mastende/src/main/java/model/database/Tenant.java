@@ -49,7 +49,7 @@ public class Tenant extends  connectionAcess implements  Property{
     @Override
     public void insert_information() {
          String addtenantSql = """
-                 INSERT INTO tenants (propertyId,name,move_in,move_out,employment,cell_number,pay_day,room_number,Room_price,debt,kin_name,kin_number) 
+                 INSERT OR IGNORE INTO tenants (propertyId,name,move_in,move_out,employment,cell_number,pay_day,room_number,Room_price,debt,kin_name,kin_number) 
                  VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
                  """;
          try (PreparedStatement pstm = connection.prepareStatement(addtenantSql)){
