@@ -13,8 +13,8 @@ public class residence extends connectionAcess implements  Property{
     private final String contact;
     private final int landlordId;
 
-    public residence(Connection connect, String property_name, int number_of_rooms,int rent,String address, String contact,int landlordId) {
-        super(connect);
+    public residence(String property_name, int number_of_rooms,int rent,String address, String contact,int landlordId) throws SQLException {
+        super();
         this.property_name = property_name;
         this.number_of_rooms = number_of_rooms;
         this.rent = rent;
