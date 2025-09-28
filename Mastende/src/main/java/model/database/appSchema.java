@@ -19,7 +19,7 @@ public class appSchema extends connectionAcess {
                          CREATE TABLE IF NOT EXISTS Users (
                                      id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                                      user_name TEXT NOT NULL,
-                                     user_email TEXT,
+                                     user_email TEXT UNIQUE,
                                      password TEXT NOT NULL,
                                      propertyId INTEGER NULL,
                                      FOREIGN KEY (propertyId) REFERENCES property(id)
@@ -29,7 +29,7 @@ public class appSchema extends connectionAcess {
             String residenceTable = """
                          CREATE TABLE IF NOT EXISTS property (
                                      id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                     property_name TEXT NOT NULL,
+                                     property_name TEXT NOT NULL UNIQUE,
                                      number_of_rooms INTEGER NOT NULL,
                                      rent INTEGER NOT NULL,
                                      address TEXT,
@@ -50,7 +50,7 @@ public class appSchema extends connectionAcess {
                                        employment TEXT NOT NULL,
                                        cell_number TEXT NOT NULL,
                                        pay_day DATE NOT NULL,
-                                       room_number INTEGER NOT NULL,
+                                       room_number INTEGER NOT NULL UNIQUE,
                                        Room_price INTEGER,
                                        debt INTEGER,
                                        kin_name Text,
