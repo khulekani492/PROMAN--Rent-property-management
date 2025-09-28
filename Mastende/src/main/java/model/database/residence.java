@@ -27,7 +27,7 @@ public class residence extends connectionAcess implements  Property{
     @Override
     public void insert_information() {
         String propertySQL = """
-            INSERT INTO property (property_name, number_of_rooms, rent, address, contact,UserId)
+            INSERT or IGNORE INTO property (property_name, number_of_rooms, rent, address, contact,UserId)
             VALUES (?, ?, ?, ?, ?,?)
           """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
