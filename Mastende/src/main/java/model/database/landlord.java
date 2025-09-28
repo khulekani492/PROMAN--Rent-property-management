@@ -31,8 +31,8 @@ public class landlord extends connectionAcess implements Property{
    private final String password;
 
 
-    public landlord(Connection connect,String user_name, String user_email, String password) {
-        super(connect);
+    public landlord(String user_name, String user_email, String password) throws SQLException {
+        super();
         this.user_name = user_name;
         this.user_email = user_email;
         this.password = password;
