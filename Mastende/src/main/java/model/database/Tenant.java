@@ -29,9 +29,9 @@ public class Tenant extends  connectionAcess implements  Property{
      */
 
 
-    public Tenant(Connection connect,int propertyId, String name, LocalDate moveInDate,LocalDate moveOut,String employment,String cell_number,
-                  LocalDate pay_day,int room_number,int room_price,int debt,String kin_name,String kin_number) {
-        super(connect);
+    public Tenant(int propertyId, String name, LocalDate moveInDate,LocalDate moveOut,String employment,String cell_number,
+                  LocalDate pay_day,int room_number,int room_price,int debt,String kin_name,String kin_number) throws SQLException {
+        super();
         this.name = name;
         this.moveInDate = moveInDate;
         this.moveOut = moveOut;
