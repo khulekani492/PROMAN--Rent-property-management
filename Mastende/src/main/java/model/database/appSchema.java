@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class appSchema extends connectionAcess {
-
-    public appSchema(Connection connect) {
-        super(connect);
+    public appSchema() throws SQLException {
+        super();
+        applicationSchema();
     }
 
     private void applicationSchema() throws SQLException {
