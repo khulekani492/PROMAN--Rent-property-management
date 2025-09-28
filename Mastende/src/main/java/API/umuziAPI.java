@@ -47,14 +47,14 @@ public class umuziAPI {
             String propertyName = ctx.formParam("property_name");
 
             //set the property_name
-            dbConnector.setPropertyname(propertyName);
+            //dbConnector.setPropertyname(propertyName);
             int numberOfRooms =  Integer.parseInt( ctx.formParam("number_of_rooms")) ;
             int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
 
             //Check if row does not exist already.
-            dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
+           // dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
 
 
             System.out.println("Property: " + propertyName);
@@ -67,10 +67,10 @@ public class umuziAPI {
         app.post("/addtenants", ctx -> {
 
             //Call the  getmethod() to get the name of  new user
-            String propertName = dbConnector.getPropertyname();
+           // String propertName = dbConnector.getPropertyname();
 
             //Insert ID as a foreign key to the tenants table
-            int residenceid = dbConnector.landlordId(propertName);
+        //    int residenceid = dbConnector.landlordId(propertName);
 
             //Access the form input --->  by accessing the value given to "name=value" in the frontEnd
             String name = ctx.formParam("tenant_name");
@@ -85,14 +85,14 @@ public class umuziAPI {
 
 
 
-            dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
+           // dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
 
 
         });
         app.post("/updateTenants",ctx -> {
 
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
-            String propertName = dbConnector.getPropertyname();
+           // String propertName = dbConnector.getPropertyname();
            // int residenceid = dbConnector.landlordId(propertName);
             String name = ctx.formParam("tenant_name");
             String moveIn = ctx.formParam("move_in");
@@ -108,7 +108,7 @@ public class umuziAPI {
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
-            dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
+            //dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
 
         });
         app.get("/tenants", ctx -> {
