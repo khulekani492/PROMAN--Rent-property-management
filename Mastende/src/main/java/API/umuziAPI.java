@@ -108,7 +108,8 @@ public class umuziAPI {
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
-            //dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
+            //
+            // dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
 
         });
         app.get("/tenants", ctx -> {
