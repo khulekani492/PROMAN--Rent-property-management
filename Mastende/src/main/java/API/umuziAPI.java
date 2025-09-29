@@ -53,7 +53,7 @@ public class umuziAPI {
             Map<String, Object> sessionMap = ctx.sessionAttributeMap();
 
             ctx.json(sessionMap);
-            ctx.render("/templates/property_form.html");
+            ctx.render("/templates/sign_up_property.html");
         });
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
