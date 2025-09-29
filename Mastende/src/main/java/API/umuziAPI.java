@@ -8,6 +8,7 @@ import model.database.landlord;
 
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Objects;
 
 import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
@@ -25,7 +26,7 @@ public class umuziAPI {
         app.post("/user_sign_up", ctx ->{
             String user_name = ctx.formParam("user_name");
             ctx.sessionAttribute("user_name",user_name);
-            String email = ctx.formParam(("email"));
+            String email = ctx.formParam(("user_email"));
             //* encrypt password before setting it   sessionAttributes
             String password = ctx.formParam("password");
             String hashedPassword = hashPassword(password);
@@ -45,8 +46,9 @@ public class umuziAPI {
 
             //assign new user uniqueId to session key  user_ID --> will be used to authenticate user for access
             ctx.sessionAttribute("password", hashedPassword);
+            Map<String, Object> sessionMap = ctx.sessionAttributeMap();
 
-
+            ctx.json(sessionMap);
         });
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
