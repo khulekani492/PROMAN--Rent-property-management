@@ -4,6 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+/**
+ * residence class is responsible for inserting property information into the database. <br>
+ * The {@code UserId} acts as a foreign key that links the property to it landlord . <br>
+ * <p>
+ * The constructor takes in a database {@link java.sql.Connection} along with tenant details,
+ * and inserts the data into the {@code property} table.
+ */
 
 public class residence extends connectionAcess implements  Property{
     private final String property_name;
