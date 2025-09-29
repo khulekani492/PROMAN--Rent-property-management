@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * The {@code propertyId} acts as a foreign key that links the tenant to the landlord’s property. <br>
  * <p>
  * The constructor takes in a database {@link java.sql.Connection} along with tenant details,
- * and inserts the data into the {@code tenants} table.
+ * and inserts the data into the {@code tenants} table .
  */
 
 public class Tenant extends  connectionAcess implements  Property{
