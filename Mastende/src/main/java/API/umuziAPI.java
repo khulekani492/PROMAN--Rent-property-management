@@ -22,7 +22,7 @@ public class umuziAPI {
         });
         //home_page Url_end_point
         app.get("/", ctx ->{
-           ctx.render("/templates/sign_up_property.html");
+           ctx.render("/templates/sign_up_user.html");
         });
 
         app.post("/user_sign_up", ctx ->{
@@ -51,7 +51,7 @@ public class umuziAPI {
             Map<String, Object> sessionMap = ctx.sessionAttributeMap();
 
             ctx.json(sessionMap);
-            ctx.render("/templates/sign_up_property.html");
+            ctx.render("/templates/property.html");
         });
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
