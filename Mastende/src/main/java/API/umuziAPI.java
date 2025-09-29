@@ -53,25 +53,20 @@ public class umuziAPI {
             ctx.json(sessionMap);
             ctx.render("/templates/property.html");
         });
-        app.post("/sign_up", ctx -> {
-            String propertyName = ctx.formParam("property_name");
 
-            //set the property_name
-            //dbConnector.setPropertyname(propertyName);
+        app.post("/add_property", ctx -> {
+            String propertyName = ctx.formParam("property_name");
             int numberOfRooms =  Integer.parseInt( ctx.formParam("number_of_rooms")) ;
             int rent =  Integer.parseInt(ctx.formParam("rent")) ;
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
-
-            //Check if row does not exist already.
-           // dbConnector.addProperty_info(propertyName,numberOfRooms,rent,address,contact);
-
 
             System.out.println("Property: " + propertyName);
             System.out.println("Rooms: " + numberOfRooms);
             System.out.println("Rent: " + rent);
             System.out.println("Address: " + address);
             System.out.println("Contact: " + contact);
+            ctx.render("/templates/tenant_form.html");
 
         });
         app.post("/addtenants", ctx -> {
