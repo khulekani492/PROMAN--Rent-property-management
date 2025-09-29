@@ -4,6 +4,7 @@ package API;
 import model.database.Data;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
+import model.database.landlord;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -15,9 +16,6 @@ import static API.SessionUtil.fileSessionHandler;
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-        Data dbConnector = new Data("jdbc:sqlite:Mastede.db");
-        String username = "khzondojhb024@student.wethinkcode.co.za";
-        String passwordd = "khule@20ct15";
 
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
@@ -27,19 +25,26 @@ public class umuziAPI {
         app.post("/user_sign_up", ctx ->{
             String user_name = ctx.formParam("user_name");
             ctx.sessionAttribute("user_name",user_name);
-            //email
             String email = ctx.formParam(("email"));
-
-            //https://github.com/verifalia/verifalia-java-sdk?tab=readme-ov-file
-            //*verify email first before setting the sessionAttributes
-            //password
             //* encrypt password before setting it   sessionAttributes
             String password = ctx.formParam("password");
             String hashedPassword = hashPassword(password);
+
+           ;
+            landlord new_user = new landlord(user_name,email,hashedPassword);
+            //Feed the Model User table with the new_user_information
+            //add the hashed password  to the database for security
+            new_user.insert_information();
+
+            //Get the uniqueId of the new inserted user
+            // VALIDATE A SINGLE QUERY PARAMETER
+            Integer new_userID = new_user.UniqueID();
+
+            //assign new user uniqueId to session key  user_ID --> will be used by property_information URL_endpoint
+            ctx.sessionAttribute("user_ID",new_userID);
+
+            //assign new user uniqueId to session key  user_ID --> will be used to authenticate user for access
             ctx.sessionAttribute("password", hashedPassword);
-
-            ctx.result("hello" + ctx.sessionAttribute("user_name"));
-
 
 
         });
@@ -148,6 +153,14 @@ public class umuziAPI {
 
         });
 
+        // Exception handler for NullPointerException
+        app.exception(NullPointerException.class, (e, ctx) -> {
+            ctx.status(400);
+            ctx.json(Map.of(
+                    "error", "null value",
+                    "message", e.getMessage()
+            ));
+        });
 
         app.start(port);
         return app;
