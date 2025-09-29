@@ -22,6 +22,10 @@ public class umuziAPI {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
         });
+        //home_page Url_end_point
+        app.get("/", ctx ->{
+           ctx.render("/templates/sign_up.html");
+        });
 
         app.post("/user_sign_up", ctx ->{
             String user_name = ctx.formParam("user_name");
@@ -44,11 +48,12 @@ public class umuziAPI {
             //assign new user uniqueId to session key  user_ID --> will be used by property_information URL_endpoint
             ctx.sessionAttribute("user_ID",new_userID);
 
-            //assign new user uniqueId to session key  user_ID --> will be used to authenticate user for access
+            //assign new user unique_Id to session key  user_ID --> will be used to authenticate user for access
             ctx.sessionAttribute("password", hashedPassword);
             Map<String, Object> sessionMap = ctx.sessionAttributeMap();
 
             ctx.json(sessionMap);
+            ctx.render("/templates/property_form.html");
         });
         app.post("/sign_up", ctx -> {
             String propertyName = ctx.formParam("property_name");
