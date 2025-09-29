@@ -4,6 +4,26 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Foundation Schema for Rental Management Application
+ *
+ * Entity Relationship Model:
+ *  User (Landlord) 1---* Property 1---* Tenant
+ *
+ * Tables:
+ *  - Users: stores landlord (signed-up users) information
+ *  - Property: stores properties owned by landlords
+ *  - Tenants: stores tenant information tied to a property
+ *
+ * Relationships:
+ *  - Users → Property : One landlord can own multiple properties
+ *  - Property → Tenants : One property can have multiple tenants
+ *
+ * Foreign Keys:
+ *  - Property.userId → Users.id
+ *  - Tenants.propertyId → Property.id
+ */
+
 public class appSchema extends connectionAcess {
     public appSchema() throws SQLException {
         super();
