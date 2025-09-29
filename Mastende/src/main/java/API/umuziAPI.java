@@ -1,14 +1,12 @@
 package API;
 
 
-import model.database.Data;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import model.database.landlord;
 
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Objects;
 
 import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
@@ -24,7 +22,7 @@ public class umuziAPI {
         });
         //home_page Url_end_point
         app.get("/", ctx ->{
-           ctx.render("/templates/sign_up.html");
+           ctx.render("/templates/sign_up_property.html");
         });
 
         app.post("/user_sign_up", ctx ->{
