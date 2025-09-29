@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Hello World Page</title>
 </head>
 <body>
 <h1>SEED SWEEP!</h1>
 <h2>Property details:</h2>
-<form method="post" action="/make-reservation">
-    Choose day
-    <select name="day">
-        <option value="saturday">Saturday</option>
-        <option value="sunday">Sunday</option>
-    </select>
-    <br>
-    Choose time
-    <select name="time">
-        <option value="8:00 PM">8:00 PM</option>
-        <option value="9:00 PM">9:00 PM</option>
-    </select>
-    <br>
-    <button>Submit</button>
+<div class="form-container">
+    <h2>Rental Management Sign_UP</h2>
+    <form action="http://localhost:7070/user_sign_up" method="POST">
+        <label for="user_name">User Name:</label>
+        <input type="text" id="user_name" name="user_name" required>
+
+        <label for="user_email">Email:</label>
+        <input type="email" id="user_email" name="user_email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Register</button>
     </form>
+</div>
+
 </body>
 </html>
