@@ -15,7 +15,7 @@ import java.time.LocalDate;
  */
 
 public class Tenant extends  connectionAcess implements  Property{
-    private final int propertyId;
+    private final Integer propertyId;
     private final String name;
     private final LocalDate moveInDate ;
     private final LocalDate moveOut;
@@ -29,7 +29,7 @@ public class Tenant extends  connectionAcess implements  Property{
     private final String kin_number;
 
 
-    public Tenant(int propertyId, String name, LocalDate moveInDate,LocalDate moveOut,String employment,String cell_number,
+    public Tenant(Integer propertyId, String name, LocalDate moveInDate,LocalDate moveOut,String employment,String cell_number,
                   LocalDate pay_day,int room_number,int room_price,int debt,String kin_name,String kin_number) throws SQLException {
         super();
         this.name = name;
