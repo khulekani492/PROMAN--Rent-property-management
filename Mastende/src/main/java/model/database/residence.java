@@ -94,5 +94,17 @@ public class residence extends connectionAcess implements  Property{
         }
     }
 
+    public void propertyFK(Integer propertyId) {
+        String propertySQL = """
+            INSERT INTO Users (propertyId)
+            VALUES (?)
+          """;
+        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
+            pstmt.setInt(1, propertyId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
