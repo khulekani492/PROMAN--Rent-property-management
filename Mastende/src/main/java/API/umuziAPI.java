@@ -4,9 +4,11 @@ package API;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import model.database.landlord;
+import model.database.residence;
 
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Objects;
 
 import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
@@ -31,16 +33,17 @@ public class umuziAPI {
             String email = ctx.formParam(("user_email"));
             //* encrypt password before setting it   sessionAttributes
             String password = ctx.formParam("password");
+
+            //add the hashed password  to the database for security
             String hashedPassword = hashPassword(password);
 
-           ;
+            //Insert into User table new_user_information
             landlord new_user = new landlord(user_name,email,hashedPassword);
-            //Feed the Model User table with the new_user_information
-            //add the hashed password  to the database for security
+
+            //call the abstract Method of Property to insert information to the database
             new_user.insert_information();
 
             //Get the uniqueId of the new inserted user
-            // VALIDATE A SINGLE QUERY PARAMETER
             Integer new_userID = new_user.UniqueID();
 
             //assign new user uniqueId to session key  user_ID --> will be used by property_information URL_endpoint
@@ -56,16 +59,21 @@ public class umuziAPI {
 
         app.post("/add_property", ctx -> {
             String propertyName = ctx.formParam("property_name");
-            int numberOfRooms =  Integer.parseInt( ctx.formParam("number_of_rooms")) ;
-            int rent =  Integer.parseInt(ctx.formParam("rent")) ;
+            int numberOfRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("number_of_rooms"))) ;
+            int rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent"))) ;
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
+            //Get the new user unique_Id by accessing the key-value setAttributes() session set in /user_sign_up Url_end point
+            Integer property_owner = ctx.sessionAttribute("user_ID");
 
-            System.out.println("Property: " + propertyName);
-            System.out.println("Rooms: " + numberOfRooms);
-            System.out.println("Rent: " + rent);
-            System.out.println("Address: " + address);
-            System.out.println("Contact: " + contact);
+            //Insert into property table property_information
+            residence property_information = new residence(propertyName,numberOfRooms,rent,address,contact,property_owner);
+
+            property_information.insert_information();
+
+            Integer owner_property = property_information.UniqueID();
+            ctx.sessionAttribute("propertyId",owner_property);
+
             ctx.render("/templates/tenant_form.html");
 
         });
