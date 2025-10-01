@@ -17,30 +17,30 @@ import java.time.LocalDate;
 public class Tenant extends  connectionAcess implements  Property{
     private final Integer propertyId;
     private final String name;
-    private final LocalDate moveInDate ;
-    private final LocalDate moveOut;
+    private final String moveInDate ;
+    private final String moveOut;
     private final String employment;
     private final String cell_number;
-    private final LocalDate pay_day;
-    private final int room_number;
-    private final int  room_price;
-    private final int debt;
+    private final Integer pay_day;
+    private final Integer   room_number;
+    private final String  room_price;
+    private final Integer debt;
     private final String kin_name;
     private final String kin_number;
 
 
-    public Tenant(Integer propertyId, String name, LocalDate moveInDate,LocalDate moveOut,String employment,String cell_number,
-                  LocalDate pay_day,int room_number,int room_price,int debt,String kin_name,String kin_number) throws SQLException {
+    public Tenant(Integer propertyId, String name, String moveInDate,String employment,String cell_number,
+                  Integer pay_day, Integer room_number,String room_price,String kin_name,String kin_number) throws SQLException {
         super();
         this.name = name;
         this.moveInDate = moveInDate;
-        this.moveOut = moveOut;
+        this.moveOut = null;
         this.employment = employment;
         this.cell_number = cell_number;
         this.pay_day = pay_day;
         this.room_number = room_number;
         this.room_price = room_price;
-        this.debt = debt;
+        this.debt = 0;
         this.kin_name = kin_name;
         this.kin_number = kin_number;
         this.propertyId =  propertyId;
@@ -55,13 +55,13 @@ public class Tenant extends  connectionAcess implements  Property{
          try (PreparedStatement pstm = connection.prepareStatement(addtenantSql)){
              pstm.setInt(1,this.propertyId);
              pstm.setString(2,this.name);
-             pstm.setDate(3, Date.valueOf(this.moveInDate));
-             pstm.setDate(4, Date.valueOf(this.moveOut));
+             pstm.setString(3, this.moveInDate);
+             pstm.setString(4, this.moveOut);
              pstm.setString(5,this.employment);
              pstm.setString(6,this.cell_number);
-             pstm.setDate(7, Date.valueOf(this.pay_day));
+             pstm.setInt(7, this.pay_day);
              pstm.setInt(8,this.room_number);
-             pstm.setInt(9,this.room_price);
+             pstm.setString(9,this.room_price);
              pstm.setInt(10,this.debt);
              pstm.setString(11,this.kin_name);
              pstm.setString(12,this.kin_number);
@@ -89,7 +89,7 @@ public class Tenant extends  connectionAcess implements  Property{
                            String move_in_date,
                            String employment_status,
                            String cellphone,
-                           String pay_day,
+                           int pay_day,
                            String room_price,
                            int debt,
                            String kin_name,
@@ -113,7 +113,7 @@ public class Tenant extends  connectionAcess implements  Property{
             pstmt.setString(2, move_in_date);
             pstmt.setString(3, employment_status);
             pstmt.setString(4, cellphone);
-            pstmt.setString(5, pay_day);
+            pstmt.setInt(5, pay_day);
             pstmt.setString(6, room_price);
             pstmt.setInt(7,debt);
             pstmt.setString(9, kin_name);
