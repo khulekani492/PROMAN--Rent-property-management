@@ -75,12 +75,21 @@ public class umuziAPI {
             System.out.println("owner_property");
             System.out.println(owner_property);
             ctx.sessionAttribute("propertyId",owner_property);
+            ctx.sessionAttribute("roomNo",numberOfRooms);
 
             ctx.render("/templates/tenant_form.html");
 
         });
         app.post("/addtenants", ctx -> {
 
+            //Get the number of rooms the landlord has submitted
+            Integer numberofRooms = ctx.sessionAttribute("roomNo");
+            System.out.println("Number of rooms");
+            System.out.println(numberofRooms);
+            //Counter to keep track of how many tenant to add
+            int counter = 0;
+            System.out.println("Initialized value for the starting position");
+            System.out.println(counter);
             //Access the form input --->
             Integer propertyID = ctx.sessionAttribute("propertyId") ;
             System.out.println(propertyID);
@@ -90,20 +99,22 @@ public class umuziAPI {
             System.out.println(moveIn);
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
-            Integer payday = Integer.parseInt(ctx.formParam("pay_day"));
-            Integer room = Integer.parseInt(ctx.formParam("room"));
+            Integer payday = Integer.parseInt(Objects.requireNonNull(ctx.formParam("pay_day")));
+            Integer room = Integer.parseInt(Objects.requireNonNull(ctx.formParam("room")));
             String room_price = ctx.formParam("room_price");
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
             Tenant tenant = new Tenant(propertyID,name,moveIn,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
-
             tenant.insert_information();
-
-
-
-           // dbConnector.addNewtenant(residenceid,name,moveIn,null,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
-
+            counter += 1;
+            System.out.println("updated counter");
+            System.out.println(counter);
+            //if counter == numberofrooms render user_profile html else keep rending tenant_form
+            if(counter == numberofRooms){
+                ctx.render("/templates/property_form");
+            }
+            ctx.render("/templates/tenant_form.html");
 
         });
         app.post("/updateTenants",ctx -> {
