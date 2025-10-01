@@ -93,18 +93,21 @@ public class residence extends connectionAcess implements  Property{
             throw new RuntimeException(e);
         }
     }
-
-    public void propertyFK(Integer propertyId) {
-        String propertySQL = """
-            INSERT INTO Users (propertyId)
-            VALUES (?)
-          """;
-        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
-            pstmt.setInt(1, propertyId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//
+//    public void propertyFK( Integer UserID,Integer propertyId) {
+//        String propertySQL = """
+//     UPDATE Users
+//    SET propertyId = ?
+//    WHERE id = ?
+//""";
+//
+//        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
+//            pstmt.setInt(1, propertyId);
+//            pstmt.setInt(2,UserID);
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
 

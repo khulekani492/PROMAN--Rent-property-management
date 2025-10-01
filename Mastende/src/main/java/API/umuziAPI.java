@@ -74,6 +74,9 @@ public class umuziAPI {
             Integer owner_property = property_information.UniqueID();
             ctx.sessionAttribute("propertyId",owner_property);
 
+            //insert the property unique Id as foreign key for the new_user
+           // property_information.propertyFK(property_owner,owner_property);
+
             ctx.render("/templates/tenant_form.html");
 
         });

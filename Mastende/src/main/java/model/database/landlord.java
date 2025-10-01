@@ -50,7 +50,7 @@ public class landlord extends connectionAcess implements Property{
                pstm.setString(3,this.password);
                pstm.executeUpdate();
            }catch (SQLException e){
-               throw new RuntimeException();
+               throw new RuntimeException("Database update failed", e);
            }
 
 
