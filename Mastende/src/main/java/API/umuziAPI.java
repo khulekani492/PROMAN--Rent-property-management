@@ -82,13 +82,17 @@ public class umuziAPI {
             ctx.render("/templates/tenant_form.html");
 
         });
-        app.post("/addtenants", ctx -> {
 
-            //Get the number of rooms the landlord has submitted
+        app.post("/addtenants", ctx -> {
+            /**
+             * Gets the number of rooms the landlord has submitted.
+             * <p>
+             * Keeps rendering the same form repeatedly until the counter
+             * reaches the last room.
+             */
+
             Integer numberofRooms = ctx.sessionAttribute("roomNo");
-            System.out.println("Number of rooms");
-            System.out.println(numberofRooms);
-            //Counter to keep track of how many tenant to add
+
             //Access the form input --->
             Integer propertyID = ctx.sessionAttribute("propertyId") ;
             System.out.println(propertyID);
@@ -107,10 +111,10 @@ public class umuziAPI {
             Tenant tenant = new Tenant(propertyID,name,moveIn,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
             tenant.insert_information();
 
-            String debugmessage = String.format("The current sessionCounter %s" ,count.getCount() ) ;
-            System.out.println("updated Session counter");
-            System.out.println(debugmessage);
-            //if counter == numberofrooms render user_profile html else keep rending tenant_form
+            /**
+             * If the counter equals the number of rooms, render the user_profile HTML.
+             * Otherwise, keep rendering the tenant_form.
+             */
             if(count.getCount() == numberofRooms){
                 ctx.result("me n My dawgs");
             }else {
@@ -118,9 +122,6 @@ public class umuziAPI {
                 ctx.render("/templates/tenant_form.html");
 
             }
-
-
-
         });
         app.post("/updateTenants",ctx -> {
 
