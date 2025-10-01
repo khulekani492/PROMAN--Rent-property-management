@@ -6,6 +6,7 @@ import io.javalin.rendering.template.JavalinThymeleaf;
 import model.database.Tenant;
 import model.database.landlord;
 import model.database.residence;
+import model.database.counter;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,12 +15,13 @@ import java.util.Objects;
 
 import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
+
 //TODO https://javalin.io/tutorials/jetty-session-handling
 
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-
+        counter  count = new counter();
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
@@ -87,9 +89,6 @@ public class umuziAPI {
             System.out.println("Number of rooms");
             System.out.println(numberofRooms);
             //Counter to keep track of how many tenant to add
-            int counter = 0;
-            System.out.println("Initialized value for the starting position");
-            System.out.println(counter);
             //Access the form input --->
             Integer propertyID = ctx.sessionAttribute("propertyId") ;
             System.out.println(propertyID);
@@ -107,14 +106,20 @@ public class umuziAPI {
 
             Tenant tenant = new Tenant(propertyID,name,moveIn,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
             tenant.insert_information();
-            counter += 1;
-            System.out.println("updated counter");
-            System.out.println(counter);
+
+            String debugmessage = String.format("The current sessionCounter %s" ,count.getCount() ) ;
+            System.out.println("updated Session counter");
+            System.out.println(debugmessage);
             //if counter == numberofrooms render user_profile html else keep rending tenant_form
-            if(counter == numberofRooms){
+            if(count.getCount() == numberofRooms){
                 ctx.render("/templates/property_form");
+            }else {
+                count.increment();
+                ctx.render("/templates/tenant_form.html");
+
             }
-            ctx.render("/templates/tenant_form.html");
+
+
 
         });
         app.post("/updateTenants",ctx -> {
