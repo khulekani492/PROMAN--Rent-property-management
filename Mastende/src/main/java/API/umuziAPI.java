@@ -3,10 +3,12 @@ package API;
 
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
+import model.database.Tenant;
 import model.database.landlord;
 import model.database.residence;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
@@ -68,36 +70,35 @@ public class umuziAPI {
 
             //Insert into property table property_information
             residence property_information = new residence(propertyName,numberOfRooms,rent,address,contact,property_owner);
-
             property_information.insert_information();
-
             Integer owner_property = property_information.UniqueID();
+            System.out.println("owner_property");
+            System.out.println(owner_property);
             ctx.sessionAttribute("propertyId",owner_property);
-
-            //insert the property unique Id as foreign key for the new_user
-           // property_information.propertyFK(property_owner,owner_property);
 
             ctx.render("/templates/tenant_form.html");
 
         });
         app.post("/addtenants", ctx -> {
 
-            //Call the  getmethod() to get the name of  new user
-           // String propertName = dbConnector.getPropertyname();
-
-            //Insert ID as a foreign key to the tenants table
-        //    int residenceid = dbConnector.landlordId(propertName);
-
-            //Access the form input --->  by accessing the value given to "name=value" in the frontEnd
+            //Access the form input --->
+            Integer propertyID = ctx.sessionAttribute("propertyId") ;
+            System.out.println(propertyID);
             String name = ctx.formParam("tenant_name");
             String moveIn = ctx.formParam("move_in");
+            System.out.println("print");
+            System.out.println(moveIn);
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
-            String payday = ctx.formParam("pay_day");
-            int room = Integer.parseInt(ctx.formParam("room"));
+            Integer payday = Integer.parseInt(ctx.formParam("pay_day"));
+            Integer room = Integer.parseInt(ctx.formParam("room"));
             String room_price = ctx.formParam("room_price");
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
+
+            Tenant tenant = new Tenant(propertyID,name,moveIn,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
+
+            tenant.insert_information();
 
 
 
@@ -115,16 +116,12 @@ public class umuziAPI {
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
             String payday = ctx.formParam("pay_day");
-
             int room = Integer.parseInt(ctx.formParam("room"));
             String room_price = ctx.formParam("room_price");
-
             //LOGIC update debt column when month ends and payment is still not paid
             int tenantsdebt = Integer.parseInt( ctx.formParam("tenant_debt"));
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
-
-            //
             // dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
 
         });
