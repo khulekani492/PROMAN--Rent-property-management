@@ -112,7 +112,7 @@ public class umuziAPI {
             System.out.println(debugmessage);
             //if counter == numberofrooms render user_profile html else keep rending tenant_form
             if(count.getCount() == numberofRooms){
-                ctx.render("/templates/property_form");
+                ctx.result("me n My dawgs");
             }else {
                 count.increment();
                 ctx.render("/templates/tenant_form.html");
