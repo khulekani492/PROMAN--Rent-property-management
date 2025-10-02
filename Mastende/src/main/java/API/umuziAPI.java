@@ -10,6 +10,7 @@ import model.database.counter;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -63,6 +64,7 @@ public class umuziAPI {
 
         app.post("/add_property", ctx -> {
             String propertyName = ctx.formParam("property_name");
+            ctx.sessionAttribute("propertyname",propertyName);
             int numberOfRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("number_of_rooms"))) ;
             int rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent"))) ;
             String address = ctx.formParam("address");
@@ -82,6 +84,7 @@ public class umuziAPI {
             ctx.render("/templates/tenant_form.html");
 
         });
+
 
         app.post("/addtenants", ctx -> {
             /**
@@ -116,12 +119,20 @@ public class umuziAPI {
              * Otherwise, keep rendering the tenant_form.
              */
             if(count.getCount() == numberofRooms){
-                ctx.result("me n My dawgs");
+                String username = ctx.sessionAttribute("user_name");
+                String propertyname = ctx.sessionAttribute("propertyname");
+                Map<String, Object> model = new HashMap<>();
+                model.put("username",username);
+                model.put("age", propertyname);
+
+                ctx.render("/templates/user_profile.html",model);
             }else {
                 count.increment();
                 ctx.render("/templates/tenant_form.html");
 
             }
+        });
+        app.get("/rentalManagement@user_profile",ctx ->{
         });
         app.post("/updateTenants",ctx -> {
 
