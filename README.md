@@ -1,2 +1,2 @@
-# Rental-property-financial-health
-Keep track of  rental property finacial health 
+# Rental-Management
+#keeps track of tenants rental payment.
