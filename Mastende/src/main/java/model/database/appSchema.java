@@ -93,7 +93,7 @@ public class appSchema extends connectionAcess {
                                        FOREIGN KEY (move_in) REFERENCES tenants(move_in),
                                        FOREIGN KEY (move_out) REFERENCES tenants(move_out),
                                        FOREIGN KEY (cellphone_number) REFERENCES tenants(cell_number),
-                                       FOREIGN KEY (room_number) REFERENCES tenants(room_null)
+                                       FOREIGN KEY (room_number) REFERENCES tenants(room_number)
                                    );
                     """;
             String grossIncome = """
