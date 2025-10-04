@@ -65,27 +65,32 @@ public class umuziAPI {
         app.post("/add_property", ctx -> {
             String propertyName = ctx.formParam("property_name");
             ctx.sessionAttribute("propertyname",propertyName);
-            int numberOfRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("number_of_rooms"))) ;
-            int rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent"))) ;
+            Integer numberOfRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("number_of_rooms")));
+            Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
+
+            Integer OccupiedRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("roomsOccupied")));
+            ctx.sessionAttribute("roomsOccupied",OccupiedRooms);
+
             String address = ctx.formParam("address");
             String contact = ctx.formParam("contact");
             //Get the new user unique_Id by accessing the key-value setAttributes() session set in /user_sign_up Url_end point
             Integer property_owner = ctx.sessionAttribute("user_ID");
 
             //Insert into property table property_information
-            residence property_information = new residence(propertyName,numberOfRooms,rent,address,contact,property_owner);
+            residence property_information = new residence(propertyName,numberOfRooms,OccupiedRooms,rent,address,contact,property_owner);
             property_information.insert_information();
+
+            //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
             System.out.println("owner_property");
             System.out.println(owner_property);
             ctx.sessionAttribute("propertyId",owner_property);
             ctx.sessionAttribute("roomNo",numberOfRooms);
 
-            Integer current_landnlord = ctx.sessionAttribute("user_ID");
+            Integer current_landlord = ctx.sessionAttribute("user_ID");
             Integer landlord_property = ctx.sessionAttribute("propertyId");
 
-            property_information.assignProperty(landlord_property,current_landnlord);
-
+            property_information.assignProperty(landlord_property,current_landlord);
 
             ctx.render("/templates/tenant_form.html");
 
@@ -100,7 +105,8 @@ public class umuziAPI {
              * reaches the last room.
              */
 
-            Integer numberofRooms = ctx.sessionAttribute("roomNo");
+
+            Integer numberofRooms = ctx.sessionAttribute("roomsOccupied");
 
             //Access the form input --->
             Integer propertyID = ctx.sessionAttribute("propertyId") ;
