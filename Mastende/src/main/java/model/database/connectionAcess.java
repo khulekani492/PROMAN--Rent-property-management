@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public abstract class connectionAcess {
-    protected static final String DB_URL = "jdbc:sqlite:propertYTEST.db";
+    protected static final String DB_URL = "jdbc:sqlite:dummytwo.db";
     protected Connection connection;
 
     public connectionAcess() throws SQLException {
