@@ -81,6 +81,12 @@ public class umuziAPI {
             ctx.sessionAttribute("propertyId",owner_property);
             ctx.sessionAttribute("roomNo",numberOfRooms);
 
+            Integer current_landnlord = ctx.sessionAttribute("user_ID");
+            Integer landlord_property = ctx.sessionAttribute("propertyId");
+
+            property_information.assignProperty(landlord_property,current_landnlord);
+
+
             ctx.render("/templates/tenant_form.html");
 
         });
