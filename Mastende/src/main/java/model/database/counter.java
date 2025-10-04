@@ -3,7 +3,7 @@ package model.database;
 public class counter {
     private Integer count ;
     public counter(){
-        this.count = 0;
+        this.count = 1;
     }
     public void increment() {
         count+=1;
