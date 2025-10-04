@@ -77,37 +77,17 @@ public class residence extends connectionAcess implements  Property{
      * to update the table information.
      */
 
-    public void updateProperty_info(String property_name, int number_of_rooms, int rent, String address, String contact) {
+    public void assignProperty(Integer propertyid,Integer userId) {
         String propertySQL = """
-            INSERT INTO residence (property_name, number_of_rooms, rent, address, contact)
-            VALUES (?, ?, ?, ?, ?)
+            UPDATE Users SET propertyId = ? WHERE id = ?
           """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
-            pstmt.setString(1, property_name);
-            pstmt.setInt(2, number_of_rooms);
-            pstmt.setInt(3, rent);
-            pstmt.setString(4, address);
-            pstmt.setString(5, contact);
+            pstmt.setInt(1, propertyid);
+            pstmt.setInt(2,userId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-//
-//    public void propertyFK( Integer UserID,Integer propertyId) {
-//        String propertySQL = """
-//     UPDATE Users
-//    SET propertyId = ?
-//    WHERE id = ?
-//""";
-//
-//        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
-//            pstmt.setInt(1, propertyId);
-//            pstmt.setInt(2,UserID);
-//            pstmt.executeUpdate();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }
 
