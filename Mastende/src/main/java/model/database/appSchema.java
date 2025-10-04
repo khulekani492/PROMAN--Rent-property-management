@@ -78,7 +78,23 @@ public class appSchema extends connectionAcess {
                                        FOREIGN KEY (propertyId) REFERENCES property(id)
                                    );
                     """;
-
+            String roomHistroy = """
+                           CREATE TABLE IF NOT EXISTS per_room (
+                                       id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                                       propertyId INTEGER NOT NULL,
+                                       tenant_name TEXT,
+                                       move_in DATE NOT NULL,
+                                       move_out DATE,
+                                       cellphone_number TEXT NOT NULL,
+                                       room_number INTEGER NOT NULL ,
+                                       FOREIGN KEY (propertyId) REFERENCES property(id),
+                                       FOREIGN KEY (tenant_name) REFERENCES tenants(name),
+                                       FOREIGN KEY (move_in) REFERENCES tenants(move_in),
+                                       FOREIGN KEY (move_out) REFERENCES tenants(move_out),
+                                       FOREIGN KEY (cellphone_number) REFERENCES tenants(cell_number),
+                                       FOREIGN KEY (room_number) REFERENCES tenants(room_null)
+                                   );
+                    """;
             String grossIncome = """
                            CREATE TABLE IF NOT EXISTS gross_income (
                                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
