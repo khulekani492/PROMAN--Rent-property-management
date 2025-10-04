@@ -51,6 +51,7 @@ public class appSchema extends connectionAcess {
                                      id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                                      property_name TEXT NOT NULL,
                                      number_of_rooms INTEGER NOT NULL,
+                                     roomsOccupied INTEGER NOT NULL,
                                      rent INTEGER NOT NULL,
                                      address TEXT,
                                      contact TEXT,
