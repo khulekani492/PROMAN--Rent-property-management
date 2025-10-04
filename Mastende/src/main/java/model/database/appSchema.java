@@ -79,7 +79,7 @@ public class appSchema extends connectionAcess {
                                        FOREIGN KEY (propertyId) REFERENCES property(id)
                                    );
                     """;
-            String roomHistroy = """
+            String roomHistory = """
                            CREATE TABLE IF NOT EXISTS per_room (
                                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                                        propertyId INTEGER NOT NULL,
@@ -109,6 +109,7 @@ public class appSchema extends connectionAcess {
             stmt.execute(Users);
             stmt.execute(tenantsTable);
             stmt.execute(residenceTable);
+            stmt.execute(roomHistory);
             stmt.execute(grossIncome);
         }
     }
