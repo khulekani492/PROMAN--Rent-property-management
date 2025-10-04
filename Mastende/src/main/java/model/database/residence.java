@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.function.IntBinaryOperator;
+
 /**
  * residence class is responsible for inserting property information into the database. <br>
  * The {@code UserId} acts as a foreign key that links the property to it landlord . <br>
@@ -14,16 +16,18 @@ import java.sql.SQLException;
 
 public class residence extends connectionAcess implements  Property{
     private final String property_name;
-    private final int number_of_rooms;
-    private final int rent;
+    private final Integer number_of_rooms;
+    private final Integer roomsOccupied;
+    private final Integer rent;
     private final String address;
     private final String contact;
     private final Integer landlordId;
 
-    public residence(String property_name, int number_of_rooms,int rent,String address, String contact, Integer landlordId) throws SQLException {
+    public residence(String property_name,Integer number_of_rooms, Integer roomsOccupied,  Integer rent, String address, String contact, Integer landlordId) throws SQLException {
         super();
         this.property_name = property_name;
         this.number_of_rooms = number_of_rooms;
+        this.roomsOccupied = roomsOccupied;
         this.rent = rent;
         this.address = address;
         this.contact = contact;
@@ -34,16 +38,17 @@ public class residence extends connectionAcess implements  Property{
     @Override
     public void insert_information() {
         String propertySQL = """
-            INSERT or IGNORE INTO property (property_name, number_of_rooms, rent, address, contact,UserId)
-            VALUES (?, ?, ?, ?, ?,?)
+            INSERT or IGNORE INTO property (property_name, number_of_rooms,roomsOccupied, rent, address, contact,UserId)
+            VALUES (?, ?, ?, ?, ?,?,?)
           """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
             pstmt.setString(1, this.property_name);
             pstmt.setInt(2, this.number_of_rooms);
-            pstmt.setInt(3, this.rent);
-            pstmt.setString(4, this.address);
-            pstmt.setString(5, this.contact);
-            pstmt.setInt(6,this.landlordId);
+            pstmt.setInt(3, this.roomsOccupied);
+            pstmt.setInt(4, this.rent);
+            pstmt.setString(5, this.address);
+            pstmt.setString(6, this.contact);
+            pstmt.setInt(7,this.landlordId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
