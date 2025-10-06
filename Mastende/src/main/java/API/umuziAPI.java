@@ -6,6 +6,7 @@ import io.javalin.rendering.template.JavalinThymeleaf;
 import model.database.*;
 
 import java.nio.MappedByteBuffer;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -78,7 +79,7 @@ public class umuziAPI {
             //Insert into property table property_information
             residence property_information = new residence(propertyName,numberOfRooms,OccupiedRooms,rent,address,contact,property_owner);
             property_information.insert_information();
-
+          //  residence newoens = new  residence("Sunset Villas",20,4,5000,"lase","03283833",1);
             //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
             System.out.println("owner_property");
@@ -104,19 +105,18 @@ public class umuziAPI {
              * reaches the last room.
              */
 
-
             Integer numberofRooms = ctx.sessionAttribute("roomsOccupied");
 
             //Access the form input --->
-            Integer propertyID = ctx.sessionAttribute("propertyId") ;
-            System.out.println(propertyID);
+            Integer propertyID = ctx.sessionAttribute("propertyId");
             String name = ctx.formParam("tenant_name");
-            String moveIn = ctx.formParam("move_in");
+            Date moveIn = Date.valueOf(ctx.formParam("move_in"));
 
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
-            Integer payday = Integer.parseInt(Objects.requireNonNull(ctx.formParam("pay_day")));
+            Date payday = Date.valueOf( ctx.formParam("pay_day"));
             Integer room = Integer.parseInt(Objects.requireNonNull(ctx.formParam("room")));
+
             // check-logic for preventing inserting tenant with the same room number to the database
             if (duplicateNUmberchecker.getCurrent_track().equals(room.intValue())) {
                 System.out.println("same Room " + duplicateNUmberchecker.getCurrent_track());
@@ -127,7 +127,7 @@ public class umuziAPI {
               System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
             }
 
-            String room_price = ctx.formParam("room_price");
+            Integer room_price = Integer.valueOf(ctx.formParam("room_price"));
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
@@ -231,7 +231,6 @@ public class umuziAPI {
      * @throws SQLException if database initialization fails
      */
     public static void main(String[] args) throws SQLException {
-        appSchema schea = new appSchema();
         startServer(7070);
     }
 }
