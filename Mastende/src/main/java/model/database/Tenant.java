@@ -66,7 +66,8 @@ public class Tenant extends  connectionAcess implements  Property{
              pstm.setString(11,this.kin_name);
              pstm.setString(12,this.kin_number);
              pstm.executeUpdate();
-
+             roomHist addTohistory = new roomHist(this.propertyId,this.room_number,this.name,this.cell_number,this.room_price,null);
+             addTohistory.insert_information();
          }catch (SQLException e) {
              throw new RuntimeException();
          }
