@@ -3,11 +3,9 @@ package API;
 
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
-import model.database.Tenant;
-import model.database.landlord;
-import model.database.residence;
-import model.database.counter;
+import model.database.*;
 
+import java.nio.MappedByteBuffer;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -223,6 +221,7 @@ public class umuziAPI {
      * @throws SQLException if database initialization fails
      */
     public static void main(String[] args) throws SQLException {
+        appSchema schea = new appSchema();
         startServer(7070);
     }
 }
