@@ -21,6 +21,7 @@ import static API.SessionUtil.fileSessionHandler;
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
         counter  count = new counter();
+        state duplicateNUmberchecker = new state(0);
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
@@ -111,12 +112,24 @@ public class umuziAPI {
             System.out.println(propertyID);
             String name = ctx.formParam("tenant_name");
             String moveIn = ctx.formParam("move_in");
-            System.out.println("print");
-            System.out.println(moveIn);
+
             String employment_status = ctx.formParam("employment");
             String cell_number = ctx.formParam("cell_number");
             Integer payday = Integer.parseInt(Objects.requireNonNull(ctx.formParam("pay_day")));
             Integer room = Integer.parseInt(Objects.requireNonNull(ctx.formParam("room")));
+            // CAPTURE the room number and store it in a variable
+            System.out.println("room Number chosen: " + duplicateNUmberchecker.getCurrent_track());
+            //ctx.sessionAttribute("previousRoom",room);
+
+            if (duplicateNUmberchecker.getCurrent_track().equals(room.intValue())) {
+                System.out.println("same Room " + duplicateNUmberchecker.getCurrent_track());
+                ctx.json(Map.of("message", "room taken", "status", 200));
+                return;
+            }else{
+              duplicateNUmberchecker.setCurrent_track(room);
+              System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
+            }
+
             String room_price = ctx.formParam("room_price");
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
