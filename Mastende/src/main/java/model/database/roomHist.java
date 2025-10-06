@@ -26,9 +26,10 @@ public class roomHist extends connectionAcess implements Property  {
     @Override
     public void insert_information() {
         String propertySQL = """
-            INSERT or IGNORE INTO per_room (propertyId, tenant_name,move_in, cellphone_number, room_number)
-            VALUES (?, ?, ?, ?, ?)
-          """;
+    INSERT INTO per_room (propertyId, tenant_name, move_in, cellphone_number, room_number)
+    VALUES (?, ?, ?, ?, ?)
+""";
+
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
             pstmt.setInt(1, this.propertyId);
             pstmt.setString(2, this.tenantname);
