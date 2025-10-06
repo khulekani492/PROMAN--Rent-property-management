@@ -42,7 +42,10 @@ public class landlord extends connectionAcess implements Property{
     @Override
     public void insert_information() {
            String insertUserSQL = """
-                   INSERT OR IGNORE INTO Users (user_name,user_email,password) VALUES (?,?,?)
+                   INSERT INTO users (user_name, user_email, password)
+                   VALUES (?, ?, ?)
+                   ON CONFLICT (user_email) DO NOTHING;
+                   
                    """;
            try (PreparedStatement pstm = connection.prepareStatement(insertUserSQL)){
                pstm.setString(1,this.user_name);
