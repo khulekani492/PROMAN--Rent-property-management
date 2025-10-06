@@ -18,7 +18,6 @@ public class roomHist extends connectionAcess implements Property  {
         this.propertyId = propertyId;
         this.roomNo = room;
         this.tenantname = tenantname;
-        //this.rent = rent; include the room rent hist
         this.contact = contact;
         this.move_in = moveIn;
         this.move_out = moveOut;
@@ -37,7 +36,7 @@ public class roomHist extends connectionAcess implements Property  {
             pstmt.setString(4,this.contact);
             pstmt.setInt(5, this.roomNo);
             pstmt.executeUpdate();
-            System.out.println("✅ Room history inserted successfully!");
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
