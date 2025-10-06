@@ -27,16 +27,17 @@ public class roomHist extends connectionAcess implements Property  {
     @Override
     public void insert_information() {
         String propertySQL = """
-            INSERT or IGNORE INTO per_room (propertyId, tenant_name,move_in, move_out, cellphone_number, room_number)
-            VALUES (?, ?, ?, ?, ?,?,?)
+            INSERT or IGNORE INTO per_room (propertyId, tenant_name,move_in, cellphone_number, room_number)
+            VALUES (?, ?, ?, ?, ?)
           """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
             pstmt.setInt(1, this.propertyId);
             pstmt.setString(2, this.tenantname);
             pstmt.setString(3,this.move_in);
-            pstmt.setString(4,this.move_out);
-            pstmt.setInt(2, this.roomNo);
+            pstmt.setString(4,this.contact);
+            pstmt.setInt(5, this.roomNo);
             pstmt.executeUpdate();
+            System.out.println("✅ Room history inserted successfully!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
