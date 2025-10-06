@@ -63,7 +63,10 @@ public class landlord extends connectionAcess implements Property{
      * this helps narrow the issue of fetching the wrong ID for a user causing leakages.
      * </p>
      */
-
+//   TODO  Session One-06
+//-- fix the bug of inserting for the same room
+//-- add the user to the history table of rooms
+//-- supabase auth to sign up user,set connection, migrate sqlite schema to postgres
     @Override
     public Integer UniqueID() {
         String reference_key = """
