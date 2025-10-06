@@ -127,7 +127,7 @@ public class umuziAPI {
               System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
             }
 
-            Integer room_price = Integer.valueOf(ctx.formParam("room_price"));
+            Integer room_price = Integer.valueOf(Objects.requireNonNull(ctx.formParam("room_price")));
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
 
