@@ -70,9 +70,9 @@ public class Tenant extends  connectionAcess implements  Property{
             pstm.setInt(8, this.room_price);
             pstm.setString(9, this.employment);
             pstm.setString(10, this.kin_number);
-
-            int rows = pstm.executeUpdate();
-            System.out.println("Inserted " + rows + " row(s) successfully!");
+            pstm.executeUpdate();
+            roomHist addToHistory = new roomHist(this.propertyId,this.room_number,this.name,this.cell_number,this.moveInDate,this.moveOut);
+            addToHistory.insert_information();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Tenant insertion failed", e);
