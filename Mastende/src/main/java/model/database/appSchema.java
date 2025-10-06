@@ -87,13 +87,7 @@ public class appSchema extends connectionAcess {
                                        move_in DATE NOT NULL,
                                        move_out DATE,
                                        cellphone_number TEXT NOT NULL,
-                                       room_number INTEGER NOT NULL ,
-                                       FOREIGN KEY (propertyId) REFERENCES property(id),
-                                       FOREIGN KEY (tenant_name) REFERENCES tenants(name),
-                                       FOREIGN KEY (move_in) REFERENCES tenants(move_in),
-                                       FOREIGN KEY (move_out) REFERENCES tenants(move_out),
-                                       FOREIGN KEY (cellphone_number) REFERENCES tenants(cell_number),
-                                       FOREIGN KEY (room_number) REFERENCES tenants(room_number)
+                                       room_number INTEGER NOT NULL
                                    );
                     """;
             String grossIncome = """
