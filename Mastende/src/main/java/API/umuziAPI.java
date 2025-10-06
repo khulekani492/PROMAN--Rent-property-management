@@ -117,10 +117,7 @@ public class umuziAPI {
             String cell_number = ctx.formParam("cell_number");
             Integer payday = Integer.parseInt(Objects.requireNonNull(ctx.formParam("pay_day")));
             Integer room = Integer.parseInt(Objects.requireNonNull(ctx.formParam("room")));
-            // CAPTURE the room number and store it in a variable
-            System.out.println("room Number chosen: " + duplicateNUmberchecker.getCurrent_track());
-            //ctx.sessionAttribute("previousRoom",room);
-
+            // check-logic for preventing inserting tenant with the same room number to the database
             if (duplicateNUmberchecker.getCurrent_track().equals(room.intValue())) {
                 System.out.println("same Room " + duplicateNUmberchecker.getCurrent_track());
                 ctx.json(Map.of("message", "room taken", "status", 200));
