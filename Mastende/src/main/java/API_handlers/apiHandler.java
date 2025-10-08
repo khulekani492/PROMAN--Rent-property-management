@@ -1,6 +1,6 @@
-package API;
+package API_handlers;
 
-import io.javalin.http.Context;
+import API.state;
 import io.javalin.http.Handler;
 import model.database.Tenant;
 import model.database.counter;
