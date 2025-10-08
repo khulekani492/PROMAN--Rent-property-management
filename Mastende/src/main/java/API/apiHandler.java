@@ -2,10 +2,14 @@ package API;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import model.database.Tenant;
+import model.database.counter;
 import model.database.landlord;
 import model.database.residence;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -95,4 +99,72 @@ public class apiHandler {
            }
     };
     }
+    /**
+     * Gets the number of rooms the landlord has submitted.
+     * <p>
+     * Keeps rendering the same form repeatedly until the counter
+     * reaches the last room.
+     */
+    public Handler addTenant(){
+        state duplicateNUmberchecker = new state(0);
+        counter count = new counter();
+        return ctx ->{
+            try{
+
+
+                Integer numberofRooms = ctx.sessionAttribute("roomsOccupied");
+
+                //Access the form input --->
+                Integer propertyID = ctx.sessionAttribute("propertyId");
+                String name = ctx.formParam("tenant_name");
+                Date moveIn = Date.valueOf(ctx.formParam("move_in"));
+
+                String employment_status = ctx.formParam("employment");
+                String cell_number = ctx.formParam("cell_number");
+                Date payday = Date.valueOf( ctx.formParam("pay_day"));
+                Integer room = Integer.parseInt(Objects.requireNonNull(ctx.formParam("room")));
+
+                // check-logic for preventing inserting tenant with the same room number to the database
+                if (duplicateNUmberchecker.getCurrent_track().equals(room.intValue())) {
+                    System.out.println("same Room " + duplicateNUmberchecker.getCurrent_track());
+                    ctx.json(Map.of("message", "room taken", "status", 200));
+                    return;
+                }else{
+                    duplicateNUmberchecker.setCurrent_track(room);
+                    System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
+                }
+
+                Integer room_price = Integer.valueOf(Objects.requireNonNull(ctx.formParam("room_price")));
+                String kin_name = ctx.formParam("kin_name");
+                String kin_number = ctx.formParam("kin_number");
+
+                Tenant tenant = new Tenant(propertyID,name,moveIn,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
+                tenant.insert_information();
+
+                /**
+                 * If the counter equals the number of rooms, render the user_profile HTML.
+                 * Otherwise, keep rendering the tenant_form.
+                 */
+                if(count.getCount() == numberofRooms){
+                    String username = ctx.sessionAttribute("user_name");
+                    String propertyname = ctx.sessionAttribute("propertyname");
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("username",username);
+                    model.put("age", propertyname);
+
+                    ctx.render("/templates/user_profile.html",model);
+                }else {
+                    count.increment();
+                    ctx.render("/templates/tenant_form.html");
+
+                }
+            } catch (Exception e) {
+                ctx.status(400).result("Error: " + e.getMessage());
+                e.printStackTrace();
+            }
+        };
+
+
+    }
+
 }
