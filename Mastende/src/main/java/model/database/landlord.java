@@ -37,6 +37,13 @@ public class landlord extends connectionAcess implements Property{
         this.user_email = user_email;
         this.password = password;
     }
+    public landlord() throws SQLException {
+        super();
+        this.user_name = "";
+        this.user_email = "";
+        this.password = "";
+
+    }
 
 
     @Override
@@ -59,6 +66,27 @@ public class landlord extends connectionAcess implements Property{
 
     }
 
+    public String getUser_passoword(String email) {
+
+        String sql = "SELECT password FROM users WHERE user_email = ?";
+        try (PreparedStatement pstm = connection.prepareStatement(sql)) {
+            pstm.setString(1, email); // email is a String
+
+            try (ResultSet rs = pstm.executeQuery()) { // use executeQuery() for SELECT
+                if (rs.next()) { // move to the first row
+                    String password = rs.getString("password"); // get password as String
+
+                    return  password;
+                } else {
+                    // no user found with this email
+                    return "not found";
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database query failed", e);
+        }
+
+    }
     /**
      * Get the unique ID using the user's email.
      * <p>
