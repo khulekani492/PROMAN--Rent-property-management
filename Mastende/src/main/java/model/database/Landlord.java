@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static API.SecurityUtil.checkPassword;
-import static API.SecurityUtil.hashPassword;
 
 /**
  * Data Access class for User (the Landlord).
@@ -56,7 +55,7 @@ public class Landlord extends connectionAcess implements Property{
                    ON CONFLICT (user_email) DO NOTHING;
                    
                    """;
-           try (PreparedStatement pstm = connection.prepareStatement(insertUserSQL)){
+           try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
                pstm.setString(1,this.user_name);
                pstm.setString(2,this.user_email);
                pstm.setString(3,this.password);
@@ -82,7 +81,7 @@ public class Landlord extends connectionAcess implements Property{
     public boolean confirm_password(String email, String password) {
 
         String sql = "SELECT password FROM users WHERE user_email = ?";
-        try (PreparedStatement pstm = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstm = this.connection.prepareStatement(sql)) {
             pstm.setString(1, email); // email is a String
 
             try (ResultSet rs = pstm.executeQuery()) { // use executeQuery() for SELECT
@@ -99,6 +98,15 @@ public class Landlord extends connectionAcess implements Property{
         }
 
     }
+    public void autocommitfalse() throws SQLException {
+        this.connection.setAutoCommit(false);
+
+    };
+
+    public void reverse() throws SQLException {
+        this.connection.setAutoCommit(false);
+        this.connection.rollback();
+    };
     /**
      * Get the unique ID using the user's email.
      * <p>
@@ -115,7 +123,7 @@ public class Landlord extends connectionAcess implements Property{
         String reference_key = """
         SELECT id FROM Users WHERE user_email = ?;
     """;
-        try (PreparedStatement pstmt = connection.prepareStatement(reference_key)) {
+        try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
             pstmt.setString(1, this.user_email);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
