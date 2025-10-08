@@ -20,18 +20,19 @@ class LandlordTest extends connectionAcess {
     }
     @BeforeEach
     void beginTransaction() throws SQLException {
-        connection.setAutoCommit(false);
+        super.connection.setAutoCommit(false);
     }
 
     @AfterEach
     void rollbackTransaction() throws SQLException {
-        connection.rollback();  // Undo all test changes
+        super.connection.rollback();  // Undo all test changes
     }
     @Test
     void testLandlordInitialization() throws SQLException {
     Landlord landlord = new Landlord();
     Landlord newLandlord = new Landlord("mfokaMkhize","mkhize@2456@gmail.com","TightSecurity");
-
+    Landlord anonewLandlord = new Landlord("sugarrush","sugar@gmail.com","TightSecYTRrity");
+    anonewLandlord.autocommitfalse();
 
     assertEquals("mfokaMkhize", newLandlord.getUser_name());
     assertEquals("mkhize@2456@gmail.com", newLandlord.getUser_email());
@@ -39,24 +40,26 @@ class LandlordTest extends connectionAcess {
 
     //check plain string matches the hashed string test
     String hashedPassword =  hashPassword(newLandlord.getPassword());
+    anonewLandlord.insert_information();
 
     assertTrue(checkPassword(newLandlord.getPassword(),hashedPassword));
 
+    anonewLandlord.reverse();
     // check plain string matches the hashed string queried from the database
-  //  assertTrue(landlord.confirm_password(newLandlord.getPassword(),hashedPassword));
+    assertTrue(landlord.confirm_password("mkhize@2456@gmail.com",newLandlord.getPassword()));
 
 }
     @Test
     void testUseremail() throws SQLException {
         String sql = "SELECT * FROM users WHERE user_email = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
             stmt.setString(1, "khulekaniszondo6@gmail.com");
             ResultSet rs = stmt.executeQuery();
             assertTrue(rs.next(), "User not found in database");
 
             if(rs.next()){
                 System.out.println(rs.getString("user_email"));
-                assertEquals(rs.getString("user_email"),"khulekaniszondo6@gmail.com"
+                assertEquals("khulekaniszondo6@gmail.com", rs.getString("user_email")
                 );
             }
 
