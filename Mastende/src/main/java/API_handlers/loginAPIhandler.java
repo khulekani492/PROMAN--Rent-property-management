@@ -1,4 +1,4 @@
-package API;
+package API_handlers;
 
 import model.database.landlord;
 import io.javalin.http.Handler;
@@ -7,34 +7,15 @@ import java.util.Map;
 
 import static API.SecurityUtil.hashPassword;
 
-public class  {
+public class  loginAPIhandler {
 
-    public Handler sign_up() {
+    public Handler log_in() {
         return ctx -> {
             try {
-                String user_name = ctx.formParam("user_name");
-                ctx.sessionAttribute("user_name", user_name);
-
-                String email = ctx.formParam("user_email");
-                String password = ctx.formParam("password");
-
-                // hash password
-                String hashedPassword = hashPassword(password);
-
-                // insert user into database
-                landlord new_user = new landlord(user_name, email, hashedPassword);
-                new_user.insert_information();
-
-                // get new user ID
-                Integer new_userID = new_user.UniqueID();
-
-                // set session attributes
-                ctx.sessionAttribute("user_ID", new_userID);
-                ctx.sessionAttribute("password", hashedPassword);
-
-                // optional: send back session data as JSON
-                Map<String, Object> sessionMap = ctx.sessionAttributeMap();
-                ctx.json(sessionMap);
+                //get username and password from the login form
+                //validate the password using decryption
+                //if password is successful return the user_profile url
+//                ctx
 
                 // render property page
                 ctx.render("/templates/property.html");
