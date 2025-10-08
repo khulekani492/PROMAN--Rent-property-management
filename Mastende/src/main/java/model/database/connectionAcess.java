@@ -32,7 +32,6 @@ public abstract class connectionAcess {
         String user = props.getProperty("db.user");
         String password = props.getProperty("db.password");
         this.connection = DriverManager.getConnection(url,user,password);
-        System.out.println("connection runnning");
 
     }
 }
