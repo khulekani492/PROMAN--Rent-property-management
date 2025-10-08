@@ -31,7 +31,9 @@ public class umuziAPI {
         app.get("/", ctx ->{
            ctx.render("/templates/index.html");
         });
-
+        app.get("/rentalmanageme@sign_up",ctx ->{
+            ctx.render("templates/sign_up_user.html");
+        });
         //sign_up session order /user_sign_up "/add_property" /addtenants"
         /**
          * adds new user information to the database
@@ -50,7 +52,7 @@ public class umuziAPI {
 
 
 
-        app.get("/rentalManagement@user_profile",ctx ->{
+        app.get("/rentalManagement@cuser_profile",ctx ->{
         });
 
 
