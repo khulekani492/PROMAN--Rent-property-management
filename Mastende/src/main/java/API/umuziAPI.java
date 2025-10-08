@@ -50,9 +50,8 @@ public class umuziAPI {
         app.post("/addtenants", controllers.addTenant());
 
 
-
-
-        app.get("/rentalManagement@cuser_profile",ctx ->{
+//log in Session
+        app.get("/rentalmanagemnt@log_in?cuser_profile",ctx ->{
         });
 
 
