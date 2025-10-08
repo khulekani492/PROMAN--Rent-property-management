@@ -1,11 +1,7 @@
 package API_handlers;
 
-import model.database.landlord;
+import model.database.Landlord;
 import io.javalin.http.Handler;
-import java.sql.SQLException;
-import java.util.Map;
-
-import static API.SecurityUtil.hashPassword;
 
 public class  loginAPIhandler {
 
@@ -17,8 +13,12 @@ public class  loginAPIhandler {
                 String email = ctx.formParam("in_user_email");
                 String password = ctx.formParam("in_password");
 
-                landlord landlordcheck = new landlord();
+                Landlord landlordcheck = new Landlord();
                 //Query db search username ,user_email,password
+                boolean passwordexist = landlordcheck.confirm_password(email,password);
+                if(passwordexist){
+                    return;
+                }
 
                 //validate the password using decryption
                 //if password is successful return the user_profile url
