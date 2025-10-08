@@ -1,6 +1,5 @@
 package model.database;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,19 +24,19 @@ import java.sql.SQLException;
  * </p>
  */
 
-public class landlord extends connectionAcess implements Property{
+public class Landlord extends connectionAcess implements Property{
    private final String user_name;
    private final String user_email;
    private final String password;
 
 
-    public landlord(String user_name, String user_email, String password) throws SQLException {
+    public Landlord(String user_name, String user_email, String password) throws SQLException {
         super();
         this.user_name = user_name;
         this.user_email = user_email;
         this.password = password;
     }
-    public landlord() throws SQLException {
+    public Landlord() throws SQLException {
         super();
         this.user_name = "";
         this.user_email = "";
