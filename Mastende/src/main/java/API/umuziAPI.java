@@ -46,8 +46,15 @@ public class umuziAPI {
  * adds tenant information to the database
  */
         app.post("/addtenants", controllers.addTenant());
+
+
+
+
         app.get("/rentalManagement@user_profile",ctx ->{
         });
+
+
+
         app.post("/updateTenants",ctx -> {
 
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
