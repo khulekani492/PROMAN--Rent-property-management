@@ -15,7 +15,7 @@ import static API.SessionUtil.fileSessionHandler;
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-        apiHandler controllers = new apiHandler();
+        apiHandler controller = new apiHandler();
 
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
@@ -32,16 +32,16 @@ public class umuziAPI {
         /**
          * adds new user information to the database
          */
-        app.post("/user_sign_up",controllers.sign_up());
+        app.post("/user_sign_up",controller.sign_up());
 /**
  * adds new user property information to the database
  */
-        app.post("/add_property", controllers.addproperty());
+        app.post("/add_property", controller.addproperty());
 
 /**
  * adds tenant information to the database
  */
-        app.post("/addtenants", controllers.addTenant());
+        app.post("/addtenants", controller.addTenant());
 
 
 //log in Session
