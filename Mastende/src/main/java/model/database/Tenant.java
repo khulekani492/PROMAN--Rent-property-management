@@ -54,9 +54,9 @@ public class Tenant extends  connectionAcess implements  Property{
         String addTenantSql = """
         INSERT INTO tenants (
             propertyId, name, move_in, move_out, cell_number,
-            pay_day, room_number, Room_price, employment, kin_number
+            pay_day, room_number, Room_price, employment,kin_name, kin_number
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     """;
 
         try (PreparedStatement pstm = connection.prepareStatement(addTenantSql)) {
@@ -69,7 +69,8 @@ public class Tenant extends  connectionAcess implements  Property{
             pstm.setInt(7, this.room_number);
             pstm.setInt(8, this.room_price);
             pstm.setString(9, this.employment);
-            pstm.setString(10, this.kin_number);
+            pstm.setString(10,this.kin_name);
+            pstm.setString(11, this.kin_number);
             pstm.executeUpdate();
             roomHist addToHistory = new roomHist(this.propertyId,this.room_number,this.name,this.cell_number,this.moveInDate,this.moveOut);
             addToHistory.insert_information();
