@@ -79,7 +79,7 @@ public class umuziAPI {
             //Insert into property table property_information
             residence property_information = new residence(propertyName,numberOfRooms,OccupiedRooms,rent,address,contact,property_owner);
             property_information.insert_information();
-          //  residence newoens = new  residence("Sunset Villas",20,4,5000,"lase","03283833",1);
+
             //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
             System.out.println("owner_property");
