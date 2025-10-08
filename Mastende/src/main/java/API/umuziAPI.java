@@ -21,16 +21,15 @@ import static API.SessionUtil.fileSessionHandler;
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-        counter  count = new counter();
         apiHandler controllers = new apiHandler();
-        state duplicateNUmberchecker = new state(0);
+
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
         });
         //home_page Url_end_point
         app.get("/", ctx ->{
-           ctx.render("/templates/sign_up_user.html");
+           ctx.render("/templates/index.html");
         });
 
         app.post("/user_sign_up",controllers.sign_up());
