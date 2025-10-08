@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static API.SecurityUtil.checkPassword;
+import static API.SecurityUtil.hashPassword;
+
 /**
  * Data Access class for User (the Landlord).
  * <p>
@@ -65,20 +68,30 @@ public class Landlord extends connectionAcess implements Property{
 
     }
 
-    public String getUser_passoword(String email) {
+    public String getUser_name() {
+        return this.user_name;
+    }
+    public  String getUser_email(){
+        return this.user_email;
+    }
+
+    public String getPassword(){
+        return  this.password;
+    }
+
+    public boolean confirm_password(String email, String password) {
 
         String sql = "SELECT password FROM users WHERE user_email = ?";
         try (PreparedStatement pstm = connection.prepareStatement(sql)) {
             pstm.setString(1, email); // email is a String
 
             try (ResultSet rs = pstm.executeQuery()) { // use executeQuery() for SELECT
-                if (rs.next()) { // move to the first row
-                    String password = rs.getString("password"); // get password as String
-
-                    return  password;
+                if (rs.next()) {
+                    // get password as String
+                    String db_password = rs.getString("password");
+                    return checkPassword(password,db_password);
                 } else {
-                    // no user found with this email
-                    return "not found";
+                    return false;
                 }
             }
         } catch (SQLException e) {
