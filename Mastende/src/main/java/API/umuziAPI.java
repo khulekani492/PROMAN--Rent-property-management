@@ -1,19 +1,13 @@
 package API;
 
 
+import API_handlers.apiHandler;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
-import model.database.*;
 
-import java.nio.MappedByteBuffer;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-import static API.SecurityUtil.hashPassword;
 import static API.SessionUtil.fileSessionHandler;
 
 //TODO https://javalin.io/tutorials/jetty-session-handling
@@ -51,6 +45,11 @@ public class umuziAPI {
 
 
 //log in Session
+//        app.get("/rentalmanagemnt@log_in?" controllers.);
+
+
+
+
         app.get("/rentalmanagemnt@log_in?cuser_profile",ctx ->{
         });
 
