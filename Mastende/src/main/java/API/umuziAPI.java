@@ -32,15 +32,18 @@ public class umuziAPI {
            ctx.render("/templates/index.html");
         });
 
+        //sign_up session order /user_sign_up "/add_property" /addtenants"
+        /**
+         * adds new user information to the database
+         */
         app.post("/user_sign_up",controllers.sign_up());
-
+/**
+ * adds new user property information to the database
+ */
         app.post("/add_property", controllers.addproperty());
 
 /**
- * Gets the number of rooms the landlord has submitted.
- * <p>
- * Keeps rendering the same form repeatedly until the counter
- * reaches the last room.
+ * adds tenant information to the database
  */
         app.post("/addtenants", controllers.addTenant());
         app.get("/rentalManagement@user_profile",ctx ->{
