@@ -30,23 +30,31 @@ class LandlordTest extends connectionAcess {
     @Test
     void testLandlordInitialization() throws SQLException {
     Landlord landlord = new Landlord();
-    Landlord newLandlord = new Landlord("mfokaMkhize","mkhize@2456@gmail.com","TightSecurity");
-    Landlord anonewLandlord = new Landlord("sugarrush","sugar@gmail.com","TightSecYTRrity");
-    anonewLandlord.autocommitfalse();
+    String unhashedpassword ="TightSecurity";
+    String hashedPassword =  hashPassword(unhashedpassword);
+        System.out.println("hashed" + hashedPassword);
+    Landlord newLandlord = new Landlord("mfokaMkhize","mkhize@2456@gmail.com",hashedPassword);
+
+    //hash password
+
+    Landlord anonewLandlord = new Landlord("sugarrush","sugar@gmail.com",hashedPassword);
+  //  anonewLandlord.autocommitfalse();
+        anonewLandlord.insert_information();
 
     assertEquals("mfokaMkhize", newLandlord.getUser_name());
-    assertEquals("mkhize@2456@gmail.com", newLandlord.getUser_email());
-    assertEquals("TightSecurity", newLandlord.getPassword());
+    assertEquals("sugar@gmail.com", anonewLandlord.getUser_email());
 
+    assertEquals(hashedPassword, newLandlord.getPassword());
+        assertEquals(landlord.confirm_password("sugar@gmail.com"),hashedPassword)  ;
     //check plain string matches the hashed string test
-    String hashedPassword =  hashPassword(newLandlord.getPassword());
-    anonewLandlord.insert_information();
 
-    assertTrue(checkPassword(newLandlord.getPassword(),hashedPassword));
+  //  anonewLandlord.insert_information();
+
+    assertTrue(checkPassword(unhashedpassword,hashedPassword));
 
     anonewLandlord.reverse();
     // check plain string matches the hashed string queried from the database
-    assertTrue(landlord.confirm_password("mkhize@2456@gmail.com",newLandlord.getPassword()));
+
 
 }
     @Test
