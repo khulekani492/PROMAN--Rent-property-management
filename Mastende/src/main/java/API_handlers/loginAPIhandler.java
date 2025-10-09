@@ -15,10 +15,10 @@ public class  loginAPIhandler {
 
                 Landlord landlordcheck = new Landlord();
                 //Query db search username ,user_email,password
-                boolean passwordexist = landlordcheck.confirm_password(email,password);
-                if(passwordexist){
-                    return;
-                }
+                //boolean passwordexist = landlordcheck.confirm_password(email,password);
+//                if(passwordexist){
+//                    return;
+//                }
 
                 //validate the password using decryption
                 //if password is successful return the user_profile url
