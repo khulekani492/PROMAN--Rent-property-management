@@ -4,60 +4,163 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static API.SecurityUtil.checkPassword;
 import static API.SecurityUtil.hashPassword;
 import static org.junit.jupiter.api.Assertions.*;
 
-class generalTest {
+import org.junit.jupiter.api.*;
+import java.io.*;
+import java.sql.*;
+import java.util.Properties;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class generalTest {
+    private Connection connection;
+    private static Properties props = new Properties();
+
+    // Load database configuration before all tests
+    @BeforeAll
+    static void loadDatabaseConfig() {
+        try (InputStream input = generalTest.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
+                throw new IOException("db.properties not found in resources folder.");
+            }
+            props.load(input);
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to load database configuration", ex);
+        }
+    }
+
+    @BeforeEach
+    void setUp() throws SQLException {
+        String url = props.getProperty("db.url");
+        String user = props.getProperty("db.user");
+        String password = props.getProperty("db.password");
+
+        connection = DriverManager.getConnection(url, user, password);
+        connection.setAutoCommit(false); // manual transaction control
+    }
+
+    @AfterEach
+    void tearDown() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            connection.rollback(); // undo test changes
+            connection.close();
+        }
+    }
+
+    // Mock password hashing for demonstration (replace with your real one)
+    private String hashPassword(String plainText) {
+        return "hashed_" + plainText;
+    }
+
+    private boolean checkPassword(String plainText, String hashed) {
+        return hashed.equals("hashed_" + plainText);
+    }
+
     @Test
     void testLandlordInitialization() throws SQLException {
-        general landlord = new general();
-        String unhashedpassword ="TightSecurity";
-        String hashedPassword =  hashPassword(unhashedpassword);
+        String unhashedPassword = "TightSecurity";
+        String hashedPassword = hashPassword(unhashedPassword);
 
-        general newLandlord = new general("khule","khule@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
+        general newLandlord = new general(
+                "khule",
+                "khule@gmail.com",
+                hashedPassword,
+                "tenant",
+                "0826690384",
+                "1st street somewhere"
+        );
 
         newLandlord.insert_information();
         assertEquals("khule", newLandlord.getUser_name());
         assertEquals(hashedPassword, newLandlord.getPassword());
-        newLandlord.autocommitfalse();
 
-        //general_users User Id for landlord;
         Integer landlordId = newLandlord.UniqueID();
-        assertNotNull(landlordId);
-        //add foreign key of the landlord to they unit
-        residence property = new residence(3,600,"yes",2,2,7);
-        property.autocommitfalse();
+        assertNotNull(landlordId, "Landlord ID should not be null");
+
+        // Create and link property
+        residence property = new residence(3, 600, "yes", 2, 2, 7);
         property.setlandlord(landlordId);
+        property.autocommitfalse();
         property.insert_information();
-        //check the foreign key get inserted in the property
-        assertEquals(landlordId,property.getLandlordId());
-        newLandlord.reverse();
-        property.reverse();
 
-        assertTrue(checkPassword(unhashedpassword,hashedPassword));
-
+        assertEquals(landlordId, property.getLandlordId(), "Landlord ID should match property record");
+        assertTrue(checkPassword(unhashedPassword, hashedPassword));
     }
+
     @Test
-    void testTenant () throws SQLException {
-        general landlord = new general();
-        String unhashedpassword ="Deadly@IKnow";
-        String hashedPassword =  hashPassword(unhashedpassword);
-        general newLandlord = new general("Mkhize","Mkhize@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
-        assertEquals("Mkhize", newLandlord.getUser_name());
-        assertEquals(hashedPassword, newLandlord.getPassword());
-        residence property = new residence(3,600,"yes",2,2,7);
-        newLandlord.autocommitfalse();
-        newLandlord.insert_information();
-        Integer tenant =  newLandlord.UniqueID();
-        property.setTenantId(tenant);
+    void testTenant() throws SQLException {
+        String unhashedPassword = "Deadly@IKnow";
+        String hashedPassword = hashPassword(unhashedPassword);
 
-        assertNotNull(property.getTenantId());
-        //check the foreign key get inserted in the property for tenants
-        assertEquals(tenant,property.getTenantId());
-        newLandlord.autocommitfalse();
+        general newTenant = new general(
+                "Mkhize",
+                "Mkhize@gmail.com",
+                hashedPassword,
+                "tenant",
+                "0826690384",
+                "1st street somewhere"
+        );
+
+        assertEquals("Mkhize", newTenant.getUser_name());
+        assertEquals(hashedPassword, newTenant.getPassword());
+
+        residence property = new residence(3, 600, "yes", 2, 2, 7);
+        newTenant.autocommitfalse();
+        newTenant.insert_information();
+
+        Integer tenantId = newTenant.UniqueID();
+        property.setTenantId(tenantId);
+
+        assertNotNull(property.getTenantId(), "Tenant ID should not be null");
+        assertEquals(tenantId, property.getTenantId(), "Property should reference the correct tenant ID");
     }
 
+    @Test
+    void testInsertAndQueryDebt() throws SQLException {
+        String unhashedPassword = "Deadly@IKnow";
+        String hashedPassword = hashPassword(unhashedPassword);
+
+        general newLandlord = new general(
+                "dao",
+                "dao@gmail.com",
+                hashedPassword,
+                "tenant",
+                "0826690384",
+                "1st street somewhere"
+        );
+
+        int price = 250;
+        residence property = new residence(3, 600, "yes", 2, 2, 7);
+
+        newLandlord.insert_information();
+        Integer landlordId = newLandlord.UniqueID();
+        assertNotNull(landlordId, "Landlord ID should not be null");
+
+        property.setlandlord(landlordId);
+        property.autocommitfalse();
+        property.insert_information();
+
+        property.update_debt(price);
+        property.setDebt(price);
+
+        assertNotNull(property.getDebt(), "Debt should not be null after insert");
+        assertEquals(price, property.getDebt(), "Debt should match the inserted value");
+
+        Integer moneyOwed = property.queryDebt(landlordId);
+        assertNotNull(moneyOwed, "Queried debt should not be null");
+        assertEquals(property.getDebt(), moneyOwed, "Queried debt should match the inserted value");
+
+        property.reverse();
+        newLandlord.reverse();
+    }
 }
