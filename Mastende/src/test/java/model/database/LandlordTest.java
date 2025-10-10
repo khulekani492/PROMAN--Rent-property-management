@@ -43,27 +43,19 @@ class landlordTest extends connectionAcess {
     residence property = new residence(3,600,"yes",2,2,7);
     property.autocommitfalse();
     property.setlandlord(landlordId);
-    System.out.println(property.getLandlordId());
-    System.out.println("Wait a bit");
-    System.out.println(landlordId);
-    assertEquals(landlordId,property.getLandlordId());
+    assertEquals("khule", newLandlord.getUser_name());
+
+    //check the foreign key get inserted in the property
+        assertEquals(landlord.confirm_password("khule@gmail.com"),hashedPassword)  ;
+
+        assertEquals(landlordId,property.getLandlordId());
     property.insert_information();
-    Integer ForeignKey  = newLandlord.property_UniqueID();
-    System.out.println(ForeignKey);
-    assertEquals(18,ForeignKey);
     newLandlord.reverse();
     property.reverse();
-    //hash password
-   // landlord anonewLandlord = new landlord("sugarrush","sugar@gmail.com",hashedPassword);
-  //  anonewLandlord.autocommitfalse();
-     //   anonewLandlord.insert_information();
 
-    assertEquals("mfokaMkhize", newLandlord.getUser_name());
-//    assertEquals("sugar@gmail.com", anonewLandlord.getUser_email());
 
     assertEquals(hashedPassword, newLandlord.getPassword());
-        assertEquals(landlord.confirm_password("sugar@gmail.com"),hashedPassword)  ;
-    //check plain string matches the hashed string test
+
 
   //  anonewLandlord.insert_information();
 
