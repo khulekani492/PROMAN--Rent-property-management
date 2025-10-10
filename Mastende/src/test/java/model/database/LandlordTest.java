@@ -33,17 +33,26 @@ class landlordTest extends connectionAcess {
     String hashedPassword =  hashPassword(unhashedpassword);
     System.out.println("hashed" + hashedPassword);
     landlord newLandlord = new landlord("khule","khule@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
+        newLandlord.insert_information();
     newLandlord.autocommitfalse();
-    newLandlord.insert_information();
+
+
+
     Integer landlordId = newLandlord.UniqueID();
     System.out.println(landlordId);
-
-    newLandlord.assignProperty(landlordId);
+    residence property = new residence(3,600,"yes",2,2,7);
+    property.autocommitfalse();
+    property.setlandlord(landlordId);
+    System.out.println(property.getLandlordId());
+    System.out.println("Wait a bit");
+    System.out.println(landlordId);
+    assertEquals(landlordId,property.getLandlordId());
+    property.insert_information();
     Integer ForeignKey  = newLandlord.property_UniqueID();
-
     System.out.println(ForeignKey);
-    assertEquals(landlordId,ForeignKey);
+    assertEquals(18,ForeignKey);
     newLandlord.reverse();
+    property.reverse();
     //hash password
    // landlord anonewLandlord = new landlord("sugarrush","sugar@gmail.com",hashedPassword);
   //  anonewLandlord.autocommitfalse();
