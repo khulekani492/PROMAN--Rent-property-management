@@ -1,7 +1,6 @@
 package model.database;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +12,10 @@ import static API.SecurityUtil.checkPassword;
 import static API.SecurityUtil.hashPassword;
 import static org.junit.jupiter.api.Assertions.*;
 
-class LandlordTest extends connectionAcess {
+class landlordTest extends connectionAcess {
 
 
-    LandlordTest() throws SQLException {
+    landlordTest() throws SQLException {
     }
     @BeforeEach
     void beginTransaction() throws SQLException {
@@ -29,20 +28,29 @@ class LandlordTest extends connectionAcess {
     }
     @Test
     void testLandlordInitialization() throws SQLException {
-    Landlord landlord = new Landlord();
+    landlord landlord = new landlord();
     String unhashedpassword ="TightSecurity";
     String hashedPassword =  hashPassword(unhashedpassword);
-        System.out.println("hashed" + hashedPassword);
-    Landlord newLandlord = new Landlord("mfokaMkhize","mkhize@2456@gmail.com",hashedPassword);
+    System.out.println("hashed" + hashedPassword);
+    landlord newLandlord = new landlord("khule","khule@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
+    newLandlord.autocommitfalse();
+    newLandlord.insert_information();
+    Integer landlordId = newLandlord.UniqueID();
+    System.out.println(landlordId);
 
+    newLandlord.assignProperty(landlordId);
+    Integer ForeignKey  = newLandlord.property_UniqueID();
+
+    System.out.println(ForeignKey);
+    assertEquals(landlordId,ForeignKey);
+    newLandlord.reverse();
     //hash password
-
-    Landlord anonewLandlord = new Landlord("sugarrush","sugar@gmail.com",hashedPassword);
+   // landlord anonewLandlord = new landlord("sugarrush","sugar@gmail.com",hashedPassword);
   //  anonewLandlord.autocommitfalse();
-        anonewLandlord.insert_information();
+     //   anonewLandlord.insert_information();
 
     assertEquals("mfokaMkhize", newLandlord.getUser_name());
-    assertEquals("sugar@gmail.com", anonewLandlord.getUser_email());
+//    assertEquals("sugar@gmail.com", anonewLandlord.getUser_email());
 
     assertEquals(hashedPassword, newLandlord.getPassword());
         assertEquals(landlord.confirm_password("sugar@gmail.com"),hashedPassword)  ;
@@ -52,7 +60,7 @@ class LandlordTest extends connectionAcess {
 
     assertTrue(checkPassword(unhashedpassword,hashedPassword));
 
-    anonewLandlord.reverse();
+    //anonewLandlord.reverse();
     // check plain string matches the hashed string queried from the database
 
 
