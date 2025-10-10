@@ -90,7 +90,6 @@ public class generalTest {
         // Create and link property
         residence property = new residence(3, 600, "yes", 2, 2, 7);
         property.setlandlord(landlordId);
-        property.autocommitfalse();
         property.insert_information();
 
         assertEquals(landlordId, property.getLandlordId(), "Landlord ID should match property record");
@@ -147,7 +146,7 @@ public class generalTest {
         assertNotNull(landlordId, "Landlord ID should not be null");
 
         property.setlandlord(landlordId);
-        property.autocommitfalse();
+
         property.insert_information();
 
         property.update_debt(price);
@@ -160,7 +159,6 @@ public class generalTest {
         assertNotNull(moneyOwed, "Queried debt should not be null");
         assertEquals(property.getDebt(), moneyOwed, "Queried debt should match the inserted value");
 
-        property.reverse();
-        newLandlord.reverse();
+
     }
 }
