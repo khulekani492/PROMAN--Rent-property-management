@@ -14,50 +14,79 @@ import java.util.function.IntBinaryOperator;
  * and inserts the data into the {@code property} table.
  */
 
-public class residence extends connectionAcess implements  Property{
+public class residence extends connectionAcess implements  Property {
     private final Integer property_unit;
     private final Integer property_rent;
-    private final  String occupation;
-    private  Integer debt;
-    private  Integer landlordId;
-    private  Integer tenantId;
-    private final  Integer pay_day;
+    private final String occupation;
+    private Integer debt;
+    private Integer landlordId;
+    private Integer tenantId;
+    private final Integer pay_day;
     private final Integer FromDay;
     private final Integer LastDay;
 
-    public residence(Integer property_name, Integer property_rent, String occupation, Integer FromDay , Integer Lastday, Integer pay_day) throws SQLException {
+    public residence(Integer property_name, Integer property_rent, String occupation, Integer FromDay, Integer Lastday, Integer pay_day) throws SQLException {
         super();
         this.property_unit = property_name;
         this.property_rent = property_rent;
         this.occupation = occupation;
         this.landlordId = null;
-        this.tenantId = 0;
-        this.debt = 0;
+        this.tenantId = null;
+        this.debt = null;
         this.pay_day = pay_day;
         this.FromDay = FromDay;
         this.LastDay = Lastday;
 
     }
 
-    public void setlandlord(Integer landlordId){
+    public void setlandlord(Integer landlordId) {
         this.landlordId = landlordId;
 
-    };
-    public Integer getLandlordId(){
-      return this.landlordId;
-    };
+    }
 
-    public void setTenantId(Integer tenantId){
+    ;
+
+    public Integer getLandlordId() {
+        return this.landlordId;
+    }
+
+    ;
+
+    public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
     }
 
-    public Integer getTenantId(){
+    public Integer getTenantId() {
         return this.tenantId;
     }
 
-    public void  setDebt(Integer debt){
+    public void setDebt(Integer debt) {
         this.debt = debt;
     }
+
+    public Integer getDebt() {
+        return this.debt;
+    }
+
+    public Integer queryDebt(Integer mastede) {
+        String sql = """
+                SELECT debt  From properties WHERE landlord_user_id = ?;
+                """;
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, mastede);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+
+                    return rs.getInt("debt");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+      return  null;
+    }
+
     @Override
     public void insert_information() {
         String propertySQL = """
@@ -73,6 +102,22 @@ public class residence extends connectionAcess implements  Property{
             pstmt.setInt(5,this.landlordId);
             pstmt.setInt(6,this.FromDay);
             pstmt.setInt(7,this.LastDay);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public void update_debt(Integer oustanding_money){
+        String sql = """
+        UPDATE properties
+        SET debt = ?
+        WHERE landlord_user_id = ?;
+    """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
+            pstmt.setInt(1, oustanding_money);
+            pstmt.setInt(2, this.landlordId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
