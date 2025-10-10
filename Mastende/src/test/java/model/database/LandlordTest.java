@@ -58,33 +58,19 @@ class landlordTest extends connectionAcess {
     property.reverse();
 
 
-
-
-
-  //  anonewLandlord.insert_information();
-
     assertTrue(checkPassword(unhashedpassword,hashedPassword));
-
-    //anonewLandlord.reverse();
-    // check plain string matches the hashed string queried from the database
-
 
 }
     @Test
-    void testUseremail() throws SQLException {
-        String sql = "SELECT * FROM users WHERE user_email = ?";
-        try (PreparedStatement stmt = this.connection.prepareStatement(sql)) {
-            stmt.setString(1, "khulekaniszondo6@gmail.com");
-            ResultSet rs = stmt.executeQuery();
-            assertTrue(rs.next(), "User not found in database");
+    void testTenant () throws SQLException {
+        landlord landlord = new landlord();
+        String unhashedpassword ="Deadly@IKnow";
+        String hashedPassword =  hashPassword(unhashedpassword);
+        landlord newLandlord = new landlord("Mkhize","Mkhize@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
+        newLandlord.insert_information();
+        assertEquals("Mkhize", newLandlord.getUser_name());
+        assertEquals(hashedPassword, newLandlord.getPassword());
+        newLandlord.autocommitfalse();
 
-            if(rs.next()){
-                System.out.println(rs.getString("user_email"));
-                assertEquals("khulekaniszondo6@gmail.com", rs.getString("user_email")
-                );
-            }
-
-        }
     }
-
 }
