@@ -150,15 +150,9 @@ public class residence extends connectionAcess implements  Property {
      * the logic of communicating with the database through the property table data access object
      * to update the table information.
      */
-    public void autocommitfalse() throws SQLException {
-        this.connection.setAutoCommit(false);
 
-    };
 
-    public void reverse() throws SQLException {
-        this.connection.setAutoCommit(false);
-        this.connection.rollback();
-    };
+
     public void assignProperty(Integer propertyid,Integer userId) {
         String propertySQL = """
                   UPDATE Users SET propertyId = ? WHERE id = ?
