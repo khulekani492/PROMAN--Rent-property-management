@@ -145,7 +145,7 @@ public class landlord extends connectionAcess implements Property{
 }
     public Integer property_UniqueID() {
         String reference_key = """
-        SELECT id FROM properties WHERE landlord_user_id = ?;
+        SELECT landlord_user_id FROM properties WHERE landlord_user_id = ?;
     """;
         try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
             pstmt.setInt(1, UniqueID());
