@@ -32,14 +32,10 @@ class generalTest {
         property.autocommitfalse();
         property.setlandlord(landlordId);
         property.insert_information();
-
-
         //check the foreign key get inserted in the property
         assertEquals(landlordId,property.getLandlordId());
-
         newLandlord.reverse();
         property.reverse();
-
 
         assertTrue(checkPassword(unhashedpassword,hashedPassword));
 
