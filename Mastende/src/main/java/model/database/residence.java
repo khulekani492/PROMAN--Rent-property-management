@@ -15,40 +15,47 @@ import java.util.function.IntBinaryOperator;
  */
 
 public class residence extends connectionAcess implements  Property{
-    private final String property_unit;
+    private final Integer property_unit;
     private final Integer property_rent;
     private final  String occupation;
     private final Integer debt;
-    private final Integer landlordId;
-    private final Integer tenantId;
-
+    private  Integer landlordId;
+    private  Integer tenantId;
     private final  Integer pay_day;
     private final Integer FromDay;
     private final Integer LastDay;
 
-
-    public residence(String property_name,Integer property_rent,String occupation, Integer FromDay ,Integer Lastday, Integer pay_day, Integer debt, Integer landlordId, Integer tenant) throws SQLException {
+    public residence(Integer property_name, Integer property_rent, String occupation, Integer FromDay , Integer Lastday, Integer pay_day) throws SQLException {
         super();
         this.property_unit = property_name;
         this.property_rent = property_rent;
         this.occupation = occupation;
-        this.tenantId = tenant;
-        this.landlordId = landlordId;
-        this.debt = debt;
+        this.landlordId = null;
+        this.tenantId = null;
+        this.debt = null;
         this.pay_day = pay_day;
         this.FromDay = FromDay;
         this.LastDay = Lastday;
+
     }
+
+    public void setlandlord(Integer landlordId){
+        this.landlordId = landlordId;
+
+    };
+    public Integer getLandlordId(){
+      return this.landlordId;
+    };
 
     @Override
     public void insert_information() {
         String propertySQL = """
-    INSERT INTO properties (property_unit, property_rent, occupation, debt,pay_day,tenant_user_id,landlord_user_id,fron_day,last_day)
+    INSERT INTO properties (property_unit, property_rent, occupation, debt,pay_day,tenant_user_id,landlord_user_id,from_day,last_day)
     VALUES (?, ?, ?, ?, ?, ?, ?,?,?)
 """;
 
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
-            pstmt.setString(1, this.property_unit);
+            pstmt.setInt(1, this.property_unit);
             pstmt.setInt(2, this.property_rent);
             pstmt.setString(3, this.occupation);
             pstmt.setInt(4, this.debt);
@@ -89,7 +96,15 @@ public class residence extends connectionAcess implements  Property{
      * the logic of communicating with the database through the property table data access object
      * to update the table information.
      */
+    public void autocommitfalse() throws SQLException {
+        this.connection.setAutoCommit(false);
 
+    };
+
+    public void reverse() throws SQLException {
+        this.connection.setAutoCommit(false);
+        this.connection.rollback();
+    };
     public void assignProperty(Integer propertyid,Integer userId) {
         String propertySQL = """
                   UPDATE Users SET propertyId = ? WHERE id = ?
