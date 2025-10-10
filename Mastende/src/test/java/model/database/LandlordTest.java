@@ -51,8 +51,6 @@ class landlordTest extends connectionAcess {
 
     //check the foreign key get inserted in the property
         assertEquals(landlordId,property.getLandlordId());
-        //
-
 
     newLandlord.reverse();
     property.reverse();
@@ -67,17 +65,17 @@ class landlordTest extends connectionAcess {
         String unhashedpassword ="Deadly@IKnow";
         String hashedPassword =  hashPassword(unhashedpassword);
         landlord newLandlord = new landlord("Mkhize","Mkhize@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
-
+        assertEquals("Mkhize", newLandlord.getUser_name());
+        assertEquals(hashedPassword, newLandlord.getPassword());
         residence property = new residence(3,600,"yes",2,2,7);
         newLandlord.autocommitfalse();
-
         newLandlord.insert_information();
         Integer tenant =  newLandlord.UniqueID();
         property.setTenantId(tenant);
-        assertNotNull(property.getTenantId());
-        assertEquals("Mkhize", newLandlord.getUser_name());
-        assertEquals(hashedPassword, newLandlord.getPassword());
-        newLandlord.autocommitfalse();
 
+        assertNotNull(property.getTenantId());
+        //check the foreign key get inserted in the property for tenants
+        assertEquals(tenant,property.getTenantId());
+        newLandlord.autocommitfalse();
     }
 }
