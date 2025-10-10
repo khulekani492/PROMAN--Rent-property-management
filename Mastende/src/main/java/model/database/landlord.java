@@ -24,39 +24,50 @@ import java.sql.SQLException;
  * </p>
  */
 
-public class Landlord extends connectionAcess implements Property{
+public class landlord extends connectionAcess implements Property{
    private final String user_name;
    private final String user_email;
    private final String password;
+   private final String contact;
+   private final String user_type;
+   private  final String property_address;
 
 
-    public Landlord(String user_name, String user_email, String password) throws SQLException {
+    public landlord(String user_name, String user_email, String password, String user_type, String contact, String address) throws SQLException {
         super();
         this.user_name = user_name;
         this.user_email = user_email;
         this.password = password;
+        this.user_type = user_type;
+        this.contact = contact;
+        this.property_address = address;
     }
-    public Landlord() throws SQLException {
+    public landlord() throws SQLException {
         super();
         this.user_name = "";
         this.user_email = "";
         this.password = "";
-
+        this.user_type = "";
+        this.contact = "";
+        this.property_address = "";
     }
 
 
     @Override
     public void insert_information() {
            String insertUserSQL = """
-                   INSERT INTO users (user_name, user_email, password)
-                   VALUES (?, ?, ?)
-                   ON CONFLICT (user_email) DO NOTHING;
+                   INSERT INTO generaL_users (name, contact, email,password,user_type,property_address)
+                   VALUES (?,?,?,?,?,?)
+                   ON CONFLICT (email) DO NOTHING;
                    
                    """;
            try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
                pstm.setString(1,this.user_name);
-               pstm.setString(2,this.user_email);
-               pstm.setString(3,this.password);
+               pstm.setString(2,this.contact);
+               pstm.setString(3,this.user_email);
+               pstm.setString(4,this.password);
+               pstm.setString(5,this.user_type);
+               pstm.setString(6,this.property_address);
                pstm.executeUpdate();
            }catch (SQLException e){
                throw new RuntimeException("Database update failed", e);
