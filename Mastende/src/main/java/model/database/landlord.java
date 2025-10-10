@@ -143,13 +143,32 @@ public class landlord extends connectionAcess implements Property{
         }
         return null; // if not found
 }
-    public void assignProperty() {
-        String propertySQL = """
-                  UPDATE properties SET landlord_user_id = ? WHERE id = ?
-                """;
-        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
+    public Integer property_UniqueID() {
+        String reference_key = """
+        SELECT id FROM properties WHERE landlord_user_id = ?;
+    """;
+        try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
             pstmt.setInt(1, UniqueID());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null; // if not found
+    }
+    public void assignProperty(Integer december) {
+        String propertySQL = """
+    INSERT INTO properties (landlord_user_id)
+    VALUES (?);
+""";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
+            pstmt.setInt(1, december);
             pstmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
