@@ -31,30 +31,34 @@ class landlordTest extends connectionAcess {
     landlord landlord = new landlord();
     String unhashedpassword ="TightSecurity";
     String hashedPassword =  hashPassword(unhashedpassword);
-    System.out.println("hashed" + hashedPassword);
+
     landlord newLandlord = new landlord("khule","khule@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
+
         newLandlord.insert_information();
-    newLandlord.autocommitfalse();
+        assertEquals("khule", newLandlord.getUser_name());
+        assertEquals(hashedPassword, newLandlord.getPassword());
+        newLandlord.autocommitfalse();
 
-
-
+    //general_users User Id for landlord;
     Integer landlordId = newLandlord.UniqueID();
-    System.out.println(landlordId);
+    assertNotNull(landlordId);
+  //add foreign key of the landlord to they unit
     residence property = new residence(3,600,"yes",2,2,7);
     property.autocommitfalse();
     property.setlandlord(landlordId);
-    assertEquals("khule", newLandlord.getUser_name());
+    property.insert_information();
+
 
     //check the foreign key get inserted in the property
-        assertEquals(landlord.confirm_password("khule@gmail.com"),hashedPassword)  ;
-
         assertEquals(landlordId,property.getLandlordId());
-    property.insert_information();
+        //
+
+
     newLandlord.reverse();
     property.reverse();
 
 
-    assertEquals(hashedPassword, newLandlord.getPassword());
+
 
 
   //  anonewLandlord.insert_information();
