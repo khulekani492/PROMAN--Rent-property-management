@@ -24,7 +24,7 @@ import java.sql.SQLException;
  * </p>
  */
 
-public class landlord extends connectionAcess implements Property{
+public class general extends connectionAcess implements Property{
    private final String user_name;
    private final String user_email;
    private final String password;
@@ -33,7 +33,7 @@ public class landlord extends connectionAcess implements Property{
    private  final String property_address;
 
 
-    public landlord(String user_name, String user_email, String password, String user_type, String contact, String address) throws SQLException {
+    public general(String user_name, String user_email, String password, String user_type, String contact, String address) throws SQLException {
         super();
         this.user_name = user_name;
         this.user_email = user_email;
@@ -42,7 +42,7 @@ public class landlord extends connectionAcess implements Property{
         this.contact = contact;
         this.property_address = address;
     }
-    public landlord() throws SQLException {
+    public general() throws SQLException {
         super();
         this.user_name = "";
         this.user_email = "";
