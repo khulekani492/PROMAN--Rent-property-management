@@ -4,7 +4,7 @@ import API.state;
 import io.javalin.http.Handler;
 import model.database.Tenant;
 import model.database.counter;
-import model.database.Landlord;
+import model.database.landlord;
 import model.database.residence;
 
 import java.sql.Date;
@@ -22,15 +22,17 @@ public class apiHandler {
             try {
                 String user_name = ctx.formParam("user_name");
                 ctx.sessionAttribute("user_name", user_name);
-
+                String contact = ctx.formParam("contact");
+                String property_address = ctx.formParam("address");
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
+                String user_type = ctx.formParam("user_type");
 
                 // hash password
                 String hashedPassword = hashPassword(password);
 
                 // insert user into database
-                Landlord new_user = new Landlord(user_name, email, hashedPassword);
+                landlord new_user = new landlord(user_name, email, hashedPassword,contact,property_address,user_type);
                 new_user.insert_information();
 
                 // get new user ID

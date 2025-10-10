@@ -4,8 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static API.SecurityUtil.checkPassword;
-
 /**
  * Data Access class for User (the Landlord).
  * <p>
@@ -78,7 +76,7 @@ public class Landlord extends connectionAcess implements Property{
         return  this.password;
     }
 
-    public boolean confirm_password(String email, String password) {
+    public String confirm_password(String email) {
 
         String sql = "SELECT password FROM users WHERE user_email = ?";
         try (PreparedStatement pstm = this.connection.prepareStatement(sql)) {
@@ -87,10 +85,9 @@ public class Landlord extends connectionAcess implements Property{
             try (ResultSet rs = pstm.executeQuery()) { // use executeQuery() for SELECT
                 if (rs.next()) {
                     // get password as String
-                    String db_password = rs.getString("password");
-                    return checkPassword(password,db_password);
+                    return rs.getString("password");
                 } else {
-                    return false;
+                    return  "no password";
                 }
             }
         } catch (SQLException e) {
