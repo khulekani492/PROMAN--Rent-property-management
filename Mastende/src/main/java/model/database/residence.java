@@ -31,8 +31,8 @@ public class residence extends connectionAcess implements  Property{
         this.property_rent = property_rent;
         this.occupation = occupation;
         this.landlordId = null;
-        this.tenantId = null;
-        this.debt = null;
+        this.tenantId = 0;
+        this.debt = 0;
         this.pay_day = pay_day;
         this.FromDay = FromDay;
         this.LastDay = Lastday;
@@ -50,20 +50,18 @@ public class residence extends connectionAcess implements  Property{
     @Override
     public void insert_information() {
         String propertySQL = """
-    INSERT INTO properties (property_unit, property_rent, occupation, debt,pay_day,tenant_user_id,landlord_user_id,from_day,last_day)
-    VALUES (?, ?, ?, ?, ?, ?, ?,?,?)
+    INSERT INTO properties (property_unit, property_rent, occupation,pay_day,landlord_user_id,from_day,last_day)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
 """;
 
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
             pstmt.setInt(1, this.property_unit);
             pstmt.setInt(2, this.property_rent);
             pstmt.setString(3, this.occupation);
-            pstmt.setInt(4, this.debt);
-            pstmt.setInt(5, this.pay_day);
-            pstmt.setInt(6,this.landlordId);
-            pstmt.setInt(7,this.tenantId);
-            pstmt.setInt(8,this.FromDay);
-            pstmt.setInt(9,this.LastDay);
+            pstmt.setInt(4, this.pay_day);
+            pstmt.setInt(5,this.landlordId);
+            pstmt.setInt(6,this.FromDay);
+            pstmt.setInt(7,this.LastDay);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
