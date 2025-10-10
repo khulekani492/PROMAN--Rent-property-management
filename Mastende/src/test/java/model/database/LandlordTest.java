@@ -67,7 +67,14 @@ class landlordTest extends connectionAcess {
         String unhashedpassword ="Deadly@IKnow";
         String hashedPassword =  hashPassword(unhashedpassword);
         landlord newLandlord = new landlord("Mkhize","Mkhize@gmail.com",hashedPassword,"tenant","0826690384","1st street somewhere");
+
+        residence property = new residence(3,600,"yes",2,2,7);
+        newLandlord.autocommitfalse();
+
         newLandlord.insert_information();
+        Integer tenant =  newLandlord.UniqueID();
+        property.setTenantId(tenant);
+        assertNotNull(property.getTenantId());
         assertEquals("Mkhize", newLandlord.getUser_name());
         assertEquals(hashedPassword, newLandlord.getPassword());
         newLandlord.autocommitfalse();
