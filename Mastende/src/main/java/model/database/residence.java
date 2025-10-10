@@ -18,7 +18,7 @@ public class residence extends connectionAcess implements  Property{
     private final Integer property_unit;
     private final Integer property_rent;
     private final  String occupation;
-    private final Integer debt;
+    private  Integer debt;
     private  Integer landlordId;
     private  Integer tenantId;
     private final  Integer pay_day;
@@ -47,6 +47,17 @@ public class residence extends connectionAcess implements  Property{
       return this.landlordId;
     };
 
+    public void setTenantId(Integer tenantId){
+        this.tenantId = tenantId;
+    }
+
+    public Integer getTenantId(){
+        return this.tenantId;
+    }
+
+    public void  setDebt(Integer debt){
+        this.debt = debt;
+    }
     @Override
     public void insert_information() {
         String propertySQL = """
