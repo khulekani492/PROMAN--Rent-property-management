@@ -129,7 +129,7 @@ public class landlord extends connectionAcess implements Property{
     @Override
     public Integer UniqueID() {
         String reference_key = """
-        SELECT id FROM Users WHERE user_email = ?;
+        SELECT id FROM general_users WHERE email = ?;
     """;
         try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
             pstmt.setString(1, this.user_email);
@@ -143,4 +143,15 @@ public class landlord extends connectionAcess implements Property{
         }
         return null; // if not found
 }
+    public void assignProperty() {
+        String propertySQL = """
+                  UPDATE properties SET landlord_user_id = ? WHERE id = ?
+                """;
+        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
+            pstmt.setInt(1, UniqueID());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
