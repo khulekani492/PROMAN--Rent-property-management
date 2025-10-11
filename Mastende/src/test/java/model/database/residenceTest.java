@@ -96,12 +96,14 @@ class residenceTest {
         newLandlord.insert_information();
         Integer landlordId = newLandlord.UniqueID();
 
+
         assertNotNull(landlordId, "Landlord ID should not be null");
 
         // Create and link property
         residence property = new residence(3, 600, "yes");
 
         property.setlandlord(landlordId);
+        System.out.println(property.getLandlordId());
         //SET PAY_DAY
         Integer usuku_lokuKhokha = 13;
         property.setRentDay(usuku_lokuKhokha);
@@ -111,8 +113,13 @@ class residenceTest {
         //Update properties table pay_column by the landlordId
         property.update_payDay();
 
+        Integer property_unit = property.UniqueID();
+        Integer money_owned = property.querypayDay();
+        System.out.println(property.UniqueID() );
+        System.out.println(money_owned);
         //
-        assertEquals(property.getRentDay(),property.getRentDay());
+        assertNotNull(property.getLandlordId());
+        assertEquals(13,money_owned);
         assertEquals(landlordId, property.getLandlordId(), "Landlord ID should match property record");
         assertTrue(checkPassword(unhashedPassword, hashedPassword));
     }
