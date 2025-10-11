@@ -23,8 +23,13 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class generalTest {
+
     private Connection connection;
     private static Properties props = new Properties();
+    general landlord = new general();
+
+    public generalTest() throws SQLException {
+    }
 
     // Load database configuration before all tests
     @BeforeAll
@@ -44,18 +49,30 @@ public class generalTest {
         String url = props.getProperty("db.url");
         String user = props.getProperty("db.user");
         String password = props.getProperty("db.password");
-
         connection = DriverManager.getConnection(url, user, password);
-        connection.setAutoCommit(false); // manual transaction control
+        landlord.setConnection(connection);
+       // manual transaction control
     }
+
 
     @AfterEach
     void tearDown() throws SQLException {
+        String deleteProperties = "DELETE FROM properties";
+        String deleteUsers = "DELETE FROM general_users";
+
+        try (
+                PreparedStatement stmt1 = connection.prepareStatement(deleteProperties);
+                PreparedStatement stmt2 = connection.prepareStatement(deleteUsers)
+        ) {
+            stmt1.executeUpdate();  // delete from properties first
+            stmt2.executeUpdate();  // then delete from general_users
+        }
+
         if (connection != null && !connection.isClosed()) {
-            connection.rollback(); // undo test changes
             connection.close();
         }
     }
+
 
     // Mock password hashing for demonstration (replace with your real one)
     private String hashPassword(String plainText) {
@@ -79,12 +96,14 @@ public class generalTest {
                 "0826690384",
                 "1st street somewhere"
         );
-
-        newLandlord.insert_information();
+        newLandlord.setConnection(connection);
+         //Check  connection is the same
+        assertEquals(connection,newLandlord.getConnection());
         assertEquals("khule", newLandlord.getUser_name());
         assertEquals(hashedPassword, newLandlord.getPassword());
-
+        newLandlord.insert_information();
         Integer landlordId = newLandlord.UniqueID();
+
         assertNotNull(landlordId, "Landlord ID should not be null");
 
         // Create and link property
