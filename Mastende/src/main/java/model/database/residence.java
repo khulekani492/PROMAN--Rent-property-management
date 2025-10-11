@@ -25,7 +25,7 @@ public class residence extends connectionAcess implements  Property {
     private Integer FromDay;
     private Integer LastDay;
 
-    public residence(Integer property_name, Integer property_rent, String occupation, Integer FromDay, Integer Lastday, Integer pay_day) throws SQLException {
+    public residence(Integer property_name, Integer property_rent, String occupation) throws SQLException {
         super();
         this.property_unit = property_name;
         this.property_rent = property_rent;
@@ -33,9 +33,9 @@ public class residence extends connectionAcess implements  Property {
         this.landlordId = null;
         this.tenantId = null;
         this.debt = null;
-        this.pay_day = pay_day;
-        this.FromDay = FromDay;
-        this.LastDay = Lastday;
+        this.pay_day = null;
+        this.FromDay = null;
+        this.LastDay = null;
     }
     public void setlandlord(Integer landlordId) {
         this.landlordId = landlordId;
@@ -104,15 +104,14 @@ public class residence extends connectionAcess implements  Property {
     public void insert_information() {
         String propertySQL = """
     INSERT INTO properties (property_unit, property_rent, occupation,landlord_user_id)
-    VALUES (?, ?, ?, ?,? )
+    VALUES (?, ?, ?, ? )
 """;
 
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
             pstmt.setInt(1, this.property_unit);
             pstmt.setInt(2, this.property_rent);
             pstmt.setString(3, this.occupation);
-            pstmt.setInt(4, this.pay_day);
-            pstmt.setInt(5,this.landlordId);
+            pstmt.setInt(4,this.landlordId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
