@@ -81,12 +81,12 @@ public class residence extends connectionAcess implements  Property {
         return this.debt;
     }
 
-    public Integer queryDebt(Integer mastede) {
+    public Integer queryDebt() {
         String sql = """
                 SELECT debt  From properties WHERE landlord_user_id = ?;
                 """;
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, mastede);
+            pstmt.setInt(1, this.landlordId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
 
@@ -118,7 +118,7 @@ public class residence extends connectionAcess implements  Property {
         }
 
     }
-    public void update_debt(Integer oustanding_money){
+    public void update_debt(){
         String sql = """
         UPDATE properties
         SET debt = ?
@@ -126,7 +126,7 @@ public class residence extends connectionAcess implements  Property {
     """;
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
-            pstmt.setInt(1, oustanding_money);
+            pstmt.setInt(1, this.debt);
             pstmt.setInt(2, this.landlordId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -135,10 +135,47 @@ public class residence extends connectionAcess implements  Property {
 
     }
 
+    public void update_payDay(){
+        String sql = """
+        UPDATE properties
+        SET pay_day = ?
+        WHERE landlord_user_id = ?;
+    """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
+            pstmt.setInt(1, this.pay_day);
+            pstmt.setInt(2, this.landlordId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public Integer querypayDay() {
+        String sql = """
+    SELECT property_unit, debt  FROM properties WHERE landlord_user_id = ? AND property_unit = ?;
+    """;
+        Integer Unique = UniqueID();
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, this.landlordId);
+            pstmt.setInt(2,Unique);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("debt");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return  null;
+    }
+
     @Override
     public Integer UniqueID() {
         String reference_key = """
-        SELECT id FROM property WHERE userId = ?;
+        SELECT id FROM properties WHERE landlord_user_id = ?;
     """;
         try (PreparedStatement pstmt = connection.prepareStatement(reference_key)) {
            pstmt.setInt(1, this.landlordId);
