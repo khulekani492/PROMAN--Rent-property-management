@@ -76,7 +76,7 @@ class residenceTest {
     }
 
     @Test
-    void testPaydayExist() throws SQLException {
+    void testInsertAndPAYyDebt() throws SQLException {
         String unhashedPassword = "Ngeke*_*Ungene";
         String hashedPassword = hashPassword(unhashedPassword);
 
