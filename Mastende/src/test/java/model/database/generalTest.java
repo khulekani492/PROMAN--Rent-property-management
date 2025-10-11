@@ -175,7 +175,7 @@ public class generalTest {
         assertNotNull(property.getDebt(), "Debt should not be null after insert");
         assertEquals(price, property.getDebt(), "Debt should match the inserted value");
 
-        Integer moneyOwed = property.queryDebt(landlordId);
+        Integer moneyOwed = property.queryDebt();
         assertNotNull(moneyOwed, "Queried debt should not be null");
         assertEquals(property.getDebt(), moneyOwed, "Queried debt should match the inserted value");
 
