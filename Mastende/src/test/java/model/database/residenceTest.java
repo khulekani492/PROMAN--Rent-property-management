@@ -108,7 +108,11 @@ class residenceTest {
          //Check if instance of the class internal attribute Payday is == usuku_lokuKhokha
         assertEquals(usuku_lokuKhokha,property.getRentDay());
         property.insert_information();
+        //Update properties table pay_column by the landlordId
+        property.update_payDay();
 
+        //
+        assertEquals(property.getRentDay(),property.getRentDay());
         assertEquals(landlordId, property.getLandlordId(), "Landlord ID should match property record");
         assertTrue(checkPassword(unhashedPassword, hashedPassword));
     }
@@ -166,14 +170,14 @@ class residenceTest {
         property.setlandlord(landlordId);
 
         property.insert_information();
-
-        property.update_debt(price);
         property.setDebt(price);
+
+        property.update_debt();
 
         assertNotNull(property.getDebt(), "Debt should not be null after insert");
         assertEquals(price, property.getDebt(), "Debt should match the inserted value");
 
-        Integer moneyOwed = property.queryDebt(landlordId);
+        Integer moneyOwed = property.queryDebt();
         assertNotNull(moneyOwed, "Queried debt should not be null");
         assertEquals(property.getDebt(), moneyOwed, "Queried debt should match the inserted value");
 
