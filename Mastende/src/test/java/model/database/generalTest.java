@@ -157,7 +157,7 @@ public class generalTest {
                 "0826690384",
                 "1st street somewhere"
         );
-
+        newLandlord.setConnection(connection);
         int price = 250;
         residence property = new residence(3, 600, "yes", 2, 2, 7);
 
