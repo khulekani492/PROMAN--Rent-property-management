@@ -128,6 +128,7 @@ public class generalTest {
                 "0826690384",
                 "1st street somewhere"
         );
+        newTenant.setConnection(connection);
 
         assertEquals("Mkhize", newTenant.getUser_name());
         assertEquals(hashedPassword, newTenant.getPassword());
