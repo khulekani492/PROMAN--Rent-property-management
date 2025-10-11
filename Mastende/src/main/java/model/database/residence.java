@@ -153,16 +153,18 @@ public class residence extends connectionAcess implements  Property {
     }
 
     public Integer querypayDay() {
+
         String sql = """
-    SELECT property_unit, debt  FROM properties WHERE landlord_user_id = ? AND property_unit = ?;
-    """;
-        Integer Unique = UniqueID();
+        SELECT pay_day FROM properties WHERE landlord_user_id = ? ;
+        """;
+
+
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, this.landlordId);
-            pstmt.setInt(2,Unique);
+         //   pstmt.setInt(2,unit);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("debt");
+                    return rs.getInt("pay_day");
                 }
             }
 
