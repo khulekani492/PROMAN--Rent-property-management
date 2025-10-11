@@ -168,9 +168,9 @@ public class generalTest {
         property.setlandlord(landlordId);
 
         property.insert_information();
-
-        property.update_debt(price);
         property.setDebt(price);
+
+        property.update_debt();
 
         assertNotNull(property.getDebt(), "Debt should not be null after insert");
         assertEquals(price, property.getDebt(), "Debt should match the inserted value");
