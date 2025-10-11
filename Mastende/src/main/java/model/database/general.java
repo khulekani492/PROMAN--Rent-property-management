@@ -1,8 +1,6 @@
 package model.database;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * Data Access class for User (the Landlord).
@@ -52,6 +50,13 @@ public class general extends connectionAcess implements Property{
         this.property_address = "";
     }
 
+    public  void  setConnection(Connection instance) throws SQLException {
+        this.connection = instance;
+    }
+
+public  Connection getConnection(){
+        return this.connection;
+}
 
     @Override
     public void insert_information() {
@@ -106,15 +111,7 @@ public class general extends connectionAcess implements Property{
         }
 
     }
-    public void autocommitfalse() throws SQLException {
-        this.connection.setAutoCommit(false);
 
-    };
-
-    public void reverse() throws SQLException {
-        this.connection.setAutoCommit(false);
-        this.connection.rollback();
-    };
     /**
      * Get the unique ID using the user's email.
      * <p>
@@ -122,10 +119,6 @@ public class general extends connectionAcess implements Property{
      * this helps narrow the issue of fetching the wrong ID for a user causing leakages.
      * </p>
      */
-//   TODO  Session One-06
-//-- fix the bug of inserting for the same room
-//-- add the user to the history table of rooms
-//-- supabase auth to sign up user,set connection, migrate sqlite schema to postgres
     @Override
     public Integer UniqueID() {
         String reference_key = """
