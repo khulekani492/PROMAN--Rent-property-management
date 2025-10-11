@@ -107,7 +107,7 @@ public class generalTest {
         assertNotNull(landlordId, "Landlord ID should not be null");
 
         // Create and link property
-        residence property = new residence(3, 600, "yes", 2, 2, 7);
+        residence property = new residence(3, 600, "yes");
         property.setlandlord(landlordId);
         property.insert_information();
 
@@ -133,8 +133,8 @@ public class generalTest {
         assertEquals("Mkhize", newTenant.getUser_name());
         assertEquals(hashedPassword, newTenant.getPassword());
 
-        residence property = new residence(3, 600, "yes", 2, 2, 7);
-        newTenant.autocommitfalse();
+        residence property = new residence(3, 600, "yes");
+
         newTenant.insert_information();
 
         Integer tenantId = newTenant.UniqueID();
@@ -159,7 +159,7 @@ public class generalTest {
         );
         newLandlord.setConnection(connection);
         int price = 250;
-        residence property = new residence(3, 600, "yes", 2, 2, 7);
+        residence property = new residence(3, 600, "yes");
 
         newLandlord.insert_information();
         Integer landlordId = newLandlord.UniqueID();
