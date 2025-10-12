@@ -179,7 +179,7 @@ public class generalTest {
         assertEquals(price, property.getDebt(), "Debt should match the inserted value");
 
         Integer moneyOwed = property.queryDebt();
-        assertNullll(moneyOwed, "Queried debt should not be null");
+        assertNotNull(moneyOwed, "Queried debt should not be null");
         assertEquals(property.getDebt(), moneyOwed, "Queried debt should match the inserted value");
 
 
