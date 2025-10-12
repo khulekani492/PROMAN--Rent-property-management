@@ -112,7 +112,7 @@ public  Connection getConnection(){
 
     }
 
-    /**
+    /** New session
      * Get the unique ID using the user's email.
      * <p>
      * User emails are unique identifiers in their own right. For security,
