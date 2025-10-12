@@ -27,13 +27,13 @@ public class apiHandler {
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
-                String NumberofUnits = ctx.formParam("n_units");
+                Integer numberofUnits = Integer.valueOf(ctx.formParam("n_units"));
 
                 // hash password
                 String hashedPassword = hashPassword(password);
 
                 // insert user into database
-                general new_user = new general(user_name, email, hashedPassword,contact,property_address,user_type);
+                general new_user = new general(user_name, email, hashedPassword,contact,property_address,user_type,numberofUnits);
                 new_user.insert_information();
 
                 // get new user ID
