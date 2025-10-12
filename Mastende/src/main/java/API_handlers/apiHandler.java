@@ -4,7 +4,7 @@ import API.state;
 import io.javalin.http.Handler;
 import model.database.Tenant;
 import model.database.counter;
-import model.database.landlord;
+import model.database.general;
 import model.database.residence;
 
 import java.sql.Date;
@@ -27,12 +27,13 @@ public class apiHandler {
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
+                String NumberofUnits = ctx.formParam("n_units");
 
                 // hash password
                 String hashedPassword = hashPassword(password);
 
                 // insert user into database
-                landlord new_user = new landlord(user_name, email, hashedPassword,contact,property_address,user_type);
+                general new_user = new general(user_name, email, hashedPassword,contact,property_address,user_type);
                 new_user.insert_information();
 
                 // get new user ID
@@ -62,21 +63,21 @@ public class apiHandler {
     public Handler addproperty(){
         return  ctx ->{
            try{
-            String propertyName = ctx.formParam("property_name");
-            ctx.sessionAttribute("propertyname",propertyName);
-            Integer numberOfRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("number_of_rooms")));
+            Integer propertyUnit = Integer.valueOf(ctx.formParam("property_name"));
+            ctx.sessionAttribute("propertyname",propertyUnit);
+           // Integer numberOfRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("number_of_rooms")));
             Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
 
-            Integer OccupiedRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("roomsOccupied")));
-            ctx.sessionAttribute("roomsOccupied",OccupiedRooms);
+           /// Integer OccupiedRooms =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("roomsOccupied")));
+            //ctx.sessionAttribute("roomsOccupied",OccupiedRooms);
 
-            String address = ctx.formParam("address");
-            String contact = ctx.formParam("contact");
+            String occupation = ctx.formParam("occupation");
+            //String contact = ctx.formParam("contact");
             //Get the new user unique_Id by accessing the key-value setAttributes() session set in /user_sign_up Url_end point
             Integer property_owner = ctx.sessionAttribute("user_ID");
 
             //Insert into property table property_information
-            residence property_information = new residence(propertyName,numberOfRooms,OccupiedRooms,rent,address,contact,property_owner);
+            residence property_information = new residence(propertyUnit,rent,occupation);
             property_information.insert_information();
 
             //entity relationship with the Users table
@@ -84,12 +85,12 @@ public class apiHandler {
             System.out.println("owner_property");
             System.out.println(owner_property);
             ctx.sessionAttribute("propertyId",owner_property);
-            ctx.sessionAttribute("roomNo",numberOfRooms);
+            //ctx.sessionAttribute("roomNo",numberOfRooms);
 
             Integer current_landlord = ctx.sessionAttribute("user_ID");
             Integer landlord_property = ctx.sessionAttribute("propertyId");
 
-            property_information.assignProperty(landlord_property,current_landlord);
+            //property_information.assignProperty(landlord_property,current_landlord);
 
             ctx.render("/templates/tenant_form.html");
            }catch (SQLException e) {
