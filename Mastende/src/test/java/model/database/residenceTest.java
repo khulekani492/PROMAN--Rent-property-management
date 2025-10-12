@@ -86,7 +86,8 @@ class residenceTest {
                 hashedPassword,
                 "landlord",
                 "0826690384",
-                "1st street somewhere"
+                "1st street somewhere",
+                2
         );
         newLandlord.setConnection(connection);
         //Check  connection is the same instance
@@ -135,7 +136,8 @@ class residenceTest {
                 hashedPassword,
                 "tenant",
                 "0826690384",
-                "1st street somewhere"
+                "1st street somewhere",
+                9
         );
         newTenant.setConnection(connection);
 
@@ -164,7 +166,8 @@ class residenceTest {
                 hashedPassword,
                 "tenant",
                 "0826690384",
-                "1st street somewhere"
+                "1st street somewhere",
+                23
         );
         newLandlord.setConnection(connection);
         int price = 250;
