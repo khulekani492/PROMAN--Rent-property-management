@@ -32,15 +32,15 @@ public class general extends connectionAcess implements Property{
    private final Integer units;
 
 
-    public general(String user_name, String user_email, String password, String user_type, String contact, String address,  Integer unit) throws SQLException {
+    public general(String user_name, String contact,String user_email, String password, String user_type,  String address,  Integer unit) throws SQLException {
         super();
         this.user_name = user_name;
+        this.contact = contact;
         this.user_email = user_email;
         this.password = password;
         this.user_type = user_type;
-        this.contact = contact;
         this.property_address = address;
-        this.units =  unit;
+        this.units = unit;
     }
     public general() throws SQLException {
         super();
@@ -91,10 +91,13 @@ public  Connection getConnection(){
     public  String getUser_email(){
         return this.user_email;
     }
-
+ public  String getContact(){
+        return  this.contact;
+ }
     public String getPassword(){
         return  this.password;
     }
+
 
     public String confirm_password(String email) {
 
