@@ -10,7 +10,6 @@ import java.util.Map;
 
 import static API.SessionUtil.fileSessionHandler;
 
-//TODO https://javalin.io/tutorials/jetty-session-handling
 
 
 public class umuziAPI {
