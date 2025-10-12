@@ -1,6 +1,6 @@
 package API_handlers;
 
-import model.database.landlord;
+//port model.database.landlord;
 import io.javalin.http.Handler;
 
 public class  loginAPIhandler {
@@ -13,7 +13,7 @@ public class  loginAPIhandler {
                 String email = ctx.formParam("in_user_email");
                 String password = ctx.formParam("in_password");
 
-                landlord landlordcheck = new landlord();
+               //andlord landlordcheck = new landlord();
                 //Query db search username ,user_email,password
                 //boolean passwordexist = landlordcheck.confirm_password(email,password);
 //                if(passwordexist){
