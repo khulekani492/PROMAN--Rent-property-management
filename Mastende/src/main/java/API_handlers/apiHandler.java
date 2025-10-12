@@ -22,11 +22,12 @@ public class apiHandler {
             try {
                 String user_name = ctx.formParam("user_name");
                 ctx.sessionAttribute("user_name", user_name);
+                System.out.println(user_name);
                 String contact = ctx.formParam("contact");
                 String property_address = ctx.formParam("address");
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
-                String user_type = ctx.formParam("user_type");
+                String user_type = "landlord";
                 Integer numberofUnits = Integer.valueOf(ctx.formParam("n_units"));
 
                 // hash password
