@@ -15,35 +15,23 @@ import java.time.LocalDate;
  */
 
 public class Tenant extends  connectionAcess implements  Property{
-    private final Integer propertyId;
-    private final String name;
+    private  Integer tenantId;
     private final Date moveInDate ;
     private final Date moveOut;
     private final String employment;
-    private final String cell_number;
-    private final Date pay_day;
-    private final Integer   room_number;
-    private final Integer  room_price;
-    private final Integer debt;
     private final String kin_name;
     private final String kin_number;
 
 
-    public Tenant(Integer propertyId, String name, Date moveInDate,String employment,String cell_number,
-                  Date pay_day, Integer room_number,Integer room_price,String kin_name,String kin_number) throws SQLException {
+    public Tenant( Date moveInDate,String employment,String kin_name,String kin_number) throws SQLException {
         super();
-        this.name = name;
+        this.tenantId = null;
         this.moveInDate = moveInDate;
         this.moveOut = null;
         this.employment = employment;
-        this.cell_number = cell_number;
-        this.pay_day = pay_day;
-        this.room_number = room_number;
-        this.room_price = room_price;
-        this.debt = 0;
         this.kin_name = kin_name;
         this.kin_number = kin_number;
-        this.propertyId =  propertyId;
+
     }
 
 
@@ -52,28 +40,21 @@ public class Tenant extends  connectionAcess implements  Property{
     @Override
     public void insert_information() {
         String addTenantSql = """
-        INSERT INTO tenants (
-            propertyId, name, move_in, move_out, cell_number,
-            pay_day, room_number, Room_price, employment,kin_name, kin_number
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+        INSERT INTO tenants_information (
+            move_in, move_out, tenant_user_id ,employment,kin_name, kin_number)
+        VALUES (?,?,?,?)
     """;
 
         try (PreparedStatement pstm = connection.prepareStatement(addTenantSql)) {
-            pstm.setInt(1, this.propertyId);
-            pstm.setString(2, this.name);
-            pstm.setDate(3, this.moveInDate); // java.sql.Date
-            pstm.setDate(4, this.moveOut != null ? this.moveOut : null); // null-safe
-            pstm.setString(5, this.cell_number);
-            pstm.setDate(6, this.pay_day != null ? this.pay_day : null); // null-safe
-            pstm.setInt(7, this.room_number);
-            pstm.setInt(8, this.room_price);
-            pstm.setString(9, this.employment);
-            pstm.setString(10,this.kin_name);
-            pstm.setString(11, this.kin_number);
+            pstm.setDate(1, this.moveInDate); // java.sql.Date // null-safe
+            pstm.setDate(2, this.moveOut);
+            pstm.setInt(3,this.tenantId);
+            pstm.setString(4,this.employment);
+            pstm.setString(5, this.kin_name);
+            pstm.setString(6,this.kin_number);
             pstm.executeUpdate();
-            roomHist addToHistory = new roomHist(this.propertyId,this.room_number,this.name,this.cell_number,this.moveInDate,this.moveOut);
-            addToHistory.insert_information();
+  //          roomHist addToHistory = new roomHist(this.propertyId,this.room_number,this.name,this.cell_number,this.moveInDate,this.moveOut);
+            //addToHistory.insert_information();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Tenant insertion failed", e);
