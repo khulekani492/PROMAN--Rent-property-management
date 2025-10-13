@@ -57,16 +57,16 @@ public class generalTest {
 
     @AfterEach
     void tearDown() throws SQLException {
-//        String deleteProperties = "DELETE FROM properties";
-//        String deleteUsers = "DELETE FROM general_users";
+        String deleteProperties = "DELETE FROM properties";
+        String deleteUsers = "DELETE FROM general_users";
 
-//        try (
-//                PreparedStatement stmt1 = connection.prepareStatement(deleteProperties);
-//                PreparedStatement stmt2 = connection.prepareStatement(deleteUsers)
-//        ) {
-//            stmt1.executeUpdate();  // delete from properties first
-//            stmt2.executeUpdate();  // then delete from general_users
-//        }
+        try (
+                PreparedStatement stmt1 = connection.prepareStatement(deleteProperties);
+                PreparedStatement stmt2 = connection.prepareStatement(deleteUsers)
+        ) {
+            stmt1.executeUpdate();  // delete from properties first
+            stmt2.executeUpdate();  // then delete from general_users
+        }
 
         if (connection != null && !connection.isClosed()) {
             connection.close();
@@ -126,10 +126,10 @@ public class generalTest {
 
         general newTenant = new general(
                 "Mkhize",
-                "Mkhize@gmail.com",
+                "0826690384",
+                "mKHIZE@34gmail.com",
                 hashedPassword,
                 "tenant",
-                "0826690384",
                 "1st street somewhere",
                 4
         );
@@ -196,7 +196,7 @@ public class generalTest {
                 "tenant"
         );
         newLandlord.setConnection(connection);
-
+        newLandlord.landlord_insert_tenant();
         Integer landlordId = newLandlord.UniqueID();
         assertNotNull(landlordId,
                 "Landlord ID should not be null");
