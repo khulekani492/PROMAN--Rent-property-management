@@ -27,6 +27,9 @@ public class umuziAPI {
         app.get("/rentalmanageme@sign_up",ctx ->{
             ctx.render("templates/sign_up_user.html");
         });
+        app.get("/tenant_form",ctx ->{
+           ctx.render("/templates/tenant_form.html");
+        });
         //sign_up session order /user_sign_up "/add_property" /addtenants"
         /**
          * adds new user information to the database
