@@ -16,25 +16,22 @@ import java.util.Objects;
 import static API.SecurityUtil.hashPassword;
 
 public class apiHandler {
-
     public Handler sign_up() {
         return ctx -> {
             try {
                 String user_name = ctx.formParam("user_name");
                 ctx.sessionAttribute("user_name", user_name);
-                System.out.println(user_name);
                 String contact = ctx.formParam("contact");
                 String property_address = ctx.formParam("address");
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
-                String user_type = "landlord";
+                String user_type = ctx.formParam("user_type");
                 Integer numberofUnits = Integer.valueOf(ctx.formParam("n_units"));
-
                 // hash password
                 String hashedPassword = hashPassword(password);
 
                 // insert user into database
-                general new_user = new general(user_name, email, hashedPassword,contact,property_address,user_type,numberofUnits);
+                general new_user = new general(user_name, contact, email, hashedPassword,user_type,property_address,numberofUnits);
                 new_user.insert_information();
 
                 // get new user ID
@@ -79,6 +76,7 @@ public class apiHandler {
 
             //Insert into property table property_information
             residence property_information = new residence(propertyUnit,rent,occupation);
+            property_information.setlandlord(ctx.sessionAttribute("user_ID"));
             property_information.insert_information();
 
             //entity relationship with the Users table
@@ -112,17 +110,14 @@ public class apiHandler {
     public Handler addTenant(){
         state duplicateNUmberchecker = new state(0);
         counter count = new counter();
+
         return ctx ->{
             try{
-
-
                 Integer numberofRooms = ctx.sessionAttribute("roomsOccupied");
 
                 //Access the form input --->
-                Integer propertyID = ctx.sessionAttribute("propertyId");
-                String name = ctx.formParam("tenant_name");
-                Date moveIn = Date.valueOf(ctx.formParam("move_in"));
 
+                Date moveIn = Date.valueOf(ctx.formParam("move_in"));
                 String employment_status = ctx.formParam("employment");
                 String cell_number = ctx.formParam("cell_number");
                 Date payday = Date.valueOf( ctx.formParam("pay_day"));
@@ -138,12 +133,25 @@ public class apiHandler {
                     System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
                 }
 
-                Integer room_price = Integer.valueOf(Objects.requireNonNull(ctx.formParam("room_price")));
+                //Insert tenant to general_user table for landlord Manual insertion
+                String name = ctx.formParam("tenant_name");
+                String number = ctx.formParam("cell_number");
+                String user_type = "tenant";
+                general addnewTenant = new general(name,number,user_type);
+                addnewTenant.landlord_insert_tenant();
+
+                //update properties table and includes the tenant unique ID
+                Integer tenantId = addnewTenant.UniqueID();
+                Integer landlordId = ctx.sessionAttribute("user_ID");
+                residence addTenantUnit = new residence();
+                //update the properties row with the tenant occupying the room
+                addTenantUnit.Insert_tenatId(tenantId,landlordId);
+
                 String kin_name = ctx.formParam("kin_name");
                 String kin_number = ctx.formParam("kin_number");
 
-                Tenant tenant = new Tenant(propertyID,name,moveIn,employment_status,cell_number,payday,room,room_price,kin_name,kin_number);
-                tenant.insert_information();
+               // Tenant tenant = new Tenant(moveIn,cell_number,payday,employment_status,kin_name,kin_number);
+                //tenant.insert_information();
 
                 /**
                  * If the counter equals the number of rooms, render the user_profile HTML.
