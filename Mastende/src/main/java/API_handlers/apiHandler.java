@@ -117,10 +117,7 @@ public class apiHandler {
 
                 //Access the form input --->
 
-                Date moveIn = Date.valueOf(ctx.formParam("move_in"));
-                String employment_status = ctx.formParam("employment");
-                String cell_number = ctx.formParam("cell_number");
-                Date payday = Date.valueOf( ctx.formParam("pay_day"));
+
                 Integer room = Integer.parseInt(Objects.requireNonNull(ctx.formParam("room")));
 
                 // check-logic for preventing inserting tenant with the same room number to the database
@@ -144,9 +141,13 @@ public class apiHandler {
                 Integer tenantId = addnewTenant.UniqueID();
                 Integer landlordId = ctx.sessionAttribute("user_ID");
                 residence addTenantUnit = new residence();
-                //update the properties row with the tenant occupying the room
+                //update the properties row with the tenant occupying the room/unit
                 addTenantUnit.Insert_tenatId(tenantId,landlordId);
 
+                //additional information about the tenant --> tenants_information table
+                //how does htm send range values
+                Date moveIn = Date.valueOf(ctx.formParam("move_in"));
+                String employment_status = ctx.formParam("employment");
                 String kin_name = ctx.formParam("kin_name");
                 String kin_number = ctx.formParam("kin_number");
 
