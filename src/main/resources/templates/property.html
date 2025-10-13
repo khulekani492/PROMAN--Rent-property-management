@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Rental Management</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background: #f4f6f9;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          min-height: 100vh;
+          margin: 0;
+          padding: 20px;
+        }
+
+        .forms-wrapper {
+          display: flex;
+          gap: 20px;
+          flex-wrap: wrap; /* stack on small screens */
+        }
+
+        .form-container {
+          background: #fff;
+          padding: 25px;
+          border-radius: 10px;
+          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+          width: 100%;
+          max-width: 400px;
+        }
+
+        h2 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #333;
+        }
+
+        label {
+          font-weight: bold;
+          margin-top: 10px;
+          display: block;
+          color: #444;
+        }
+
+        input, textarea, select, button {
+          width: 100%;
+          padding: 10px;
+          margin-top: 5px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 14px;
+        }
+
+        textarea {
+          resize: none;
+        }
+
+        button {
+          background: #007bff;
+          color: #fff;
+          font-weight: bold;
+          cursor: pointer;
+          margin-top: 15px;
+          transition: background 0.3s;
+        }
+
+        button:hover {
+          background: #0056b3;
+        }
+
+        .radio-group {
+          display: flex;
+          gap: 15px;
+          margin-top: 5px;
+        }
+
+        .radio-group label {
+          display: flex;
+          align-items: center;
+          font-weight: normal;
+        }
+
+        .radio-group input {
+          margin-right: 5px;
+          width: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Property-Unit information</h2>
+    <form action="http://localhost:7070/add_property" method="POST">
+        <label for="property_name">Property unit:</label>
+        <input id="property_name" name="property_name"  type="number" min="1" value="1" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2" required>
+
+        <label for="rent">Unit Rent (per month):</label>
+        <input type="number" id="rent" name="rent" step="0.01" required>
+
+        <label for="occupation">Occupation:</label>
+        <select id="occupation" name="occupation" required>
+            <option value="">Select</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        <label>IF yes, send an email to the tenant:</label>
+        <a href="#" id="invite-tenant">Invite</a>
+        <label>Add tenant manually</label>
+        <a   href="/tenant_form">Add</a>
+        <button type="submit">Save Property</button>
+    </form>
+</div>
+
+</body>
+</html>
