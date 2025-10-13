@@ -15,9 +15,9 @@ import java.util.function.IntBinaryOperator;
  */
 
 public class residence extends connectionAcess implements  Property {
-    private final Integer property_unit;
-    private final Integer property_rent;
-    private final String occupation;
+    private Integer property_unit;
+    private Integer property_rent;
+    private String occupation;
     private Integer debt;
     private Integer landlordId;
     private Integer tenantId;
@@ -37,6 +37,20 @@ public class residence extends connectionAcess implements  Property {
         this.FromDay = null;
         this.LastDay = null;
     }
+
+    public residence() throws SQLException {
+        super();
+        this.property_unit = null;
+        this.property_rent = null;
+        this.occupation = "";
+        this.landlordId = null;
+        this.tenantId = null;
+        this.debt = null;
+        this.pay_day = null;
+        this.FromDay = null;
+        this.LastDay = null;
+    }
+
     public void setlandlord(Integer landlordId) {
         this.landlordId = landlordId;
     }
@@ -99,7 +113,19 @@ public class residence extends connectionAcess implements  Property {
         }
       return  null;
     }
+    public  void  Insert_tenatId(Integer tenantid,Integer landlordId){
+        String tenant = """
+                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ?
+                """;
 
+        try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
+            pstm.setInt(1,tenantid);
+            pstm.setInt(2,landlordId);
+            pstm.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException("Database update failed", e);
+        }
+    }
     @Override
     public void insert_information() {
         String propertySQL = """
