@@ -11,16 +11,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import static API.SecurityUtil.checkPassword;
-import static API.SecurityUtil.hashPassword;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
-import java.io.*;
-import java.sql.*;
-import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.sql.*;
 
 public class generalTest {
 
@@ -189,22 +184,41 @@ public class generalTest {
     }
     @Test
     void testTenantadded() throws SQLException {
-
+        String unhashedPassword = "Deadly@IKnow";
+        String hashedPassword = hashPassword(unhashedPassword);
         general newLandlord = new general(
+                "HambaNgevura",
+                "vura@gmail.com",
+                hashedPassword,
+                "landlord",
+                "0826423844",
+                "1st street somewhere",
+                6
+        );
+        newLandlord.insert_information();
+        assertNotNull(newLandlord.getUser_name());
+        assertNotNull(newLandlord.UniqueID());
+        Integer landlord = newLandlord.UniqueID();
+        assertNotNull(landlord);
+
+        general newtenant = new general(
                 "dao",
                 "0826690384",
                 "tenant"
         );
-        newLandlord.setConnection(connection);
-        newLandlord.landlord_insert_tenant();
-        Integer landlordId = newLandlord.UniqueID();
-        assertNotNull(landlordId,
+        residence property_unit = new residence();
+        newtenant.setConnection(connection);
+        newtenant.landlord_insert_tenant();
+        Integer tenantid = newtenant.UniqueID();
+        assertNotNull(tenantid,
                 "Landlord ID should not be null");
-        assertNotNull(newLandlord.getContact(),
+        assertNotNull(newtenant.getContact(),
                 "Debt should not be null after insert");
-        assertNotNull(newLandlord.getUser_name(),
+        assertNotNull(newtenant.getUser_name(),
                 "Debt should match the inserted value");
-        assertNotNull(newLandlord.getUser_type());
+        assertNotNull(newtenant.getUser_type());
+
+       property_unit.Insert_tenatId(tenantid,landlord);
 
 
 
