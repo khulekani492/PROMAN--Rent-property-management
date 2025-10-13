@@ -75,11 +75,20 @@ public  Connection getConnection(){
 
 public void  landlord_insert_tenant(){
     String insertUserSQL = """
-                   INSERT INTO generaL_users (name, contact, user_type)
-                   VALUES (?,?,?)
+                   INSERT INTO generaL_users (name, contact,email , password ,user_type)
+                   VALUES (?,?,?,?,?)
                    ON CONFLICT (email) DO NOTHING;
                    """;
-
+    try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
+        pstm.setString(1,this.user_name);
+        pstm.setString(2,this.contact);
+        pstm.setString(3,this.user_email);
+        pstm.setString(4,this.password);
+        pstm.setString(5,this.user_type);
+        pstm.executeUpdate();
+    }catch (SQLException e){
+        throw new RuntimeException("Database update failed", e);
+    }
 }
 
     @Override
