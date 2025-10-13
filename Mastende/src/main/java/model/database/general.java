@@ -53,12 +53,33 @@ public class general extends connectionAcess implements Property{
         this.property_address = "";
     }
 
+    public general(String name, String number, String user_type) throws SQLException{
+        super();
+        this.user_name = name;
+        this.contact  = number;
+        this.user_email = "";
+        this.password = "";
+        this.user_type = user_type;
+        this.property_address = "";
+        this.units = null;
+
+    }
+
     public  void  setConnection(Connection instance) throws SQLException {
         this.connection = instance;
     }
 
 public  Connection getConnection(){
         return this.connection;
+}
+
+public void  landlord_insert_tenant(){
+    String insertUserSQL = """
+                   INSERT INTO generaL_users (name, contact, user_type)
+                   VALUES (?,?,?)
+                   ON CONFLICT (email) DO NOTHING;
+                   """;
+
 }
 
     @Override
@@ -91,6 +112,7 @@ public  Connection getConnection(){
     public  String getUser_email(){
         return this.user_email;
     }
+    public  String getUser_type(){return  this.user_type;}
  public  String getContact(){
         return  this.contact;
  }
