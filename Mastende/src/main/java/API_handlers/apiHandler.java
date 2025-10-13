@@ -90,7 +90,6 @@ public class apiHandler {
             Integer landlord_property = ctx.sessionAttribute("propertyId");
 
             //property_information.assignProperty(landlord_property,current_landlord);
-
             ctx.render("/templates/tenant_form.html");
            }catch (SQLException e) {
                ctx.status(500).result("Database error: " + e.getMessage());
@@ -137,6 +136,9 @@ public class apiHandler {
                 general addnewTenant = new general(name,number,user_type);
                 addnewTenant.landlord_insert_tenant();
 
+                //Access the unique ID from the general_user tabkle
+                Integer tenantUniqueID =  addnewTenant.UniqueID();
+
                 //update properties table and includes the tenant unique ID
                 Integer tenantId = addnewTenant.UniqueID();
                 Integer landlordId = ctx.sessionAttribute("user_ID");
@@ -144,12 +146,21 @@ public class apiHandler {
                 //update the properties row with the tenant occupying the room/unit
                 addTenantUnit.Insert_tenatId(tenantId,landlordId);
 
+
                 //additional information about the tenant --> tenants_information table
+
                 //how does htm send range values
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
                 String employment_status = ctx.formParam("employment");
                 String kin_name = ctx.formParam("kin_name");
                 String kin_number = ctx.formParam("kin_number");
+
+                //additional information about the tenant --> tenants_information table
+                Tenant additional_information = new Tenant(moveIn,employment_status,kin_name,kin_number);
+                additional_information.setTenantId(tenantUniqueID);
+                additional_information.insert_information();
+
+
 
                // Tenant tenant = new Tenant(moveIn,cell_number,payday,employment_status,kin_name,kin_number);
                 //tenant.insert_information();
