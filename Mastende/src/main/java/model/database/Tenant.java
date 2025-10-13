@@ -35,23 +35,24 @@ public class Tenant extends  connectionAcess implements  Property{
     }
 
 
-
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
+    }
 
     @Override
     public void insert_information() {
         String addTenantSql = """
         INSERT INTO tenants_information (
-            move_in, move_out, tenant_user_id ,employment,kin_name, kin_number)
-        VALUES (?,?,?,?)
+            move_in,tenant_user_id ,employment,kin_name, kin_number)
+        VALUES (?,?,?,?,?)
     """;
 
         try (PreparedStatement pstm = connection.prepareStatement(addTenantSql)) {
             pstm.setDate(1, this.moveInDate); // java.sql.Date // null-safe
-            pstm.setDate(2, this.moveOut);
-            pstm.setInt(3,this.tenantId);
-            pstm.setString(4,this.employment);
-            pstm.setString(5, this.kin_name);
-            pstm.setString(6,this.kin_number);
+            pstm.setInt(2,this.tenantId);
+            pstm.setString(3,this.employment);
+            pstm.setString(4, this.kin_name);
+            pstm.setString(5,this.kin_number);
             pstm.executeUpdate();
   //          roomHist addToHistory = new roomHist(this.propertyId,this.room_number,this.name,this.cell_number,this.moveInDate,this.moveOut);
             //addToHistory.insert_information();
