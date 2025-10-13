@@ -57,16 +57,16 @@ public class generalTest {
 
     @AfterEach
     void tearDown() throws SQLException {
-        String deleteProperties = "DELETE FROM properties";
-        String deleteUsers = "DELETE FROM general_users";
+//        String deleteProperties = "DELETE FROM properties";
+//        String deleteUsers = "DELETE FROM general_users";
 
-        try (
-                PreparedStatement stmt1 = connection.prepareStatement(deleteProperties);
-                PreparedStatement stmt2 = connection.prepareStatement(deleteUsers)
-        ) {
-            stmt1.executeUpdate();  // delete from properties first
-            stmt2.executeUpdate();  // then delete from general_users
-        }
+//        try (
+//                PreparedStatement stmt1 = connection.prepareStatement(deleteProperties);
+//                PreparedStatement stmt2 = connection.prepareStatement(deleteUsers)
+//        ) {
+//            stmt1.executeUpdate();  // delete from properties first
+//            stmt2.executeUpdate();  // then delete from general_users
+//        }
 
         if (connection != null && !connection.isClosed()) {
             connection.close();
@@ -101,6 +101,9 @@ public class generalTest {
          //Check  connection is the same
         assertEquals(connection,newLandlord.getConnection());
         assertEquals("khule", newLandlord.getUser_name());
+        System.out.println(newLandlord.getUser_email());
+        assertEquals("khule@gmail.com",newLandlord.getUser_email());
+        assertEquals("0826690384",newLandlord.getContact());
         assertEquals(hashedPassword, newLandlord.getPassword());
         newLandlord.insert_information();
         Integer landlordId = newLandlord.UniqueID();
@@ -184,4 +187,28 @@ public class generalTest {
 
 
     }
+    @Test
+    void testTenantadded() throws SQLException {
+
+        general newLandlord = new general(
+                "dao",
+                "0826690384",
+                "tenant"
+        );
+        newLandlord.setConnection(connection);
+
+        Integer landlordId = newLandlord.UniqueID();
+        assertNotNull(landlordId,
+                "Landlord ID should not be null");
+        assertNotNull(newLandlord.getContact(),
+                "Debt should not be null after insert");
+        assertNotNull(newLandlord.getUser_name(),
+                "Debt should match the inserted value");
+        assertNotNull(newLandlord.getUser_type());
+
+
+
+    }
+
+
 }
