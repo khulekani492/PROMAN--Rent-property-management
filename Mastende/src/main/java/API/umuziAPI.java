@@ -1,14 +1,13 @@
 package API;
 
 
-import API_handlers.apiHandler;
-import io.javalin.Javalin;
-import io.javalin.rendering.template.JavalinThymeleaf;
-
 import java.sql.SQLException;
 import java.util.Map;
 
 import static API.SessionUtil.fileSessionHandler;
+import API_handlers.apiHandler;
+import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinThymeleaf;
 
 
 
@@ -19,10 +18,11 @@ public class umuziAPI {
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
+            config.staticFiles.add("/");
         });
         //home_page Url_end_point
         app.get("/", ctx ->{
-           ctx.render("/templates/index.html");
+           ctx.render("/index.html");
         });
         app.get("/rentalmanageme@sign_up",ctx ->{
             ctx.render("templates/sign_up_user.html");
