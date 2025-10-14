@@ -20,7 +20,7 @@ public class umuziAPI {
             config.fileRenderer(new JavalinThymeleaf());
             config.staticFiles.add("/");
         });
-        //home_page Url_end_point
+        //home_page Url_end_point.
         app.get("/", ctx ->{
            ctx.render("/index.html");
         });
