@@ -28,12 +28,13 @@ public class apiHandler {
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
+                String property_name = ctx.formParam("property_name");
 
                 // hash password
                 String hashedPassword = hashPassword(password);
 
                 // insert user into database
-                general new_user = new general(user_name, contact, email, hashedPassword,user_type,property_address);
+                general new_user = new general(user_name, contact, email, hashedPassword,user_type,property_address,property_name);
                 new_user.insert_information();
 
                 // get new user ID
@@ -64,32 +65,33 @@ public class apiHandler {
         return  ctx ->{
            try{
 
-            Integer propertyUnit = Integer.valueOf(ctx.formParam("property_name"));
-            ctx.sessionAttribute("propertyname",propertyUnit);
+            Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
+            ctx.sessionAttribute("property_unit",propertyUnit);
             Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
             String occupation = ctx.formParam("occupation");
             //String contact = ctx.formParam("contact");
             Integer property_owner = ctx.sessionAttribute("user_ID");
 
+            Integer pay_day = Integer.valueOf(ctx.formParam("pay_day"));
+
             //Insert into property table property_information
-               System.out.println("rent "+ rent);
             residence property_information = new residence(propertyUnit,rent,occupation);
             property_information.setlandlord(property_owner);
-            property_information.setRentDay(rent);
+            property_information.setRentDay(pay_day);
 
             property_information.insert_information();
             //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
-            System.out.println("owner_property");
-            System.out.println(owner_property);
+
             ctx.sessionAttribute("propertyId",owner_property);
-            //ctx.sessionAttribute("roomNo",numberOfRooms);
+            Integer property_unit =  ctx.sessionAttribute("property_unit");
+//            Integer current_landlord = ctx.sessionAttribute("user_ID");
+//            Integer landlord_property = ctx.sessionAttribute("propertyId");
+               Map<String, Object> model = new HashMap<>();
+               model.put("property_unit",property_unit);
+               model.put("unit_add", propertyUnit);
 
-            Integer current_landlord = ctx.sessionAttribute("user_ID");
-            Integer landlord_property = ctx.sessionAttribute("propertyId");
-
-            //property_information.assignProperty(landlord_property,current_landlord);
-            ctx.render("/templates/tenant_form.html");
+            ctx.render("/templates/dashboard.html",model);
            }catch (SQLException e) {
                ctx.status(500).result("Database error: " + e.getMessage());
                e.printStackTrace();
@@ -129,8 +131,8 @@ public class apiHandler {
                 System.out.println("lil wayne down: " + number);
                 String user_type = "tenant";
                 general addnewTenant = new general(name,number,user_type);
-
-                addnewTenant.landlord_insert_tenant();
+                addnewTenant.insert_information();
+                //addnewTenant.landlord_insert_tenant();
 
                 //Access the unique ID from the general_user table
                 Integer tenantUniqueID =  addnewTenant.UniqueID();

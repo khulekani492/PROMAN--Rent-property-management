@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Tenant</title>
+</head>
+<body>
+<h1 th:text="'Property ' + ${property_name}"></h1>
+<p>Units</p>
+<p th:text="'Unit ' + ${unit_add}"></p>
+
+<p>Add tenant to unit.</p>
+<p>
+    You can send out a form for the tenant to fill in their personal details
+    or add it yourself.
+</p>
+
+<div>
+    <label>Send an email to the tenant:</label>
+    <a href="#" id="invite-tenant">Invite</a>
+</div>
+
+<div>
+    <label>Add tenant manually:</label>
+    <a href="/tenant_form">Add</a>
+</div>
+
+
+</body>
+</html>
