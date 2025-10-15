@@ -92,8 +92,8 @@ public void  landlord_insert_tenant(){
     @Override
     public void insert_information() {
            String insertUserSQL = """
-                   INSERT INTO generaL_users (name, contact, email,password,user_type,property_address,units)
-                   VALUES (?,?,?,?,?,?,?)
+                   INSERT INTO generaL_users (name, contact, email,password,user_type,property_address)
+                   VALUES (?,?,?,?,?,?)
                    ON CONFLICT (email) DO NOTHING;
                    
                    """;
