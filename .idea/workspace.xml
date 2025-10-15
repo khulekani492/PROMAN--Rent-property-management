@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cd5ff09d-31fa-43d9-b03f-e8653f8a5c59" name="Changes" comment="">
+    <list default="true" id="cd5ff09d-31fa-43d9-b03f-e8653f8a5c59" name="Changes" comment="updates">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/database/residence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/database/residence.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/database/tenant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/database/tenant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/sign_up_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/sign_up_user.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/tenant_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/tenant_form.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/model/database/generalTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/model/database/generalTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/model/database/residenceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/model/database/residenceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +49,9 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/System_design" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources" />
       <recent name="$PROJECT_DIR$" />
@@ -90,6 +99,38 @@
       <option name="presentableId" value="Default" />
       <updated>1760517469194</updated>
     </task>
+    <task id="LOCAL-00001" summary="updates">
+      <option name="closed" value="true" />
+      <created>1760537353437</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1760537353437</updated>
+    </task>
+    <task id="LOCAL-00002" summary="updates">
+      <option name="closed" value="true" />
+      <created>1760537361869</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1760537361869</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="updates" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/API/umuziAPI.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
