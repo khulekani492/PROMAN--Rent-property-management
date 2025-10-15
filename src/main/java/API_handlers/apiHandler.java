@@ -137,12 +137,16 @@ public class apiHandler {
 
                 //Access the unique ID from the general_user table
                 Integer tenantUniqueID =  addnewTenant.UniqueID();
+                System.out.println("tenant " + tenantUniqueID);
                 //update properties table and includes the tenant unique ID
-                Integer tenantId = addnewTenant.UniqueID();
                 Integer landlordId = ctx.sessionAttribute("user_ID");
+                System.out.println("amen " + landlordId);
                 residence addTenantUnit = new residence();
+                System.out.println(landlordId);
+
+                ;
                 //update the properties row with the tenant occupying the room/unit
-                addTenantUnit.Insert_tenatId(tenantId,landlordId);
+                addTenantUnit.Insert_tenatId(landlordId,landlordId);
                 //additional information about the tenant --> tenants_information table
                 //how does htm send range values
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
@@ -160,10 +164,10 @@ public class apiHandler {
                  */
                 String username = ctx.sessionAttribute("name");
                 System.out.println(username + "username");
-                String propertyname = ctx.sessionAttribute("propertyname");
+                //String property_name = ctx.sessionAttribute("property_name");
                 Map<String, Object> model = new HashMap<>();
                 model.put("username",username);
-                model.put("age", propertyname);
+                //model.put("age", propertyname);
                 ctx.render("/templates/property.html",model);
 
             } catch (Exception e) {
