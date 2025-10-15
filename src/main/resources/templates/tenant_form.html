@@ -89,7 +89,11 @@
 <body>
 <div class="form-container">
     <h2>Add Tenant</h2>
-    <form action="http://localhost:7070/addtenants" method="POST">
+    <form action="http://localhost:7070/add_tenants" method="POST">
+        <label>Name: </label>
+        <input type="text" id="tenant_name" name="tenant_name" required>
+        <label for="cell_number">Phone number:</label>
+        <input type="tel" id="cell_number" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
         <label for="move_in">Move In:</label>
         <input type="date" id="move_in" name="move_in" required>
         <label>Employment:</label>
@@ -97,8 +101,6 @@
             <label><input type="radio" name="employment" value="yes" required> Yes</label>
             <label><input type="radio" name="employment" value="no"> No</label>
         </div>
-        <label for="cell_number">Phone number:</label>
-        <input type="tel" id="cell_number" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
         <label for="kin_name">Next of Kin Name:</label>
         <input type="text" id="kin_name" name="kin_name">
         <label for="kin_number">Next of Kin Number:</label>
