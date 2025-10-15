@@ -43,7 +43,7 @@ public class umuziAPI {
 /**
  * adds tenant information to the database
  */
-        app.post("/addtenants", controller.addTenant());
+        app.post("/add_tenants", controller.addTenant());
 
 
 //log in Session
