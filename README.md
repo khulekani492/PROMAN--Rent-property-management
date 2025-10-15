@@ -21,7 +21,7 @@ PROMAN is a web application designed to help property owners and managers effici
 - **Database**: PostgreSQL /   
 ---
 
-## Installation
+## Project_Overview
 
 1. **In development**  
 ``
