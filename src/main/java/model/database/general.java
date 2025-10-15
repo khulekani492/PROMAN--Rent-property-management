@@ -29,10 +29,10 @@ public class general extends connectionAcess implements Property{
    private final String contact;
    private final String user_type;
    private  final String property_address;
-   private final Integer units;
 
 
-    public general(String user_name, String contact,String user_email, String password, String user_type,  String address,  Integer unit) throws SQLException {
+
+    public general(String user_name, String contact,String user_email, String password, String user_type,  String address) throws SQLException {
         super();
         this.user_name = user_name;
         this.contact = contact;
@@ -40,11 +40,10 @@ public class general extends connectionAcess implements Property{
         this.password = password;
         this.user_type = user_type;
         this.property_address = address;
-        this.units = unit;
+
     }
     public general() throws SQLException {
         super();
-        this.units = null;
         this.user_name = "";
         this.user_email = "";
         this.password = "";
@@ -61,7 +60,6 @@ public class general extends connectionAcess implements Property{
         this.password = "";
         this.user_type = user_type;
         this.property_address = "";
-        this.units = null;
 
     }
 
@@ -106,7 +104,6 @@ public void  landlord_insert_tenant(){
                pstm.setString(4,this.password);
                pstm.setString(5,this.user_type);
                pstm.setString(6,this.property_address);
-               pstm.setInt(7,this.units);
                pstm.executeUpdate();
            }catch (SQLException e){
                throw new RuntimeException("Database update failed", e);
