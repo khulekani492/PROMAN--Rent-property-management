@@ -117,7 +117,7 @@ public class residence extends connectionAcess implements  Property {
         String tenant = """
                 UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ?
                 """;
-
+//concerns what happens when I add another tenant with the same lord???
         try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
             pstm.setInt(1,tenantid);
             pstm.setInt(2,landlordId);
