@@ -91,16 +91,21 @@
     <h2 th:text="'Welcome, ' + ${username}"></h2>
     <p th:text="${msg}"></p>
 </div>
-
+<p>Please fill out property information</p>
 <!-- Form below the message -->
+
 <div class="form-container">
+
     <h2>Property-Unit Information</h2>
     <form action="http://localhost:7070/add_property" method="POST">
-        <label for="property_name">Property unit:</label>
-        <input id="property_name" name="property_name" type="number" min="1" value="1" required>
+        <label for="property_unit">Property unit:</label>
+        <input id="property_unit" name="property_unit" type="number" min="1" value="1" required>
 
         <label for="rent">Unit Rent (per month):</label>
         <input type="number" id="rent" name="rent" step="0.01" required>
+
+        <label for="rent">pay_day (per month):</label>
+        <input type="number" id="pay_day" name="pay_day" step="0.01" required>
 
         <label for="occupation">Occupation:</label>
         <select id="occupation" name="occupation" required>
@@ -108,13 +113,6 @@
             <option value="yes">Yes</option>
             <option value="no">No</option>
         </select>
-
-        <label>If yes, send an email to the tenant:</label>
-        <a href="#" id="invite-tenant">Invite</a>
-
-        <label>Add tenant manually:</label>
-        <a href="/tenant_form">Add</a>
-
         <button type="submit">Save Property</button>
     </form>
 </div>
