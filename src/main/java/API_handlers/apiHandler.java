@@ -29,6 +29,7 @@ public class apiHandler {
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
                 String property_name = ctx.formParam("property_name");
+                ctx.sessionAttribute("property_name",property_name);
 
                 // hash password
                 String hashedPassword = hashPassword(password);
@@ -84,11 +85,11 @@ public class apiHandler {
             Integer owner_property = property_information.UniqueID();
 
             ctx.sessionAttribute("propertyId",owner_property);
-            Integer property_unit =  ctx.sessionAttribute("property_unit");
+            String property_name =  ctx.sessionAttribute("property_name");
 //            Integer current_landlord = ctx.sessionAttribute("user_ID");
 //            Integer landlord_property = ctx.sessionAttribute("propertyId");
                Map<String, Object> model = new HashMap<>();
-               model.put("property_unit",property_unit);
+               model.put("property_name",property_name);
                model.put("unit_add", propertyUnit);
 
             ctx.render("/templates/dashboard.html",model);
@@ -157,7 +158,7 @@ public class apiHandler {
                  * If the counter equals the number of rooms, render the user_profile HTML.
                  * Otherwise, keep rendering the tenant_form.
                  */
-                String username = ctx.sessionAttribute("user_name");
+                String username = ctx.sessionAttribute("name");
                 System.out.println(username + "username");
                 String propertyname = ctx.sessionAttribute("propertyname");
                 Map<String, Object> model = new HashMap<>();
