@@ -25,3 +25,5 @@ PROMAN is a web application designed to help property owners and managers effici
 
 1. **In development**  
 ``
+System_design/sign_up_systemOverview.png
+![Alt text](System_design/sign_up_systemOverview.png)
