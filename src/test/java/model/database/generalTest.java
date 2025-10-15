@@ -89,8 +89,7 @@ public class generalTest {
                 hashedPassword,
                 "tenant",
                 "0826690384",
-                "1st street somewhere",
-                3
+                "1st street somewhere"
         );
         newLandlord.setConnection(connection);
          //Check  connection is the same
@@ -125,8 +124,7 @@ public class generalTest {
                 "mKHIZE@34gmail.com",
                 hashedPassword,
                 "tenant",
-                "1st street somewhere",
-                4
+                "1st street somewhere"
         );
         newTenant.setConnection(connection);
 
@@ -155,8 +153,7 @@ public class generalTest {
                 hashedPassword,
                 "tenant",
                 "0826690384",
-                "1st street somewhere",
-                6
+                "1st street somewhere"
         );
         newLandlord.setConnection(connection);
         int price = 250;
@@ -192,8 +189,7 @@ public class generalTest {
                 hashedPassword,
                 "landlord",
                 "0826423844",
-                "1st street somewhere",
-                6
+                "1st street somewhere"
         );
         newLandlord.insert_information();
         assertNotNull(newLandlord.getUser_name());
