@@ -29,10 +29,13 @@ public class general extends connectionAcess implements Property{
    private final String contact;
    private final String user_type;
    private  final String property_address;
+   private final String property_name;
 
 
 
-    public general(String user_name, String contact,String user_email, String password, String user_type,  String address) throws SQLException {
+    public general(String user_name, String contact,String user_email,
+                   String password, String user_type,  String address, String name
+    ) throws SQLException {
         super();
         this.user_name = user_name;
         this.contact = contact;
@@ -40,6 +43,7 @@ public class general extends connectionAcess implements Property{
         this.password = password;
         this.user_type = user_type;
         this.property_address = address;
+        this.property_name = name;
 
     }
     public general() throws SQLException {
@@ -50,6 +54,7 @@ public class general extends connectionAcess implements Property{
         this.user_type = "";
         this.contact = "";
         this.property_address = "";
+        this.property_name = "";
     }
 
     public general(String name, String number, String user_type) throws SQLException{
@@ -60,6 +65,7 @@ public class general extends connectionAcess implements Property{
         this.password = "";
         this.user_type = user_type;
         this.property_address = "";
+        this.property_name = "";
 
     }
 
@@ -70,30 +76,29 @@ public class general extends connectionAcess implements Property{
 public  Connection getConnection(){
         return this.connection;
 }
-
 public void  landlord_insert_tenant(){
-    String insertUserSQL = """
+        String insertUserSQL = """
                    INSERT INTO generaL_users (name, contact,email , password ,user_type)
                    VALUES (?,?,?,?,?)
                    ON CONFLICT (email) DO NOTHING;
                    """;
-    try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
-        pstm.setString(1,this.user_name);
-        pstm.setString(2,this.contact);
-        pstm.setString(3,this.user_email);
-        pstm.setString(4,this.password);
-        pstm.setString(5,this.user_type);
-        pstm.executeUpdate();
-    }catch (SQLException e){
-        throw new RuntimeException("Database update failed", e);
+        try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
+            pstm.setString(1,this.user_name);
+            pstm.setString(2,this.contact);
+            pstm.setString(3,this.user_email);
+            pstm.setString(4,this.password);
+            pstm.setString(5,this.user_type);
+            pstm.executeUpdate();
+        }catch (SQLException e){
+            throw new RuntimeException("Database update failed", e);
+        }
     }
-}
-
     @Override
     public void insert_information() {
            String insertUserSQL = """
-                   INSERT INTO generaL_users (name, contact, email,password,user_type,property_address)
-                   VALUES (?,?,?,?,?,?)
+                   INSERT INTO generaL_users (name, contact, email,password
+                   ,user_type,property_address,property_name)
+                   VALUES (?,?,?,?,?,?,?)
                    ON CONFLICT (email) DO NOTHING;
                    
                    """;
@@ -104,6 +109,7 @@ public void  landlord_insert_tenant(){
                pstm.setString(4,this.password);
                pstm.setString(5,this.user_type);
                pstm.setString(6,this.property_address);
+               pstm.setString(7,this.property_name);
                pstm.executeUpdate();
            }catch (SQLException e){
                throw new RuntimeException("Database update failed", e);
@@ -119,7 +125,7 @@ public void  landlord_insert_tenant(){
         return this.user_email;
     }
     public  String getUser_type(){return  this.user_type;}
- public  String getContact(){
+    public  String getContact(){
         return  this.contact;
  }
     public String getPassword(){
