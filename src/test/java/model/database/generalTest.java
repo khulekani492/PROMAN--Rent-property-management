@@ -52,15 +52,18 @@ public class generalTest {
 
     @AfterEach
     void tearDown() throws SQLException {
+        String deletetenants = "DELETE FROM tenants_information";
         String deleteProperties = "DELETE FROM properties";
         String deleteUsers = "DELETE FROM general_users";
 
         try (
-                PreparedStatement stmt1 = connection.prepareStatement(deleteProperties);
-                PreparedStatement stmt2 = connection.prepareStatement(deleteUsers)
+                PreparedStatement stmt1 = connection.prepareStatement(deletetenants);
+                PreparedStatement stmt2 = connection.prepareStatement(deleteProperties);
+                PreparedStatement stmt3 = connection.prepareStatement(deleteUsers)
         ) {
             stmt1.executeUpdate();  // delete from properties first
             stmt2.executeUpdate();  // then delete from general_users
+            stmt3.executeUpdate();
         }
 
         if (connection != null && !connection.isClosed()) {
@@ -85,13 +88,15 @@ public class generalTest {
 
         general newLandlord = new general(
                 "khule",
+                "0826690384",
                 "khule@gmail.com",
                 hashedPassword,
-                "tenant",
-                "0826690384",
-                "1st street somewhere"
+                "landlord",
+                "1st street somewhere",
+                "ZOndo"
         );
         newLandlord.setConnection(connection);
+        newLandlord.insert_information();
          //Check  connection is the same
         assertEquals(connection,newLandlord.getConnection());
         assertEquals("khule", newLandlord.getUser_name());
@@ -124,7 +129,8 @@ public class generalTest {
                 "mKHIZE@34gmail.com",
                 hashedPassword,
                 "tenant",
-                "1st street somewhere"
+                "1st street somewhere",
+                "ZOndo"
         );
         newTenant.setConnection(connection);
 
@@ -153,7 +159,8 @@ public class generalTest {
                 hashedPassword,
                 "tenant",
                 "0826690384",
-                "1st street somewhere"
+                "1st street somewhere",
+                "dududze"
         );
         newLandlord.setConnection(connection);
         int price = 250;
@@ -189,7 +196,8 @@ public class generalTest {
                 hashedPassword,
                 "landlord",
                 "0826423844",
-                "1st street somewhere"
+                "1st street somewhere",
+                "thula"
         );
         newLandlord.insert_information();
         assertNotNull(newLandlord.getUser_name());
