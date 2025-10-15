@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastende System Forms</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background: #f4f6f9;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          min-height: 100vh;
+          margin: 0;
+          padding: 20px;
+        }
+
+        .forms-wrapper {
+          display: flex;
+          gap: 20px;
+          flex-wrap: wrap; /* stack on small screens */
+        }
+
+        .form-container {
+          background: #fff;
+          padding: 25px;
+          border-radius: 10px;
+          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+          width: 100%;
+          max-width: 400px;
+        }
+
+        h2 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #333;
+        }
+
+        label {
+          font-weight: bold;
+          margin-top: 10px;
+          display: block;
+          color: #444;
+        }
+
+        input, textarea, select, button {
+          width: 100%;
+          padding: 10px;
+          margin-top: 5px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 14px;
+        }
+
+        textarea {
+          resize: none;
+        }
+
+        button {
+          background: #007bff;
+          color: #fff;
+          font-weight: bold;
+          cursor: pointer;
+          margin-top: 15px;
+          transition: background 0.3s;
+        }
+
+        button:hover {
+          background: #0056b3;
+        }
+
+        .radio-group {
+          display: flex;
+          gap: 15px;
+          margin-top: 5px;
+        }
+
+        .radio-group label {
+          display: flex;
+          align-items: center;
+          font-weight: normal;
+        }
+
+        .radio-group input {
+          margin-right: 5px;
+          width: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="forms-wrapper">
+
+    <!-- Form 1: User Sign Up -->
+    <div class="form-container">
+        <h2> Multi-unit property<br>Rent management <h2>
+        <h2>Sign_UP</h2>
+        <form action="http://localhost:7070/user_sign_up" method="POST">
+            <label for="user_name">User Name:</label>
+            <input type="text" id="user_name" name="user_name" required>
+
+            <label for="user_email">Email:</label>
+            <input type="email" id="user_email" name="user_email" required>
+
+            <label for="contact">Contact:</label>
+            <input type="email" id="number" name="contact" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <!-- Form 2: Add Property -->
+    <div class="form-container">
+        <h2>Add Property</h2>
+        <form action="http://localhost:7070/add_property" method="POST">
+            <label for="property_name">Property Name:</label>
+            <input type="text" id="property_name" name="property_name" required>
+
+            <label for="number_of_rooms">Number of Rooms:</label>
+            <input type="number" id="number_of_rooms" name="number_of_rooms" min="1" required>
+
+            <label for="rent">Rent (per month):</label>
+            <input type="number" id="rent" name="rent" step="0.01" required>
+
+            <label for="contact">Contact Number:</label>
+            <input type="tel" id="contact" name="contact" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+
+            <button type="submit">Save Property</button>
+        </form>
+    </div>
+
+    <!-- Form 3: Add Tenant -->
+    <div class="form-container">
+        <h2>Add Tenant</h2>
+        <form action="http://localhost:7070/addtenants" method="POST">
+            <label for="tenant_name">Name:</label>
+            <input type="text" id="tenant_name" name="tenant_name" required>
+
+            <label for="move_in">Move In:</label>
+            <input type="date" id="move_in" name="move_in" required>
+
+            <label>Employment:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="employment" value="yes" required> Yes</label>
+                <label><input type="radio" name="employment" value="no"> No</label>
+            </div>
+
+            <label for="cell_number">Phone number:</label>
+            <input type="tel" id="cell_number" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+
+            <label for="kin_name">Next of Kin Name:</label>
+            <input type="text" id="kin_name" name="kin_name">
+
+            <label for="kin_number">Next of Kin Number:</label>
+            <input type="tel" id="kin_number" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
+
+            <label for="pay_day">Pay Day:</label>
+            <select name="pay_day" id="pay_day">
+                <option value="1">1</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+            </select>
+
+            <label for="room">Select a Room:</label>
+            <select name="room" id="room">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+
+            <label for="room_price">Room Price:</label>
+            <input type="number" id="room_price" name="room_price" step="0.01">
+            <button type="submit">Add Tenant</button>
+        </form>
+    </div>
+
+    <!-- Form 4: Edit Tenant -->
+    <div class="form-container">
+        <h2>Edit Tenant</h2>
+        <form action="http://localhost:7070/updateTenants" method="POST">
+            <label for="tenantname">Name:</label>
+            <input type="text" id="tenantname" name="tenant_name" required>
+
+            <label for="movein">Move In:</label>
+            <input type="date" id="movein" name="move_in" required>
+
+            <label>Employment:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="employment" value="yes" required> Yes</label>
+                <label><input type="radio" name="employment" value="no"> No</label>
+            </div>
+
+            <label for="cellnumber">Phone number:</label>
+            <input type="tel" id="cellnumber" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+
+            <label for="kinname">Next of Kin Name:</label>
+            <input type="text" id="kinname" name="kin_name">
+
+            <label for="kinnumber">Next of Kin Number:</label>
+            <input type="tel" id="kinnumber" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
+
+            <label for="payday">Pay Day:</label>
+            <select name="pay_day" id="payday">
+                <option value="1">1</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+            </select>
+
+            <label for="room_">Select a Room:</label>
+            <select name="room" id="room_">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+
+            <label for="roomprice">Room Price:</label>
+            <input type="number" id="roomprice" name="room_price" step="0.01">
+
+            <button type="submit">Update Tenant</button>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>
