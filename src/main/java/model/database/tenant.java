@@ -1,10 +1,8 @@
 package model.database;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 /**
  * Tenant class is responsible for inserting tenant information into the database. <br>
@@ -14,7 +12,7 @@ import java.time.LocalDate;
  * and inserts the data into the {@code tenants} table .
  */
 
-public class Tenant extends  connectionAcess implements  Property{
+public class tenant extends  connectionAcess implements  Property{
     private  Integer tenantId;
     private final Date moveInDate ;
     private final Date moveOut;
@@ -23,7 +21,7 @@ public class Tenant extends  connectionAcess implements  Property{
     private final String kin_number;
 
 
-    public Tenant( Date moveInDate,String employment,String kin_name,String kin_number) throws SQLException {
+    public tenant(Date moveInDate, String employment, String kin_name, String kin_number) throws SQLException {
         super();
         this.tenantId = null;
         this.moveInDate = moveInDate;
