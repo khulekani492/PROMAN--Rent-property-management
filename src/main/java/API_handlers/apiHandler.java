@@ -72,8 +72,11 @@ public class apiHandler {
             Integer property_owner = ctx.sessionAttribute("user_ID");
 
             //Insert into property table property_information
+               System.out.println("rent "+ rent);
             residence property_information = new residence(propertyUnit,rent,occupation);
             property_information.setlandlord(property_owner);
+            property_information.setRentDay(rent);
+
             property_information.insert_information();
             //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
@@ -126,11 +129,11 @@ public class apiHandler {
                 System.out.println("lil wayne down: " + number);
                 String user_type = "tenant";
                 general addnewTenant = new general(name,number,user_type);
+
                 addnewTenant.landlord_insert_tenant();
 
                 //Access the unique ID from the general_user table
                 Integer tenantUniqueID =  addnewTenant.UniqueID();
-
                 //update properties table and includes the tenant unique ID
                 Integer tenantId = addnewTenant.UniqueID();
                 Integer landlordId = ctx.sessionAttribute("user_ID");
@@ -152,22 +155,19 @@ public class apiHandler {
                  * If the counter equals the number of rooms, render the user_profile HTML.
                  * Otherwise, keep rendering the tenant_form.
                  */
-//
-
                 String username = ctx.sessionAttribute("user_name");
                 System.out.println(username + "username");
                 String propertyname = ctx.sessionAttribute("propertyname");
                 Map<String, Object> model = new HashMap<>();
                 model.put("username",username);
                 model.put("age", propertyname);
-                ctx.render("/templates/property_form.html",model);
+                ctx.render("/templates/property.html",model);
 
             } catch (Exception e) {
                 ctx.status(400).result("Error: " + e.getMessage());
                 e.printStackTrace();
             }
         };
-
 
     }
 
