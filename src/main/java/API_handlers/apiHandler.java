@@ -20,7 +20,9 @@ public class apiHandler {
         return ctx -> {
             try {
                 String user_name = ctx.formParam("user_name");
+
                 ctx.sessionAttribute("user_name", user_name);
+
                 String contact = ctx.formParam("contact");
                 String property_address = ctx.formParam("address");
                 String email = ctx.formParam("user_email");
@@ -41,7 +43,7 @@ public class apiHandler {
                 ctx.sessionAttribute("user_ID", new_userID);
                 ctx.sessionAttribute("password", hashedPassword);
 
-                // optional: send back session data as JSON
+                // set sesssion attributes the username and property_name
                 Map<String, Object> sessionMap = ctx.sessionAttributeMap();
                 ctx.json(sessionMap);
 
@@ -61,6 +63,7 @@ public class apiHandler {
     public Handler addproperty(){
         return  ctx ->{
            try{
+
             Integer propertyUnit = Integer.valueOf(ctx.formParam("property_name"));
             ctx.sessionAttribute("propertyname",propertyUnit);
             Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
@@ -106,30 +109,26 @@ public class apiHandler {
         return ctx ->{
             try{
                 Integer numberofRooms = ctx.sessionAttribute("roomsOccupied");
-
-                //Access the form input --->
-
-
-                Integer room = Integer.parseInt(Objects.requireNonNull(ctx.formParam("room")));
-
                 // check-logic for preventing inserting tenant with the same room number to the database
-                if (duplicateNUmberchecker.getCurrent_track().equals(room.intValue())) {
-                    System.out.println("same Room " + duplicateNUmberchecker.getCurrent_track());
-                    ctx.json(Map.of("message", "room taken", "status", 200));
-                    return;
-                }else{
-                    duplicateNUmberchecker.setCurrent_track(room);
-                    System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
-                }
+//                if (duplicateNUmberchecker.getCurrent_track().equals(room.intValue())) {
+//                    System.out.println("same Room " + duplicateNUmberchecker.getCurrent_track());
+//                    ctx.json(Map.of("message", "room taken", "status", 200));
+//                    return;
+//                }else{
+//                    duplicateNUmberchecker.setCurrent_track(room);
+//                    System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
+//                }
 
                 //Insert tenant to general_user table for landlord Manual insertion
                 String name = ctx.formParam("tenant_name");
                 String number = ctx.formParam("cell_number");
+                System.out.println("Sweet love : " + name);
+                System.out.println("lil wayne down: " + number);
                 String user_type = "tenant";
                 general addnewTenant = new general(name,number,user_type);
                 addnewTenant.landlord_insert_tenant();
 
-                //Access the unique ID from the general_user tabkle
+                //Access the unique ID from the general_user table
                 Integer tenantUniqueID =  addnewTenant.UniqueID();
 
                 //update properties table and includes the tenant unique ID
@@ -138,10 +137,7 @@ public class apiHandler {
                 residence addTenantUnit = new residence();
                 //update the properties row with the tenant occupying the room/unit
                 addTenantUnit.Insert_tenatId(tenantId,landlordId);
-
-
                 //additional information about the tenant --> tenants_information table
-
                 //how does htm send range values
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
                 String employment_status = ctx.formParam("employment");
@@ -156,19 +152,16 @@ public class apiHandler {
                  * If the counter equals the number of rooms, render the user_profile HTML.
                  * Otherwise, keep rendering the tenant_form.
                  */
-                if(count.getCount() == numberofRooms){
-                    String username = ctx.sessionAttribute("user_name");
-                    String propertyname = ctx.sessionAttribute("propertyname");
-                    Map<String, Object> model = new HashMap<>();
-                    model.put("username",username);
-                    model.put("age", propertyname);
+//
 
-                    ctx.render("/templates/user_profile.html",model);
-                }else {
-                    count.increment();
-                    ctx.render("/templates/tenant_form.html");
+                String username = ctx.sessionAttribute("user_name");
+                System.out.println(username + "username");
+                String propertyname = ctx.sessionAttribute("propertyname");
+                Map<String, Object> model = new HashMap<>();
+                model.put("username",username);
+                model.put("age", propertyname);
+                ctx.render("/templates/property_form.html",model);
 
-                }
             } catch (Exception e) {
                 ctx.status(400).result("Error: " + e.getMessage());
                 e.printStackTrace();
