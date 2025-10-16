@@ -78,6 +78,7 @@ public class apiHandler {
             ctx.sessionAttribute("property_unit",propertyUnit);
             Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
             String occupation = ctx.formParam("occupation");
+
             //String contact = ctx.formParam("contact");
             Integer property_owner = ctx.sessionAttribute("user_ID");
 
@@ -94,11 +95,17 @@ public class apiHandler {
                System.out.println("properties_id " + owner_property);
                String property_name =  ctx.sessionAttribute("property_name");
                ctx.sessionAttribute("_unit",propertyUnit);
-
-
                Map<String, Object> model = new HashMap<>();
                model.put("unit_add", propertyUnit);
-            ctx.render("/templates/tenant_form.html",model);
+
+               if ("yes".equals(occupation)) {
+                   ctx.render("/templates/tenant_form.html", model);
+               } else {
+                   ctx.render("/templates/dashboard.html", model);
+               }
+
+
+               ctx.render("/templates/tenant_form.html",model);
            }catch (SQLException e) {
                ctx.status(500).result("Database error: " + e.getMessage());
                e.printStackTrace();
@@ -142,6 +149,10 @@ public class apiHandler {
 
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
+
+                String tenant_name =   addnewTenant.getTenantnamebyId(tenantUniqueID);
+
+                System.out.println(tenant_name + " tenant_name by Id");
                 addTenantUnit.Insert_tenatId();
                 //System.out.println(landlordId);
                 //update the properties row with the tenant occupying the room/unit
@@ -169,8 +180,10 @@ public class apiHandler {
 
 
                 Map<String, Object> model = new HashMap<>();
+
                 model.put("property_name",property_name);
                 model.put("unit_add", unit_number);
+                model.put("tenant_name",tenant_name);
                 ctx.render("/templates/dashboard.html",model);
 
             } catch (Exception e) {
