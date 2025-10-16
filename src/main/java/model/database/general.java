@@ -25,9 +25,9 @@ import java.sql.*;
 public class general extends connectionAcess implements Property{
    private final String user_name;
    private final String user_email;
-   private final String password;
+   private  String password;
    private final String contact;
-   private final String user_type;
+   private String user_type;
    private  final String property_address;
    private final String property_name;
 
@@ -77,17 +77,18 @@ public  Connection getConnection(){
         return this.connection;
 }
 public void  landlord_insert_tenant(){
+        this.user_type = "tenant";
+        this.password = "null";
         String insertUserSQL = """
-                   INSERT INTO generaL_users (name, contact,email , password ,user_type)
-                   VALUES (?,?,?,?,?)
+                   INSERT INTO generaL_users (name, contact,user_type,password)
+                   VALUES (?,?,?,?)
                    ON CONFLICT (email) DO NOTHING;
                    """;
         try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
             pstm.setString(1,this.user_name);
             pstm.setString(2,this.contact);
-            pstm.setString(3,this.user_email);
+            pstm.setString(3,this.user_type);
             pstm.setString(4,this.password);
-            pstm.setString(5,this.user_type);
             pstm.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException("Database update failed", e);
@@ -176,13 +177,14 @@ public void  landlord_insert_tenant(){
             throw new RuntimeException(e);
         }
         return null; // if not found
-}
-    public Integer property_UniqueID() {
+
+    }
+    public Integer tenant_ID() {
         String reference_key = """
-        SELECT landlord_user_id FROM properties WHERE landlord_user_id = ?;
+        SELECT id FROM general_users WHERE contact = ?;
     """;
         try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
-            pstmt.setInt(1, UniqueID());
+            pstmt.setString(1, this.contact);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
@@ -192,7 +194,9 @@ public void  landlord_insert_tenant(){
             throw new RuntimeException(e);
         }
         return null; // if not found
+
     }
+
     public void assignProperty(Integer december) {
         String propertySQL = """
     INSERT INTO properties (landlord_user_id)
