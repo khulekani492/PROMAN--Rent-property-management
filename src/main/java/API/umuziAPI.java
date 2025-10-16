@@ -2,6 +2,7 @@ package API;
 
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static API.SessionUtil.fileSessionHandler;
@@ -28,7 +29,7 @@ public class umuziAPI {
             ctx.render("templates/sign_up_user.html");
         });
         app.get("/tenant_form",ctx ->{
-           ctx.render("/templates/tenant_form.html");
+           ctx.render("/templates/property.html");
         });
         //sign_up session order /user_sign_up "/add_property" /addtenants"
         /**
@@ -76,9 +77,14 @@ public class umuziAPI {
             // dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
 
         });
-        app.get("/tenants", ctx -> {
+        app.get("/add_another_unit", ctx -> {
+            Map<String, Object> model = new HashMap<>();
 
-            ctx.render("/templates/property_form.html");
+            // Example: populate values (replace with actual session or DB data)
+            model.put("user_name", ctx.sessionAttribute("user_name"));
+            model.put("residence_name", "My Residence"); // or fetch dynamically
+
+            ctx.render("/templates/property_form.html",model);
         });
 
 

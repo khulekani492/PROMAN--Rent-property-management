@@ -5,24 +5,16 @@
     <title>Add Tenant</title>
 </head>
 <body>
-<h1 th:text="'Property ' + ${property_name}"></h1>
-<p>Units</p>
-<p th:text="'Unit ' + ${unit_add}"></p>
+<p>Available Units</p>
+<p th:text="'Unit: ' + ${unit_add} + ' — ' + ${tenant_name}"></p>
 
-<p>Add tenant to unit.</p>
-<p>
-    You can send out a form for the tenant to fill in their personal details
-    or add it yourself.
-</p>
+<p>Unit with no occupation</p>
+<p th:text="'Unit: ' + ${unit_add}"></p>
 
-<div>
-    <label>Send an email to the tenant:</label>
-    <a href="#" id="invite-tenant">Invite</a>
-</div>
+<h1 th:text="'ADD MORE UNITS for ' + ${property_name}"></h1>
+<a href="http://localhost:7070/tenant_form">ADD</a>
 
 <div>
-    <label>Add tenant manually:</label>
-    <a href="/tenant_form">Add</a>
 </div>
 
 
