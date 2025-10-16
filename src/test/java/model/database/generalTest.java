@@ -222,7 +222,7 @@ public class generalTest {
                 "Debt should match the inserted value");
         assertNotNull(newtenant.getUser_type());
 
-       property_unit.Insert_tenatId(tenantid,landlord);
+       property_unit.Insert_tenatId();
 
 
 
