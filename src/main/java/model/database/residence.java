@@ -117,7 +117,7 @@ public class residence extends connectionAcess implements  Property {
                 """;
         try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
             pstm.setInt(1,this.tenantId);
-            pstm.setInt(2,landlordId);
+            pstm.setInt(2,this.landlordId);
             pstm.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException("Database update failed", e);
@@ -126,8 +126,8 @@ public class residence extends connectionAcess implements  Property {
     @Override
     public void insert_information() {
         String propertySQL = """
-    INSERT INTO properties (property_unit, property_rent, occupation,landlord_user_id)
-    VALUES (?, ?, ?, ? )
+    INSERT INTO properties (property_unit,property_rent, occupation,landlord_user_id,pay_day)
+    VALUES (?, ?, ?, ?,? )
 """;
 
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
@@ -135,6 +135,7 @@ public class residence extends connectionAcess implements  Property {
             pstmt.setInt(2, this.property_rent);
             pstmt.setString(3, this.occupation);
             pstmt.setInt(4,this.landlordId);
+            pstmt.setInt(5,this.pay_day);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
