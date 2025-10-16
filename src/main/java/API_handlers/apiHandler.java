@@ -65,7 +65,8 @@ public class apiHandler {
     public Handler addproperty(){
         return  ctx ->{
            try{
-
+               Integer unit = ctx.sessionAttribute("unit_add");
+               System.out.println(unit + "Makasana");
             Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
             ctx.sessionAttribute("property_unit",propertyUnit);
             Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
@@ -83,16 +84,14 @@ public class apiHandler {
             property_information.insert_information();
             //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
+               System.out.println("properties_id " + owner_property);
+               String property_name =  ctx.sessionAttribute("property_name");
+               ctx.sessionAttribute("_unit",propertyUnit);
 
-            ctx.sessionAttribute("propertyId",owner_property);
-            String property_name =  ctx.sessionAttribute("property_name");
-//            Integer current_landlord = ctx.sessionAttribute("user_ID");
-//            Integer landlord_property = ctx.sessionAttribute("propertyId");
+
                Map<String, Object> model = new HashMap<>();
-               model.put("property_name",property_name);
                model.put("unit_add", propertyUnit);
-
-            ctx.render("/templates/dashboard.html",model);
+            ctx.render("/templates/tenant_form.html",model);
            }catch (SQLException e) {
                ctx.status(500).result("Database error: " + e.getMessage());
                e.printStackTrace();
@@ -136,12 +135,10 @@ public class apiHandler {
 
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
-
-
                 addTenantUnit.Insert_tenatId();
-                System.out.println(landlordId);
+                //System.out.println(landlordId);
                 //update the properties row with the tenant occupying the room/unit
-                addTenantUnit.Insert_tenatId();
+               // addTenantUnit.Insert_tenatId();
                 //additional information about the tenant --> tenants_information table
                 //how does htm send range values
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
@@ -160,9 +157,13 @@ public class apiHandler {
                 String username = ctx.sessionAttribute("name");
                 System.out.println(username + "username");
                 //String property_name = ctx.sessionAttribute("property_name");
+                String property_name =  ctx.sessionAttribute("property_name");
+                Integer unit_number = ctx.sessionAttribute("_unit");
+
+
                 Map<String, Object> model = new HashMap<>();
-                model.put("username",username);
-                //model.put("age", propertyname);
+                model.put("property_name",property_name);
+                model.put("unit_add", unit_number);
                 ctx.render("/templates/dashboard.html",model);
 
             } catch (Exception e) {
