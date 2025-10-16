@@ -48,9 +48,30 @@ header button {
 .page__navigation {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 15px;
 }
 
 a {
     text-decoration: none;
+}
+
+.about {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    padding: 25px 100px;
+    gap: 25px;
+}
+
+.cards {
+    padding: 25px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    gap: 25px;
+    background-color: azure;
 }
