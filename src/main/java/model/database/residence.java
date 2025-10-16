@@ -1,10 +1,8 @@
 package model.database;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.function.IntBinaryOperator;
 
 /**
  * residence class is responsible for inserting property information into the database. <br>
@@ -113,13 +111,12 @@ public class residence extends connectionAcess implements  Property {
         }
       return  null;
     }
-    public  void  Insert_tenatId(Integer tenantid,Integer landlordId){
+    public  void  Insert_tenatId(){
         String tenant = """
                 UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ?
                 """;
-
         try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
-            pstm.setInt(1,tenantid);
+            pstm.setInt(1,this.tenantId);
             pstm.setInt(2,landlordId);
             pstm.executeUpdate();
         }catch (SQLException e){
