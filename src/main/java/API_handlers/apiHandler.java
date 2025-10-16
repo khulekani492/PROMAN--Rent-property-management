@@ -132,12 +132,13 @@ public class apiHandler {
                 System.out.println("lil wayne down: " + number);
                 String user_type = "tenant";
                 general addnewTenant = new general(name,number,user_type);
-                addnewTenant.insert_information();
-                //addnewTenant.landlord_insert_tenant();
 
+                addnewTenant.landlord_insert_tenant();
                 //Access the unique ID from the general_user table
-                Integer tenantUniqueID =  addnewTenant.UniqueID();
-                System.out.println("tenant " + tenantUniqueID);
+                Integer tenantUniqueID =  addnewTenant.tenant_ID();
+
+                System.out.println("ID " + tenantUniqueID);
+
                 //update properties table and includes the tenant unique ID
                 Integer landlordId = ctx.sessionAttribute("user_ID");
                 System.out.println("amen " + landlordId);
