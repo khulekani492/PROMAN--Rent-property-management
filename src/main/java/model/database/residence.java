@@ -68,7 +68,9 @@ public class residence extends connectionAcess implements  Property {
     public void setDebt(Integer debt) {
         this.debt = debt;
     }
-
+    public  void setProperty_unit(Integer unit){
+        this.property_unit = unit;
+    }
     public void setRentDay(Integer pay_day){
         this.pay_day = pay_day;
     }
@@ -113,11 +115,12 @@ public class residence extends connectionAcess implements  Property {
     }
     public  void  Insert_tenatId(){
         String tenant = """
-                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ?
+                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ? and WHERE  property_unit = ?
                 """;
         try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
             pstm.setInt(1,this.tenantId);
             pstm.setInt(2,this.landlordId);
+            pstm.setInt(3,this.property_unit);
             pstm.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException("Database update failed", e);

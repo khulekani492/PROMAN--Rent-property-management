@@ -211,4 +211,22 @@ public void  landlord_insert_tenant(){
             throw new RuntimeException(e);
         }
     }
+
+    public String getTenantnamebyId(Integer tenantUniqueID) {
+
+        String reference_key = """
+        SELECT name FROM general_users WHERE id = ?;
+    """;
+        try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
+            pstmt.setInt(1, tenantUniqueID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null; // if not found
+    }
 }
