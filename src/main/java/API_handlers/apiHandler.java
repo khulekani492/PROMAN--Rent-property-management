@@ -28,6 +28,7 @@ public class apiHandler {
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
+                ctx.sessionAttribute("user_name",user_name);
                 String property_name = ctx.formParam("property_name");
                 ctx.sessionAttribute("property_name",property_name);
 
@@ -45,12 +46,18 @@ public class apiHandler {
                 ctx.sessionAttribute("user_ID", new_userID);
                 ctx.sessionAttribute("password", hashedPassword);
 
-                // set sesssion attributes the username and property_name
+                // set session attributes the username and property_name
+                String residence_name = ctx.formParam("property_name");
+                String landlord_username = ctx.formParam("user_name");
                 Map<String, Object> sessionMap = ctx.sessionAttributeMap();
                 ctx.json(sessionMap);
 
+                Map<String, Object> model = new HashMap<>();
+                model.put("user_name", landlord_username);
+                model.put("residence_name",residence_name);
+
                 // render property page
-                ctx.render("/templates/property.html");
+                ctx.render("/templates/property.html",model);
 
             } catch (SQLException e) {
                 ctx.status(500).result("Database error: " + e.getMessage());
