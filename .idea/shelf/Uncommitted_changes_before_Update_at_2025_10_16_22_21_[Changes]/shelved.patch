@@ -1,0 +1,887 @@
+Index: src/main/java/model/database/general.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model.database;\n\nimport java.sql.*;\n\n/**\n * Data Access class for User (the Landlord).\n * <p>\n * When the user signs in, this class is called and the information is added\n * to the <code>Users</code> database table. The table is then queried to get\n * the unique ID of the landlord.\n * </p>\n *\n * <p>\n * Through abstraction, the landlordId can be accessed via the abstract\n * instance. This is used to handle the foreign key relationship with\n * other tables. In the <code>Users</code> schema, the foreign key is\n * <code>propertyID</code>.\n * </p>\n *\n * <p>\n * To access it, refer to demonstration 1.2 of abstraction.\n * </p>\n */\n\npublic class general extends connectionAcess implements Property{\n   private final String user_name;\n   private final String user_email;\n   private  String password;\n   private final String contact;\n   private String user_type;\n   private  final String property_address;\n   private final String property_name;\n\n\n\n    public general(String user_name, String contact,String user_email,\n                   String password, String user_type,  String address, String name\n    ) throws SQLException {\n        super();\n        this.user_name = user_name;\n        this.contact = contact;\n        this.user_email = user_email;\n        this.password = password;\n        this.user_type = user_type;\n        this.property_address = address;\n        this.property_name = name;\n\n    }\n    public general() throws SQLException {\n        super();\n        this.user_name = \"\";\n        this.user_email = \"\";\n        this.password = \"\";\n        this.user_type = \"\";\n        this.contact = \"\";\n        this.property_address = \"\";\n        this.property_name = \"\";\n    }\n\n    public general(String name, String number, String user_type) throws SQLException{\n        super();\n        this.user_name = name;\n        this.contact  = number;\n        this.user_email = \"\";\n        this.password = \"\";\n        this.user_type = user_type;\n        this.property_address = \"\";\n        this.property_name = \"\";\n\n    }\n\n    public  void  setConnection(Connection instance) throws SQLException {\n        this.connection = instance;\n    }\n\npublic  Connection getConnection(){\n        return this.connection;\n}\npublic void  landlord_insert_tenant(){\n        this.user_type = \"tenant\";\n        this.password = \"null\";\n        String insertUserSQL = \"\"\"\n                   INSERT INTO generaL_users (name, contact,user_type,password)\n                   VALUES (?,?,?,?)\n                   ON CONFLICT (email) DO NOTHING;\n                   \"\"\";\n        try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){\n            pstm.setString(1,this.user_name);\n            pstm.setString(2,this.contact);\n            pstm.setString(3,this.user_type);\n            pstm.setString(4,this.password);\n            pstm.executeUpdate();\n        }catch (SQLException e){\n            throw new RuntimeException(\"Database update failed\", e);\n        }\n    }\n    @Override\n    public void insert_information() {\n           String insertUserSQL = \"\"\"\n                   INSERT INTO generaL_users (name, contact, email,password\n                   ,user_type,property_address,property_name)\n                   VALUES (?,?,?,?,?,?,?)\n                   ON CONFLICT (email) DO NOTHING;\n                   \n                   \"\"\";\n           try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){\n               pstm.setString(1,this.user_name);\n               pstm.setString(2,this.contact);\n               pstm.setString(3,this.user_email);\n               pstm.setString(4,this.password);\n               pstm.setString(5,this.user_type);\n               pstm.setString(6,this.property_address);\n               pstm.setString(7,this.property_name);\n               pstm.executeUpdate();\n           }catch (SQLException e){\n               throw new RuntimeException(\"Database update failed\", e);\n           }\n\n\n    }\n\n    public String getUser_name() {\n        return this.user_name;\n    }\n    public  String getUser_email(){\n        return this.user_email;\n    }\n    public  String getUser_type(){return  this.user_type;}\n    public  String getContact(){\n        return  this.contact;\n }\n    public String getPassword(){\n        return  this.password;\n    }\n\n\n    public String confirm_password(String email) {\n\n        String sql = \"SELECT password FROM users WHERE user_email = ?\";\n        try (PreparedStatement pstm = this.connection.prepareStatement(sql)) {\n            pstm.setString(1, email); // email is a String\n\n            try (ResultSet rs = pstm.executeQuery()) { // use executeQuery() for SELECT\n                if (rs.next()) {\n                    // get password as String\n                    return rs.getString(\"password\");\n                } else {\n                    return  \"no password\";\n                }\n            }\n        } catch (SQLException e) {\n            throw new RuntimeException(\"Database query failed\", e);\n        }\n\n    }\n\n    /** New session\n     * Get the unique ID using the user's email.\n     * <p>\n     * User emails are unique identifiers in their own right. For security,\n     * this helps narrow the issue of fetching the wrong ID for a user causing leakages.\n     * </p>\n     */\n    @Override\n    public Integer UniqueID() {\n        String reference_key = \"\"\"\n        SELECT id FROM general_users WHERE email = ?;\n    \"\"\";\n        try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {\n            pstmt.setString(1, this.user_email);\n            try (ResultSet rs = pstmt.executeQuery()) {\n                if (rs.next()) {\n                    return rs.getInt(\"id\");\n                }\n            }\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n        return null; // if not found\n\n    }\n    public Integer tenant_ID() {\n        String reference_key = \"\"\"\n        SELECT id FROM general_users WHERE contact = ?;\n    \"\"\";\n        try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {\n            pstmt.setString(1, this.contact);\n            try (ResultSet rs = pstmt.executeQuery()) {\n                if (rs.next()) {\n                    return rs.getInt(\"id\");\n                }\n            }\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n        return null; // if not found\n\n    }\n\n    public void assignProperty(Integer december) {\n        String propertySQL = \"\"\"\n    INSERT INTO properties (landlord_user_id)\n    VALUES (?);\n\"\"\";\n\n        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {\n            pstmt.setInt(1, december);\n            pstmt.executeUpdate();\n\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/model/database/general.java b/src/main/java/model/database/general.java
+--- a/src/main/java/model/database/general.java	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/src/main/java/model/database/general.java	(date 1760643583143)
+@@ -211,4 +211,22 @@
+             throw new RuntimeException(e);
+         }
+     }
++
++    public String getTenantnamebyId(Integer tenantUniqueID) {
++        String reference_key = """
++        SELECT name FROM general_users WHERE id = ?;
++    """;
++        try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
++            pstmt.setInt(1, tenantUniqueID);
++            try (ResultSet rs = pstmt.executeQuery()) {
++                if (rs.next()) {
++                    return rs.getString("name");
++                }
++            }
++        } catch (SQLException e) {
++            throw new RuntimeException(e);
++        }
++        return null; // if not found
++
++    }
+ }
+Index: src/main/java/model/database/residence.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package model.database;\n\nimport java.sql.PreparedStatement;\nimport java.sql.ResultSet;\nimport java.sql.SQLException;\n\n/**\n * residence class is responsible for inserting property information into the database. <br>\n * The {@code UserId} acts as a foreign key that links the property to it landlord . <br>\n * <p>\n * The constructor takes in a database {@link java.sql.Connection} along with tenant details,\n * and inserts the data into the {@code property} table.\n */\n\npublic class residence extends connectionAcess implements  Property {\n    private Integer property_unit;\n    private Integer property_rent;\n    private String occupation;\n    private Integer debt;\n    private Integer landlordId;\n    private Integer tenantId;\n    private Integer pay_day;\n    private Integer FromDay;\n    private Integer LastDay;\n\n    public residence(Integer property_name, Integer property_rent, String occupation) throws SQLException {\n        super();\n        this.property_unit = property_name;\n        this.property_rent = property_rent;\n        this.occupation = occupation;\n        this.landlordId = null;\n        this.tenantId = null;\n        this.debt = null;\n        this.pay_day = null;\n        this.FromDay = null;\n        this.LastDay = null;\n    }\n\n    public residence() throws SQLException {\n        super();\n        this.property_unit = null;\n        this.property_rent = null;\n        this.occupation = \"\";\n        this.landlordId = null;\n        this.tenantId = null;\n        this.debt = null;\n        this.pay_day = null;\n        this.FromDay = null;\n        this.LastDay = null;\n    }\n\n    public void setlandlord(Integer landlordId) {\n        this.landlordId = landlordId;\n    }\n\n    public Integer getLandlordId() {\n        return this.landlordId;\n    }\n\n    public void setTenantId(Integer tenantId) {\n        this.tenantId = tenantId;\n    }\n\n    public Integer getTenantId() {\n        return this.tenantId;\n    }\n\n    public void setDebt(Integer debt) {\n        this.debt = debt;\n    }\n\n    public void setRentDay(Integer pay_day){\n        this.pay_day = pay_day;\n    }\n    public Integer getRentDay(){\n        return this.pay_day;\n    }\n\n    public void setRangePayDays(Integer fromDay,Integer lastDay) {\n        this.FromDay = fromDay;\n        this.LastDay = lastDay;\n    }\n\n    public Integer getFromDay() {\n        return FromDay;\n    }\n\n    public Integer getLastDay() {\n        return LastDay;\n    }\n\n    public Integer getDebt() {\n        return this.debt;\n    }\n\n    public Integer queryDebt() {\n        String sql = \"\"\"\n                SELECT debt  From properties WHERE landlord_user_id = ?;\n                \"\"\";\n        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {\n            pstmt.setInt(1, this.landlordId);\n            try (ResultSet rs = pstmt.executeQuery()) {\n                if (rs.next()) {\n\n                    return rs.getInt(\"debt\");\n                }\n            }\n\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n      return  null;\n    }\n    public  void  Insert_tenatId(){\n        String tenant = \"\"\"\n                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ?\n                \"\"\";\n        try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){\n            pstm.setInt(1,this.tenantId);\n            pstm.setInt(2,this.landlordId);\n            pstm.executeUpdate();\n        }catch (SQLException e){\n            throw new RuntimeException(\"Database update failed\", e);\n        }\n    }\n    @Override\n    public void insert_information() {\n        String propertySQL = \"\"\"\n    INSERT INTO properties (property_unit,property_rent, occupation,landlord_user_id,pay_day)\n    VALUES (?, ?, ?, ?,? )\n\"\"\";\n\n        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {\n            pstmt.setInt(1, this.property_unit);\n            pstmt.setInt(2, this.property_rent);\n            pstmt.setString(3, this.occupation);\n            pstmt.setInt(4,this.landlordId);\n            pstmt.setInt(5,this.pay_day);\n            pstmt.executeUpdate();\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n\n    }\n    public void update_debt(){\n        String sql = \"\"\"\n        UPDATE properties\n        SET debt = ?\n        WHERE landlord_user_id = ?;\n    \"\"\";\n\n        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {\n            pstmt.setInt(1, this.debt);\n            pstmt.setInt(2, this.landlordId);\n            pstmt.executeUpdate();\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n\n    }\n\n    public void update_payDay(){\n        String sql = \"\"\"\n        UPDATE properties\n        SET pay_day = ?\n        WHERE landlord_user_id = ?;\n    \"\"\";\n\n        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {\n            pstmt.setInt(1, this.pay_day);\n            pstmt.setInt(2, this.landlordId);\n            pstmt.executeUpdate();\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n\n    }\n\n    public Integer querypayDay() {\n\n        String sql = \"\"\"\n        SELECT pay_day FROM properties WHERE landlord_user_id = ? ;\n        \"\"\";\n\n\n        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {\n            pstmt.setInt(1, this.landlordId);\n         //   pstmt.setInt(2,unit);\n            try (ResultSet rs = pstmt.executeQuery()) {\n                if (rs.next()) {\n                    return rs.getInt(\"pay_day\");\n                }\n            }\n\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n        return  null;\n    }\n\n    @Override\n    public Integer UniqueID() {\n        String reference_key = \"\"\"\n        SELECT id FROM properties WHERE landlord_user_id = ?;\n    \"\"\";\n        try (PreparedStatement pstmt = connection.prepareStatement(reference_key)) {\n           pstmt.setInt(1, this.landlordId);\n            try (ResultSet rs = pstmt.executeQuery()) {\n                if (rs.next()) {\n                    return rs.getInt(\"id\");\n                }\n            }\n        } catch (SQLException e) {\n            throw new RuntimeException(e);\n        }\n        return null; // if not found\n    }\n\n    /**\n     * Updates landlord property information. <br>\n     * <p>\n     * This feature depends on the view layer for input, while the controller handles\n     * the logic of communicating with the database through the property table data access object\n     * to update the table information.\n     */\n\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/model/database/residence.java b/src/main/java/model/database/residence.java
+--- a/src/main/java/model/database/residence.java	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/src/main/java/model/database/residence.java	(date 1760646088316)
+@@ -113,11 +113,12 @@
+     }
+     public  void  Insert_tenatId(){
+         String tenant = """
+-                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ?
++                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ? and property_unit = ?
+                 """;
+         try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
+             pstm.setInt(1,this.tenantId);
+             pstm.setInt(2,this.landlordId);
++            pstm.setInt(3,this.property_unit);
+             pstm.executeUpdate();
+         }catch (SQLException e){
+             throw new RuntimeException("Database update failed", e);
+Index: src/main/resources/templates/dashboard.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\n<html lang=\"en\" xmlns:th=\"http://www.thymeleaf.org\">\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Add Tenant</title>\n</head>\n<body>\n<h1 th:text=\"'Property ' + ${property_name}\"></h1>\n<p>Units</p>\n<p th:text=\"'Unit ' + ${unit_add}\"></p>\n\n<p>Add tenant to unit.</p>\n<p>\n    You can send out a form for the tenant to fill in their personal details\n    or add it yourself.\n</p>\n\n<div>\n    <label>Send an email to the tenant:</label>\n    <a href=\"#\" id=\"invite-tenant\">Invite</a>\n</div>\n\n<div>\n    <label>Add tenant manually:</label>\n    <a href=\"/tenant_form\">Add</a>\n</div>\n\n\n</body>\n</html>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/templates/dashboard.html b/src/main/resources/templates/dashboard.html
+--- a/src/main/resources/templates/dashboard.html	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/src/main/resources/templates/dashboard.html	(date 1760643207449)
+@@ -5,24 +5,15 @@
+     <title>Add Tenant</title>
+ </head>
+ <body>
+-<h1 th:text="'Property ' + ${property_name}"></h1>
+-<p>Units</p>
+-<p th:text="'Unit ' + ${unit_add}"></p>
++<p>Available Units</p>
++<p th:text="'Unit: ' + ${unit_add} + ' — ' + ${tenant_name}"></p>
+ 
+-<p>Add tenant to unit.</p>
+-<p>
+-    You can send out a form for the tenant to fill in their personal details
+-    or add it yourself.
+-</p>
++<p>Unit with no occupation</p>
++<p th:text="'Unit: ' + ${unit_add}"></p>
+ 
++<h1 th:text="'ADD MORE UNITS for ' + ${property_name}"></h1>
++<a href="/add_another_unit">ADD</a>
+ <div>
+-    <label>Send an email to the tenant:</label>
+-    <a href="#" id="invite-tenant">Invite</a>
+-</div>
+-
+-<div>
+-    <label>Add tenant manually:</label>
+-    <a href="/tenant_form">Add</a>
+ </div>
+ 
+ 
+Index: src/main/java/API/umuziAPI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package API;\n\n\nimport java.sql.SQLException;\nimport java.util.Map;\n\nimport static API.SessionUtil.fileSessionHandler;\nimport API_handlers.apiHandler;\nimport io.javalin.Javalin;\nimport io.javalin.rendering.template.JavalinThymeleaf;\n\n\n\npublic class umuziAPI {\n    public  static Javalin startServer(int port) throws SQLException {\n        apiHandler controller = new apiHandler();\n\n        Javalin app = Javalin.create(config -> {\n            config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));\n            config.fileRenderer(new JavalinThymeleaf());\n            config.staticFiles.add(\"/\");\n        });\n        //home_page Url_end_point.\n        app.get(\"/\", ctx ->{\n           ctx.render(\"/index.html\");\n        });\n        app.get(\"/rentalmanageme@sign_up\",ctx ->{\n            ctx.render(\"templates/sign_up_user.html\");\n        });\n        app.get(\"/tenant_form\",ctx ->{\n           ctx.render(\"/templates/tenant_form.html\");\n        });\n        //sign_up session order /user_sign_up \"/add_property\" /addtenants\"\n        /**\n         * adds new user information to the database\n         */\n        app.post(\"/user_sign_up\",controller.sign_up());\n/**\n * adds new user property information to the database\n */\n        app.post(\"/add_property\", controller.addproperty());\n\n/**\n * adds tenant information to the database\n */\n        app.post(\"/add_tenants\", controller.addTenant());\n\n\n//log in Session\n//        app.get(\"/rentalmanagemnt@log_in?\" controllers.);\n\n\n\n\n        app.get(\"/rentalmanagemnt@log_in?cuser_profile\",ctx ->{\n        });\n\n\n\n        app.post(\"/updateTenants\",ctx -> {\n\n            ///Updating Previously occupied room with new tenant or individual update like rent price for that rent\n           // String propertName = dbConnector.getPropertyname();\n           // int residenceid = dbConnector.landlordId(propertName);\n            String name = ctx.formParam(\"tenant_name\");\n            String moveIn = ctx.formParam(\"move_in\");\n            String employment_status = ctx.formParam(\"employment\");\n            String cell_number = ctx.formParam(\"cell_number\");\n            String payday = ctx.formParam(\"pay_day\");\n            int room = Integer.parseInt(ctx.formParam(\"room\"));\n            String room_price = ctx.formParam(\"room_price\");\n            //LOGIC update debt column when month ends and payment is still not paid\n            int tenantsdebt = Integer.parseInt( ctx.formParam(\"tenant_debt\"));\n            String kin_name = ctx.formParam(\"kin_name\");\n            String kin_number = ctx.formParam(\"kin_number\");\n            // dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );\n\n        });\n        app.get(\"/tenants\", ctx -> {\n\n            ctx.render(\"/templates/property_form.html\");\n        });\n\n\n\n        app.exception(SQLException.class, (e, ctx) -> {\n            if (e.getMessage().contains(\"UNIQUE constraint failed\")) {\n                ctx.status(400).json(Map.of(\n                        \"error\", \"Property already exists\",\n                        \"field\", \"property_name\"\n                ));\n            } else {\n                ctx.status(500).json(Map.of(\n                        \"error\", \"Database error\"\n                ));\n            }\n        });\n\n        app.exception(Exception.class, (e, ctx) -> {\n            e.printStackTrace();\n            if (e.getMessage().contains(\"UNIQUE constraint failed\")) {\n                ctx.status(400).json(Map.of(\n                        \"error\", \"Property already exists\",\n                        \"field\", \"property_name\"\n                ));\n            } else {\n                ctx.status(500).json(Map.of(\n                        \"error\", \"Database error\",\n                        \"message\",e.getMessage()\n                ));\n            }\n\n        });\n\n        // Exception handler for NullPointerException\n        app.exception(NullPointerException.class, (e, ctx) -> {\n            ctx.status(400);\n            ctx.json(Map.of(\n                    \"error\", \"null value\",\n                    \"message\", e.getMessage()\n            ));\n        });\n\n        app.start(port);\n        return app;\n    }\n\n    /**\n     * Main entry point of the application.\n     * <p>\n     * Starts the API server on port 7070.\n     *\n     * @param args command-line arguments (not used)\n     * @throws SQLException if database initialization fails\n     */\n    public static void main(String[] args) throws SQLException {\n        startServer(7070);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/API/umuziAPI.java b/src/main/java/API/umuziAPI.java
+--- a/src/main/java/API/umuziAPI.java	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/src/main/java/API/umuziAPI.java	(date 1760643115430)
+@@ -76,13 +76,10 @@
+             // dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
+ 
+         });
+-        app.get("/tenants", ctx -> {
+-
+-            ctx.render("/templates/property_form.html");
++        app.get("/add_another_unit",ctx ->{
++           ctx.render("/templates/property_form.html");
+         });
+ 
+-
+-
+         app.exception(SQLException.class, (e, ctx) -> {
+             if (e.getMessage().contains("UNIQUE constraint failed")) {
+                 ctx.status(400).json(Map.of(
+Index: target/classes/templates/property_form.html
+===================================================================
+diff --git a/target/classes/templates/property_form.html b/target/classes/templates/property_form.html
+deleted file mode 100644
+--- a/target/classes/templates/property_form.html	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ /dev/null	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
+@@ -1,232 +0,0 @@
+-<!DOCTYPE html>
+-<html lang="en">
+-<head>
+-    <meta charset="UTF-8">
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-    <title>Mastende System Forms</title>
+-    <style>
+-        body {
+-          font-family: Arial, sans-serif;
+-          background: #f4f6f9;
+-          display: flex;
+-          justify-content: center;
+-          align-items: flex-start;
+-          min-height: 100vh;
+-          margin: 0;
+-          padding: 20px;
+-        }
+-
+-        .forms-wrapper {
+-          display: flex;
+-          gap: 20px;
+-          flex-wrap: wrap; /* stack on small screens */
+-        }
+-
+-        .form-container {
+-          background: #fff;
+-          padding: 25px;
+-          border-radius: 10px;
+-          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+-          width: 100%;
+-          max-width: 400px;
+-        }
+-
+-        h2 {
+-          text-align: center;
+-          margin-bottom: 20px;
+-          color: #333;
+-        }
+-
+-        label {
+-          font-weight: bold;
+-          margin-top: 10px;
+-          display: block;
+-          color: #444;
+-        }
+-
+-        input, textarea, select, button {
+-          width: 100%;
+-          padding: 10px;
+-          margin-top: 5px;
+-          border: 1px solid #ccc;
+-          border-radius: 6px;
+-          font-size: 14px;
+-        }
+-
+-        textarea {
+-          resize: none;
+-        }
+-
+-        button {
+-          background: #007bff;
+-          color: #fff;
+-          font-weight: bold;
+-          cursor: pointer;
+-          margin-top: 15px;
+-          transition: background 0.3s;
+-        }
+-
+-        button:hover {
+-          background: #0056b3;
+-        }
+-
+-        .radio-group {
+-          display: flex;
+-          gap: 15px;
+-          margin-top: 5px;
+-        }
+-
+-        .radio-group label {
+-          display: flex;
+-          align-items: center;
+-          font-weight: normal;
+-        }
+-
+-        .radio-group input {
+-          margin-right: 5px;
+-          width: auto;
+-        }
+-    </style>
+-</head>
+-<body>
+-
+-<div class="forms-wrapper">
+-
+-    <!-- Form 1: User Sign Up -->
+-    <div class="form-container">
+-        <h2> Multi-unit property<br>Rent management <h2>
+-        <h2>Sign_UP</h2>
+-        <form action="http://localhost:7070/user_sign_up" method="POST">
+-            <label for="user_name">User Name:</label>
+-            <input type="text" id="user_name" name="user_name" required>
+-
+-            <label for="user_email">Email:</label>
+-            <input type="email" id="user_email" name="user_email" required>
+-
+-            <label for="contact">Contact:</label>
+-            <input type="email" id="number" name="contact" required>
+-
+-            <label for="password">Password:</label>
+-            <input type="password" id="password" name="password" required>
+-
+-            <label for="address">Address:</label>
+-            <textarea id="address" name="address" rows="3" required></textarea>
+-
+-            <button type="submit">Register</button>
+-        </form>
+-    </div>
+-
+-    <!-- Form 2: Add Property -->
+-    <div class="form-container">
+-        <h2>Add Property</h2>
+-        <form action="http://localhost:7070/add_property" method="POST">
+-            <label for="property_name">Property Name:</label>
+-            <input type="text" id="property_name" name="property_name" required>
+-
+-            <label for="number_of_rooms">Number of Rooms:</label>
+-            <input type="number" id="number_of_rooms" name="number_of_rooms" min="1" required>
+-
+-            <label for="rent">Rent (per month):</label>
+-            <input type="number" id="rent" name="rent" step="0.01" required>
+-
+-            <label for="contact">Contact Number:</label>
+-            <input type="tel" id="contact" name="contact" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+-
+-            <button type="submit">Save Property</button>
+-        </form>
+-    </div>
+-
+-    <!-- Form 3: Add Tenant -->
+-    <div class="form-container">
+-        <h2>Add Tenant</h2>
+-        <form action="http://localhost:7070/addtenants" method="POST">
+-            <label for="tenant_name">Name:</label>
+-            <input type="text" id="tenant_name" name="tenant_name" required>
+-
+-            <label for="move_in">Move In:</label>
+-            <input type="date" id="move_in" name="move_in" required>
+-
+-            <label>Employment:</label>
+-            <div class="radio-group">
+-                <label><input type="radio" name="employment" value="yes" required> Yes</label>
+-                <label><input type="radio" name="employment" value="no"> No</label>
+-            </div>
+-
+-            <label for="cell_number">Phone number:</label>
+-            <input type="tel" id="cell_number" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+-
+-            <label for="kin_name">Next of Kin Name:</label>
+-            <input type="text" id="kin_name" name="kin_name">
+-
+-            <label for="kin_number">Next of Kin Number:</label>
+-            <input type="tel" id="kin_number" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
+-
+-            <label for="pay_day">Pay Day:</label>
+-            <select name="pay_day" id="pay_day">
+-                <option value="1">1</option>
+-                <option value="15">15</option>
+-                <option value="30">30</option>
+-            </select>
+-
+-            <label for="room">Select a Room:</label>
+-            <select name="room" id="room">
+-                <option value="1">1</option>
+-                <option value="2">2</option>
+-                <option value="3">3</option>
+-            </select>
+-
+-            <label for="room_price">Room Price:</label>
+-            <input type="number" id="room_price" name="room_price" step="0.01">
+-            <button type="submit">Add Tenant</button>
+-        </form>
+-    </div>
+-
+-    <!-- Form 4: Edit Tenant -->
+-    <div class="form-container">
+-        <h2>Edit Tenant</h2>
+-        <form action="http://localhost:7070/updateTenants" method="POST">
+-            <label for="tenantname">Name:</label>
+-            <input type="text" id="tenantname" name="tenant_name" required>
+-
+-            <label for="movein">Move In:</label>
+-            <input type="date" id="movein" name="move_in" required>
+-
+-            <label>Employment:</label>
+-            <div class="radio-group">
+-                <label><input type="radio" name="employment" value="yes" required> Yes</label>
+-                <label><input type="radio" name="employment" value="no"> No</label>
+-            </div>
+-
+-            <label for="cellnumber">Phone number:</label>
+-            <input type="tel" id="cellnumber" name="cell_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678" required>
+-
+-            <label for="kinname">Next of Kin Name:</label>
+-            <input type="text" id="kinname" name="kin_name">
+-
+-            <label for="kinnumber">Next of Kin Number:</label>
+-            <input type="tel" id="kinnumber" name="kin_number" pattern="[0-9]{10,15}" placeholder="e.g. 0712345678">
+-
+-            <label for="payday">Pay Day:</label>
+-            <select name="pay_day" id="payday">
+-                <option value="1">1</option>
+-                <option value="15">15</option>
+-                <option value="30">30</option>
+-            </select>
+-
+-            <label for="room_">Select a Room:</label>
+-            <select name="room" id="room_">
+-                <option value="1">1</option>
+-                <option value="2">2</option>
+-                <option value="3">3</option>
+-            </select>
+-
+-            <label for="roomprice">Room Price:</label>
+-            <input type="number" id="roomprice" name="room_price" step="0.01">
+-
+-            <button type="submit">Update Tenant</button>
+-        </form>
+-    </div>
+-
+-</div>
+-</body>
+-</html>
+Index: target/classes/templates/tenant_form.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <title>Rental Management</title>\n    <style>\n        body {\n          font-family: Arial, sans-serif;\n          background: #f4f6f9;\n          display: flex;\n          justify-content: center;\n          align-items: flex-start;\n          min-height: 100vh;\n          margin: 0;\n          padding: 20px;\n        }\n\n        .forms-wrapper {\n          display: flex;\n          gap: 20px;\n          flex-wrap: wrap; /* stack on small screens */\n        }\n\n        .form-container {\n          background: #fff;\n          padding: 25px;\n          border-radius: 10px;\n          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);\n          width: 100%;\n          max-width: 400px;\n        }\n\n        h2 {\n          text-align: center;\n          margin-bottom: 20px;\n          color: #333;\n        }\n\n        label {\n          font-weight: bold;\n          margin-top: 10px;\n          display: block;\n          color: #444;\n        }\n\n        input, textarea, select, button {\n          width: 100%;\n          padding: 10px;\n          margin-top: 5px;\n          border: 1px solid #ccc;\n          border-radius: 6px;\n          font-size: 14px;\n        }\n\n        textarea {\n          resize: none;\n        }\n\n        button {\n          background: #007bff;\n          color: #fff;\n          font-weight: bold;\n          cursor: pointer;\n          margin-top: 15px;\n          transition: background 0.3s;\n        }\n\n        button:hover {\n          background: #0056b3;\n        }\n\n        .radio-group {\n          display: flex;\n          gap: 15px;\n          margin-top: 5px;\n        }\n\n        .radio-group label {\n          display: flex;\n          align-items: center;\n          font-weight: normal;\n        }\n\n        .radio-group input {\n          margin-right: 5px;\n          width: auto;\n        }\n    </style>\n</head>\n<body>\n<div class=\"form-container\">\n    <h2>Add Tenant</h2>\n    <form action=\"http://localhost:7070/add_tenants\" method=\"POST\">\n        <label>Name: </label>\n        <input type=\"text\" id=\"tenant_name\" name=\"tenant_name\" required>\n        <label for=\"cell_number\">Phone number:</label>\n        <input type=\"tel\" id=\"cell_number\" name=\"cell_number\" pattern=\"[0-9]{10,15}\" placeholder=\"e.g. 0712345678\" required>\n        <label for=\"move_in\">Move In:</label>\n        <input type=\"date\" id=\"move_in\" name=\"move_in\" required>\n        <label>Employment:</label>\n        <div class=\"radio-group\">\n            <label><input type=\"radio\" name=\"employment\" value=\"yes\" required> Yes</label>\n            <label><input type=\"radio\" name=\"employment\" value=\"no\"> No</label>\n        </div>\n        <label for=\"kin_name\">Next of Kin Name:</label>\n        <input type=\"text\" id=\"kin_name\" name=\"kin_name\">\n        <label for=\"kin_number\">Next of Kin Number:</label>\n        <input type=\"tel\" id=\"kin_number\" name=\"kin_number\" pattern=\"[0-9]{10,15}\" placeholder=\"e.g. 0712345678\">\n        <button type=\"submit\">Add Tenant</button>\n    </form>\n</div>\n\n</body>\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/classes/templates/tenant_form.html b/target/classes/templates/tenant_form.html
+--- a/target/classes/templates/tenant_form.html	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/classes/templates/tenant_form.html	(date 1760638391878)
+@@ -1,5 +1,5 @@
+ <!DOCTYPE html>
+-<html lang="en">
++<html lang="en" xmlns:th="http://www.thymeleaf.org">
+ <head>
+     <title>Rental Management</title>
+     <style>
+@@ -89,6 +89,7 @@
+ <body>
+ <div class="form-container">
+     <h2>Add Tenant</h2>
++    <p th:text="'Unit ' + ${unit_add}"></p>
+     <form action="http://localhost:7070/add_tenants" method="POST">
+         <label>Name: </label>
+         <input type="text" id="tenant_name" name="tenant_name" required>
+Index: src/main/resources/umuzi/credits.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/umuzi/credits.txt b/src/main/resources/umuzi/credits.txt
+new file mode 100644
+--- /dev/null	(date 1760644325897)
++++ b/src/main/resources/umuzi/credits.txt	(date 1760644325897)
+@@ -0,0 +1,3 @@
++## Image credits:
++
++- https://www.pexels.com/
+Index: target/maven-archiver/pom.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Generated by Maven\n#Wed Oct 15 11:27:57 SAST 2025\nartifactId=umuzi\ngroupId=org.sonarEffect\nversion=1.0.0\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/target/maven-archiver/pom.properties b/target/maven-archiver/pom.properties
+--- a/target/maven-archiver/pom.properties	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/maven-archiver/pom.properties	(date 1760633383551)
+@@ -1,5 +1,3 @@
+-#Generated by Maven
+-#Wed Oct 15 11:27:57 SAST 2025
+ artifactId=umuzi
+ groupId=org.sonarEffect
+ version=1.0.0
+Index: target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>model/database/residenceTest.class\nmodel/database/testSchema.class\nmodel/database/generalTest.class\nmodel/database/TenantTest.class\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst b/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+--- a/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst	(date 1760633382298)
+@@ -1,4 +1,4 @@
+-model/database/residenceTest.class
+-model/database/testSchema.class
+-model/database/generalTest.class
+-model/database/TenantTest.class
++model\database\residenceTest.class
++model\database\generalTest.class
++model\database\TenantTest.class
++model\database\testSchema.class
+Index: target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>model/database/Data.class\nmodel/main.class\nAPI/SecurityUtil.class\nmodel/database/roomHist.class\nmodel/database/general.class\nAPI/umuziAPI.class\nmodel/database/Property.class\nAPI_handlers/loginAPIhandler.class\nmodel/database/counter.class\nmodel/database/connectionAcess.class\nAPI/SessionUtil.class\nmodel/database/Tenant.class\nAPI_handlers/apiHandler.class\nAPI/state.class\norg/sonarEffect/Main.class\nmodel/database/appSchema.class\nmodel/database/residence.class\nAPI/readStoreKeys.class\norg/sonarEffect/main_muzi.class\nmodel/database/grossIncome.class\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst b/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+--- a/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst	(date 1760633277421)
+@@ -1,20 +1,20 @@
+-model/database/Data.class
+-model/main.class
+-API/SecurityUtil.class
+-model/database/roomHist.class
+-model/database/general.class
+-API/umuziAPI.class
+-model/database/Property.class
+-API_handlers/loginAPIhandler.class
+-model/database/counter.class
+-model/database/connectionAcess.class
+-API/SessionUtil.class
+-model/database/Tenant.class
+-API_handlers/apiHandler.class
+-API/state.class
+-org/sonarEffect/Main.class
+-model/database/appSchema.class
+-model/database/residence.class
+-API/readStoreKeys.class
+-org/sonarEffect/main_muzi.class
+-model/database/grossIncome.class
++model\main.class
++org\sonarEffect\Main.class
++model\database\Data.class
++model\database\roomHist.class
++API\umuziAPI.class
++API\SessionUtil.class
++model\database\counter.class
++API\state.class
++API_handlers\apiHandler.class
++API\readStoreKeys.class
++model\database\Property.class
++model\database\connectionAcess.class
++model\database\tenant.class
++API\SecurityUtil.class
++API_handlers\loginAPIhandler.class
++model\database\general.class
++model\database\grossIncome.class
++model\database\residence.class
++org\sonarEffect\main_muzi.class
++model\database\appSchema.class
+Index: target/classes/index.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Rental Management</title>\n    <link rel=\"stylesheet\" href=\"/css/style.css\">\n</head>\n\n<body>\n\n    <nav>\n        <div id=\"logo\">\n            <h1>Logo</h1>\n        </div>\n\n        <div class=\"page__navigation\">\n            <a href=\"#home\" id=\"home\">Home</a>\n            <a href=\"#about\" id=\"about-us\">About Us</a>\n            <a href=\"#contact\" id=\"contact-us\">Contact Us</a>\n        </div>\n\n        <div class=\"log__user\">\n            <a href=\"./templates/login.html\">Login</a>\n            <div id=\"spacer\"></div>\n            <a href=\"./templates/sign_up_user.html\">Signup</a>\n        </div>\n    </nav>\n\n    <main>\n\n        <header>\n            <div class=\"heading\">\n                <h1>Rental Management</h1>\n            </div>\n\n            <div class=\"descrip\">\n                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem odio ducimus illo, corrupti laudantium\n                    ipsam\n                    perspiciatis cum esse ab veritatis quibusdam perferendis ea modi libero tempora, exercitationem\n                    voluptas\n                    distinctio provident?</p>\n            </div>\n\n            <div class=\"directions\">\n                <button>Explore More</button>\n            </div>\n        </header>\n\n\n        <!-- <img src=\"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDIrROG870rUiwNMjEpyWxN1K07M2qqdsivg&s\"\n            alt=\"Rental Management Logo\" />\n\n        <div class=\"button-container\">\n            <button class=\"btn\" onclick=\"window.location.href='/rentalmanageme@sign_up'\">Sign Up</button>\n            <button class=\"btn\">Log In</button>\n        </div> -->\n\n    </main>\n\n</body>\n<script src=\"/js/main.js\"></script>\n\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/classes/index.html b/target/classes/index.html
+--- a/target/classes/index.html	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/classes/index.html	(date 1760632862288)
+@@ -49,9 +49,52 @@
+         </header>
+ 
+ 
+-        <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDIrROG870rUiwNMjEpyWxN1K07M2qqdsivg&s"
++        <section class="about" id="about">
++
++            <div class="about__left">
++                <h2>Second Heading</h2>
++
++                <div class="cards">
++    
++                    <div class="card">
++                        <h3>Manage Smarter, Not Harder</h3>
++                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum!</p>
++                    </div>
++    
++    
++                    <div class="card">
++                        <h3>Manage Smarter, Not Harder</h3>
++                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum!</p>
++                    </div>
++    
++    
++                    <div class="card">
++                        <h3>Manage Smarter, Not Harder</h3>
++                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum!</p>
++                    </div>
++    
++    
++                    <div class="card">
++                        <h3>Manage Smarter, Not Harder</h3>
++                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum!</p>
++                    </div>
++    
++                </div>
++            </div>
++
++
++            <div class="about__right">
++                <div class="side-image">
++                    <img src="" alt="Random House's front yard">
++                </div>
++            </div>
++
++        </section>
++
++        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDIrROG870rUiwNMjEpyWxN1K07M2qqdsivg&s"
+             alt="Rental Management Logo" />
+ 
++        <!--
+         <div class="button-container">
+             <button class="btn" onclick="window.location.href='/rentalmanageme@sign_up'">Sign Up</button>
+             <button class="btn">Log In</button>
+Index: target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/home/wtc/PROMAN--Rent-property-management/src/main/java/model/main.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/Property.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/API/readStoreKeys.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/API/SessionUtil.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/API/state.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/org/sonarEffect/main_muzi.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/grossIncome.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/API_handlers/loginAPIhandler.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/Tenant.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/residence.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/counter.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/general.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/appSchema.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/API/umuziAPI.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/connectionAcess.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/roomHist.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/Data.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/API/SecurityUtil.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/API_handlers/apiHandler.java\n/home/wtc/PROMAN--Rent-property-management/src/main/java/org/sonarEffect/Main.java\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst b/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+--- a/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst	(date 1760633381192)
+@@ -1,20 +1,20 @@
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/main.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/Property.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/API/readStoreKeys.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/API/SessionUtil.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/API/state.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/org/sonarEffect/main_muzi.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/grossIncome.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/API_handlers/loginAPIhandler.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/Tenant.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/residence.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/counter.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/general.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/appSchema.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/API/umuziAPI.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/connectionAcess.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/roomHist.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/model/database/Data.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/API/SecurityUtil.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/API_handlers/apiHandler.java
+-/home/wtc/PROMAN--Rent-property-management/src/main/java/org/sonarEffect/Main.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\Property.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\Data.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\residence.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\grossIncome.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\main.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\API_handlers\loginAPIhandler.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\API\state.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\general.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\org\sonarEffect\Main.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\API\umuziAPI.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\API\SessionUtil.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\appSchema.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\connectionAcess.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\tenant.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\API_handlers\apiHandler.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\roomHist.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\org\sonarEffect\main_muzi.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\API\SecurityUtil.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\API\readStoreKeys.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\main\java\model\database\counter.java
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"cd5ff09d-31fa-43d9-b03f-e8653f8a5c59\" name=\"Changes\" comment=\"updates\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/model/database/residence.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/model/database/residence.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/model/database/tenant.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/model/database/tenant.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/resources/templates/sign_up_user.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/resources/templates/sign_up_user.html\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/resources/templates/tenant_form.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/resources/templates/tenant_form.html\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/test/java/model/database/generalTest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/test/java/model/database/generalTest.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/test/java/model/database/residenceTest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/test/java/model/database/residenceTest.java\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"ProjectColorInfo\"><![CDATA[{\n  \"associatedIndex\": 5\n}]]></component>\n  <component name=\"ProjectId\" id=\"3464Djf4HdPW8JDfOfOApj8hmSC\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"Application.main.executor\": \"Run\",\n    \"Application.umuziAPI.executor\": \"Run\",\n    \"ModuleVcsDetector.initialDetectionPerformed\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252\": \"true\",\n    \"RunOnceActivity.git.unshallow\": \"true\",\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\n    \"SHELLCHECK.PATH\": \"/home/wtc/.local/share/JetBrains/IdeaIC2025.2/Shell Script/shellcheck\",\n    \"git-widget-placeholder\": \"main\",\n    \"kotlin-language-version-configured\": \"true\",\n    \"last_opened_file_path\": \"/home/wtc/PROMAN--Rent-property-management/System_design\",\n    \"project.structure.last.edited\": \"Modules\",\n    \"project.structure.proportion\": \"0.15\",\n    \"project.structure.side.proportion\": \"0.2\",\n    \"settings.editor.selected.configurable\": \"project.propCompiler\"\n  }\n}]]></component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/System_design\" />\n    </key>\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/src/main/resources\" />\n      <recent name=\"$PROJECT_DIR$\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Application.umuziAPI\">\n    <configuration name=\"main\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"model.main\" />\n      <module name=\"Mastende\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"model.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"umuziAPI\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"API.umuziAPI\" />\n      <module name=\"Mastende\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"API.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Application.umuziAPI\" />\n        <item itemvalue=\"Application.main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"cd5ff09d-31fa-43d9-b03f-e8653f8a5c59\" name=\"Changes\" comment=\"\" />\n      <created>1760517469194</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1760517469194</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"updates\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1760537353437</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1760537353437</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"updates\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1760537361869</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1760537361869</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"3\" />\n    <servers />\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"updates\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"updates\" />\n  </component>\n  <component name=\"XDebuggerManager\">\n    <breakpoint-manager>\n      <breakpoints>\n        <line-breakpoint enabled=\"true\" type=\"java-line\">\n          <url>file://$PROJECT_DIR$/src/main/java/API/umuziAPI.java</url>\n          <line>13</line>\n          <option name=\"timeStamp\" value=\"1\" />\n        </line-breakpoint>\n      </breakpoints>\n    </breakpoint-manager>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/.idea/workspace.xml	(date 1760645917140)
+@@ -4,14 +4,42 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="cd5ff09d-31fa-43d9-b03f-e8653f8a5c59" name="Changes" comment="updates">
++    <list default="true" id="cd5ff09d-31fa-43d9-b03f-e8653f8a5c59" name="Changes" comment="NEW method that get tenant name by id and pass it to the dashboard besides the tenant unit_number">
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/credits.txt" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/img/pexels-alex-staudinger-829197-1732414.jpg" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/img/pexels-binyaminmellish-106399.jpg" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/img/pexels-pixabay-460695.jpg" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/img/pexels-thgusstavo-2102587.jpg" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/inspo/Screenshot-2022-04-06-at-3.webp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/inspo/image13-2.webp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/inspo/original-542ba98c95c52426d4324e7ef3b2b886.webp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/inspo/original-9f80307f2a627fc2be001edd82438f60.webp" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/main/resources/umuzi/planning.odt" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/API/umuziAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/API/umuziAPI.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/model/database/general.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/database/general.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/model/database/residence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/database/residence.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/model/database/tenant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/database/tenant.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/sign_up_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/sign_up_user.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/tenant_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/tenant_form.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/test/java/model/database/generalTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/model/database/generalTest.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/test/java/model/database/residenceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/model/database/residenceTest.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/dashboard.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/API/umuziAPI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/API/umuziAPI.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/API_handlers/apiHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/API_handlers/apiHandler.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/css/style.css" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/index.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/model/database/Tenant.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/database/Tenant.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/model/database/general.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/database/general.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/model/database/residence.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/database/residence.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/templates/property.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/property.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/templates/property_form.html" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/templates/sign_up_user.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/sign_up_user.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/templates/tenant_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/tenant_form.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/original-umuzi-1.0.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/original-umuzi-1.0.0.jar" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/test-classes/model/database/generalTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/model/database/generalTest.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/test-classes/model/database/residenceTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/model/database/residenceTest.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/umuzi-1.0.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/umuzi-1.0.0.jar" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -21,9 +49,9 @@
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+-  <component name="ProjectColorInfo"><![CDATA[{
+-  "associatedIndex": 5
+-}]]></component>
++  <component name="ProjectColorInfo">{
++  &quot;associatedIndex&quot;: 5
++}</component>
+   <component name="ProjectId" id="3464Djf4HdPW8JDfOfOApj8hmSC" />
+   <component name="ProjectViewState">
+     <option name="hideEmptyMiddlePackages" value="true" />
+@@ -39,7 +67,7 @@
+     "RunOnceActivity.git.unshallow": "true",
+     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+     "SHELLCHECK.PATH": "/home/wtc/.local/share/JetBrains/IdeaIC2025.2/Shell Script/shellcheck",
+-    "git-widget-placeholder": "main",
++    "git-widget-placeholder": "Merging main",
+     "kotlin-language-version-configured": "true",
+     "last_opened_file_path": "/home/wtc/PROMAN--Rent-property-management/System_design",
+     "project.structure.last.edited": "Modules",
+@@ -73,7 +101,7 @@
+     </configuration>
+     <configuration name="umuziAPI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="API.umuziAPI" />
+-      <module name="Mastende" />
++      <module name="umuzi" />
+       <extension name="coverage">
+         <pattern>
+           <option name="PATTERN" value="API.*" />
+@@ -91,6 +119,7 @@
+       </list>
+     </recent_temporary>
+   </component>
++  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+     <task active="true" id="Default" summary="Default task">
+       <changelist id="cd5ff09d-31fa-43d9-b03f-e8653f8a5c59" name="Changes" comment="" />
+@@ -115,12 +144,66 @@
+       <option name="project" value="LOCAL" />
+       <updated>1760537361869</updated>
+     </task>
+-    <option name="localTasksCounter" value="3" />
++    <task id="LOCAL-00003" summary="added tymeleaf to display the unit of the tenant on the page">
++      <option name="closed" value="true" />
++      <created>1760638488593</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1760638488593</updated>
++    </task>
++    <task id="LOCAL-00004" summary="Persisting session attributes across all th e url_end point">
++      <option name="closed" value="true" />
++      <created>1760638574569</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1760638574569</updated>
++    </task>
++    <task id="LOCAL-00005" summary="thymleaf Fixed expression">
++      <option name="closed" value="true" />
++      <created>1760640108005</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1760640108005</updated>
++    </task>
++    <task id="LOCAL-00006" summary="thymleaf variables for property_name and landlord_username">
++      <option name="closed" value="true" />
++      <created>1760640184596</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1760640184596</updated>
++    </task>
++    <task id="LOCAL-00007" summary="updated methods">
++      <option name="closed" value="true" />
++      <created>1760640236464</created>
++      <option name="number" value="00007" />
++      <option name="presentableId" value="LOCAL-00007" />
++      <option name="project" value="LOCAL" />
++      <updated>1760640236464</updated>
++    </task>
++    <task id="LOCAL-00008" summary="NEW method that get tenant name by id and pass it to the dashboard besides the tenant unit_number">
++      <option name="closed" value="true" />
++      <created>1760644174065</created>
++      <option name="number" value="00008" />
++      <option name="presentableId" value="LOCAL-00008" />
++      <option name="project" value="LOCAL" />
++      <updated>1760644174065</updated>
++    </task>
++    <option name="localTasksCounter" value="9" />
+     <servers />
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="updates" />
+-    <option name="LAST_COMMIT_MESSAGE" value="updates" />
++    <MESSAGE value="added tymeleaf to display the unit of the tenant on the page" />
++    <MESSAGE value="Persisting session attributes across all th e url_end point" />
++    <MESSAGE value="thymleaf Fixed expression" />
++    <MESSAGE value="thymleaf variables for property_name and landlord_username" />
++    <MESSAGE value="updated methods" />
++    <MESSAGE value="NEW method that get tenant name by id and pass it to the dashboard besides the tenant unit_number" />
++    <option name="LAST_COMMIT_MESSAGE" value="NEW method that get tenant name by id and pass it to the dashboard besides the tenant unit_number" />
+   </component>
+   <component name="XDebuggerManager">
+     <breakpoint-manager>
+Index: target/classes/templates/sign_up_user.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!doctype html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <title>ProMan — Landlord Sign Up</title>\n    <!-- Tailwind CDN for quick styling -->\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n    <!-- Chart.js for the sample income graph -->\n    <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n</head>\n<body class=\"bg-gray-50 text-gray-800 antialiased\">\n<header class=\"bg-white shadow-sm\">\n    <div class=\"max-w-6xl mx-auto px-6 py-6 flex items-center justify-between\">\n        <h1 class=\"text-2xl font-extrabold\">ProMan</h1>\n        <p class=\"text-sm text-gray-500\">Manage — <span class=\"font-semibold\">Keep track of tenants' payments</span></p>\n    </div>\n</header>\n\n<main class=\"max-w-6xl mx-auto px-6 py-10\">\n    <div class=\"grid grid-cols-1 lg:grid-cols-3 gap-8\">\n        <!-- Sign-up / Landlord Form -->\n        <section class=\"lg:col-span-1 bg-white p-6 rounded-2xl shadow\">\n            <h2 class=\"text-xl font-bold mb-4\">Landlord Sign-Up</h2>\n            <form id=\"landlordForm\" method=\"POST\" action=\"http://localhost:7070/user_sign_up\" class=\"space-y-4\">\n\n                <div>\n                    <label for=\"user_name\" class=\"block text-sm font-medium\">Username</label>\n                    <input id=\"user_name\" name=\"user_name\" required type=\"text\" class=\"mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-200 p-2\" />\n                </div>\n\n                <div>\n                    <label for=\"contact\" class=\"block text-sm font-medium\">Contact</label>\n                    <input id=\"contact\" name=\"contact\" required type=\"text\" class=\"mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2\" />\n                </div>\n\n                <div>\n                    <label for=\"address\" class=\"block text-sm font-medium\">Address</label>\n                    <input id=\"address\" name=\"address\" required type=\"text\" class=\"mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2\" />\n                </div>\n\n                <div>\n                    <label for=\"user_email\" class=\"block text-sm font-medium\">Email</label>\n                    <input id=\"user_email\" name=\"user_email\" required type=\"email\" class=\"mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2\" />\n                </div>\n\n                <div>\n                    <label for=\"password\" class=\"block text-sm font-medium\">Password</label>\n                    <input id=\"password\" name=\"password\" required type=\"password\" class=\"mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2\" />\n                </div>\n\n                <!-- Hidden user_type as requested -->\n                <input id=\"user_type\" name=\"user_type\" type=\"hidden\" value=\"landlord\" />\n\n                <div class=\"pt-4\">\n                    <button type=\"submit\" class=\"w-full inline-flex justify-center items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700\">Sign up as landlord</button>\n                </div>\n            </form>\n            <p class=\"mt-4 text-xs text-gray-500\">Form posts to <code class=\"bg-gray-100 px-1 rounded\">/landlordpropertyinformation</code></p>\n        </section>\n\n        <!-- Hero + Overview -->\n        <section class=\"lg:col-span-2 bg-white p-6 rounded-2xl shadow\">\n            <div class=\"mb-6\">\n                <h2 class=\"text-2xl font-bold\">What ProMan does</h2>\n                <p class=\"mt-2 text-gray-600\">ProMan simplifies property management — keeping original content intact while presenting it cleanly and professionally.</p>\n            </div>\n\n            <div class=\"grid grid-cols-1 md:grid-cols-2 gap-6\">\n                <div class=\"p-4 border rounded-lg\">\n                    <h3 class=\"font-semibold mb-2\">Platform Overview</h3>\n                    <ul class=\"list-disc ml-5 text-gray-700 space-y-1\">\n                        <li>Keep track of tenants' payments and accounting.</li>\n                        <li>Record missed or late payments automatically.</li>\n                        <li>Add and monitor overdue balances.</li>\n                        <li>Visual graphs showing property gross income (monthly &amp; annually).</li>\n                    </ul>\n                </div>\n\n                <div class=\"p-4 border rounded-lg\">\n                    <h3 class=\"font-semibold mb-2\">Tenant Management</h3>\n                    <ul class=\"list-disc ml-5 text-gray-700 space-y-1\">\n                        <li>Invite tenants and give them access to submit requests.</li>\n                        <li>Store tenants' personal details securely.</li>\n                        <li>Link unit payments with tenant records.</li>\n                        <li>History of tenant occupation per unit.</li>\n                    </ul>\n                </div>\n\n                <div class=\"p-4 border rounded-lg\">\n                    <h3 class=\"font-semibold mb-2\">Financial History &amp; Reviews</h3>\n                    <ul class=\"list-disc ml-5 text-gray-700 space-y-1\">\n                        <li>History of the financial performance of the property.</li>\n                        <li>Historical tenant reviews and feedback.</li>\n                    </ul>\n                </div>\n\n                <div class=\"p-4 border rounded-lg\">\n                    <h3 class=\"font-semibold mb-2\">Quick Actions</h3>\n                    <p class=\"text-sm text-gray-600\">Invite tenants, export reports, or view overdue balances.</p>\n                    <div class=\"mt-3 flex gap-2\">\n                        <button class=\"px-3 py-1 rounded bg-gray-100 text-sm\">Invite Tenant</button>\n                        <button class=\"px-3 py-1 rounded bg-gray-100 text-sm\">Export Report</button>\n                    </div>\n                </div>\n            </div>\n\n            <div class=\"mt-8\">\n                <h3 class=\"font-semibold mb-3\">Property Income (Sample)</h3>\n                <div class=\"bg-white border p-4 rounded-lg\">\n                    <canvas id=\"incomeChart\" height=\"120\"></canvas>\n                </div>\n            </div>\n\n        </section>\n    </div>\n\n    <!-- Extra details and footer -->\n    <section class=\"mt-10 bg-white p-6 rounded-2xl shadow\">\n        <h3 class=\"text-lg font-bold mb-3\">More details</h3>\n        <p class=\"text-gray-700\">For more details — email: <a href=\"mailto:ProMan@gmail.com\" class=\"text-indigo-600 font-medium\">ProMan@gmail.com</a></p>\n    </section>\n</main>\n\n<footer class=\"mt-12 py-6 bg-white border-t\">\n    <div class=\"max-w-6xl mx-auto px-6 text-sm text-gray-500\">© ProMan — Property Management</div>\n</footer>\n\n<script>\n    // Sample Chart.js rendering with dummy data for monthly & annual gross income\n    const ctx = document.getElementById('incomeChart');\n    if (ctx) {\n      new Chart(ctx.getContext('2d'), {\n        type: 'bar',\n        data: {\n          labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],\n          datasets: [{\n            label: 'Gross Income (monthly)',\n            data: [1200, 1500, 1100, 1800, 1400, 1600, 1700, 1550, 1650, 1900, 2000, 2100],\n            borderWidth: 1,\n            backgroundColor: 'rgba(99,102,241,0.7)'\n          }]\n        },\n        options: {\n          responsive: true,\n          maintainAspectRatio: false,\n          scales: {\n            y: { beginAtZero: true }\n          }\n        }\n      })\n    }\n\n    // Basic client-side validation / UX for the form\n    document.getElementById('landlordForm').addEventListener('submit', function (e) {\n      // we keep default submit so backend handles it; this just demonstrates an opportunity to do further checks\n      const nUnits = Number(document.getElementById('n_units').value || 0);\n      if (nUnits < 1) {\n        e.preventDefault();\n        alert('Please enter a valid number of units (1 or more).');\n      }\n    });\n</script>\n</body>\n</html>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/classes/templates/sign_up_user.html b/target/classes/templates/sign_up_user.html
+--- a/target/classes/templates/sign_up_user.html	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/classes/templates/sign_up_user.html	(date 1760559655898)
+@@ -34,11 +34,18 @@
+                     <input id="contact" name="contact" required type="text" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2" />
+                 </div>
+ 
++                <div>
++                    <label for="property_name" class="block text-sm font-medium">Property_name:</label>
++                    <input id="property_name" name="property_name" required type="text" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2" />
++                </div>
++
++
+                 <div>
+                     <label for="address" class="block text-sm font-medium">Address</label>
+                     <input id="address" name="address" required type="text" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2" />
+                 </div>
+ 
++
+                 <div>
+                     <label for="user_email" class="block text-sm font-medium">Email</label>
+                     <input id="user_email" name="user_email" required type="email" class="mt-1 block w-full rounded-md border-gray-200 shadow-sm p-2" />
+Index: target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/AppSchemaTest.java\n/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/residenceTest.java\n/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/testSchema.java\n/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/TenantTest.java\n/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/generalTest.java\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst b/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+--- a/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst	(date 1760633381214)
+@@ -1,5 +1,5 @@
+-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/AppSchemaTest.java
+-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/residenceTest.java
+-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/testSchema.java
+-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/TenantTest.java
+-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/generalTest.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\test\java\model\database\generalTest.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\test\java\model\database\AppSchemaTest.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\test\java\model\database\testSchema.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\test\java\model\database\residenceTest.java
++C:\Users\Mkhulex\PROMAN--Rent-property-management\src\test\java\model\database\TenantTest.java
+Index: target/classes/templates/property.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\n<html xmlns:th=\"http://www.thymeleaf.org\">\n<head>\n    <title>Rental Management</title>\n    <style>\n        body {\n          font-family: Arial, sans-serif;\n          background: #f4f6f9;\n          display: flex;\n          flex-direction: column;\n          align-items: center;\n          min-height: 100vh;\n          margin: 0;\n          padding: 20px;\n        }\n\n        .message {\n          background: #007bff;\n          color: white;\n          padding: 15px 25px;\n          border-radius: 10px;\n          box-shadow: 0 4px 8px rgba(0,0,0,0.1);\n          text-align: center;\n          margin-bottom: 30px;\n          width: 100%;\n          max-width: 600px;\n        }\n\n        .form-container {\n          background: #fff;\n          padding: 25px;\n          border-radius: 10px;\n          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);\n          width: 100%;\n          max-width: 400px;\n        }\n\n        h2 {\n          text-align: center;\n          margin-bottom: 20px;\n          color: #333;\n        }\n\n        label {\n          font-weight: bold;\n          margin-top: 10px;\n          display: block;\n          color: #444;\n        }\n\n        input, textarea, select, button {\n          width: 100%;\n          padding: 10px;\n          margin-top: 5px;\n          border: 1px solid #ccc;\n          border-radius: 6px;\n          font-size: 14px;\n        }\n\n        textarea {\n          resize: none;\n        }\n\n        button {\n          background: #007bff;\n          color: #fff;\n          font-weight: bold;\n          cursor: pointer;\n          margin-top: 15px;\n          transition: background 0.3s;\n        }\n\n        button:hover {\n          background: #0056b3;\n        }\n\n        a {\n          color: #007bff;\n          text-decoration: none;\n        }\n\n        a:hover {\n          text-decoration: underline;\n        }\n    </style>\n</head>\n<body>\n\n<!-- Welcome message section -->\n<div class=\"message\">\n    <h2 th:text=\"'Welcome, ' + ${username}\"></h2>\n    <p th:text=\"${msg}\"></p>\n</div>\n<p>Please fill out property information</p>\n<!-- Form below the message -->\n\n<div class=\"form-container\">\n\n    <h2>Property-Unit Information</h2>\n    <form action=\"http://localhost:7070/add_property\" method=\"POST\">\n        <label for=\"property_unit\">Property unit:</label>\n        <input id=\"property_unit\" name=\"property_unit\" type=\"number\" min=\"1\" value=\"1\" required>\n\n        <label for=\"rent\">Unit Rent (per month):</label>\n        <input type=\"number\" id=\"rent\" name=\"rent\" step=\"0.01\" required>\n\n        <label for=\"rent\">pay_day (per month):</label>\n        <input type=\"number\" id=\"pay_day\" name=\"pay_day\" step=\"0.01\" required>\n\n        <label for=\"occupation\">Occupation:</label>\n        <select id=\"occupation\" name=\"occupation\" required>\n            <option value=\"\">Select</option>\n            <option value=\"yes\">Yes</option>\n            <option value=\"no\">No</option>\n        </select>\n        <button type=\"submit\">Save Property</button>\n    </form>\n</div>\n\n</body>\n</html>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/classes/templates/property.html b/target/classes/templates/property.html
+--- a/target/classes/templates/property.html	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/classes/templates/property.html	(date 1760639950754)
+@@ -88,10 +88,11 @@
+ 
+ <!-- Welcome message section -->
+ <div class="message">
+-    <h2 th:text="'Welcome, ' + ${username}"></h2>
+-    <p th:text="${msg}"></p>
++    <h2 th:text="'Welcome, ' + ${user_name}"></h2>
++    <p th:text="${residence_name} + ' Kindly add unit or property information'"></p>
++
+ </div>
+-<p>Please fill out property information</p>
++<p></p>
+ <!-- Form below the message -->
+ 
+ <div class="form-container">
+Index: target/classes/css/style.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>* {\n    padding: 0;\n    margin: 0;\n}\n\nnav {\n    position: absolute;\n    top: 0;\n    left: 0;\n    width: 90%;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    text-align: center;\n    justify-content: space-between;\n    margin: 15px 5%;\n    z-index: 5;\n}\n\n#spacer {\n    width: 1px;\n    height: 20px;\n    background-color: black;\n}\n\n.log__user {\n    display: flex;\n    flex-direction: row;\n    gap: 5px;\n}\n\nheader {\n    padding: 0 60% 0 100px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: start;\n    text-align: start;\n    gap: 20px;\n    background-color: aquamarine;\n    height: 100vh;\n}\n\nheader button {\n    padding: 5px 10px;\n}\n\n.page__navigation {\n    display: flex;\n    flex-direction: row;\n    gap: 10px;\n}\n\na {\n    text-decoration: none;\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/target/classes/css/style.css b/target/classes/css/style.css
+--- a/target/classes/css/style.css	(revision 9e52400cb895aa78d41f789cbab7591a11d7d730)
++++ b/target/classes/css/style.css	(date 1760632862288)
+@@ -48,9 +48,30 @@
+ .page__navigation {
+     display: flex;
+     flex-direction: row;
+-    gap: 10px;
++    gap: 15px;
+ }
+ 
+ a {
+     text-decoration: none;
++}
++
++.about {
++    display: grid;
++    grid-template-columns: 1fr 1.25fr;
++    padding: 25px 100px;
++    gap: 25px;
++}
++
++.cards {
++    padding: 25px 0;
++    display: grid;
++    grid-template-columns: repeat(2, 1fr);
++}
++
++.card {
++    display: flex;
++    flex-direction: column;
++    width: 75%;
++    gap: 25px;
++    background-color: azure;
+ }
+\ No newline at end of file
