@@ -114,17 +114,6 @@ public class apiHandler {
 
         return ctx ->{
             try{
-                Integer numberofRooms = ctx.sessionAttribute("roomsOccupied");
-                // check-logic for preventing inserting tenant with the same room number to the database
-//                if (duplicateNUmberchecker.getCurrent_track().equals(room.intValue())) {
-//                    System.out.println("same Room " + duplicateNUmberchecker.getCurrent_track());
-//                    ctx.json(Map.of("message", "room taken", "status", 200));
-//                    return;
-//                }else{
-//                    duplicateNUmberchecker.setCurrent_track(room);
-//                    System.out.println("Previous room number: " + duplicateNUmberchecker.getCurrent_track());
-//                }
-
                 //Insert tenant to general_user table for landlord Manual insertion
                 String name = ctx.formParam("tenant_name");
                 String number = ctx.formParam("cell_number");
@@ -138,16 +127,21 @@ public class apiHandler {
                 Integer tenantUniqueID =  addnewTenant.tenant_ID();
 
                 System.out.println("ID " + tenantUniqueID);
-
                 //update properties table and includes the tenant unique ID
                 Integer landlordId = ctx.sessionAttribute("user_ID");
                 System.out.println("amen " + landlordId);
-                residence addTenantUnit = new residence();
-                System.out.println(landlordId);
 
-                ;
+
+                residence addTenantUnit = new residence();
+
+                addTenantUnit.setlandlord(landlordId);
+                addTenantUnit.setTenantId(tenantUniqueID);
+
+
+                addTenantUnit.Insert_tenatId();
+                System.out.println(landlordId);
                 //update the properties row with the tenant occupying the room/unit
-                addTenantUnit.Insert_tenatId(landlordId,landlordId);
+                addTenantUnit.Insert_tenatId();
                 //additional information about the tenant --> tenants_information table
                 //how does htm send range values
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
