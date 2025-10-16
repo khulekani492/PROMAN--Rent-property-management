@@ -88,10 +88,11 @@
 
 <!-- Welcome message section -->
 <div class="message">
-    <h2 th:text="'Welcome, ' + ${username}"></h2>
-    <p th:text="${msg}"></p>
+    <h2 th:text="'Welcome, ' + ${user_name}"></h2>
+    <p th:text="${residence_name} + ' Kindly add unit or property information'"></p>
+
 </div>
-<p>Please fill out property information</p>
+<p></p>
 <!-- Form below the message -->
 
 <div class="form-container">
