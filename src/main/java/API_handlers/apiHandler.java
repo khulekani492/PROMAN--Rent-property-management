@@ -139,14 +139,16 @@ public class apiHandler {
                 //Access the unique ID from the general_user table
                 Integer tenantUniqueID =  addnewTenant.tenant_ID();
 
-                System.out.println("ID " + tenantUniqueID);
+                System.out.println("tenant ID" + tenantUniqueID);
                 //update properties table and includes the tenant unique ID
                 Integer landlordId = ctx.sessionAttribute("user_ID");
-                System.out.println("amen " + landlordId);
+                Integer property_unit = ctx.sessionAttribute("property_unit");
+                System.out.println("landlord " + landlordId);
+                System.out.println("unit " + property_unit);
 
 
                 residence addTenantUnit = new residence();
-
+                addTenantUnit.setProperty_unit(property_unit);
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
 
