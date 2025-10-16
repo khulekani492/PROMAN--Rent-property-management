@@ -163,7 +163,7 @@ public class apiHandler {
                 Map<String, Object> model = new HashMap<>();
                 model.put("username",username);
                 //model.put("age", propertyname);
-                ctx.render("/templates/property.html",model);
+                ctx.render("/templates/dashboard.html",model);
 
             } catch (Exception e) {
                 ctx.status(400).result("Error: " + e.getMessage());
