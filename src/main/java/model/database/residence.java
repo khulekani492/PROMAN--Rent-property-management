@@ -126,7 +126,7 @@ public class residence extends connectionAcess implements  Property {
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
                 // rethrow to be caught in your route handler
-                throw new SQLException("Duplicate entry: property or tenant already exists", e);
+                throw new SQLException("tenant exists", e);
             } else {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
             }
@@ -147,8 +147,7 @@ public class residence extends connectionAcess implements  Property {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
-                // rethrow to be caught in your route handler
-                throw new SQLException("Duplicate entry: property or tenant already exists", e);
+                throw new SQLException("unit taken", e);
             } else {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
             }
