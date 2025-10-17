@@ -87,21 +87,6 @@ public class umuziAPI {
             ctx.render("/templates/property_form.html",model);
         });
 
-
-
-        app.exception(SQLException.class, (e, ctx) -> {
-            if (e.getMessage().contains("UNIQUE constraint failed")) {
-                ctx.status(400).json(Map.of(
-                        "error", "Property already exists",
-                        "field", "property_name"
-                ));
-            } else {
-                ctx.status(500).json(Map.of(
-                        "error", "Database error"
-                ));
-            }
-        });
-
         app.exception(Exception.class, (e, ctx) -> {
             e.printStackTrace();
             if (e.getMessage().contains("UNIQUE constraint failed")) {
