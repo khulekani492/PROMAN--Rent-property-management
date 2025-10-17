@@ -3,6 +3,7 @@ package model.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * residence class is responsible for inserting property information into the database. <br>
@@ -113,7 +114,7 @@ public class residence extends connectionAcess implements  Property {
         }
       return  null;
     }
-    public  void  Insert_tenatId(){
+    public  void  Insert_tenatId() throws SQLException {
         String tenant = """
                 UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ? and property_unit = ?
                 """;
@@ -122,12 +123,16 @@ public class residence extends connectionAcess implements  Property {
             pstm.setInt(2,this.landlordId);
             pstm.setInt(3,this.property_unit);
             pstm.executeUpdate();
-        }catch (SQLException e){
-            throw new RuntimeException("Database update failed", e);
-        }
-    }
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) {
+                // rethrow to be caught in your route handler
+                throw new SQLException("Duplicate entry: property or tenant already exists", e);
+            } else {
+                throw new SQLException("Insert failed: " + e.getMessage(), e);
+            }
+        }}
     @Override
-    public void insert_information() {
+    public void insert_information() throws SQLException {
         String propertySQL = """
     INSERT INTO properties (property_unit,property_rent, occupation,landlord_user_id,pay_day)
     VALUES (?, ?, ?, ?,? )
@@ -141,7 +146,12 @@ public class residence extends connectionAcess implements  Property {
             pstmt.setInt(5,this.pay_day);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            if ("23505".equals(e.getSQLState())) {
+                // rethrow to be caught in your route handler
+                throw new SQLException("Duplicate entry: property or tenant already exists", e);
+            } else {
+                throw new SQLException("Insert failed: " + e.getMessage(), e);
+            }
         }
 
     }
