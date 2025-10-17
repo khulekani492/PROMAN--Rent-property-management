@@ -115,7 +115,7 @@ public void  landlord_insert_tenant(){
            } catch (SQLException e) {
                if ("23505".equals(e.getSQLState())) {
                    // rethrow to be caught in your route handler
-                   throw new SQLException("Duplicate entry: property or tenant already exists", e);
+                   throw new SQLException("user exists", e);
                } else {
                    throw new SQLException("Insert failed: " + e.getMessage(), e);
                }
