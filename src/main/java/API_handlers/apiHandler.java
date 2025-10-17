@@ -107,7 +107,8 @@ public class apiHandler {
                }
 
            }catch (SQLException e) {
-               ctx.status(500).result("Database error: " + e.getMessage());
+               ctx.status(500).json("error: " + e.getMessage());
+
                e.printStackTrace();
            } catch (Exception e) {
                ctx.status(400).result("Error: " + e.getMessage());
@@ -121,79 +122,67 @@ public class apiHandler {
      * Keeps rendering the same form repeatedly until the counter
      * reaches the last room.
      */
-    public Handler addTenant(){
-        state duplicateNUmberchecker = new state(0);
-        counter count = new counter();
-
-        return ctx ->{
-            try{
-                //Insert tenant to general_user table for landlord Manual insertion
+    public Handler addTenant() {
+        return ctx -> {
+            try {
+                // Insert tenant into general_user table for landlord manual insertion
                 String name = ctx.formParam("tenant_name");
                 String number = ctx.formParam("cell_number");
-                System.out.println("Sweet love : " + name);
-                System.out.println("lil wayne down: " + number);
                 String user_type = "tenant";
-                general addnewTenant = new general(name,number,user_type);
 
+                general addnewTenant = new general(name, number, user_type);
                 addnewTenant.landlord_insert_tenant();
-                //Access the unique ID from the general_user table
-                Integer tenantUniqueID =  addnewTenant.tenant_ID();
 
-                System.out.println("tenant ID" + tenantUniqueID);
-                //update properties table and includes the tenant unique ID
+                // Access the unique ID from the general_user table
+                Integer tenantUniqueID = addnewTenant.tenant_ID();
+                System.out.println("Tenant ID: " + tenantUniqueID);
+
+                // Update properties table with tenant unique ID
                 Integer landlordId = ctx.sessionAttribute("user_ID");
                 Integer property_unit = ctx.sessionAttribute("property_unit");
-                System.out.println("landlord " + landlordId);
-                System.out.println("unit " + property_unit);
 
+                System.out.println("Landlord ID: " + landlordId);
+                System.out.println("Property unit: " + property_unit);
 
                 residence addTenantUnit = new residence();
                 addTenantUnit.setProperty_unit(property_unit);
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
 
-                String tenant_name =   addnewTenant.getTenantnamebyId(tenantUniqueID);
-
+                String tenant_name = addnewTenant.getTenantnamebyId(tenantUniqueID);
                 System.out.println(tenant_name + " tenant_name by Id");
+
                 addTenantUnit.Insert_tenatId();
-                //System.out.println(landlordId);
-                //update the properties row with the tenant occupying the room/unit
-               // addTenantUnit.Insert_tenatId();
-                //additional information about the tenant --> tenants_information table
-                //how does htm send range values
+
+                // Additional tenant info
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
                 String employment_status = ctx.formParam("employment");
                 String kin_name = ctx.formParam("kin_name");
                 String kin_number = ctx.formParam("kin_number");
 
-                //additional information about the tenant --> tenants_information table
-                tenant additional_information = new tenant(moveIn,employment_status,kin_name,kin_number);
+                tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number);
                 additional_information.setTenantId(tenantUniqueID);
                 additional_information.insert_information();
-                /**
-                 * If the counter equals the number of rooms, render the user_profile HTML.
-                 * Otherwise, keep rendering the tenant_form.
-                 */
+
+                // Render dashboard with updated model
                 String username = ctx.sessionAttribute("name");
-                System.out.println(username + "username");
-                //String property_name = ctx.sessionAttribute("property_name");
-                String property_name =  ctx.sessionAttribute("property_name");
+                String property_name = ctx.sessionAttribute("property_name");
                 Integer unit_number = ctx.sessionAttribute("_unit");
 
-
                 Map<String, Object> model = new HashMap<>();
-
-                model.put("property_name",property_name);
+                model.put("property_name", property_name);
                 model.put("unit_add", unit_number);
-                model.put("tenant_name",tenant_name);
-                ctx.render("/templates/dashboard.html",model);
+                model.put("tenant_name", tenant_name);
 
+                ctx.render("/templates/dashboard.html", model);
+
+            } catch (SQLException e) {
+                ctx.status(500).json("error: " + e.getMessage());
+                e.printStackTrace();
             } catch (Exception e) {
                 ctx.status(400).result("Error: " + e.getMessage());
                 e.printStackTrace();
             }
         };
-
     }
-
 }
