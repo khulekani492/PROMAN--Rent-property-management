@@ -95,7 +95,7 @@ public void  landlord_insert_tenant(){
         }
     }
     @Override
-    public void insert_information() {
+    public void insert_information() throws SQLException {
            String insertUserSQL = """
                    INSERT INTO generaL_users (name, contact,email,password
                    ,user_type,property_address,property_name)
@@ -112,8 +112,13 @@ public void  landlord_insert_tenant(){
                pstm.setString(6,this.property_address);
                pstm.setString(7,this.property_name);
                pstm.executeUpdate();
-           }catch (SQLException e){
-               throw new RuntimeException("Database update failed", e);
+           } catch (SQLException e) {
+               if ("23505".equals(e.getSQLState())) {
+                   // rethrow to be caught in your route handler
+                   throw new SQLException("Duplicate entry: property or tenant already exists", e);
+               } else {
+                   throw new SQLException("Insert failed: " + e.getMessage(), e);
+               }
            }
 
 
