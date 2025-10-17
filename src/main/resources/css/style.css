@@ -1,6 +1,16 @@
 * {
-    padding: 0;
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    display: flex;
+    flex-direction: column;
 }
 
 nav {
@@ -15,6 +25,7 @@ nav {
     justify-content: space-between;
     margin: 15px 5%;
     z-index: 5;
+    color: aliceblue;
 }
 
 #spacer {
@@ -37,8 +48,17 @@ header {
     align-items: start;
     text-align: start;
     gap: 20px;
-    background-color: aquamarine;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("../umuzi/img/pexels-alex-staudinger-829197-1732414.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
     height: 100vh;
+    width: 100%;
+    color: aliceblue;
+}
+
+header p {
+    line-height: 1.5rem;
 }
 
 header button {
@@ -53,25 +73,92 @@ header button {
 
 a {
     text-decoration: none;
+    color: aliceblue;
 }
 
 .about {
-    display: grid;
-    grid-template-columns: 1fr 1.25fr;
+    display: flex;
     padding: 25px 100px;
-    gap: 25px;
+    gap: 3rem;
+}
+
+.about__left {
+    display: flex;
+    flex-direction: column;
+}
+
+.about__right {
+    background-image:  url("../umuzi/img/pexels-thgusstavo-2102587.jpg");
+    width: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .cards {
     padding: 25px 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    /* allow cards to shrink/grow responsively */
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
 }
 
 .card {
     display: flex;
     flex-direction: column;
-    width: 75%;
+    width: 100%;           /* fill the grid cell */
+    min-height: 200px;     /* optional minimum */
+    height: auto;          /* let content determine height */
     gap: 25px;
-    background-color: azure;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    padding: 25px 30px;    /* slightly reduced horizontal padding */
+    box-sizing: border-box;
+    max-width: 100%;
+}
+@media (max-width: 1250px) {
+.about__right {
+        display: none;
+    }
+
+    .about {
+        padding: 25px 0;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    header {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url("../umuzi/img/pexels-thgusstavo-2102587.jpg");
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 25px;
+    }
+
+    .page__navigation {
+        display: none;
+    }
+
+    .intro-content {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .hero-image {
+        display: none;
+    }
+
+    .cards {
+        padding: 25px 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
 }
