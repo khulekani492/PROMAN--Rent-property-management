@@ -97,15 +97,15 @@ public class apiHandler {
                ctx.sessionAttribute("_unit",propertyUnit);
                Map<String, Object> model = new HashMap<>();
                model.put("unit_add", propertyUnit);
-
+               System.out.println(occupation);
                if ("yes".equals(occupation)) {
+                   System.out.println("yes status");
                    ctx.render("/templates/tenant_form.html", model);
                } else {
+                   System.out.println("no status");
                    ctx.render("/templates/dashboard.html", model);
                }
 
-
-               ctx.render("/templates/tenant_form.html",model);
            }catch (SQLException e) {
                ctx.status(500).result("Database error: " + e.getMessage());
                e.printStackTrace();
