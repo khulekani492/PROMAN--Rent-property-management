@@ -14,6 +14,12 @@ body {
     flex-direction: column;
 }
 
+#logo {
+    background-image: url("../umuzi/img/proman_logo.png");
+    width: 100px;
+    height: 100px;
+}
+
 nav {
     position: absolute;
     top: 0;
@@ -239,6 +245,14 @@ a {
     max-width: 84%;
 }
 
+footer {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../umuzi/img/pexels-pixabay-460695.jpg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 @media (max-width: 1250px) {
 .about__right {
