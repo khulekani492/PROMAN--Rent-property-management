@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Rental Management</title>
     <style>
@@ -89,6 +89,7 @@
 <body>
 <div class="form-container">
     <h2>Add Tenant</h2>
+    <p th:text="'Unit ' + ${unit_add}"></p>
     <form action="http://localhost:7070/add_tenants" method="POST">
         <label>Name: </label>
         <input type="text" id="tenant_name" name="tenant_name" required>

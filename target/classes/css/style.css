@@ -1,6 +1,23 @@
 * {
-    padding: 0;
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    color: #0f1724;
+    display: flex;
+    flex-direction: column;
+}
+
+#logo {
+    background-image: url("../umuzi/img/proman_logo.png");
+    width: 100px;
+    height: 100px;
 }
 
 nav {
@@ -15,6 +32,7 @@ nav {
     justify-content: space-between;
     margin: 15px 5%;
     z-index: 5;
+    color: aliceblue;
 }
 
 #spacer {
@@ -26,31 +44,259 @@ nav {
 .log__user {
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: 15px;
 }
 
 header {
-    padding: 0 60% 0 100px;
+    padding: 0 40% 0 100px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: start;
     text-align: start;
     gap: 20px;
-    background-color: aquamarine;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("../umuzi/img/pexels-alex-staudinger-829197-1732414.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
     height: 100vh;
+    width: 100%;
+    color: aliceblue;
 }
 
-header button {
-    padding: 5px 10px;
+header p {
+    line-height: 1.5rem;
+}
+
+/* Descrip -> heading + points styling */
+.descrip {
+    max-width: 720px;
+    margin-top: 6px;
+    color: rgba(255,255,255,0.95);
+}
+
+.descrip-title {
+    font-family: 'Merriweather', serif;
+    font-size: 22px;
+    margin: 0 0 12px 0;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    text-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+.descrip-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+/* custom gradient marker and compact text */
+.descrip-list li {
+    position: relative;
+    padding-left: 28px;
+    color: rgba(255,255,255,0.92);
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 400;
+}
+
+/* gradient square bullet */
+.descrip-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    background: linear-gradient(90deg,#ff6ad5 0%, #8b5cf6 100%);
+    box-shadow: 0 6px 16px rgba(139,92,246,0.18);
+}
+
+.directions button {
+    padding: 10px 15px;
+    margin-top: 1.2rem;
+    border-radius: 12px;
+    background-color: #fff;
+    font-size: 1.2rem;
+    font-family: inherit;
+    font-weight: 600;
+    line-height: 1.2rem;
 }
 
 .page__navigation {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 15px;
 }
 
 a {
     text-decoration: none;
+    color: aliceblue;
+}
+
+.about {
+    display: flex;
+    padding: 48px 100px;
+    justify-content: center;
+    gap: 2rem;
+    background: #f8fafc; /* subtle off-white panel */
+    border-top: 1px solid rgba(15,23,36,0.04);
+    align-items: flex-start;
+}
+
+.about__left {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;       /* center the heading and cards */
+}
+
+.about__left h2 {
+    font-family: 'Merriweather', serif;
+    font-size: 28px;
+    margin-bottom: 18px;
+    color: #0f1724;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+
+/* Keep the image column intact */
+.about__right {
+    background-image: url("../umuzi/img/pexels-thgusstavo-2102587.jpg");
+    width: 50%;
+    height: 950px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+}
+
+/* Cards grid unchanged in size but visually centered */
+.cards {
+    padding: 8px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+/* Center text inside each card without altering card dimensions */
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 400px;
+    height: auto;
+    gap: 25px;
+    background-color: rgba(2,6,23,0.85); /* deeper card tone on light panel */
+    border-radius: 16px;
+    padding: 25px 30px;
+    box-sizing: border-box;
+
+    /* center content */
+    align-items: center;
+    text-align: center;
+}
+
+/* Make the card content use full card height to center vertically */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+}
+
+/* Card headings: elegant serif with emphasis */
+.card-content h3 {
+    font-family: 'Merriweather', serif;
+    font-size: 20px;
+    line-height: 1.15;
+    margin: 0;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+/* small accent under the heading */
+.card-content h3::after {
+    content: "";
+    display: block;
+    height: 4px;
+    width: 48px;
+    margin: 10px auto 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg,#8b5cf6,#ff6ad5);
+    opacity: 0.95;
+}
+
+/* description style */
+.card-content p {
+    margin: 0;
+    color: #d1d5db;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 84%;
+}
+
+footer {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../umuzi/img/pexels-pixabay-460695.jpg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 1250px) {
+.about__right {
+        display: none;
+    }
+
+    .about {
+        padding: 25px 0;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    header {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url("../umuzi/img/pexels-thgusstavo-2102587.jpg");
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 25px;
+    }
+
+    .page__navigation {
+        display: none;
+    }
+
+    .intro-content {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .hero-image {
+        display: none;
+    }
+
+    .cards {
+        padding: 25px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
 }

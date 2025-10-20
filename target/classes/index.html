@@ -2,17 +2,23 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rental Management</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <!-- Fonts: Poppins for UI, Merriweather for headings -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Poppins:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css" />
 </head>
 
 <body>
-
     <nav>
         <div id="logo">
-            <h1>Logo</h1>
+            <h1 id="brand">
+            </h1>
         </div>
 
         <div class="page__navigation">
@@ -29,36 +35,96 @@
     </nav>
 
     <main>
-
         <header>
+            <div class="intro-content">
+                <div class="heading">
+                    <h1>Rental Management</h1>
+                </div>
+
+                <div class="descrip">
+                    <h2 class="descrip-title">ProMan makes property management easy</h2>
+
+                    <ul class="descrip-list" aria-label="features">
+                        <li>Keep track of tenant payments and accounting</li>
+                        <li>Automatically record missed or late payments</li>
+                        <li>Monitor and manage overdue balances</li>
+                        <li>Generate clear monthly and yearly income graphs</li>
+                    </ul>
+                </div>
+
+                <div class="directions">
+                    <button>Start Managing</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="about" id="about">
+            <div class="about__left">
+                <h2>Tenant Management</h2>
+
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-content">
+                            <h3>Tenant Access & Requests</h3>
+                            <p>
+                                Invite tenants and grand them access to submit service or maintenance requests.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-content">
+                            <h3>Secure Tenant Records</h3>
+                            <p>
+                                Securely store tenants' personal and contact details.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-content">
+                            <h3>Integrated Payment Tracking</h3>
+                            <p>
+                                Link Payment records directly to each tenants and their assigned unit.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-content">
+                            <h3>Tenant Occupancy History</h3>
+                            <p>
+                                Maintain a detailed history of tenant occupation for every unit.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about__right">
+                <div class="side-image"></div>
+            </div>
+        </section>
+
+    </main>
+    <footer>
+        <div class="intro-content">
             <div class="heading">
                 <h1>Rental Management</h1>
             </div>
 
             <div class="descrip">
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem odio ducimus illo, corrupti laudantium
-                    ipsam
-                    perspiciatis cum esse ab veritatis quibusdam perferendis ea modi libero tempora, exercitationem
-                    voluptas
-                    distinctio provident?</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea adipisci impedit amet, iusto corporis
+                    maxime debitis odio, provident, sed repudiandae autem laboriosam quisquam animi at magnam
+                    dignissimos porro veritatis facere?</p>
             </div>
 
             <div class="directions">
-                <button>Explore More</button>
+                <button>Start Managing</button>
+                <button>Hello World</button>
             </div>
-        </header>
-
-
-        <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDIrROG870rUiwNMjEpyWxN1K07M2qqdsivg&s"
-            alt="Rental Management Logo" />
-
-        <div class="button-container">
-            <button class="btn" onclick="window.location.href='/rentalmanageme@sign_up'">Sign Up</button>
-            <button class="btn">Log In</button>
-        </div> -->
-
-    </main>
-
+        </div>
+    </footer>
 </body>
 <script src="/js/main.js"></script>
 
