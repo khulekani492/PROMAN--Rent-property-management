@@ -29,7 +29,7 @@ public class khuleDevEmailAPI {
 
         MailerSend ms = new MailerSend();
 
-        ms.setToken("mlsn.30bb80be32bbb66074037b8bce49b75b00b32aff5f222c20735347daba8ab58c");
+        //ms.setToken("mlsn.30bb80be32bbb66074037b8bce49b75b00b32aff5f222c20735347daba8ab58c");
 
         try {
             MailerSendResponse response = ms.emails().send(email);
