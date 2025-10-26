@@ -15,6 +15,7 @@ public class khuleDevEmailAPI {
         email.setFrom("name", "khzondojhb024@student.wethinkcode.co.za");
         email.addRecipient("name", "khzondojhb024@student.wethinkcode.co.za ");
 
+        //not clean
         // you can also add multiple recipients by calling addRecipient again
 //        email.addRecipient("name 2", "your@recipient2.com");
 
