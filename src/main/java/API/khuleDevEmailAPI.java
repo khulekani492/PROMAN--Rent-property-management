@@ -13,14 +13,14 @@ public class khuleDevEmailAPI {
         Email email = new Email();
 
         email.setFrom("name", "khzondojhb024@student.wethinkcode.co.za");
-        email.addRecipient("name", "khulekaniszondo6@gmail.com");
+        email.addRecipient("name", "khzondojhb024@student.wethinkcode.co.za ");
 
         // you can also add multiple recipients by calling addRecipient again
 //        email.addRecipient("name 2", "your@recipient2.com");
 
         // there's also a recipient object you can use
-        Recipient recipient = new Recipient("name", "your@recipient3.com");
-        email.AddRecipient(recipient);
+//        Recipient recipient = new Recipient("name", "your@recipient3.com");
+//        email.AddRecipient(recipient);
 
         email.setSubject("Email subject");
 
@@ -29,7 +29,7 @@ public class khuleDevEmailAPI {
 
         MailerSend ms = new MailerSend();
 
-        //ms.setToken("mlsn.30bb80be32bbb66074037b8bce49b75b00b32aff5f222c20735347daba8ab58c");
+        ms.setToken("mlsn.e900adf7a44ad1c4a816314bf8477b5be8b8930bd64298d8cd8b6ce2f861ee6e");
 
         try {
             MailerSendResponse response = ms.emails().send(email);
@@ -39,5 +39,8 @@ public class khuleDevEmailAPI {
         }
     }
 
-
+ static void main(String[] args) {
+        khuleDevEmailAPI email = new khuleDevEmailAPI();
+        email.sendEmail();
+}
     }
