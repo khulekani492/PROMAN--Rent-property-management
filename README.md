@@ -29,6 +29,6 @@ sign_up_session flow-part1.png
 ![Alt text](System_design/sign_up_systemOverview.png)
 
 # Design principle -- Separating aspects that vary from those that stay the same || When new requirements are needed, changes are implemented only for the parts that vary.
-#In this project:
-#The aspects that vary are tenants
+# In this project:
+# The aspects that vary are tenants
 # A unit can get a new tenant, but payment rules still apply.
