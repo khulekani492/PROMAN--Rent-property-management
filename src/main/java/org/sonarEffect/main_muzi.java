@@ -1,8 +1,11 @@
 package org.sonarEffect;
 
+import java.sql.SQLException;
+
+import static API.umuziAPI.startServer;
+
 public class main_muzi {
-    public static void main(String[] args) {
-        // your code here
-        System.out.println("Hello, world!");
+    static void main(String[] args) throws SQLException {
+        startServer(6070);
     }
 }

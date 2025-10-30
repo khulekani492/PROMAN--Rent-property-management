@@ -110,8 +110,10 @@ public class generalTest {
         assertNotNull(landlordId, "Landlord ID should not be null");
 
         // Create and link property
-        residence property = new residence(3, 600, "yes");
+
+        residence property = new residence(9, 600, "yes");
         property.setlandlord(landlordId);
+        property.setRentDay(3);
         property.insert_information();
 
         assertEquals(landlordId, property.getLandlordId(), "Landlord ID should match property record");

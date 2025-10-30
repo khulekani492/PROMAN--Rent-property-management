@@ -1,7 +1,7 @@
 package API;
 
 import org.mindrot.jbcrypt.BCrypt;
-import com.verifalia.api.VerifaliaRestClient;
+
 
 public class SecurityUtil {
     public static String hashPassword(String plainTextPassword) {

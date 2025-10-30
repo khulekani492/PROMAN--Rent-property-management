@@ -1,9 +1,7 @@
 package API_handlers;
 
-import API.state;
 import io.javalin.http.Handler;
 import model.database.tenant;
-import model.database.counter;
 import model.database.general;
 import model.database.residence;
 

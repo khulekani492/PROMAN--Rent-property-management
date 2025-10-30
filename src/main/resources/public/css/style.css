@@ -268,7 +268,8 @@ footer {
 @media (max-width: 600px) {
     header {
         background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url("../umuzi/img/pexels-thgusstavo-2102587.jpg");
+            url(" /public/umuzi/img/pexels-thgusstavo-2102587.jpg ");
+
         width: 100vw;
         display: flex;
         flex-direction: column;

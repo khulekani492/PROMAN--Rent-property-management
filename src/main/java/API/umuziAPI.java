@@ -19,11 +19,18 @@ public class umuziAPI {
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
-            config.staticFiles.add("/");
+            config.staticFiles.add("public/"); //how to include dependecy to the jarfile in target
         });
         //home_page Url_end_point.
         app.get("/", ctx ->{
-           ctx.render("/index.html");
+           ctx.render("/public/index.html");
+        });
+
+        app.get("templates/sign_up_user.html",ctx ->{
+            ctx.render("templates/sign_up_user.html");
+        });
+        app.get("/public/templates/sign_up_user.html",ctx ->{
+            ctx.render("templates/sign_up_user.html");
         });
         app.get("/rentalmanageme@sign_up",ctx ->{
             ctx.render("templates/sign_up_user.html");

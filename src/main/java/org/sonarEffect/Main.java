@@ -3,7 +3,7 @@ import java.sql.SQLException;
 
 import static API.umuziAPI.startServer;
 public class Main {
-    static void main(String[] args) throws SQLException {
-        startServer(7070);
+    public static void main(String[] args) throws SQLException {
+        startServer(6070);
     }
 }
