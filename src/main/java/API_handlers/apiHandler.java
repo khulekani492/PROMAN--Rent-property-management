@@ -71,7 +71,6 @@ public class apiHandler {
         return  ctx ->{
            try{
                Integer unit = ctx.sessionAttribute("unit_add");
-               System.out.println(unit + "Makasana");
             Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
             ctx.sessionAttribute("property_unit",propertyUnit);
             Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
@@ -95,7 +94,8 @@ public class apiHandler {
                ctx.sessionAttribute("_unit",propertyUnit);
                Map<String, Object> model = new HashMap<>();
                model.put("unit_add", propertyUnit);
-               System.out.println(occupation);
+
+
                if ("yes".equals(occupation)) {
                    System.out.println("yes status");
                    ctx.render("/templates/tenant_form.html", model);

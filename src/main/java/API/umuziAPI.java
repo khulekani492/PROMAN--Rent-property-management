@@ -29,6 +29,9 @@ public class umuziAPI {
         app.get("templates/sign_up_user.html",ctx ->{
             ctx.render("templates/sign_up_user.html");
         });
+
+
+
         app.get("/public/templates/sign_up_user.html",ctx ->{
             ctx.render("templates/sign_up_user.html");
         });
