@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * and inserts the data into the {@code tenants} table .
  */
 
-public class tenant extends  connectionAcess implements  Property{
+public class tenant extends ConnectionAccess implements  Property{
     private  Integer tenantId;
     private final Date moveInDate ;
     private final Date moveOut;
