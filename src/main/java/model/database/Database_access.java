@@ -7,12 +7,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 //To do implementing a singleton design pattern to reduce perfromance overhead when connecting the database
-public class connectionAcess {
-    private static  connectionAcess Instance;
+public class Database_access {
+    private static Database_access Instance;
 
     static {
         try {
-            Instance = new connectionAcess();
+            Instance = new Database_access();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -21,10 +21,10 @@ public class connectionAcess {
     private final  Connection connection;
 
 
-    private connectionAcess() throws SQLException {
+    private Database_access() throws SQLException {
         Properties props = new Properties();
 
-        try (InputStream input = connectionAcess.class.getClassLoader().getResourceAsStream("db.properties")) {
+        try (InputStream input = Database_access.class.getClassLoader().getResourceAsStream("db.properties")) {
             if (input == null) {
                 throw new IOException("db.properties not found in resources folder.");
             }
@@ -39,7 +39,7 @@ public class connectionAcess {
 
     }
 
-    public static connectionAcess getInstance() {
+    public static Database_access getInstance() {
         return Instance;
     }
     public Connection getConnection(){
