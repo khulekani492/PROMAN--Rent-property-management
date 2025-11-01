@@ -1,122 +1,291 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Rental Management</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ProMan — Add Unit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root{
+            --brand: #8B5E3C;
+            --brand-weak: #D9CBB8;
+            --bg: #fafaf9;
+            --card: #ffffff;
+            --accent-pill: #FFF8E7;
+        }
+
         body {
-          font-family: Arial, sans-serif;
-          background: #f4f6f9;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          min-height: 100vh;
-          margin: 0;
-          padding: 20px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--bg);
+            color: #1f2937; /* gray-800 */
+            margin: 0;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Progress / stepper styles */
+        .progress-wrap {
+            width: 100%;
+            max-width: 900px;
+            margin: 18px auto;
+        }
+        .progress-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 8px 12px;
+        }
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .progress-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #6b7280; /* gray-600 */
+        }
+        .progress-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 9999px;
+            display: inline-block;
+            background: var(--brand-weak);
+            border: 2px solid transparent;
+        }
+        .progress-sep {
+            width: 56px;
+            height: 3px;
+            background: var(--brand-weak);
+            border-radius: 3px;
+        }
+        .progress-col.active {
+            color: var(--brand);
+            font-weight: 700;
+        }
+        .progress-col.active .progress-dot {
+            background: var(--brand);
+            box-shadow: 0 6px 16px rgba(139,94,60,0.18);
+            border-color: rgba(139,94,60,0.06);
+        }
+
+        /* small form card styles */
+        .form-card {
+            background: var(--card);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(16,24,40,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            max-width: 680px;
+            margin: 0 auto 40px;
         }
 
         .message {
-          background: #007bff;
-          color: white;
-          padding: 15px 25px;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-          text-align: center;
-          margin-bottom: 30px;
-          width: 100%;
-          max-width: 600px;
-        }
-
-        .form-container {
-          background: #fff;
-          padding: 25px;
-          border-radius: 10px;
-          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-          width: 100%;
-          max-width: 400px;
-        }
-
-        h2 {
-          text-align: center;
-          margin-bottom: 20px;
-          color: #333;
+            background: var(--brand);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+            text-align: center;
+            margin: 18px auto;
+            width: 100%;
+            max-width: 680px;
         }
 
         label {
-          font-weight: bold;
-          margin-top: 10px;
-          display: block;
-          color: #444;
+            font-weight: 600;
+            color: #374151; /* gray-700 */
+            display: block;
+            margin-bottom: 6px;
         }
 
-        input, textarea, select, button {
-          width: 100%;
-          padding: 10px;
-          margin-top: 5px;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          font-size: 14px;
+        input, select, button {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+            font-size: 14px;
+            box-sizing: border-box;
         }
 
-        textarea {
-          resize: none;
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 6px rgba(139,94,60,0.06);
+            border-color: var(--brand);
         }
 
         button {
-          background: #007bff;
-          color: #fff;
-          font-weight: bold;
-          cursor: pointer;
-          margin-top: 15px;
-          transition: background 0.3s;
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
         }
+        button:hover { background: #70472E; }
 
-        button:hover {
-          background: #0056b3;
+        /* Header / Footer consistency */
+        .site-header, .site-footer {
+            background: #ffffff;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 2px 6px rgba(16,24,40,0.03);
         }
-
-        a {
-          color: #007bff;
-          text-decoration: none;
+        .site-header .container, .site-footer .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
+        .nav-links a {
+            margin-left: 14px;
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .nav-links a:hover { color: var(--brand); }
 
-        a:hover {
-          text-decoration: underline;
+        .logo-img { height: 56px; width: auto; display: block; }
+
+        .footer-grid {
+            max-width: 1100px;
+            margin: 24px auto;
+            padding: 24px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            align-items: start;
+        }
+        .footer-grid a { color: #6b7280; text-decoration: none; display: block; margin-top: 6px; }
+        .footer-grid a:hover { color: var(--brand); text-decoration: underline; }
+
+        @media (max-width: 720px) {
+            .site-header .container, .site-footer .container { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .footer-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<!-- Welcome message section -->
-<div class="message">
+<!-- Header / Navbar (Tailwind-like look but plain CSS for compatibility) -->
+<header class="site-header" role="banner">
+    <div class="container">
+        <a href="home.html" aria-label="ProMan Home" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="logo-img">
+            <div style="line-height:1;">
+                <div style="color:var(--brand);font-weight:800;font-size:18px;">ProMan</div>
+                <div style="font-size:12px;color:#6b7280;margin-top:2px;">Property management simplified</div>
+            </div>
+        </a>
+
+        <nav class="nav-links" role="navigation" aria-label="Main navigation">
+            <a href="home.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Welcome message section (Thymeleaf placeholders preserved) -->
+<div class="message" role="status" aria-live="polite">
     <h2 th:text="'Welcome, ' + ${user_name}"></h2>
     <p th:text="'Property: ' + (${residence_name} ?: 'Unknown') + ' — Kindly add unit or property information.'"></p>
 </div>
 
-<p></p>
-<!-- Form below the message -->
+<!-- Progress / stepper: ADD UNIT highlighted -->
+<div class="progress-wrap" aria-hidden="false">
+    <div class="progress-inner" role="navigation" aria-label="Sign-up progress">
+        <div class="progress-step">
+            <div class="progress-col">
+                <span class="progress-dot" aria-hidden="true" style="background:var(--brand)"></span>
+                <span>Account</span>
+            </div>
 
-<div class="form-container">
+            <div class="progress-sep" aria-hidden="true"></div>
 
-    <h2>Property-Unit Information</h2>
-    <form action="http://localhost:7070/add_property" method="POST">
-        <label for="property_unit">Property unit:</label>
-        <input id="property_unit" name="property_unit" type="number" min="1" value="1" required>
+            <div class="progress-col active" aria-current="step">
+                <span class="progress-dot" aria-hidden="true"></span>
+                <span>ADD UNIT</span>
+            </div>
 
-        <label for="rent">Unit Rent (per month):</label>
-        <input type="number" id="rent" name="rent" step="0.01" required>
+            <div class="progress-sep" aria-hidden="true"></div>
 
-        <label for="rent">pay_day (per month):</label>
-        <input type="number" id="pay_day" name="pay_day" step="0.01" required>
-
-        <label for="occupation">Occupation:</label>
-        <select id="occupation" name="occupation" required>
-            <option value="">Select</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-        </select>
-        <button type="submit">Save Property</button>
-    </form>
+            <div class="progress-col">
+                <span class="progress-dot" aria-hidden="true"></span>
+                <span>add Tenant</span>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Form card -->
+<main>
+    <div class="form-card" role="main" aria-labelledby="form-title">
+        <h2 id="form-title" style="margin-top:0;margin-bottom:6px;text-align:center;">Property-Unit Information</h2>
+
+        <form action="http://localhost:7070/add_property" th:action="@{/add_property}" method="POST" novalidate>
+            <label for="property_unit">Property unit:</label>
+            <input id="property_unit" name="property_unit" type="number" min="1" value="1" required>
+
+            <label for="rent">Unit Rent (per month):</label>
+            <input type="number" id="rent" name="rent" step="0.01" required>
+
+            <label for="pay_day">pay_day (per month):</label>
+            <input type="number" id="pay_day" name="pay_day" required>
+
+            <label for="occupation">Occupation:</label>
+            <select id="occupation" name="occupation" required>
+                <option value="">Select</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+
+            <button type="submit" aria-label="Save Property">Save Property</button>
+        </form>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="site-footer" role="contentinfo">
+    <div class="container">
+        <div style="display:flex;gap:12px;align-items:center;">
+            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="logo-img" style="height:48px;">
+            <div>
+                <div style="font-weight:700;color:var(--brand);">ProMan</div>
+                <div style="font-size:13px;color:#6b7280;margin-top:4px;">Property management simplified</div>
+            </div>
+        </div>
+
+        <div style="text-align:right;">
+            <div style="color:#6b7280;">© ProMan — Property Management</div>
+            <a href="mailto:ProMan@gmail.com" style="color:var(--brand);text-decoration:none;">ProMan@gmail.com</a>
+        </div>
+    </div>
+
+    <div class="footer-grid" aria-hidden="true">
+        <div>
+            <h4 style="margin:0 0 8px 0;color:#374151;">Product</h4>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="login.html">Log in</a>
+        </div>
+
+        <div style="text-align:right;">
+            <h4 style="margin:0 0 8px 0;color:#374151;">Contact</h4>
+            <div style="color:#6b7280;">Need help? Email us</div>
+            <a href="mailto:ProMan@gmail.com">ProMan@gmail.com</a>
+        </div>
+    </div>
+</footer>
 
 </body>
 </html>
