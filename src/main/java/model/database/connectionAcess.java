@@ -1,23 +1,27 @@
 package model.database;
 
-import org.eclipse.jetty.webapp.AbsoluteOrdering;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 //To do implementing a singleton design pattern to reduce perfromance overhead when connecting the database
-public abstract class connectionAcess {
-    protected static final String DB_URL = "jdbc:sqlite:classes.db";
+public class connectionAcess {
+    private static  connectionAcess Instance;
 
-    private  static connectionAcess conn;
-    protected Connection connection;
+    static {
+        try {
+            Instance = new connectionAcess();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private final  Connection connection;
 
 
-    public connectionAcess() throws SQLException {
+    private connectionAcess() throws SQLException {
         Properties props = new Properties();
 
         try (InputStream input = connectionAcess.class.getClassLoader().getResourceAsStream("db.properties")) {
@@ -33,5 +37,12 @@ public abstract class connectionAcess {
         String password = props.getProperty("db.password");
         this.connection = DriverManager.getConnection(url,user,password);
 
+    }
+
+    public static connectionAcess getInstance() {
+        return Instance;
+    }
+    public Connection getConnection(){
+        return connection;
     }
 }
