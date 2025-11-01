@@ -9,27 +9,47 @@
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 
-<header class="header">
-    <div class="header-container">
-        <img src="/umuzi/img/mypromann.png" alt="ProMan Logo" class="header-logo">
+<!-- Header -->
+<header class="bg-white shadow-sm h-32 mb-8">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between h-full">
+        <!-- Logo fills full header height -->
+        <div class="h-full flex items-center">
+            <img src="/umuzi/img/mypromann.png" alt="ProMan Logo"
+                 class="h-full w-auto object-contain">
+        </div>
 
-        <nav class="header-nav">
-            <a href="home.html">Home</a>
-            <a href="signup.html">Sign Up</a>
-            <a href="login.html">Login</a>
+        <nav class="space-x-6 text-gray-600 text-lg font-medium flex items-center">
+            <a href="home.html" class="hover:text-[#8B5E3C] transition">Home</a>
+            <a href="signup.html" class="hover:text-[#8B5E3C] transition">log in</a>
+            <a href="http://localhost:7070/ayi" class="hover:text-[#8B5E3C] transition">Sign_up</a>
         </nav>
     </div>
-</header
+</header>
 
 <!-- Hero Section -->
 <section class="text-white" style="background-color: #8B5E3C;">
     <div class="max-w-6xl mx-auto px-6 py-20 text-center">
         <h2 class="text-4xl font-bold mb-4">Simplify Your Property Management</h2>
         <p class="mb-8 text-lg">
-            Track tenant payments, generate monthly reports, and manage properties easily.
-            Add property addresses so tenants can find units close to their preferred locations.
+            Track tenant payments, generate monthly reports, and manage multi-unit properties easily.
+            Expose your property location so potential tenants can find units close to their preferred areas.
         </p>
-        <a href="signup.html" class="bg-white text-[#8B5E3C] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+
+        <!-- Search Field -->
+        <div class="max-w-md mx-auto mb-8">
+            <form class="flex items-center bg-white rounded-lg overflow-hidden shadow-md">
+                <input type="text" placeholder="Find property near..."
+                       class="flex-grow px-4 py-3 text-gray-700 focus:outline-none"
+                       name="location" required>
+                <button type="submit"
+                        class="bg-[#8B5E3C] text-white px-6 py-3 font-semibold hover:bg-[#70472E] transition">
+                    Search
+                </button>
+            </form>
+        </div>
+
+        <a href="signup.html"
+           class="bg-white text-[#8B5E3C] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
             Get Started
         </a>
     </div>
@@ -41,15 +61,15 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
             <h4 class="font-semibold mb-3 text-[#8B5E3C]">Track Payments</h4>
-            <p class="text-gray-600">Automatically record tenant payments and monitor overdue balances with ease.</p>
+            <p class="text-gray-600">Record tenant payments and monitor overdue balances with ease.</p>
         </div>
         <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
-            <h4 class="font-semibold mb-3 text-[#8B5E3C]">Tenant Management</h4>
-            <p class="text-gray-600">Invite tenants, store their details securely, and link payments to their accounts.</p>
+            <h4 class="font-semibold mb-3 text-[#8B5E3C]">Property Search</h4>
+            <p class="text-gray-600">Find rental properties close to your preferred area quickly and easily.</p>
         </div>
         <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition">
             <h4 class="font-semibold mb-3 text-[#8B5E3C]">Reports & Insights</h4>
-            <p class="text-gray-600">Visualize property performance with charts and export financial reports quickly.</p>
+            <p class="text-gray-600">Visualize property performance and export financial reports effortlessly.</p>
         </div>
     </div>
 </section>
@@ -68,7 +88,8 @@
 <!-- Footer -->
 <footer class="mt-12 py-6 bg-white border-t">
     <div class="max-w-6xl mx-auto px-6 text-sm text-gray-500 text-center">
-        © ProMan — Property Management | <a href="mailto:ProMan@gmail.com" class="text-[#8B5E3C]">ProMan@gmail.com</a>
+        © ProMan — Property Management |
+        <a href="mailto:ProMan@gmail.com" class="text-[#8B5E3C] hover:underline">ProMan@gmail.com</a>
     </div>
 </footer>
 
