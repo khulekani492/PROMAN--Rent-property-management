@@ -22,7 +22,7 @@ import java.sql.*;
  * </p>
  */
 
-public class general extends connectionAcess implements Property{
+public class general extends ConnectionAccess implements Property{
    private final String user_name;
    private final String user_email;
    private  String password;
@@ -69,13 +69,8 @@ public class general extends connectionAcess implements Property{
 
     }
 
-    public  void  setConnection(Connection instance) throws SQLException {
-        this.connection = instance;
-    }
 
-public  Connection getConnection(){
-        return this.connection;
-}
+
 public void  landlord_insert_tenant(){
         this.user_type = "tenant";
         this.password = "null";
