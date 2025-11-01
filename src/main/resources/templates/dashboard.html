@@ -1,22 +1,296 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Add Tenant</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ProMan — Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Highlight when hovering the payment indicator (+ / -) */
+        .payment-hover {
+            transition: background-color .15s, color .15s;
+        }
+        .payment-hover:hover {
+            background-color: #FFF8E7; /* light warm highlight */
+            color: #8B5E3C;
+            cursor: pointer;
+        }
+
+        /* Small rounded pill for + / - */
+        .indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.9rem;
+            height: 1.9rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            user-select: none;
+        }
+
+        /* Visual selected row */
+        .row-selected {
+            background-color: #f7f7f7;
+            box-shadow: inset 0 0 0 2px rgba(210, 180, 140, 0.12);
+        }
+    </style>
 </head>
-<body>
-<p>Available Units</p>
-<p th:text="'Unit: ' + ${unit_add} + ' — ' + ${tenant_name}"></p>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen">
 
-<p>Unit with no occupation</p>
-<p th:text="'Unit: ' + ${unit_add}"></p>
+<!-- Header: aligned with Home page style (larger logo, consistent nav) -->
+<header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-16 md:h-20 w-auto object-contain">
+            <div class="leading-tight">
+                <a href="home.html" class="text-lg md:text-xl font-extrabold text-[#8B5E3C]">ProMan</a>
+                <div class="text-xs text-gray-500 -mt-1">Property management simplified</div>
+            </div>
+        </div>
 
-<h1 th:text="'ADD MORE UNITS for ' + ${property_name}"></h1>
-<a href="http://localhost:7070/tenant_form">ADD</a>
+        <nav class="space-x-6 text-gray-600 text-lg font-medium flex items-center">
+            <a href="home.html" class="hover:text-[#8B5E3C] transition">Home</a>
+            <a href="dashboard.html" class="hover:text-[#8B5E3C] transition font-bold">Dashboard</a>
+            <a href="logout.html" class="hover:text-[#8B5E3C] transition">Logout</a>
+        </nav>
+    </div>
+</header>
 
-<div>
-</div>
+<main class="max-w-6xl mx-auto px-6 pb-12">
+    <div class="bg-transparent py-6">
+        <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-3">
+            <div class="flex items-center gap-3">
 
+                <div class="flex flex-col items-center text-sm text-gray-600">
+                    <span class="progress-dot" style="background:var(--accent)"></span>
+                    <span class="mt-2">ADD UNIT</span>
+            </div>
+        </div>
+    </div>
+    <h1 class="text-3xl font-extrabold text-[#8B5E3C] mb-2 text-center">Property Dashboard</h1>
 
+    <!-- Logo placed after the heading as requested (smaller / centered) -->
+    <div class="flex justify-center mb-6">
+        <a href="home.html" aria-label="ProMan Home">
+            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-12 md:h-14 w-auto object-contain">
+        </a>
+    </div>
+
+    <!-- Controls: Property name (heading) and Search tenant (heading) -->
+    <section class="bg-white rounded-lg shadow p-6 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-2">Property Name</label>
+                <select id="propertySelect" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0">
+                    <option value="all">All properties</option>
+                    <option value="Sunset Villas" selected>Sunset Villas</option>
+                    <option value="Maple Apartments">Maple Apartments</option>
+                    <option value="Oceanview Heights">Oceanview Heights</option>
+                </select>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-600 mb-2">Search tenant</label>
+                <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)"
+                       class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0" />
+            </div>
+        </div>
+        <p class="mt-4 text-sm text-gray-500">
+            Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.
+        </p>
+    </section>
+
+    <!-- External controls (placed above the table) -->
+    <div id="controlsWrapper" class="max-w-6xl mx-auto px-6 mb-4 flex flex-wrap gap-3 items-center">
+        <button id="btnPaid" type="button" class="px-4 py-2 rounded-md bg-green-600 text-white font-semibold shadow hover:bg-green-700">
+            Mark Paid (+)
+        </button>
+
+        <button id="btnUnpaid" type="button" class="px-4 py-2 rounded-md bg-red-600 text-white font-semibold shadow hover:bg-red-700">
+            Mark Unpaid (-)
+        </button>
+
+        <!-- Add Unit button (links to add_property_unit) -->
+        <a href="http://localhost:7070/add_property_unit"
+           class="inline-flex items-center px-4 py-2 rounded-md bg-[#8B5E3C] text-white font-semibold shadow hover:bg-[#70472E] transition"
+           role="button" aria-label="Add Unit">
+            Add Unit
+        </a>
+
+        <div class="text-sm text-gray-600 ml-2">Select a row, then click a button to update the Payment box only.</div>
+    </div>
+
+    <!-- Table: unit number | rent | rent day | Payment | Overdue -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full border border-[#D2B48C] rounded-lg shadow-md bg-white">
+            <thead class="bg-[#FAF3E0] border-b border-[#D2B48C]">
+            <tr>
+                <th class="px-4 py-3 text-left font-semibold">Unit Number</th>
+                <th class="px-4 py-3 text-left font-semibold">Rent</th>
+                <th class="px-4 py-3 text-left font-semibold">Rent Day</th>
+                <th class="px-4 py-3 text-left font-semibold">Payment</th>
+                <th class="px-4 py-3 text-left font-semibold">Overdue (days)</th>
+            </tr>
+            </thead>
+            <tbody id="unitsTbody">
+            <!-- Each row stores the property and tenant as data attributes (used by filters) -->
+            <tr class="border-b border-gray-200" data-property="Sunset Villas" data-tenant="John Doe">
+                <td class="px-4 py-3">101</td>
+                <td class="px-4 py-3">R5000</td>
+                <td class="px-4 py-3">1st</td>
+                <!-- Payment cell contains the indicator pill (updated by external controls) -->
+                <td class="px-4 py-3 payment-hover payment-cell">
+                    <span class="indicator bg-green-100 text-green-800" aria-label="Payment: yes">+</span>
+                </td>
+                <!-- Overdue now holds an integer (days overdue) -->
+                <td class="px-4 py-3 overdue-cell" aria-label="Overdue days">0</td>
+            </tr>
+
+            <tr class="border-b border-gray-200" data-property="Maple Apartments" data-tenant="Jane Smith">
+                <td class="px-4 py-3">203</td>
+                <td class="px-4 py-3">R4500</td>
+                <td class="px-4 py-3">5th</td>
+                <td class="px-4 py-3 payment-hover payment-cell">
+                    <span class="indicator bg-red-100 text-red-800" aria-label="Payment: no">-</span>
+                </td>
+                <td class="px-4 py-3 overdue-cell" aria-label="Overdue days">30</td>
+            </tr>
+
+            <tr class="border-b border-gray-200" data-property="Oceanview Heights" data-tenant="Peter Parker">
+                <td class="px-4 py-3">502</td>
+                <td class="px-4 py-3">R7000</td>
+                <td class="px-4 py-3">10th</td>
+                <td class="px-4 py-3 payment-hover payment-cell">
+                    <span class="indicator bg-green-100 text-green-800" aria-label="Payment: yes">+</span>
+                </td>
+                <td class="px-4 py-3 overdue-cell" aria-label="Overdue days">0</td>
+            </tr>
+
+            <!-- More rows can be added here, following the same pattern -->
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Footer: consistent with Home page footer -->
+<footer class="mt-12 py-10 bg-white border-t">
+    <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
+        <div>
+            <a href="home.html" class="text-lg font-extrabold text-[#8B5E3C]">ProMan</a>
+            <p class="text-sm text-gray-500 mt-2">Make property management simple and reliable.</p>
+        </div>
+
+        <div class="flex flex-col">
+            <h4 class="font-semibold text-gray-700 mb-2">Product</h4>
+            <a href="dashboard.html" class="text-sm text-gray-600 hover:underline">Dashboard</a>
+            <a href="signup.html" class="text-sm text-gray-600 hover:underline mt-1">Log in</a>
+            <a href="http://localhost:7070/ayi" class="text-sm text-gray-600 hover:underline mt-1">Sign up</a>
+        </div>
+
+        <div class="text-right md:text-left">
+            <div>© ProMan — Property Management</div>
+            <a href="mailto:ProMan@gmail.com" class="text-[#8B5E3C] hover:underline">ProMan@gmail.com</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Filtering logic (property select + tenant search)
+    const propertySelect = document.getElementById('propertySelect');
+    const tenantSearch = document.getElementById('tenantSearch');
+    const tbody = document.getElementById('unitsTbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    function applyFilters() {
+        const prop = propertySelect.value;
+        const tenantQuery = tenantSearch.value.trim().toLowerCase();
+
+        rows.forEach(row => {
+            const rowProp = row.dataset.property || '';
+            const rowTenant = row.dataset.tenant || '';
+
+            const matchesProp = (prop === 'all') || (rowProp === prop);
+            const matchesTenant = tenantQuery === '' || rowTenant.toLowerCase().includes(tenantQuery);
+
+            row.style.display = (matchesProp && matchesTenant) ? '' : 'none';
+        });
+    }
+
+    propertySelect.addEventListener('change', applyFilters);
+    tenantSearch.addEventListener('input', applyFilters);
+
+    // Selection logic: select a single row to act upon with external controls
+    let selectedRow = null;
+
+    function clearSelection() {
+        if (!selectedRow) return;
+        selectedRow.classList.remove('row-selected');
+        selectedRow = null;
+    }
+
+    rows.forEach(row => {
+        row.addEventListener('click', (e) => {
+            // Ignore clicks on the indicator itself (payment pill is not clickable for changes here)
+            if (e.target.closest('.indicator')) return;
+
+            if (selectedRow) selectedRow.classList.remove('row-selected');
+            selectedRow = row;
+            selectedRow.classList.add('row-selected');
+        });
+    });
+
+    // External controls (+ and -) behavior — update Payment pill only
+    const btnPaid = document.getElementById('btnPaid');
+    const btnUnpaid = document.getElementById('btnUnpaid');
+
+    function updatePaymentForRow(row, paid) {
+        const paymentIndicator = row.querySelector('.payment-cell .indicator');
+        if (!paymentIndicator) return;
+        if (paid) {
+            paymentIndicator.textContent = '+';
+            paymentIndicator.classList.remove('bg-red-100', 'text-red-800');
+            paymentIndicator.classList.add('bg-green-100', 'text-green-800');
+            paymentIndicator.setAttribute('aria-label', 'Payment: yes');
+        } else {
+            paymentIndicator.textContent = '-';
+            paymentIndicator.classList.remove('bg-green-100', 'text-green-800');
+            paymentIndicator.classList.add('bg-red-100', 'text-red-800');
+            paymentIndicator.setAttribute('aria-label', 'Payment: no');
+        }
+    }
+
+    function flashMessage(msg, color = 'yellow') {
+        const el = document.createElement('div');
+        el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
+            color === 'green' ? 'bg-green-100 text-green-800' :
+                color === 'red' ? 'bg-red-100 text-red-800' :
+                    'bg-yellow-100 text-yellow-800'
+        }`;
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1600);
+    }
+
+    btnPaid.addEventListener('click', () => {
+        if (!selectedRow) {
+            flashMessage('No row selected — click a row first.', 'yellow');
+            return;
+        }
+        updatePaymentForRow(selectedRow, true);
+        flashMessage('Payment set to + (paid).', 'green');
+    });
+
+    btnUnpaid.addEventListener('click', () => {
+        if (!selectedRow) {
+            flashMessage('No row selected — click a row first.', 'yellow');
+            return;
+        }
+        updatePaymentForRow(selectedRow, false);
+        flashMessage('Payment set to - (unpaid).', 'red');
+    });
+
+    // Initialize filters on load
+    applyFilters();
+</script>
 </body>
 </html>
