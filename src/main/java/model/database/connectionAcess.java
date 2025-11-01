@@ -9,11 +9,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
+//To do implementing a singleton design pattern to reduce perfromance overhead when connecting the database
 public abstract class connectionAcess {
     protected static final String DB_URL = "jdbc:sqlite:classes.db";
 
-
+    private  static connectionAcess conn;
     protected Connection connection;
 
 
