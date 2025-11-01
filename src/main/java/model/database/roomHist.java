@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class roomHist extends connectionAcess implements Property  {
+public class roomHist extends ConnectionAccess implements Property  {
     private final Integer propertyId ;
     private final Integer roomNo;
     private final String  tenantname;
