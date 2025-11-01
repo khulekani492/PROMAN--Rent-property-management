@@ -23,12 +23,12 @@ public class umuziAPI {
         });
         //home_page Url_end_point.
         app.get("/", ctx ->{
-           ctx.render("/public/index.html");
+           ctx.render("templates/home.html");
         });
 
-        app.get("templates/sign_up_user.html",ctx ->{
-            ctx.render("templates/sign_up_user.html");
-        });
+//        app.get("templates/sign_up_user.html",ctx ->{
+//            ctx.render("templates/sign_up_user.html");
+//        });
 
 
 
@@ -39,9 +39,16 @@ public class umuziAPI {
             ctx.render("templates/sign_up_user.html");
         });
         app.get("/tenant_form",ctx ->{
-           ctx.render("/templates/property.html");
+           ctx.render("/templates/propert.html");
         });
         //sign_up session order /user_sign_up "/add_property" /addtenants"
+        app.get("/ayi",ctx ->{
+            ctx.render("templates/landlord.html");
+        });
+        app.get("/add_property_unit",ctx ->{
+            ctx.render("templates/property.html");
+        });
+
         /**
          * adds new user information to the database
          */
