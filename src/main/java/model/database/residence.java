@@ -3,7 +3,6 @@ package model.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 /**
  * residence class is responsible for inserting property information into the database. <br>
@@ -13,7 +12,7 @@ import java.util.Map;
  * and inserts the data into the {@code property} table.
  */
 
-public class residence extends connectionAcess implements  Property {
+public class residence extends ConnectionAccess implements  Property {
     private Integer property_unit;
     private Integer property_rent;
     private String occupation;
