@@ -24,7 +24,7 @@ import java.sql.Statement;
  *  - Tenants.propertyId → Property.id
  */
 
-public class appSchema extends connectionAcess {
+public class appSchema extends ConnectionAccess {
     public appSchema() throws SQLException {
         super();
         applicationSchema();
