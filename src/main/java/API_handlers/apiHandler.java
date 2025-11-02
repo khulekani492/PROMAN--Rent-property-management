@@ -55,7 +55,7 @@ public class apiHandler {
                 model.put("residence_name",residence_name);
 
                 // render property page
-                ctx.render("/templates/property.html",model);
+                ctx.render("/templates/dashboard.html",model);
 
             } catch (SQLException e) {
                 ctx.status(500).result("Database error: " + e.getMessage());
