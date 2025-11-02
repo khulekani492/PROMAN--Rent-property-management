@@ -26,26 +26,23 @@ public class umuziAPI {
            ctx.render("templates/home.html");
         });
 
-//        app.get("templates/sign_up_user.html",ctx ->{
-//            ctx.render("templates/sign_up_user.html");
-//        });
-
-
-
         app.get("/public/templates/sign_up_user.html",ctx ->{
             ctx.render("templates/sign_up_user.html");
         });
-        app.get("/rentalmanageme@sign_up",ctx ->{
-            ctx.render("templates/sign_up_user.html");
-        });
         app.get("/tenant_form",ctx ->{
-           ctx.render("/templates/propert.html");
+           ctx.render("/templates/property.html");
+        });
+        app.get("/dashboard",ctx ->{
+            ctx.render("/templates/dashboard.html");
         });
         //sign_up session order /user_sign_up "/add_property" /addtenants"
         app.get("/ayi",ctx ->{
             ctx.render("templates/landlord.html");
         });
         app.get("/add_property_unit",ctx ->{
+            ctx.render("templates/property.html");
+        });
+        app.get("/add_property",ctx ->{
             ctx.render("templates/property.html");
         });
 
