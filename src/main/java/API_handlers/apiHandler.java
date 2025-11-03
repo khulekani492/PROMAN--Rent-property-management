@@ -52,10 +52,13 @@ public class apiHandler {
 
                 Map<String, Object> model = new HashMap<>();
                 model.put("name", landlord_username);
+                model.put("Unit",4);
+                model.put("rent",400);
+                model.put("rent_date",7);
                 model.put("residence_name",residence_name);
 
                 // render property page
-                ctx.render("/templates/dashboard.html",model);
+                ctx.render("/templates/property.html",model);
 
             } catch (SQLException e) {
                 ctx.status(500).result("Database error: " + e.getMessage());
@@ -172,7 +175,7 @@ public class apiHandler {
                 model.put("unit_add", unit_number);
                 model.put("tenant_name", tenant_name);
 
-                ctx.render("dashboard.html", model);
+                ctx.render("/templates/dashboard.html", model);
 
             } catch (SQLException e) {
                 ctx.status(500).json("error: " + e.getMessage());

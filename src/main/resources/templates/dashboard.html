@@ -86,10 +86,9 @@
                 <label class="block text-sm font-medium text-gray-600 mb-2">Property Name</label>
                 <select id="propertySelect" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0">
                     <option value="all">All properties</option>
-                    <option value="Sunset Villas" selected>Sunset Villas</option>
-                    <option value="Maple Apartments">Maple Apartments</option>
-                    <option value="Oceanview Heights">Oceanview Heights</option>
+                    <option th:value="${name}" th:text="${name}">Default Name</option>
                 </select>
+                <h2><a href="http://localhost:7070/add_property_unit">Add New property</a> </h2>
             </div>
 
             <div class="md:col-span-2">
@@ -137,10 +136,10 @@
             </thead>
             <tbody id="unitsTbody">
             <!-- Each row stores the property and tenant as data attributes (used by filters) -->
-            <tr class="border-b border-gray-200" data-property="Sunset Villas" data-tenant="John Doe">
-                <td class="px-4 py-3">101</td>
-                <td class="px-4 py-3">R5000</td>
-                <td class="px-4 py-3">1st</td>
+            <tr class="border-b border-gray-200" data-property="table" data-tenant="John Doe">
+                <td class="px-4 py-3" th:text="${_unit}">Unit</td>
+                <td class="px-4 py-3" th:text="${rent}">0</td>
+                <td class="px-4 py-3" th:text="${rent_date}">0</td>
                 <!-- Payment cell contains the indicator pill (updated by external controls) -->
                 <td class="px-4 py-3 payment-hover payment-cell">
                     <span class="indicator bg-green-100 text-green-800" aria-label="Payment: yes">+</span>
@@ -148,27 +147,6 @@
                 <!-- Overdue now holds an integer (days overdue) -->
                 <td class="px-4 py-3 overdue-cell" aria-label="Overdue days">0</td>
             </tr>
-
-            <tr class="border-b border-gray-200" data-property="Maple Apartments" data-tenant="Jane Smith">
-                <td class="px-4 py-3">203</td>
-                <td class="px-4 py-3">R4500</td>
-                <td class="px-4 py-3">5th</td>
-                <td class="px-4 py-3 payment-hover payment-cell">
-                    <span class="indicator bg-red-100 text-red-800" aria-label="Payment: no">-</span>
-                </td>
-                <td class="px-4 py-3 overdue-cell" aria-label="Overdue days">30</td>
-            </tr>
-
-            <tr class="border-b border-gray-200" data-property="Oceanview Heights" data-tenant="Peter Parker">
-                <td class="px-4 py-3">502</td>
-                <td class="px-4 py-3">R7000</td>
-                <td class="px-4 py-3">10th</td>
-                <td class="px-4 py-3 payment-hover payment-cell">
-                    <span class="indicator bg-green-100 text-green-800" aria-label="Payment: yes">+</span>
-                </td>
-                <td class="px-4 py-3 overdue-cell" aria-label="Overdue days">0</td>
-            </tr>
-
             <!-- More rows can be added here, following the same pattern -->
             </tbody>
         </table>
