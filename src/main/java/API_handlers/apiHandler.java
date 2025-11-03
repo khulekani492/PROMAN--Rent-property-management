@@ -51,7 +51,7 @@ public class apiHandler {
                 ctx.json(sessionMap);
 
                 Map<String, Object> model = new HashMap<>();
-                model.put("user_name", landlord_username);
+                model.put("name", landlord_username);
                 model.put("residence_name",residence_name);
 
                 // render property page
@@ -168,11 +168,11 @@ public class apiHandler {
                 Integer unit_number = ctx.sessionAttribute("_unit");
 
                 Map<String, Object> model = new HashMap<>();
-                model.put("property_name", property_name);
+                model.put("name", property_name);
                 model.put("unit_add", unit_number);
                 model.put("tenant_name", tenant_name);
 
-                ctx.render("/templates/dashboard.html", model);
+                ctx.render("dashboard.html", model);
 
             } catch (SQLException e) {
                 ctx.status(500).json("error: " + e.getMessage());
