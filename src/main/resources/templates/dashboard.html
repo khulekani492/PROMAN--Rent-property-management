@@ -1,5 +1,6 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -49,9 +50,9 @@
         </div>
 
         <nav class="space-x-6 text-gray-600 text-lg font-medium flex items-center">
-            <a href="home.html" class="hover:text-[#8B5E3C] transition">Home</a>
-            <a href="dashboard.html" class="hover:text-[#8B5E3C] transition font-bold">Dashboard</a>
-            <a href="logout.html" class="hover:text-[#8B5E3C] transition">Logout</a>
+            <a href="http://localhost:7070/" class="hover:text-[#8B5E3C] transition">Home</a>
+            <a href="http://localhost:7070/dashboard" class="hover:text-[#8B5E3C] transition font-bold">Dashboard</a>
+            <a href="http://localhost:7070/" class="hover:text-[#8B5E3C] transition">Logout</a>
         </nav>
     </div>
 </header>
@@ -67,7 +68,9 @@
             </div>
         </div>
     </div>
-    <h1 class="text-3xl font-extrabold text-[#8B5E3C] mb-2 text-center">Property Dashboard</h1>
+        <h1 class="text-3xl font-extrabold text-[#8B5E3C] mb-2 text-center">
+            Property<span th:text="${name}">Name</span>
+        </h1>
 
     <!-- Logo placed after the heading as requested (smaller / centered) -->
     <div class="flex justify-center mb-6">
