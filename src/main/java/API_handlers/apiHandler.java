@@ -55,10 +55,9 @@ public class apiHandler {
                 model.put("Unit",4);
                 model.put("rent",400);
                 model.put("rent_date",7);
-                model.put("residence_name",residence_name);
+                model.put("residence_name",property_name);
 
-                // render property page
-                ctx.render("/templates/property.html",model);
+                ctx.redirect("/add_property_unit");
 
             } catch (SQLException e) {
                 ctx.status(500).result("Database error: " + e.getMessage());
