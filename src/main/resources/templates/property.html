@@ -384,6 +384,9 @@
                         <label for="pay_day">Rent Due Day</label>
                         <input type="number" id="pay_day" name="pay_day" min="1" max="31" placeholder="1-31" required>
                         <p class="field-help">Day of the month when rent is due (1-31)</p>
+                        <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            <p th:text="${error}"></p>
+                        </div>
                     </div>
                 </div>
             </div>
