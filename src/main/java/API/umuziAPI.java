@@ -19,7 +19,7 @@ public class umuziAPI {
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
-            config.staticFiles.add("public/"); //how to include dependecy to the jarfile in target
+            config.staticFiles.add("public"); //Include Dependency to the jarfile
         });
         //home_page Url_end_point.
         app.get("/", ctx ->{
@@ -33,10 +33,12 @@ public class umuziAPI {
            ctx.render("/templates/property.html");
         });
         app.get("/dashboard",ctx ->{
-            ctx.render("/templates/dashboard.html");
+            Map<String, Object> model = new HashMap<>();
+            model.put("name","khulekani");
+            ctx.render("templates/dashboard.html",model);
         });
         //sign_up session order /user_sign_up "/add_property" /addtenants"
-        app.get("/ayi",ctx ->{
+        app.get("/landlord_sign_up",ctx ->{
             ctx.render("templates/landlord.html");
         });
         app.get("/add_property_unit",ctx ->{
