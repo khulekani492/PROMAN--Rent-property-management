@@ -100,7 +100,8 @@ public class apiHandler {
 
                if ("yes".equals(occupation)) {
                    System.out.println("yes status");
-                   ctx.render("/templates/tenant_form.html", model);
+                   ctx.redirect("/add_tenant");
+                   //ctx.render("/templates/tenant_form.html", model);
                } else {
                    System.out.println("no status");
                    ctx.render("/templates/dashboard.html", model);
@@ -174,7 +175,8 @@ public class apiHandler {
                 model.put("unit_add", unit_number);
                 model.put("tenant_name", tenant_name);
 
-                ctx.render("/templates/dashboard.html", model);
+                ctx.redirect("/dashboard");
+                //ctx.render("/templates/dashboard.html", model);
 
             } catch (SQLException e) {
                 ctx.status(500).json("error: " + e.getMessage());
