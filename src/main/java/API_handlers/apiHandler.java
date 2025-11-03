@@ -6,6 +6,7 @@ import model.database.general;
 import model.database.residence;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +76,19 @@ public class apiHandler {
                Integer unit = ctx.sessionAttribute("unit_add");
             Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
             ctx.sessionAttribute("property_unit",propertyUnit);
-            Integer rent =  Integer.parseInt(Objects.requireNonNull(ctx.formParam("rent")));
+
+
+
+               Integer rent = null;
+               try {
+                   rent = Integer.valueOf(Objects.requireNonNull(ctx.formParam("rent")));
+               } catch (Exception e) {
+                   ctx.result("Invalid or missing rent amount");
+                   HashMap<String,String> model = new HashMap<>();
+                   model.put("error", "Invalid or missing rent day. Please enter a valid number.");
+                   ctx.render("/templates/property.html", model);
+                   return;
+               }
             String occupation = ctx.formParam("occupation");
 
             //String contact = ctx.formParam("contact");
@@ -99,7 +112,10 @@ public class apiHandler {
             property_information.setlandlord(property_owner);
             property_information.setRentDay(pay_day);
 
-            property_information.insert_information();
+
+
+                   property_information.insert_information();
+
             //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
                System.out.println("properties_id " + owner_property);

@@ -22,6 +22,7 @@ public class residence extends ConnectionAccess implements  Property {
     private Integer pay_day;
     private Integer FromDay;
     private Integer LastDay;
+    private boolean unit_state;
 
     public residence(Integer property_name, Integer property_rent, String occupation) throws SQLException {
         super();
@@ -34,6 +35,7 @@ public class residence extends ConnectionAccess implements  Property {
         this.pay_day = null;
         this.FromDay = null;
         this.LastDay = null;
+        this.unit_state = false;
     }
 
     public residence() throws SQLException {
@@ -64,6 +66,7 @@ public class residence extends ConnectionAccess implements  Property {
     public Integer getTenantId() {
         return this.tenantId;
     }
+
 
     public void setDebt(Integer debt) {
         this.debt = debt;
@@ -130,6 +133,13 @@ public class residence extends ConnectionAccess implements  Property {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
             }
         }}
+
+    public void setUnit_state(boolean state){
+        this.unit_state = state;
+    }
+    public boolean getUnit_state(){
+        return this.unit_state;
+    }
     @Override
     public void insert_information() throws SQLException {
         String propertySQL = """
@@ -146,7 +156,7 @@ public class residence extends ConnectionAccess implements  Property {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
-                throw new SQLException("unit taken", e);
+                setUnit_state(true);
             } else {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
             }
