@@ -26,9 +26,6 @@ public class umuziAPI {
            ctx.render("templates/home.html");
         });
 
-        app.get("/public/templates/sign_up_user.html",ctx ->{
-            ctx.render("templates/sign_up_user.html");
-        });
         app.get("/tenant_form",ctx ->{
            ctx.render("/templates/property.html");
         });
@@ -42,7 +39,15 @@ public class umuziAPI {
             ctx.render("templates/landlord.html");
         });
         app.get("/add_property_unit",ctx ->{
-            ctx.render("templates/property.html");
+            String getUsername = ctx.sessionAttribute("user_name");
+            String getpropertyname = ctx.sessionAttribute("property_name");
+            System.out.println(getUsername +  " Scenic route");
+            System.out.println(getpropertyname + " How we do");
+            HashMap<String,String> model = new HashMap<>();
+            model.put("user_name",getUsername);
+            model.put("residence_name", getpropertyname);
+
+            ctx.render("templates/property.html",model);
         });
         app.get("/add_property",ctx ->{
             ctx.render("templates/property.html");
@@ -95,7 +100,7 @@ public class umuziAPI {
         });
         app.get("/add_another_unit", ctx -> {
             Map<String, Object> model = new HashMap<>();
-
+            System.out.println("bible studies");
             // Example: populate values (replace with actual session or DB data)
             model.put("user_name", ctx.sessionAttribute("user_name"));
             model.put("residence_name", "My Residence"); // or fetch dynamically
