@@ -61,11 +61,12 @@ public class umuziAPI {
  * adds new user property information to the database
  */
         app.post("/add_property", controller.addproperty());
-
+        app.get("/add_tenant",ctx -> {
+           ctx.render("templates/tenant_form.html");
+        });
 /**
  * adds tenant information to the database
- */
-        app.post("/add_tenants", controller.addTenant());
+ */ app.post("/add_tenants", controller.addTenant());
 
 
 //log in Session
