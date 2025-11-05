@@ -28,13 +28,10 @@ public class general extends ConnectionAccess implements Property{
    private  String password;
    private final String contact;
    private String user_type;
-   private  final String property_address;
-   private final String property_name;
-
 
 
     public general(String user_name, String contact,String user_email,
-                   String password, String user_type,  String address, String name
+                   String password, String user_type
     ) throws SQLException {
         super();
         this.user_name = user_name;
@@ -42,10 +39,8 @@ public class general extends ConnectionAccess implements Property{
         this.user_email = user_email;
         this.password = password;
         this.user_type = user_type;
-        this.property_address = address;
-        this.property_name = name;
-
     }
+
     public general() throws SQLException {
         super();
         this.user_name = "";
@@ -53,8 +48,6 @@ public class general extends ConnectionAccess implements Property{
         this.password = "";
         this.user_type = "";
         this.contact = "";
-        this.property_address = "";
-        this.property_name = "";
     }
 
     public general(String name, String number, String user_type) throws SQLException{
@@ -64,9 +57,6 @@ public class general extends ConnectionAccess implements Property{
         this.user_email = "";
         this.password = "";
         this.user_type = user_type;
-        this.property_address = "";
-        this.property_name = "";
-
     }
 
 
@@ -77,7 +67,7 @@ public void  landlord_insert_tenant(){
         String insertUserSQL = """
                    INSERT INTO generaL_users (name, contact,user_type,password)
                    VALUES (?,?,?,?)
-                   ON CONFLICT (email) DO NOTHING;
+                   ON CONFLICT (email);
                    """;
         try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
             pstm.setString(1,this.user_name);
@@ -95,7 +85,7 @@ public void  landlord_insert_tenant(){
                    INSERT INTO generaL_users (name, contact,email,password
                    ,user_type)
                    VALUES (?,?,?,?,?)
-                   ON CONFLICT (email) DO NOTHING;
+                   ON CONFLICT (email) Do Nothing;
                    
                    """;
            try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
@@ -105,6 +95,11 @@ public void  landlord_insert_tenant(){
                pstm.setString(4,this.password);
                pstm.setString(5,this.user_type);
                pstm.executeUpdate();
+               int rows = pstm.executeUpdate();
+               if (rows == 0) {
+                   throw new SQLException("user exists");
+                   //
+               }
            } catch (SQLException e) {
                if ("23505".equals(e.getSQLState())) {
                    // rethrow to be caught in your route handler
