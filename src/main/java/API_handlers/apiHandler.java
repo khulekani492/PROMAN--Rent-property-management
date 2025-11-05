@@ -11,8 +11,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
 import static API.SecurityUtil.hashPassword;
+
 
 public class apiHandler {
     public Handler sign_up() {
@@ -36,32 +36,44 @@ public class apiHandler {
 
                 // insert user into database
                 general new_user = new general(user_name, contact, email, hashedPassword,user_type);
-                new_user.insert_information();
+                try{
+                    new_user.insert_information();
+                    Integer new_userID = new_user.UniqueID();
+
+                    // set session attributes
+                    ctx.sessionAttribute("user_ID", new_userID);
+                    ctx.sessionAttribute("password", hashedPassword);
+
+                    // set session attributes the username and property_name
+                    String residence_name = ctx.formParam("property_name");
+                    String landlord_username = ctx.formParam("user_name");
+                    Map<String, Object> sessionMap = ctx.sessionAttributeMap();
+                    ctx.json(sessionMap);
+
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("name", landlord_username);
+                    model.put("Unit",4);
+                    model.put("rent",400);
+                    model.put("rent_date",7);
+                    model.put("residence_name",property_name);
+
+                    ctx.redirect("/add_property_unit");
+                } catch (SQLException e){
+                    if ("user exists".equals(e.getMessage())) {
+                        System.out.println("messages s");
+                        ctx.redirect("/user_sign_up/error");
+                    } else {
+                        ctx.status(500).result("Unexpected error: " + e.getMessage());
+                     //   ctx.redirect("/user_sign_up/error");
+                    }
+                }
+
 
                 // get new user ID
-                Integer new_userID = new_user.UniqueID();
 
-                // set session attributes
-                ctx.sessionAttribute("user_ID", new_userID);
-                ctx.sessionAttribute("password", hashedPassword);
-
-                // set session attributes the username and property_name
-                String residence_name = ctx.formParam("property_name");
-                String landlord_username = ctx.formParam("user_name");
-                Map<String, Object> sessionMap = ctx.sessionAttributeMap();
-                ctx.json(sessionMap);
-
-                Map<String, Object> model = new HashMap<>();
-                model.put("name", landlord_username);
-                model.put("Unit",4);
-                model.put("rent",400);
-                model.put("rent_date",7);
-                model.put("residence_name",property_name);
-
-                ctx.redirect("/add_property_unit");
 
             } catch (SQLException e) {
-                ctx.status(500).result("Database error: " + e.getMessage());
+                ctx.status(500).result("Database wonder error: " + e.getMessage());
                 e.printStackTrace();
             } catch (Exception e) {
                 ctx.status(400).result("Error: " + e.getMessage());
@@ -151,6 +163,11 @@ public class apiHandler {
      * Keeps rendering the same form repeatedly until the counter
      * reaches the last room.
      */
+    public Handler errorMessage(){
+        return ctx -> {
+            ctx.result("ABCDeezNuts");
+        };
+    }
     public Handler addTenant() {
         return ctx -> {
             try {
