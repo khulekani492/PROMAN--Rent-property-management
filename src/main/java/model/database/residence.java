@@ -20,22 +20,27 @@ public class residence extends ConnectionAccess implements  Property {
     private Integer landlordId;
     private Integer tenantId;
     private Integer pay_day;
-    private Integer FromDay;
     private Integer LastDay;
-    private boolean unit_state;
+    private String property_name;
+    private String property_address;
 
-    public residence(Integer property_name, Integer property_rent, String occupation) throws SQLException {
+    public residence(Integer property_unit, Integer property_rent,
+                     String occupation,
+                     String property_name,
+                     String property_address
+    ) throws SQLException {
         super();
-        this.property_unit = property_name;
+        this.property_unit = property_unit;
         this.property_rent = property_rent;
         this.occupation = occupation;
         this.landlordId = null;
         this.tenantId = null;
         this.debt = null;
         this.pay_day = null;
-        this.FromDay = null;
         this.LastDay = null;
-        this.unit_state = false;
+        this.property_name = property_name;
+        this.property_address = property_address;
+
     }
 
     public residence() throws SQLException {
@@ -47,8 +52,9 @@ public class residence extends ConnectionAccess implements  Property {
         this.tenantId = null;
         this.debt = null;
         this.pay_day = null;
-        this.FromDay = null;
         this.LastDay = null;
+        this.property_name = null;
+
     }
 
     public void setlandlord(Integer landlordId) {
@@ -82,12 +88,8 @@ public class residence extends ConnectionAccess implements  Property {
     }
 
     public void setRangePayDays(Integer fromDay,Integer lastDay) {
-        this.FromDay = fromDay;
+        this.pay_day = fromDay;
         this.LastDay = lastDay;
-    }
-
-    public Integer getFromDay() {
-        return FromDay;
     }
 
     public Integer getLastDay() {
@@ -116,14 +118,16 @@ public class residence extends ConnectionAccess implements  Property {
         }
       return  null;
     }
+
+    //prevents adding the tenants to the same  unit based on property_name and and unit number
     public  void  Insert_tenatId() throws SQLException {
         String tenant = """
-                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ? and property_unit = ?
+                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ? and property_name = ? and  property_name = ?
                 """;
         try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
             pstm.setInt(1,this.tenantId);
             pstm.setInt(2,this.landlordId);
-            pstm.setInt(3,this.property_unit);
+            pstm.setString(3,this.property_name);
             pstm.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
@@ -134,17 +138,11 @@ public class residence extends ConnectionAccess implements  Property {
             }
         }}
 
-    public void setUnit_state(boolean state){
-        this.unit_state = state;
-    }
-    public boolean getUnit_state(){
-        return this.unit_state;
-    }
     @Override
     public void insert_information() throws SQLException {
         String propertySQL = """
-    INSERT INTO properties (property_unit,property_rent, occupation,landlord_user_id,pay_day)
-    VALUES (?, ?, ?, ?,? )
+    INSERT INTO properties (property_unit,property_rent,occupation,landlord_user_id,pay_day,property_name,property_address)
+    VALUES (?, ?, ?, ?,?,?,?)
 """;
 
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
@@ -153,10 +151,11 @@ public class residence extends ConnectionAccess implements  Property {
             pstmt.setString(3, this.occupation);
             pstmt.setInt(4,this.landlordId);
             pstmt.setInt(5,this.pay_day);
+            pstmt.setString(6,this.property_name);
+            pstmt.setString(7,this.property_address);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
-                setUnit_state(true);
             } else {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
             }
