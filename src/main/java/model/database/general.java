@@ -93,8 +93,8 @@ public void  landlord_insert_tenant(){
     public void insert_information() throws SQLException {
            String insertUserSQL = """
                    INSERT INTO generaL_users (name, contact,email,password
-                   ,user_type,property_address,property_name)
-                   VALUES (?,?,?,?,?,?,?)
+                   ,user_type)
+                   VALUES (?,?,?,?,?)
                    ON CONFLICT (email) DO NOTHING;
                    
                    """;
@@ -104,8 +104,6 @@ public void  landlord_insert_tenant(){
                pstm.setString(3,this.user_email);
                pstm.setString(4,this.password);
                pstm.setString(5,this.user_type);
-               pstm.setString(6,this.property_address);
-               pstm.setString(7,this.property_name);
                pstm.executeUpdate();
            } catch (SQLException e) {
                if ("23505".equals(e.getSQLState())) {
