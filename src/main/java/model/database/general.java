@@ -85,8 +85,7 @@ public void  landlord_insert_tenant(){
                    INSERT INTO generaL_users (name, contact,email,password
                    ,user_type)
                    VALUES (?,?,?,?,?)
-                   ON CONFLICT (email) Do Nothing;
-                   
+                   ON CONFLICT (email) Do NOTHING;
                    """;
            try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
                pstm.setString(1,this.user_name);
@@ -94,7 +93,6 @@ public void  landlord_insert_tenant(){
                pstm.setString(3,this.user_email);
                pstm.setString(4,this.password);
                pstm.setString(5,this.user_type);
-               pstm.executeUpdate();
                int rows = pstm.executeUpdate();
                if (rows == 0) {
                    throw new SQLException("user exists");
