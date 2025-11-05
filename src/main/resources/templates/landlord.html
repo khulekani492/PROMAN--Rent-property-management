@@ -24,21 +24,69 @@
 <body class="page-bg text-gray-800 antialiased">
 
 <script>
-    // Supabase configuration
     const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // your anon key
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Google Sign-In handler
-    async function signInWithGoogle() {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: 'http://localhost:7070/dashboard' // your landing page
-            }
-        });
-        if (error) console.error('Google Sign-In Error:', error.message);
+
+// Google Sign-In handler
+async function signInWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: 'http://localhost:7070/add_property_unit'
+        }
+    });
+
+    if (error) {
+        console.error('Google Sign-In Error:', error.message);
     }
+}
+
+// Listen for auth state changes
+supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+        console.log('User signed in:', session.user);
+        await insertUserEmail(session.user);
+    }
+});
+
+// Insert email into general_users table
+async function insertUserEmail(user) {
+    try {
+        const { data, error } = await supabase
+            .from('general_users')
+            .insert([
+                {
+                    email: user.email
+                }
+            ])
+            .select();
+
+        if (error) {
+            if (error.code === '23505') { // Unique violation (email already exists)
+                console.log('Email already exists in general_users table');
+            } else {
+                console.error('Error inserting email:', error);
+            }
+        } else {
+            console.log('Email inserted successfully:', data);
+        }
+    } catch (err) {
+        console.error('Error in insertUserEmail:', err);
+    }
+}
+
+// Check current session on page load
+async function checkCurrentUser() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        await insertUserEmail(session.user);
+    }
+}
+
+// Call this when your page loads
+checkCurrentUser();
 </script>
 
 <!-- Header -->

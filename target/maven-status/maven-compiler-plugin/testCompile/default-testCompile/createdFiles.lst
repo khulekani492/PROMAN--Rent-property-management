@@ -1,4 +1,2 @@
-model/database/residenceTest.class
 model/database/testSchema.class
-model/database/generalTest.class
 model/database/TenantTest.class

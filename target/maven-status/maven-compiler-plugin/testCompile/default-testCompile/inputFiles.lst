@@ -1,5 +1,5 @@
-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/AppSchemaTest.java
-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/residenceTest.java
-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/testSchema.java
-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/TenantTest.java
-/home/wtc/PROMAN--Rent-property-management/src/test/java/model/database/generalTest.java
+/home/wtc/sweetlove/PROMAN--Rent-property-management/src/test/java/model/database/generalTest.java
+/home/wtc/sweetlove/PROMAN--Rent-property-management/src/test/java/model/database/TenantTest.java
+/home/wtc/sweetlove/PROMAN--Rent-property-management/src/test/java/model/database/testSchema.java
+/home/wtc/sweetlove/PROMAN--Rent-property-management/src/test/java/model/database/AppSchemaTest.java
+/home/wtc/sweetlove/PROMAN--Rent-property-management/src/test/java/model/database/residenceTest.java

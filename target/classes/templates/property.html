@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ProMan — Add Unit</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        // 1️⃣ Create Supabase client correctly
+        const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); // ✅ correct if using window.supabase
+
+        // 2️⃣ Wrap async code in a function
+        async function getUserSession() {
+          const { data: { session }, error } = await supabase.auth.getSession();
+
+          if (error) {
+            console.error('Error getting session:', error.message);
+          } else if (session) {
+            console.log('Logged-in user:', session.user);
+          } else {
+            console.log('No user is logged in.');
+          }
+        }
+
+        // 3️⃣ Call the function
+        getUserSession();
+    </script>
+
+
     <style>
         :root{
             --brand: #8B5E3C;
