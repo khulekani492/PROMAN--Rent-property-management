@@ -26,6 +26,7 @@ public class umuziAPI {
            ctx.render("templates/home.html");
         });
 
+
         app.get("/tenant_form",ctx ->{
            ctx.render("/templates/property.html");
         });
