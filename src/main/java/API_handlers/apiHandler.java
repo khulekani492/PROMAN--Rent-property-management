@@ -35,7 +35,7 @@ public class apiHandler {
                 String hashedPassword = hashPassword(password);
 
                 // insert user into database
-                general new_user = new general(user_name, contact, email, hashedPassword,user_type,property_address,property_name);
+                general new_user = new general(user_name, contact, email, hashedPassword,user_type);
                 new_user.insert_information();
 
                 // get new user ID
