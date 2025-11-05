@@ -1,5 +1,8 @@
 package model.database;
 
+import io.javalin.http.Context;
+import io.javalin.http.Handler;
+
 import java.sql.*;
 
 /**
@@ -29,8 +32,7 @@ public class general extends ConnectionAccess implements Property{
    private final String contact;
    private String user_type;
 
-
-    public general(String user_name, String contact,String user_email,
+   public general(String user_name, String contact,String user_email,
                    String password, String user_type
     ) throws SQLException {
         super();
@@ -67,7 +69,7 @@ public void  landlord_insert_tenant(){
         String insertUserSQL = """
                    INSERT INTO generaL_users (name, contact,user_type,password)
                    VALUES (?,?,?,?)
-                   ON CONFLICT (email);
+                   ON CONFLICT (email) DO NOTHING;
                    """;
         try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
             pstm.setString(1,this.user_name);
@@ -79,13 +81,14 @@ public void  landlord_insert_tenant(){
             throw new RuntimeException("Database update failed", e);
         }
     }
+
+
     @Override
     public void insert_information() throws SQLException {
            String insertUserSQL = """
                    INSERT INTO generaL_users (name, contact,email,password
                    ,user_type)
-                   VALUES (?,?,?,?,?)
-                   ON CONFLICT (email) Do NOTHING;
+                   VALUES (?,?,?,?,?);
                    """;
            try (PreparedStatement pstm = this.connection.prepareStatement(insertUserSQL)){
                pstm.setString(1,this.user_name);
@@ -93,23 +96,17 @@ public void  landlord_insert_tenant(){
                pstm.setString(3,this.user_email);
                pstm.setString(4,this.password);
                pstm.setString(5,this.user_type);
-               int rows = pstm.executeUpdate();
-               if (rows == 0) {
-                   throw new SQLException("user exists");
-                   //
-               }
+               pstm.executeUpdate();
+
            } catch (SQLException e) {
                if ("23505".equals(e.getSQLState())) {
-                   // rethrow to be caught in your route handler
+                   // rethrow to be caught in your route handle
                    throw new SQLException("user exists", e);
                } else {
                    throw new SQLException("Insert failed: " + e.getMessage(), e);
                }
            }
-
-
     }
-
     public String getUser_name() {
         return this.user_name;
     }
@@ -123,8 +120,6 @@ public void  landlord_insert_tenant(){
     public String getPassword(){
         return  this.password;
     }
-
-
     public String confirm_password(String email) {
 
         String sql = "SELECT password FROM users WHERE user_email = ?";
@@ -152,8 +147,12 @@ public void  landlord_insert_tenant(){
      * this helps narrow the issue of fetching the wrong ID for a user causing leakages.
      * </p>
      */
+
+
+
     @Override
     public Integer UniqueID() {
+
         String reference_key = """
         SELECT id FROM general_users WHERE email = ?;
     """;
