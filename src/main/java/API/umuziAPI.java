@@ -9,13 +9,13 @@ import static API.SessionUtil.fileSessionHandler;
 import API_handlers.apiHandler;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
-
+import model.database.general;
 
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
         apiHandler controller = new apiHandler();
-
+        general error = new general();
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
@@ -58,6 +58,7 @@ public class umuziAPI {
          * adds new user information to the database
          */
         app.post("/user_sign_up",controller.sign_up());
+        app.get("/user_sign_up/error",controller.errorMessage());
 /**
  * adds new user property information to the database
  */
