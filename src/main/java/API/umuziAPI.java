@@ -41,12 +41,12 @@ public class umuziAPI {
         });
         app.get("/add_property_unit",ctx ->{
             String getUsername = ctx.sessionAttribute("user_name");
-            String getpropertyname = ctx.sessionAttribute("property_name");
-            System.out.println(getUsername +  " Scenic route");
-            System.out.println(getpropertyname + " How we do");
+            //String getpropertyname = ctx.sessionAttribute("property_name");
+            //System.out.println(getUsername +  " Scenic route");
+            //System.out.println(getpropertyname + " How we do");
             HashMap<String,String> model = new HashMap<>();
             model.put("user_name",getUsername);
-            model.put("residence_name", getpropertyname);
+
 
             ctx.render("templates/property.html",model);
         });
@@ -64,6 +64,10 @@ public class umuziAPI {
  */
         app.post("/add_property", controller.addproperty());
         app.get("/add_tenant",ctx -> {
+            String pro = ctx.sessionAttribute("property_Name");
+            String getUsername = ctx.sessionAttribute("user_name");
+            System.out.println(getUsername);
+            System.out.println(pro +  " more work to DO");
            ctx.render("templates/tenant_form.html");
         });
 /**
