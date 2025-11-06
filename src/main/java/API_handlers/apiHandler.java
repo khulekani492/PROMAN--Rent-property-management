@@ -8,6 +8,7 @@ import model.database.residence;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,15 +22,12 @@ public class apiHandler {
                 String user_name = ctx.formParam("user_name");
 
                 ctx.sessionAttribute("user_name", user_name);
-
                 String contact = ctx.formParam("contact");
-                String property_address = ctx.formParam("address");
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
                 ctx.sessionAttribute("user_name",user_name);
-                String property_name = ctx.formParam("property_name");
-                ctx.sessionAttribute("property_name",property_name);
+                //String property_name = ctx.formParam("property_name");
 
                 // hash password
                 String hashedPassword = hashPassword(password);
@@ -39,13 +37,11 @@ public class apiHandler {
                 try{
                     new_user.insert_information();
                     Integer new_userID = new_user.UniqueID();
-
                     // set session attributes
                     ctx.sessionAttribute("user_ID", new_userID);
                     ctx.sessionAttribute("password", hashedPassword);
 
                     // set session attributes the username and property_name
-                    String residence_name = ctx.formParam("property_name");
                     String landlord_username = ctx.formParam("user_name");
                     Map<String, Object> sessionMap = ctx.sessionAttributeMap();
                     ctx.json(sessionMap);
@@ -55,7 +51,6 @@ public class apiHandler {
                     model.put("Unit",4);
                     model.put("rent",400);
                     model.put("rent_date",7);
-                    model.put("residence_name",property_name);
 
                     ctx.redirect("/add_property_unit");
                 } catch (SQLException e){
@@ -85,15 +80,17 @@ public class apiHandler {
     public Handler addproperty(){
         return  ctx ->{
            try{
-               Integer unit = ctx.sessionAttribute("unit_add");
+
             Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
-            String property_Name = ctx.formParam("property_name");
+            String property_Name = ctx.formParam("property_Name");
+            System.out.println(property_Name + " DOOSDSSSSSSSSSS");
+            ctx.sessionAttribute("property_name", property_Name);
+            String every = ctx.sessionAttribute("property_name");
+               System.out.println("Name of the currect property " + every);
             ctx.sessionAttribute("property_unit",propertyUnit);
 
-
-
-               Integer rent = null;
-               try {
+            Integer rent = null;
+            try {
                    rent = Integer.valueOf(Objects.requireNonNull(ctx.formParam("rent")));
                } catch (Exception e) {
                    ctx.result("Invalid or missing rent amount");
@@ -107,8 +104,8 @@ public class apiHandler {
             //String contact = ctx.formParam("contact");
             Integer property_owner = ctx.sessionAttribute("user_ID");
 
-               Integer pay_day = null;
-               try {
+            Integer pay_day = null;
+            try {
                    pay_day = Integer.valueOf(Objects.requireNonNull(ctx.formParam("pay_day")));
                } catch (Exception e) {
                    ctx.result("Invalid or missing pay_day");
@@ -120,14 +117,12 @@ public class apiHandler {
 
 
 
-            //Insert into property table property_information
+            //Insert INTO property table property_information
             residence property_information = new residence(propertyUnit,rent,occupation, property_Name);
             property_information.setlandlord(property_owner);
             property_information.setRentDay(pay_day);
-
-
-
-                   property_information.insert_information();
+            property_information.setProperty_Name(property_Name);
+            property_information.insert_information();
 
             //entity relationship with the Users table
             Integer owner_property = property_information.UniqueID();
@@ -137,6 +132,7 @@ public class apiHandler {
                Map<String, Object> model = new HashMap<>();
                model.put("unit_add", propertyUnit);
                model.put("residence_name",property_name);
+               ctx.sessionAttribute("residence",property_name);
 
 
                if ("yes".equals(occupation)) {
@@ -187,12 +183,16 @@ public class apiHandler {
                 // Update properties table with tenant unique ID
                 Integer landlordId = ctx.sessionAttribute("user_ID");
                 Integer property_unit = ctx.sessionAttribute("property_unit");
-
+                String property_Name = ctx.sessionAttribute("property_name");
+                String property = ctx.sessionAttribute("residence");
+                System.out.println("Property_name from cookie session: " + property_Name );
+                System.out.println("Property_residence: " + property );
                 System.out.println("Landlord ID: " + landlordId);
                 System.out.println("Property unit: " + property_unit);
 
                 residence addTenantUnit = new residence();
                 addTenantUnit.setProperty_unit(property_unit);
+                addTenantUnit.setProperty_Name(property_Name);
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
 
@@ -213,7 +213,7 @@ public class apiHandler {
 
                 // Render dashboard with updated model
                 String username = ctx.sessionAttribute("name");
-                String property_name = ctx.sessionAttribute("property_name");
+                String property_name = ctx.sessionAttribute("property_Name");
                 Integer unit_number = ctx.sessionAttribute("_unit");
 
                 Map<String, Object> model = new HashMap<>();
