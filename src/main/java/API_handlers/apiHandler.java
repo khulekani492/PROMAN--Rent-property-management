@@ -87,6 +87,7 @@ public class apiHandler {
            try{
                Integer unit = ctx.sessionAttribute("unit_add");
             Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
+            String property_Name = ctx.formParam("property_name");
             ctx.sessionAttribute("property_unit",propertyUnit);
 
 
@@ -120,7 +121,7 @@ public class apiHandler {
 
 
             //Insert into property table property_information
-            residence property_information = new residence(propertyUnit,rent,occupation);
+            residence property_information = new residence(propertyUnit,rent,occupation, property_Name);
             property_information.setlandlord(property_owner);
             property_information.setRentDay(pay_day);
 
