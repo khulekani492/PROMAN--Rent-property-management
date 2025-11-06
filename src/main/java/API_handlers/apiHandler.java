@@ -120,8 +120,9 @@ public class apiHandler {
             //Insert INTO property table property_information
             residence property_information = new residence(propertyUnit,rent,occupation, property_Name);
             property_information.setlandlord(property_owner);
-            property_information.setRentDay(pay_day);
+
             property_information.setProperty_Name(property_Name);
+           //TRY AND EXCEPT
             property_information.insert_information();
 
             //entity relationship with the Users table
@@ -199,8 +200,15 @@ public class apiHandler {
                 String tenant_name = addnewTenant.getTenantnamebyId(tenantUniqueID);
                 System.out.println(tenant_name + " tenant_name by Id");
 
-                addTenantUnit.Insert_tenatId();
 
+                try {
+                    addTenantUnit.Insert_tenatId();
+                } catch (SQLException e) {
+                    ctx.redirect("/user_sign_up/error");
+                    e.printStackTrace();  // <-- ensures the exception appears in your terminal
+                    System.err.println("Error: " + e.getMessage());
+
+                }
                 // Additional tenant info
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
                 String employment_status = ctx.formParam("employment");

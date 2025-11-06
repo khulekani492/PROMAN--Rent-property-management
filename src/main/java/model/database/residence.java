@@ -16,11 +16,8 @@ public class residence extends ConnectionAccess implements  Property {
     private Integer property_unit;
     private Integer property_rent;
     private String occupation;
-    private Integer debt;
     private Integer landlordId;
     private Integer tenantId;
-    private Integer pay_day;
-    private Integer LastDay;
     private String property_name;
     private String property_address;
 
@@ -35,9 +32,6 @@ public class residence extends ConnectionAccess implements  Property {
         this.occupation = occupation;
         this.landlordId = null;
         this.tenantId = null;
-        this.debt = null;
-        this.pay_day = null;
-        this.LastDay = null;
         this.property_name = property_name;
         this.property_address = property_address;
 
@@ -50,9 +44,6 @@ public class residence extends ConnectionAccess implements  Property {
         this.occupation = "";
         this.landlordId = null;
         this.tenantId = null;
-        this.debt = null;
-        this.pay_day = null;
-        this.LastDay = null;
         this.property_name = null;
 
     }
@@ -81,32 +72,11 @@ public class residence extends ConnectionAccess implements  Property {
     public void setProperty_Name(String propertyName) {
            this.property_name = propertyName;
     }
-    public void setDebt(Integer debt) {
 
-        this.debt = debt;
-    }
     public  void setProperty_unit(Integer unit){
         this.property_unit = unit;
     }
-    public void setRentDay(Integer pay_day){
-        this.pay_day = pay_day;
-    }
-    public Integer getRentDay(){
-        return this.pay_day;
-    }
 
-    public void setRangePayDays(Integer fromDay,Integer lastDay) {
-        this.pay_day = fromDay;
-        this.LastDay = lastDay;
-    }
-
-    public Integer getLastDay() {
-        return LastDay;
-    }
-
-    public Integer getDebt() {
-        return this.debt;
-    }
 
     public Integer queryDebt() {
         String sql = """
@@ -150,59 +120,60 @@ public class residence extends ConnectionAccess implements  Property {
     @Override
     public void insert_information() throws SQLException {
         String propertySQL = """
-    INSERT INTO properties (property_unit,property_rent,occupation,landlord_user_id,pay_day,property_name,property_address)
-    VALUES (?, ?, ?, ?,?,?,?)
+    INSERT INTO properties (property_unit,property_rent,occupation,landlord_user_id,property_name,property_address)
+    VALUES (?, ?, ?, ?,?,?)
 """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
             pstmt.setInt(1, this.property_unit);
             pstmt.setInt(2, this.property_rent);
             pstmt.setString(3, this.occupation);
             pstmt.setInt(4,this.landlordId);
-            pstmt.setInt(5,this.pay_day);
-            pstmt.setString(6,this.property_name);
-            pstmt.setString(7,this.property_address);
+            pstmt.setString(5,this.property_name);
+            pstmt.setString(6,this.property_address);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
+                // rethrow to be caught in your route handle
+                throw new SQLException("user exists", e);
             } else {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
             }
         }
 
     }
-    public void update_debt(){
-        String sql = """
-        UPDATE properties
-        SET debt = ?
-        WHERE landlord_user_id = ?;
-    """;
+//    public void update_debt(){
+//        String sql = """
+//        UPDATE properties
+//        SET debt = ?
+//        WHERE landlord_user_id = ?;
+//    """;
+//
+//        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
+//            pstmt.setInt(1, this.debt);
+//            pstmt.setInt(2, this.landlordId);
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
-            pstmt.setInt(1, this.debt);
-            pstmt.setInt(2, this.landlordId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    public void update_payDay(){
-        String sql = """
-        UPDATE properties
-        SET pay_day = ?
-        WHERE landlord_user_id = ?;
-    """;
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
-            pstmt.setInt(1, this.pay_day);
-            pstmt.setInt(2, this.landlordId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+//    public void update_payDay(){
+//        String sql = """
+//        UPDATE properties
+//        SET pay_day = ?
+//        WHERE landlord_user_id = ?;
+//    """;
+//
+//        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
+//            pstmt.setInt(1, this.pay_day);
+//            pstmt.setInt(2, this.landlordId);
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 
     public Integer querypayDay() {
 
