@@ -85,12 +85,9 @@ public class apiHandler {
 
             String property_Name = ctx.formParam("property_Name");
             String property_address = ctx.formParam("property_Address");
-            System.out.println(property_Name + " DOOSDSSSSSSSSSS");
             ctx.sessionAttribute("property_name", property_Name);
-            String every = ctx.sessionAttribute("property_name");
-               System.out.println("Name of the currect property " + every);
             ctx.sessionAttribute("property_unit",propertyUnit);
-               System.out.println("property address " + property_address);
+            System.out.println("property address " + property_address);
 
             Integer rent = null;
             try {
@@ -104,13 +101,11 @@ public class apiHandler {
                }
             String occupation = ctx.formParam("occupation");
 
-            //String contact = ctx.formParam("contact");
             Integer property_owner = ctx.sessionAttribute("user_ID");
 
-            Integer pay_day = null;
+
             try {
-                   pay_day = Integer.valueOf(Objects.requireNonNull(ctx.formParam("pay_day")));
-               } catch (Exception e) {
+            } catch (Exception e) {
                    ctx.result("Invalid or missing pay_day");
                    HashMap<String,String> model = new HashMap<>();
                    model.put("error", "Invalid or missing pay day. Please enter a valid number.");
@@ -118,16 +113,20 @@ public class apiHandler {
                    return;
                }
 
-
-
             //Insert INTO property table property_information
             residence property_information = new residence(propertyUnit,rent,occupation, property_Name);
             property_information.setlandlord(property_owner);
             property_information.setProperty_address(property_address);
             property_information.setProperty_Name(property_Name);
            //TRY AND EXCEPT
-            property_information.insert_information();
             //entity relationship with the Users table
+               try {
+                   property_information.insert_information();
+               } catch (Exception e) {
+                   // post e.message to a url_end_point and  have
+                   ctx.redirect("/error/"+ e.getMessage());
+                   return;
+               }
 
             Integer owner_property = property_information.UniqueID();
                System.out.println("properties_id " + owner_property);
@@ -148,12 +147,8 @@ public class apiHandler {
                    ctx.render("/templates/dashboard.html", model);
                }
 
-           }catch (SQLException e) {
-               ctx.status(500).json("error: " + e.getMessage());
-
-               e.printStackTrace();
            } catch (Exception e) {
-               ctx.status(400).result("Error: " + e.getMessage());
+               ctx.status(400).result("Error chill: " + e.getMessage());
                e.printStackTrace();
            }
     };
