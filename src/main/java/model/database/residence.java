@@ -139,7 +139,7 @@ public class residence extends ConnectionAccess implements  Property {
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
                 // rethrow to be caught in your route handle
-                throw new SQLException("user exists", e);
+                throw new SQLException("unit number already taken by property", e);
             } else {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
             }
