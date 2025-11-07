@@ -70,7 +70,10 @@ public class umuziAPI {
  */ app.post("/add_tenants", controller.addTenant());
     app.get("/error/{message}",ctx -> {
 
+        // Logic to execute for same unit
         String  update_user = ctx.pathParam("message");
+        //ErrorHandler  updateUser = new SameUnit;
+        //updateUser.update(Update)
         String property_name = ctx.sessionAttribute("property_name");
         Integer property_unit = ctx.sessionAttribute("property_unit");
         String property_address = ctx.sessionAttribute("property address");
@@ -84,10 +87,6 @@ public class umuziAPI {
         model.put("property_occupation",property_occupation);
         ctx.render("templates/property.html",model);
     });
-
-//log in Session
-//        app.get("/rentalmanagemnt@log_in?" controllers.);
-
 
 
 
