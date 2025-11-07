@@ -104,7 +104,7 @@ public class apiHandler {
                try {
                    property_information.insert_information();
                } catch (Exception e) {
-                   // post e.message to a url_end_point and  have
+                   // post e.message to a url_end_point
                    ctx.redirect("/error/"+ e.getMessage());
                    return;
                }
