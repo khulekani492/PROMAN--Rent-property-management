@@ -368,7 +368,7 @@
             Add a new unit to your property
         </p>
 
-        <form action="http://localhost:7070/add_property" th:action="@{/add_property}" method="POST" novalidate>
+        <form action="http://localhost:7070/add_property" th:action="@{/add_property}" method="POST" >
 
             <!-- Unit Details Section -->
             <div class="form-section">
@@ -378,7 +378,7 @@
                 <div class="form-row" style="display: flex; gap: 16px;">
                     <div class="form-field" style="flex: 1;">
                         <label for="property_Name">Property Name:</label>
-                        <input id="property_Name" name="property_Name" type="text" required>
+                        <input id="property_Name" name="property_Name" type="text"  th:value="${property_name}">
                         <p class="field-help">Enter the name of the property</p>
                     </div>
 
@@ -427,12 +427,11 @@
                     </div>
 
                     <div class="form-field" style="flex: 1;">
-                        <label for="pay_day">Rent Due Day</label>
-                        <input type="number" id="pay_day" name="pay_day" min="1" max="31" placeholder="1-31" required>
-                        <p class="field-help">Day of the month when rent is due (1-31)</p>
-
-                        <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <div th:if="${error}" class="bg-blue-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                             <p th:text="${error}"></p>
+                            <a href="http://localhost:7070/update_unit">add new tenant to the unit</a>
+                            <p>Change property name if it another unit for a different property</p>
+                            <button onclick="this.parentElement.remove()">×</button>
                         </div>
                     </div>
                 </div>
