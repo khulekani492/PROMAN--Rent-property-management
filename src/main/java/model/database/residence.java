@@ -75,13 +75,13 @@ public class residence extends ConnectionAccess implements  Property {
     }
 
     public void setProperty_address(String address) {
-           this.property_name = address;
+           this.property_address = address;
     }
+
 
     public  void setProperty_unit(Integer unit){
         this.property_unit = unit;
     }
-
 
     public Integer queryDebt() {
         String sql = """
