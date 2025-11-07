@@ -82,7 +82,9 @@ public class apiHandler {
            try{
 
             Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
+
             String property_Name = ctx.formParam("property_Name");
+            String property_address = ctx.formParam("property_Address");
             System.out.println(property_Name + " DOOSDSSSSSSSSSS");
             ctx.sessionAttribute("property_name", property_Name);
             String every = ctx.sessionAttribute("property_name");
@@ -120,6 +122,7 @@ public class apiHandler {
             //Insert INTO property table property_information
             residence property_information = new residence(propertyUnit,rent,occupation, property_Name);
             property_information.setlandlord(property_owner);
+            property_information.setProperty_address(property_address);
 
             property_information.setProperty_Name(property_Name);
            //TRY AND EXCEPT

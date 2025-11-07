@@ -69,8 +69,13 @@ public class residence extends ConnectionAccess implements  Property {
     public Integer getTenantId() {
         return this.tenantId;
     }
+
     public void setProperty_Name(String propertyName) {
            this.property_name = propertyName;
+    }
+
+    public void setProperty_address(String address) {
+           this.property_name = address;
     }
 
     public  void setProperty_unit(Integer unit){
