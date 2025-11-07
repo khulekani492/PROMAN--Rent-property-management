@@ -90,6 +90,7 @@ public class apiHandler {
             String every = ctx.sessionAttribute("property_name");
                System.out.println("Name of the currect property " + every);
             ctx.sessionAttribute("property_unit",propertyUnit);
+               System.out.println("property address " + property_address);
 
             Integer rent = null;
             try {
@@ -123,12 +124,11 @@ public class apiHandler {
             residence property_information = new residence(propertyUnit,rent,occupation, property_Name);
             property_information.setlandlord(property_owner);
             property_information.setProperty_address(property_address);
-
             property_information.setProperty_Name(property_Name);
            //TRY AND EXCEPT
             property_information.insert_information();
-
             //entity relationship with the Users table
+
             Integer owner_property = property_information.UniqueID();
                System.out.println("properties_id " + owner_property);
                String property_name =  ctx.sessionAttribute("property_name");
