@@ -378,13 +378,13 @@
                 <div class="form-row" style="display: flex; gap: 16px;">
                     <div class="form-field" style="flex: 1;">
                         <label for="property_Name">Property Name:</label>
-                        <input id="property_Name" name="property_Name" type="text"  th:value="${property_name}">
+                        <input id="property_Name" name="property_Name" type="text"  th:value="${property_name}" required>
                         <p class="field-help">Enter the name of the property</p>
                     </div>
 
                     <div class="form-field" style="flex: 1;">
                         <label for="property_Address">Property Address:</label>
-                        <input id="property_Address" name="property_Address" type="text" required>
+                        <input id="property_Address" name="property_Address" type="text" th:value="${property_name}" required>
                         <p class="field-help">Enter the address of the property</p>
                     </div>
                 </div>
@@ -393,14 +393,14 @@
                 <div class="form-row" style="display: flex; gap: 16px;">
                     <div class="form-field" style="flex: 1;">
                         <label for="property_unit">Unit Number</label>
-                        <input id="property_unit" name="property_unit" type="number" min="1" value="1" required>
+                        <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required>
                         <p class="field-help">The unique number identifying this unit</p>
                     </div>
 
                     <div class="form-field" style="flex: 1;">
                         <label id="occupation_status">Occupancy Status</label>
                         <div class="occupation-status" style="display: flex; gap: 12px;">
-                            <label class="occupation-option" for="occupied">
+                            <label class="occupation-option" for="occupied" th:value="${occupation_status}">
                                 <input type="radio" id="occupied" name="occupation" value="yes" required>
                                 <div>Occupied</div>
                             </label>
@@ -421,7 +421,7 @@
                     <div class="form-field" style="flex: 1;">
                         <label for="rent">Monthly Rent</label>
                         <div class="currency-input">
-                            <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00" required>
+                            <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00"  th:value="${property_rent}" required>
                         </div>
                         <p class="field-help">The monthly rental amount for this unit</p>
                     </div>
