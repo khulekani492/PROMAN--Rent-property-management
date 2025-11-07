@@ -41,13 +41,8 @@ public class umuziAPI {
         });
         app.get("/add_property_unit",ctx ->{
             String getUsername = ctx.sessionAttribute("user_name");
-            //String getpropertyname = ctx.sessionAttribute("property_name");
-            //System.out.println(getUsername +  " Scenic route");
-            //System.out.println(getpropertyname + " How we do");
             HashMap<String,String> model = new HashMap<>();
             model.put("user_name",getUsername);
-
-
             ctx.render("templates/property.html",model);
         });
         app.get("/add_property",ctx ->{
@@ -73,7 +68,12 @@ public class umuziAPI {
 /**
  * adds tenant information to the database
  */ app.post("/add_tenants", controller.addTenant());
-
+    app.get("/error/{message}",ctx -> {
+        String  update_user =  "Hello: " + ctx.pathParam("message");
+        HashMap<String,String> model = new HashMap<>();
+        model.put("error",update_user);
+        ctx.render("templates/property.html",model);
+    });
 
 //log in Session
 //        app.get("/rentalmanagemnt@log_in?" controllers.);
