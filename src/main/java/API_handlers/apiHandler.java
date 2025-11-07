@@ -85,33 +85,14 @@ public class apiHandler {
 
             String property_Name = ctx.formParam("property_Name");
             String property_address = ctx.formParam("property_Address");
+            String occupation = ctx.formParam("occupation");
+            Integer rent = Integer.valueOf(Objects.requireNonNull(ctx.formParam("rent")));
+
             ctx.sessionAttribute("property_name", property_Name);
             ctx.sessionAttribute("property_unit",propertyUnit);
-            System.out.println("property address " + property_address);
-
-            Integer rent = null;
-            try {
-                   rent = Integer.valueOf(Objects.requireNonNull(ctx.formParam("rent")));
-               } catch (Exception e) {
-                   ctx.result("Invalid or missing rent amount");
-                   HashMap<String,String> model = new HashMap<>();
-                   model.put("error", "Invalid or missing rent day. Please enter a valid number.");
-                   ctx.render("/templates/property.html", model);
-                   return;
-               }
-            String occupation = ctx.formParam("occupation");
-
+            ctx.sessionAttribute("property address",property_address);
+            ctx.sessionAttribute("occupation",occupation);
             Integer property_owner = ctx.sessionAttribute("user_ID");
-
-
-            try {
-            } catch (Exception e) {
-                   ctx.result("Invalid or missing pay_day");
-                   HashMap<String,String> model = new HashMap<>();
-                   model.put("error", "Invalid or missing pay day. Please enter a valid number.");
-                   ctx.render("/templates/property.html", model);
-                   return;
-               }
 
             //Insert INTO property table property_information
             residence property_information = new residence(propertyUnit,rent,occupation, property_Name);
