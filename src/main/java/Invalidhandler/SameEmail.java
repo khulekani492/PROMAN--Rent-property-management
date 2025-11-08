@@ -8,22 +8,18 @@ public class SameEmail implements ErrorHandler{
     @Override
     public Handler error_message() {
         return ctx -> {
-            //String messagE = ctx.sessionAttribute("error");
-            String  update_user = ctx.sessionAttribute("error");
-            //ErrorHandler  updateUser = new SameUnit;
-            //updateUser.update(Update)
-            String property_name = ctx.sessionAttribute("property_name");
-            Integer property_unit = ctx.sessionAttribute("property_unit");
-            String property_address = ctx.sessionAttribute("property address");
-            String property_occupation = ctx.sessionAttribute("occupation");
-
+            String update_user = ctx.sessionAttribute("error1");
+            String username = ctx.sessionAttribute("user_name");
+            String contact = ctx.sessionAttribute("contact");
+            String email = ctx.sessionAttribute("email");
+            String password = ctx.sessionAttribute("password");
             HashMap<String,String> model = new HashMap<>();
-            model.put("error",update_user);
-            model.put("property_name",property_name);
-            model.put("property_unit", String.valueOf(property_unit));
-            model.put("property_address",property_address);
-            model.put("property_occupation",property_occupation);
-            ctx.render("templates/property.html",model);
+            model.put("error", " Email already " + update_user +" Log in" );
+            model.put("username",username);
+            model.put("contact",contact);
+            model.put("email",email);
+            model.put("password",password);
+            ctx.render("templates/landlord.html",model);
         };
     }
 }
