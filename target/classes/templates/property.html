@@ -360,26 +360,48 @@
 <!-- Form card -->
 <main>
     <div class="form-card" role="main" aria-labelledby="form-title">
-        <h2 id="form-title" style="margin-top:0;margin-bottom:6px;text-align:center;">Property-Unit Information</h2>
+        <h2 id="form-title" style="margin-top:0;margin-bottom:6px;text-align:center;">
+            Property-Unit Information
+        </h2>
 
-        <p style="text-align:center;color:#6b7280;margin-bottom:24px;">Add a new unit to your property</p>
+        <p style="text-align:center;color:#6b7280;margin-bottom:24px;">
+            Add a new unit to your property
+        </p>
 
-        <form action="http://localhost:7070/add_property" th:action="@{/add_property}" method="POST" novalidate>
+        <form action="http://localhost:7070/add_property"  method="POST" >
+
             <!-- Unit Details Section -->
             <div class="form-section">
                 <h3 class="form-section-title">Unit Details</h3>
 
-                <div class="form-row">
-                    <div class="form-field">
-                        <label for="property_unit">Unit Number</label>
-                        <input id="property_unit" name="property_unit" type="number" min="1" value="1" required>
-                        <p class="field-help">The unique number identifying this unit</p>
+                <!-- Property Name & Address side-by-side -->
+                <div class="form-row" style="display: flex; gap: 16px;">
+                    <div class="form-field" style="flex: 1;">
+                        <label for="property_Name">Property Name:</label>
+                        <input id="property_Name" name="property_Name" type="text"  th:value="${property_name}" required>
+                        <p class="field-help">Enter the name of the property</p>
                     </div>
 
-                    <div class="form-field">
+                    <div class="form-field" style="flex: 1;">
+                        <label for="property_Address">Property Address:</label>
+                        <input id="property_Address" name="property_Address" type="text" th:value="${property_name}" required>
+                        <p class="field-help">Enter the address of the property</p>
+                    </div>
+                </div>
+
+                <!-- Unit Number & Occupancy -->
+                <div class="form-row" style="display: flex; gap: 16px;">
+                    <div class="form-field" style="flex: 1;">
+                        <label for="property_unit">Unit Number</label>
+                        <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required>
+                        <p class="field-help">The unique number identifying this unit</p>
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <div class="form-field" style="flex: 1;">
                         <label id="occupation_status">Occupancy Status</label>
-                        <div class="occupation-status">
-                            <label class="occupation-option" for="occupied">
+                        <div class="occupation-status" style="display: flex; gap: 12px;">
+                            <label class="occupation-option" for="occupied" th:value="${occupation_status}">
                                 <input type="radio" id="occupied" name="occupation" value="yes" required>
                                 <div>Occupied</div>
                             </label>
@@ -387,6 +409,7 @@
                                 <input type="radio" id="vacant" name="occupation" value="no" required>
                                 <div>Vacant</div>
                             </label>
+                            <p th:if="${error}"></p>
                         </div>
                     </div>
                 </div>
@@ -396,34 +419,34 @@
             <div class="form-section">
                 <h3 class="form-section-title">Financial Details</h3>
 
-                <div class="form-row">
-                    <div class="form-field">
+                <div class="form-row" style="display: flex; gap: 16px;">
+                    <div class="form-field" style="flex: 1;">
                         <label for="rent">Monthly Rent</label>
                         <div class="currency-input">
-                            <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00" required>
+                            <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00"  th:value="${property_rent}" required>
                         </div>
                         <p class="field-help">The monthly rental amount for this unit</p>
                     </div>
 
-                    <div class="form-field">
-                        <label for="pay_day">Rent Due Day</label>
-                        <input type="number" id="pay_day" name="pay_day" min="1" max="31" placeholder="1-31" required>
-                        <p class="field-help">Day of the month when rent is due (1-31)</p>
-                        <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            <p th:text="${error}"></p>
-                        </div>
+                    <div class="form-field" style="flex: 1;">
+<!--                        <div th:if="${error}" class="bg-blue-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">-->
+<!--                            <a href="http://localhost:7070/update_unit">add new tenant to the unit</a>-->
+<!--                            <p>Change property name if it another unit for a different property</p>-->
+<!--                            <button onclick="this.parentElement.remove()">×</button>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
 
             <!-- Form Actions -->
-            <div class="form-actions">
+            <div class="form-actions" style="text-align:center; margin-top:24px;">
                 <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
                 <button type="submit" aria-label="Save Property">Save Unit</button>
             </div>
         </form>
     </div>
 </main>
+
 
 <!-- Footer -->
 <footer class="site-footer" role="contentinfo">
