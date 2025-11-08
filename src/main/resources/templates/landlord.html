@@ -156,23 +156,25 @@ checkCurrentUser();
             <form id="landlordForm" method="POST" action="http://localhost:7070/user_sign_up" class="space-y-4">
                 <div>
                     <label for="user_name" class="block text-sm font-semibold text-[var(--brand-dark)]">Username</label>
-                    <input id="user_name" name="user_name" required type="text" autocomplete="username" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus"/>
+                    <input id="user_name" name="user_name" required type="text" autocomplete="username" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus"  th:value="${username}"/>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="contact" class="block text-sm font-semibold text-[var(--brand-dark)]">Contact</label>
-                        <input id="contact" name="contact" required type="tel" autocomplete="tel" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus"/>
+                        <input id="contact" name="contact" required type="tel" autocomplete="tel" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus" th:value="${contact}" />
                     </div>
                     <div>
                         <label for="user_email" class="block text-sm font-semibold text-[var(--brand-dark)]">Email</label>
-                        <input id="user_email" name="user_email"  pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"required type="email"    autocomplete="email" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus"/>
+                        <input id="user_email" name="user_email"  pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"required type="email"    autocomplete="email" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus" th:value="${email}"/>
+                        <p th:text="${error}"></p>
                     </div>
+
                 </div>
 
                 <div>
                     <label for="password" class="block text-sm font-semibold text-[var(--brand-dark)]">Password</label>
-                    <input id="password" name="password" required type="password" autocomplete="new-password" minlength="8" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus" />
+                    <input id="password" name="password" required type="password" autocomplete="new-password" minlength="8" class="mt-1 block w-full rounded-md border border-[var(--accent)] bg-[var(--pill-bg)] p-3 shadow-sm input-focus" th:value="${password}"/>
                     <div class="text-xs text-gray-500 mt-2">Use 8 or more characters with a mix of letters and numbers.</div>
                 </div>
 
@@ -183,6 +185,7 @@ checkCurrentUser();
                         Sign up as Landlord
                     </button>
                 </div>
+
                 <div class="text-center text-sm text-gray-600 mt-2">
                     Already have an account?
                     <a href="login.html" class="text-[var(--brand)] font-medium hover:underline">Log in</a>
