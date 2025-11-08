@@ -1,5 +1,9 @@
 package API_handlers;
 
+import Invalidhandler.ErrorHandler;
+import Invalidhandler.SameEmail;
+import Invalidhandler.SameEmialCreator;
+import Invalidhandler.UpdateUser;
 import io.javalin.http.Handler;
 import model.database.tenant;
 import model.database.general;
@@ -16,6 +20,7 @@ import static API.SecurityUtil.hashPassword;
 
 
 public class apiHandler {
+
     public Handler sign_up() {
         return ctx -> {
             try {
@@ -105,7 +110,14 @@ public class apiHandler {
                    property_information.insert_information();
                } catch (Exception e) {
                    // post e.message to a url_end_point
-                   ctx.redirect("/error/"+ e.getMessage());
+                   UpdateUser user_feedback;
+                   System.out.println("siyafika lah");
+                   ctx.sessionAttribute("error",e.getMessage());
+                   user_feedback = new SameEmialCreator();
+                   //error message
+                   user_feedback.updateUser(e.getMessage());
+                  // ctx.redirect("/error/"+ e.getMessage());
+
                    return;
                }
 
