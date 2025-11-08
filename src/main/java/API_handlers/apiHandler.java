@@ -92,7 +92,7 @@ public class apiHandler {
             String property_Name = ctx.formParam("property_Name");
             String property_address = ctx.formParam("property_Address");
             String occupation = ctx.formParam("occupation");
-            Integer rent = Integer.valueOf(Objects.requireNonNull(ctx.formParam("rent")));
+            String rent = ctx.formParam("rent");
 
             ctx.sessionAttribute("property_name", property_Name);
             ctx.sessionAttribute("property_unit",propertyUnit);
