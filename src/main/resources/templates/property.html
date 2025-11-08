@@ -29,7 +29,6 @@
         getUserSession();
     </script>
 
-
     <style>
         :root{
             --brand: #8B5E3C;
@@ -37,6 +36,8 @@
             --bg: #fafaf9;
             --card: #ffffff;
             --accent-pill: #FFF8E7;
+            --error: #dc2626;
+            --error-light: #fef2f2;
         }
 
         body {
@@ -283,6 +284,25 @@
             display: none;
         }
 
+        /* Error state for occupation status */
+        .occupation-status.error {
+            border: 1px solid var(--error);
+            border-radius: 8px;
+            padding: 12px;
+            background-color: var(--error-light);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
         .form-actions {
             display: flex;
             gap: 12px;
@@ -303,6 +323,7 @@
             .footer-grid { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
             .form-actions { flex-direction: column; }
+            .occupation-status { flex-direction: column; }
         }
     </style>
 </head>
@@ -368,7 +389,7 @@
             Add a new unit to your property
         </p>
 
-        <form action="http://localhost:7070/add_property"  method="POST" >
+        <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
 
             <!-- Unit Details Section -->
             <div class="form-section">
@@ -378,7 +399,7 @@
                 <div class="form-row" style="display: flex; gap: 16px;">
                     <div class="form-field" style="flex: 1;">
                         <label for="property_Name">Property Name:</label>
-                        <input id="property_Name" name="property_Name" type="text"  th:value="${property_name}" required>
+                        <input id="property_Name" name="property_Name" type="text" th:value="${property_name}" required>
                         <p class="field-help">Enter the name of the property</p>
                     </div>
 
@@ -400,7 +421,7 @@
 
                     <div class="form-field" style="flex: 1;">
                         <label id="occupation_status">Occupancy Status</label>
-                        <div class="occupation-status" style="display: flex; gap: 12px;">
+                        <div id="occupationContainer" class="occupation-status">
                             <label class="occupation-option" for="occupied" th:value="${occupation_status}">
                                 <input type="radio" id="occupied" name="occupation" value="yes" required>
                                 <div>Occupied</div>
@@ -409,8 +430,9 @@
                                 <input type="radio" id="vacant" name="occupation" value="no" required>
                                 <div>Vacant</div>
                             </label>
-                            <p th:if="${error}"></p>
                         </div>
+                        <p class="field-help">Specify the unit occupation status</p>
+                        <div id="occupationError" class="error-message">Please select an occupation status</div>
                     </div>
                 </div>
             </div>
@@ -423,17 +445,13 @@
                     <div class="form-field" style="flex: 1;">
                         <label for="rent">Monthly Rent</label>
                         <div class="currency-input">
-                            <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00"  th:value="${property_rent}" required>
+                            <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00" th:value="${property_rent}" required>
                         </div>
                         <p class="field-help">The monthly rental amount for this unit</p>
                     </div>
 
                     <div class="form-field" style="flex: 1;">
-<!--                        <div th:if="${error}" class="bg-blue-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">-->
-<!--                            <a href="http://localhost:7070/update_unit">add new tenant to the unit</a>-->
-<!--                            <p>Change property name if it another unit for a different property</p>-->
-<!--                            <button onclick="this.parentElement.remove()">×</button>-->
-<!--                        </div>-->
+                        <!-- Empty div for layout consistency -->
                     </div>
                 </div>
             </div>
@@ -446,7 +464,6 @@
         </form>
     </div>
 </main>
-
 
 <!-- Footer -->
 <footer class="site-footer" role="contentinfo">
@@ -497,8 +514,31 @@
             const radio = this.querySelector('input[type="radio"]');
             if (radio) {
                 radio.checked = true;
+                // Remove error state when an option is selected
+                document.getElementById('occupationContainer').classList.remove('error');
+                document.getElementById('occupationError').classList.remove('show');
             }
         });
+    });
+
+    // Form validation
+    document.getElementById('unitForm').addEventListener('submit', function(event) {
+        const occupationSelected = document.querySelector('input[name="occupation"]:checked');
+
+        if (!occupationSelected) {
+            // Prevent form submission
+            event.preventDefault();
+
+            // Highlight the occupation status field
+            document.getElementById('occupationContainer').classList.add('error');
+            document.getElementById('occupationError').classList.add('show');
+
+            // Scroll to the error for better UX
+            document.getElementById('occupationContainer').scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
     });
 </script>
 
