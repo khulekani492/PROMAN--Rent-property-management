@@ -9,18 +9,12 @@ import java.util.*;
 
 public class Propertyinfo extends ConnectionAccess {
     private String property_name;
-    private  String email;
     private Integer tenant;
 
-    //How do I query all the property_name for a landlord
-    //properties
-    //
     public Propertyinfo(){
         this.property_name = null;
         this.tenant = null;
-        this.email = null;
     }
-
     public void setProperty_name(String property_name) {
         this.property_name = property_name ;
 
@@ -30,7 +24,7 @@ public class Propertyinfo extends ConnectionAccess {
         this.tenant = tenant_ ;
 
     }
-    public Integer getTenantId() {
+    public Integer get_TenantId() {
         return tenant;
     }
 
@@ -58,11 +52,38 @@ public class Propertyinfo extends ConnectionAccess {
         return propertyNames;
     }
 
+
+    public HashMap<Integer,Integer> property_tenants(){
+        ArrayList<Integer> property_tenantId = new ArrayList<>();
+        HashMap<Integer, Integer> property_tenants = new HashMap<>();
+
+        String sql = """
+                SELECT tenants_information.tenant_user_id,tenants_information.rent_payment_day\s
+                FROM tenants_information\s
+                inner join properties ON tenants_information.tenant_user_id = properties.tenant_user_id
+                Where property_name = ? \s
+               \s""";
+        try(PreparedStatement pstm = this.connection.prepareStatement(sql)){
+            pstm.setString(1,"Thornville_rooms");
+            ResultSet result = pstm.executeQuery();
+            while (result.next()){
+                property_tenantId.add(result.getInt("rent_payment_day"));
+                property_tenants.put(result.getInt("tenant_user_id"),result.getInt("rent_payment_day") );
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return property_tenants;
+    }
+
+
     //options
     public List<HashMap<String, String>> getLandlordProperty(String property_name) {
         String query = """
         SELECT property_unit, property_rent, occupation  FROM properties WHERE property_name = ?;
     """;
+
 
         List<HashMap<String, String>> allProperties = new ArrayList<>();
 
@@ -87,10 +108,12 @@ public class Propertyinfo extends ConnectionAccess {
 
     public Integer tenant_payment_day(Integer tenantId) {
         String reference_key = """
-        SELECT rent_payment_day FROM tenant_information WHERE tenant_user_id = ?;
-    """;
+        SELECT tenants_information.rent_payment_day\s
+        FROM tenants_information inner join properties
+         ON tenants_information.tenant_user_id = properties.tenant_user_id where properties.tenant_user_id= ?;
+       \s""";
         try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
-            pstmt.setInt(1, this.getTenantId());
+            pstmt.setInt(1, this.get_TenantId());
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("rent_payment_day");
@@ -104,6 +127,9 @@ public class Propertyinfo extends ConnectionAccess {
     }
 
 
-
+    static void main(){
+       Propertyinfo as = new Propertyinfo();
+        System.out.println(as.property_tenants());
+    }
 
 }
