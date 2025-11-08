@@ -7,6 +7,8 @@ import java.util.Map;
 
 import static API.SessionUtil.fileSessionHandler;
 import API_handlers.apiHandler;
+import Invalidhandler.SameEmialCreator;
+import Invalidhandler.UpdateUser;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import model.database.general;
@@ -62,31 +64,16 @@ public class umuziAPI {
             String pro = ctx.sessionAttribute("property_Name");
             String getUsername = ctx.sessionAttribute("user_name");
             System.out.println(getUsername);
-            System.out.println(pro +  " more work to DO");
+            System.out.println(pro +  "more work to DO");
            ctx.render("templates/tenant_form.html");
         });
 /**
  * adds tenant information to the database
  */ app.post("/add_tenants", controller.addTenant());
-    app.get("/error/{message}",ctx -> {
 
-        // Logic to execute for same unit
-        String  update_user = ctx.pathParam("message");
-        //ErrorHandler  updateUser = new SameUnit;
-        //updateUser.update(Update)
-        String property_name = ctx.sessionAttribute("property_name");
-        Integer property_unit = ctx.sessionAttribute("property_unit");
-        String property_address = ctx.sessionAttribute("property address");
-        String property_occupation = ctx.sessionAttribute("occupation");
-
-        HashMap<String,String> model = new HashMap<>();
-        model.put("error",update_user);
-        model.put("property_name",property_name);
-        model.put("property_unit", String.valueOf(property_unit));
-        model.put("property_address",property_address);
-        model.put("property_occupation",property_occupation);
-        ctx.render("templates/property.html",model);
-    });
+    UpdateUser feedback;
+    feedback = new SameEmialCreator();
+    app.get("/error/unit",feedback.updateUser());
 
 
 
