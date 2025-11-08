@@ -19,9 +19,12 @@ public class tenant extends ConnectionAccess implements  Property{
     private final String employment;
     private final String kin_name;
     private final String kin_number;
+    private final String rent_payment_day;
+    private final Integer debt;
 
 
-    public tenant(Date moveInDate, String employment, String kin_name, String kin_number) throws SQLException {
+
+    public tenant(Date moveInDate, String employment,String kin_name, String kin_number,String rentPaymentDay,  Integer debt) throws SQLException {
         super();
         this.tenantId = null;
         this.moveInDate = moveInDate;
@@ -29,6 +32,8 @@ public class tenant extends ConnectionAccess implements  Property{
         this.employment = employment;
         this.kin_name = kin_name;
         this.kin_number = kin_number;
+        this.rent_payment_day = rentPaymentDay;
+        this.debt = debt;
 
     }
 
@@ -41,8 +46,8 @@ public class tenant extends ConnectionAccess implements  Property{
     public void insert_information() {
         String addTenantSql = """
         INSERT INTO tenants_information (
-            move_in,tenant_user_id ,employment,kin_name, kin_number)
-        VALUES (?,?,?,?,?)
+            move_in,tenant_user_id ,employment,kin_name,kin_number,rent_payment_day,debt)
+        VALUES (?,?,?,?,?,?,?)
     """;
 
         try (PreparedStatement pstm = connection.prepareStatement(addTenantSql)) {
@@ -51,6 +56,8 @@ public class tenant extends ConnectionAccess implements  Property{
             pstm.setString(3,this.employment);
             pstm.setString(4, this.kin_name);
             pstm.setString(5,this.kin_number);
+            pstm.setString(6,this.rent_payment_day);
+            pstm.setInt(7,this.debt);
             pstm.executeUpdate();
   //          roomHist addToHistory = new roomHist(this.propertyId,this.room_number,this.name,this.cell_number,this.moveInDate,this.moveOut);
             //addToHistory.insert_information();
