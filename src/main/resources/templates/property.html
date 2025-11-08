@@ -368,7 +368,7 @@
             Add a new unit to your property
         </p>
 
-        <form action="http://localhost:7070/add_property" th:action="@{/add_property}" method="POST" >
+        <form action="http://localhost:7070/add_property"  method="POST" >
 
             <!-- Unit Details Section -->
             <div class="form-section">
@@ -395,6 +395,7 @@
                         <label for="property_unit">Unit Number</label>
                         <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required>
                         <p class="field-help">The unique number identifying this unit</p>
+                        <p th:text="${error}"></p>
                     </div>
 
                     <div class="form-field" style="flex: 1;">
@@ -408,6 +409,7 @@
                                 <input type="radio" id="vacant" name="occupation" value="no" required>
                                 <div>Vacant</div>
                             </label>
+                            <p th:if="${error}"></p>
                         </div>
                     </div>
                 </div>
@@ -427,12 +429,11 @@
                     </div>
 
                     <div class="form-field" style="flex: 1;">
-                        <div th:if="${error}" class="bg-blue-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            <p th:text="${error}"></p>
-                            <a href="http://localhost:7070/update_unit">add new tenant to the unit</a>
-                            <p>Change property name if it another unit for a different property</p>
-                            <button onclick="this.parentElement.remove()">×</button>
-                        </div>
+<!--                        <div th:if="${error}" class="bg-blue-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">-->
+<!--                            <a href="http://localhost:7070/update_unit">add new tenant to the unit</a>-->
+<!--                            <p>Change property name if it another unit for a different property</p>-->
+<!--                            <button onclick="this.parentElement.remove()">×</button>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
