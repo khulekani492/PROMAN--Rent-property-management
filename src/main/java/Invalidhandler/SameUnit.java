@@ -15,7 +15,7 @@ public class SameUnit implements  ErrorHandler{
             String property_rent = ctx.sessionAttribute("rent");
             String property_occupation = ctx.sessionAttribute("occupation");
             HashMap<String,String> model = new HashMap<>();
-            model.put("error",update_user);
+            model.put("error",update_user + " "+ property_name);
             model.put("property_name",property_name);
             model.put("property_unit", String.valueOf(property_unit));
             model.put("property_address",property_address);
