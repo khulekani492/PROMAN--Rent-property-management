@@ -197,10 +197,18 @@ public class apiHandler {
                 String employment_status = ctx.formParam("employment");
                 String kin_name = ctx.formParam("kin_name");
                 String kin_number = ctx.formParam("kin_number");
+                String rent_payment_day = ctx.formParam("rent_payment_day");
+                Integer debt = Integer.valueOf(ctx.formParam("debt"));
+                 try {
+                     tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number,rent_payment_day,debt);
+                     additional_information.setTenantId(tenantUniqueID);
+                     additional_information.insert_information();
 
-                tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number);
-                additional_information.setTenantId(tenantUniqueID);
-                additional_information.insert_information();
+                 } catch (Exception e) {
+
+                     throw new RuntimeException(e);
+                 }
+
 
                 // Render dashboard with updated model
                 String username = ctx.sessionAttribute("name");
@@ -209,8 +217,7 @@ public class apiHandler {
 
                 Map<String, Object> model = new HashMap<>();
                 model.put("name", property_name);
-                model.put("unit_add", unit_number);
-                model.put("tenant_name", tenant_name);
+
 
                 ctx.redirect("/dashboard");
                 //ctx.render("/templates/dashboard.html", model);
