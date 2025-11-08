@@ -5,11 +5,10 @@ import io.javalin.http.Handler;
 import java.util.HashMap;
 
 public class SameEmail implements ErrorHandler{
-
-
-
-    public Handler error_message3() {
+    @Override
+    public Handler error_message() {
         return ctx -> {
+            //String messagE = ctx.sessionAttribute("error");
             String  update_user = ctx.sessionAttribute("error");
             //ErrorHandler  updateUser = new SameUnit;
             //updateUser.update(Update)
@@ -25,12 +24,6 @@ public class SameEmail implements ErrorHandler{
             model.put("property_address",property_address);
             model.put("property_occupation",property_occupation);
             ctx.render("templates/property.html",model);
-            ctx.redirect("/error/{message}");
         };
-    }
-
-    @Override
-    public void  error_message(String message) {
-        System.out.println(message +  " Log in or create another account " );
     }
 }
