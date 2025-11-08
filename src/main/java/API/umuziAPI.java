@@ -8,6 +8,8 @@ import java.util.Map;
 import static API.SessionUtil.fileSessionHandler;
 import API_handlers.apiHandler;
 import Invalidhandler.SameEmialCreator;
+import Invalidhandler.SameUnit;
+import Invalidhandler.SameUnitCreator;
 import Invalidhandler.UpdateUser;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
@@ -73,8 +75,10 @@ public class umuziAPI {
 
     UpdateUser feedback;
     feedback = new SameEmialCreator();
-    app.get("/error/unit",feedback.updateUser());
+    app.get("/error/same_email",feedback.updateUser());
 
+    feedback = new SameUnitCreator();
+    app.get("/error/same_unit",feedback.updateUser());
 
 
         app.get("/rentalmanagemnt@log_in?cuser_profile",ctx ->{
