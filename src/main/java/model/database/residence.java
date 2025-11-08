@@ -14,14 +14,14 @@ import java.sql.SQLException;
 
 public class residence extends ConnectionAccess implements  Property {
     private Integer property_unit;
-    private Integer property_rent;
+    private String property_rent;
     private String occupation;
     private Integer landlordId;
     private Integer tenantId;
     private String property_name;
     private String property_address;
 
-    public residence(Integer property_unit, Integer property_rent,
+    public residence(Integer property_unit, String property_rent,
                      String occupation,
                      String property_name,
                      String property_address
@@ -48,7 +48,7 @@ public class residence extends ConnectionAccess implements  Property {
 
     }
 
-    public residence(Integer propertyUnit, Integer rent, String occupation, String propertyName) {
+    public residence(Integer propertyUnit, String rent, String occupation, String propertyName) {
         this.property_unit = propertyUnit;
         this.property_rent = rent;
         this.occupation = occupation;
@@ -130,7 +130,7 @@ public class residence extends ConnectionAccess implements  Property {
 """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
             pstmt.setInt(1, this.property_unit);
-            pstmt.setInt(2, this.property_rent);
+            pstmt.setString(2, this.property_rent);
             pstmt.setString(3, this.occupation);
             pstmt.setInt(4,this.landlordId);
             pstmt.setString(5,this.property_name);
