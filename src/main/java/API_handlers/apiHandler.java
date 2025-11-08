@@ -26,13 +26,17 @@ public class apiHandler {
             try {
                 String user_name = ctx.formParam("user_name");
 
-                ctx.sessionAttribute("user_name", user_name);
                 String contact = ctx.formParam("contact");
                 String email = ctx.formParam("user_email");
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
+
+
                 ctx.sessionAttribute("user_name",user_name);
-                //String property_name = ctx.formParam("property_name");
+                ctx.sessionAttribute("contact",contact);
+                ctx.sessionAttribute("email",email);
+                ctx.sessionAttribute("password",password);
+
 
                 // hash password
                 String hashedPassword = hashPassword(password);
@@ -53,15 +57,13 @@ public class apiHandler {
 
                     Map<String, Object> model = new HashMap<>();
                     model.put("name", landlord_username);
-                    model.put("Unit",4);
-                    model.put("rent",400);
-                    model.put("rent_date",7);
                     ctx.redirect("/add_property_unit");
 
                 } catch (SQLException e){
-                    if ("user exists".equals(e.getMessage())) {
-                        System.out.println("messages s");
-                        ctx.redirect("/user_sign_up/error");
+                    if ("exists".equals(e.getMessage())) {
+                        System.out.println(ctx.attributeMap());
+                        ctx.sessionAttribute("error1",e.getMessage());
+                        ctx.redirect("/error/same_email");
                     } else {
                         ctx.status(500).result("Unexpected error: " + e.getMessage());
                      //   ctx.redirect("/user_sign_up/error");
@@ -87,7 +89,6 @@ public class apiHandler {
            try{
 
             Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
-
             String property_Name = ctx.formParam("property_Name");
             String property_address = ctx.formParam("property_Address");
             String occupation = ctx.formParam("occupation");
@@ -109,8 +110,7 @@ public class apiHandler {
                try {
                    property_information.insert_information();
                } catch (Exception e) {
-                  ctx.redirect("/error/unit");
-                   return;
+                  ctx.redirect("/error/same_unit");
                }
 
             Integer owner_property = property_information.UniqueID();
