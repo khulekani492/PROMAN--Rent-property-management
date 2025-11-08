@@ -56,8 +56,8 @@ public class apiHandler {
                     model.put("Unit",4);
                     model.put("rent",400);
                     model.put("rent_date",7);
-
                     ctx.redirect("/add_property_unit");
+
                 } catch (SQLException e){
                     if ("user exists".equals(e.getMessage())) {
                         System.out.println("messages s");
@@ -109,15 +109,7 @@ public class apiHandler {
                try {
                    property_information.insert_information();
                } catch (Exception e) {
-                   // post e.message to a url_end_point
-                   UpdateUser user_feedback;
-                   System.out.println("siyafika lah");
-                   ctx.sessionAttribute("error",e.getMessage());
-                   user_feedback = new SameEmialCreator();
-                   //error message
-                   user_feedback.updateUser(e.getMessage());
-                  // ctx.redirect("/error/"+ e.getMessage());
-
+                  ctx.redirect("/error/unit");
                    return;
                }
 
