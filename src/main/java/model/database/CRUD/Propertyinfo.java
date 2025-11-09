@@ -53,9 +53,10 @@ public class Propertyinfo extends ConnectionAccess {
     }
 
 
-    public HashMap<Integer,Integer> property_tenants(){
-        ArrayList<Integer> property_tenantId = new ArrayList<>();
-        HashMap<Integer, Integer> property_tenants = new HashMap<>();
+    public HashMap<Integer,ArrayList<String>> property_tenants(){
+        ArrayList<String> property_status = new ArrayList<>();
+
+        HashMap<Integer,ArrayList<String> > property_tenants = new HashMap<>();
 
         String sql = """
                 SELECT tenants_information.tenant_user_id,tenants_information.rent_payment_day\s
@@ -63,17 +64,29 @@ public class Propertyinfo extends ConnectionAccess {
                 inner join properties ON tenants_information.tenant_user_id = properties.tenant_user_id
                 Where property_name = ? \s
                \s""";
-        try(PreparedStatement pstm = this.connection.prepareStatement(sql)){
+
+        String propertyinfo = """
+                SELECT property_unit,property_rent,occupation,tenant_user_id FROM properties WHERE property_name = ? """;
+        try(PreparedStatement pstm = this.connection.prepareStatement(propertyinfo)){
             pstm.setString(1,"Thornville_rooms");
             ResultSet result = pstm.executeQuery();
+            Integer unit_number = null;
+            Integer tenantId = null;
             while (result.next()){
-                property_tenantId.add(result.getInt("rent_payment_day"));
-                property_tenants.put(result.getInt("tenant_user_id"),result.getInt("rent_payment_day") );
+                unit_number = result.getInt("property_unit") ;
+                property_status.add(String.valueOf(unit_number));
+                property_status.add(result.getString("property_rent"));
+                property_status.add(result.getString("occupation"));
+                property_status.add(result.getString("tenant_user_id"));
+                property_tenants.put(unit_number,property_status);
+                property_status = new ArrayList<>();
 
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return property_tenants;
     }
 
@@ -130,6 +143,11 @@ public class Propertyinfo extends ConnectionAccess {
     static void main(){
        Propertyinfo as = new Propertyinfo();
         System.out.println(as.property_tenants());
+        ArrayList<String> modify = as.property_tenants().get(1);
+        modify.add(0 ,"43");
+        System.out.println("List Modified : " + modify);
+        System.out.println(as.property_tenants());
+
     }
 
 }
