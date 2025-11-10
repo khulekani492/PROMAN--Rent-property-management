@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-//To do implementing a singleton design pattern to reduce perfromance overhead when connecting the database
+
 public class Database_access {
     private static final Database_access Instance;
 
