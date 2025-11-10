@@ -2,10 +2,7 @@ package model.database.CRUD;
 
 import model.database.ConnectionAccess;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLOutput;
+import java.sql.*;
 import java.util.*;
 
 public class Propertyinfo extends ConnectionAccess {
@@ -79,53 +76,95 @@ public class Propertyinfo extends ConnectionAccess {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            if ("ERROR: prepared statement \"S_1\" already exists".equals(e.getMessage())){
+                System.out.println(e.getMessage() + " dssd");
+                // Handle the specific error: Deallocate the existing statement
+                try (Statement stmt = connection.createStatement()) {
+                    stmt.execute("DEALLOCATE S_1");
+                } catch (SQLException deallocateEx) {
+                    // Handle error during deallocation
+                    deallocateEx.printStackTrace();
+                }
+                throw new RuntimeException("skip");
 
-            // you can replace this with proper logging or error handling
+
+            }
+
         }
 
         return rent;
     }
 
 
+public  HashMap<Integer,ArrayList<String>> fetchALL(String property_name){
+    Propertyinfo property_list = new Propertyinfo();
+    HashMap<Integer,ArrayList<String>> get_Unit_related = property_list.property_tenants(property_name);
+    for (int i =1 ; i <= get_Unit_related.size() ; i++){
+        ArrayList<String> property_per_unit = get_Unit_related.get(i);
+        try {
 
+            Integer AccessLast = Integer.valueOf(property_per_unit.get(3));
+            // Access Zero for empty unit
+            Integer first_one = Integer.valueOf(property_per_unit.get(0));
+            String rent_day_tenant = null;
+            try{
+                 rent_day_tenant = property_list.rent_payment(AccessLast);
+            } catch (RuntimeException e) {
+                System.out.println("Dawg yami");
+                throw new RuntimeException(e);
+            }
+
+            property_per_unit.add(rent_day_tenant);
+            System.out.println(rent_day_tenant);
+            //replace the key
+            get_Unit_related.replace(first_one,property_per_unit);
+            System.out.println("tenant_id " + AccessLast + "Choosen Day for rent " +  property_per_unit);
+            System.out.println();
+        } catch (NumberFormatException e){
+            continue;
+        }
+    }
+
+    return get_Unit_related;
+
+} ;
     static void main(){
        Propertyinfo property_list = new Propertyinfo();
 
         HashMap<Integer,ArrayList<String>> get_Unit_related = property_list.property_tenants("Thornville_rooms");
-        System.out.println(get_Unit_related.size());
-        System.out.println(get_Unit_related.get(1).size());
+        HashMap<Integer,ArrayList<String>> get_tenants = new HashMap<>();
         ///rent_day_tenant = Integer.valueOf(property_list.rent_payment(AccessLast));
-        //System.out.println(property_list.rent_payment(property_per_unit));
         System.out.println(get_Unit_related);
         for (int i =1 ; i <= get_Unit_related.size() ; i++){
             ArrayList<String> property_per_unit = get_Unit_related.get(i);
             try {
                 Integer AccessLast = Integer.valueOf(property_per_unit.get(3));
-                // Access Zero for empty unit
+
+                // Accessing the unit number which is Identical to the map key
                 Integer first_one = Integer.valueOf(property_per_unit.get(0));
 
+                String rent_day_tenant = null;
+                try {
+                    rent_day_tenant = property_list.rent_payment(AccessLast);
+                } catch (Exception e) {
+                    if("skip".equals(e.getMessage())){
+                        continue;
+                    }
 
-                String rent_day_tenant = property_list.rent_payment(AccessLast);
+                }
+
                 property_per_unit.add(rent_day_tenant);
                 System.out.println(rent_day_tenant);
                 //replace the key
-                get_Unit_related.replace(first_one,property_per_unit);
+                get_tenants.put(first_one,property_per_unit);
                 System.out.println("tenant_id " + AccessLast + "Choosen Day for rent " +  property_per_unit);
                 System.out.println();
             } catch (NumberFormatException e){
                 continue;
             }
-
-
-//
-//            Integer tenant_id = Integer.valueOf(get_Unit_related.get(3));
-//            Integer rent_day_tenant = Integer.valueOf(property_list.rent_payment(tenant_id));
-//            get_Unit_related.addLast(String.valueOf( rent_day_tenant));
-//        }
     }
 
-        System.out.println(get_Unit_related);
+        System.out.println(get_tenants);
 
 }
 }
