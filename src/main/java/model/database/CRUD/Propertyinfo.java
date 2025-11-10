@@ -155,7 +155,7 @@ public  HashMap<Integer,ArrayList<String>> fetchALL(String property_name){
 
                 property_per_unit.add(rent_day_tenant);
                 System.out.println(rent_day_tenant);
-                //replace the key
+                //replace the kefy
                 get_tenants.put(first_one,property_per_unit);
                 System.out.println("tenant_id " + AccessLast + "Choosen Day for rent " +  property_per_unit);
                 System.out.println();
