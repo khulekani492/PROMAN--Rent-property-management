@@ -32,8 +32,6 @@ public class umuziAPI {
         app.get("/", ctx ->{
            ctx.render("templates/home.html");
         });
-
-
         app.get("/tenant_form",ctx ->{
            ctx.render("/templates/property.html");
         });
@@ -43,7 +41,6 @@ public class umuziAPI {
             model.put("user_name",user_name);
             ctx.render("templates/dashboard.html",model);
         });
-
         app.get("/landlord_sign_up",ctx ->{
             ctx.render("templates/landlord.html");
         });
@@ -73,38 +70,20 @@ public class umuziAPI {
 /**
  * adds tenant information to the database
  */
-AddTenant property_tenant = new AddTenant();
+    AddTenant property_tenant = new AddTenant();
     app.post("/add_tenants", property_tenant.addTenant());
+
     UpdateUser feedback;
     feedback = new SameEmialCreator();
     app.get("/error/same_email",feedback.updateUser());
+
     feedback = new SameUnitCreator();
     app.get("/error/same_unit",feedback.updateUser());
+
     app.post("/updateTenants",ctx -> {
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
-           // String propertName = dbConnector.getPropertyname();
-           // int residenceid = dbConnector.landlordId(propertName);
-            String name = ctx.formParam("tenant_name");
-            String moveIn = ctx.formParam("move_in");
-            String employment_status = ctx.formParam("employment");
-            String cell_number = ctx.formParam("cell_number");
-            String payday = ctx.formParam("pay_day");
-            int room = Integer.parseInt(ctx.formParam("room"));
-            String room_price = ctx.formParam("room_price");
-            //LOGIC update debt column when month ends and payment is still not paid
-            int tenantsdebt = Integer.parseInt( ctx.formParam("tenant_debt"));
-            String kin_name = ctx.formParam("kin_name");
-            String kin_number = ctx.formParam("kin_number");
         });
-    app.get("/add_another_unit", ctx -> {
-            Map<String, Object> model = new HashMap<>();
-            // Example: populate values (replace with actual session or DB data)
-            model.put("user_name", ctx.sessionAttribute("user_name"));
-            model.put("residence_name", "My Residence"); // or fetch dynamically
-            ctx.render("/templates/property_form.html",model);
-        });
-
-        app.exception(Exception.class, (e, ctx) -> {
+    app.exception(Exception.class, (e, ctx) -> {
             e.printStackTrace();
             if (e.getMessage().contains("UNIQUE constraint failed")) {
                 ctx.status(400).json(Map.of(
