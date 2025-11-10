@@ -63,7 +63,7 @@ public class Propertyinfo extends ConnectionAccess {
 
 
     public String rent_payment(Integer tenantID) {
-        String query = """
+        String ery = """
         SELECT rent_payment_day\s
         FROM tenants_information\s
         WHERE tenant_user_id = ?;
@@ -71,7 +71,7 @@ public class Propertyinfo extends ConnectionAccess {
 
         String rent = null;
 
-        try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
+        try (PreparedStatement pstmt = this.connection.prepareStatement(ery)) {
             pstmt.setInt(1, tenantID);
             try (ResultSet result = pstmt.executeQuery()) {
                 if (result.next()) {
@@ -79,7 +79,9 @@ public class Propertyinfo extends ConnectionAccess {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // you can replace this with proper logging or error handling
+            e.printStackTrace();
+
+            // you can replace this with proper logging or error handling
         }
 
         return rent;
@@ -89,28 +91,26 @@ public class Propertyinfo extends ConnectionAccess {
 
     static void main(){
        Propertyinfo property_list = new Propertyinfo();
-//        System.out.println( as.rent_payment(807));
-//        System.out.println(as.property_tenants());
-//        ArrayList<String> modify = as.property_tenants().get(1);
-//        modify.add(as.rent_payment(778));
-//        System.out.println("List Modified : " + modify);
-//        System.out.println(as.property_tenants());
-//        System.out.println(property_list.property_tenants("Thornville_rooms"));
+
         HashMap<Integer,ArrayList<String>> get_Unit_related = property_list.property_tenants("Thornville_rooms");
-//        ArrayList<String> property_per_unit = get_Unit_related.get(1);
-//        Integer AccessLast = Integer.valueOf(property_per_unit.get(3));
-//        String rent_payment = property_list.rent_payment(Integer.valueOf(AccessLast));
-//        System.out.println("rent " + rent_payment);
-        System.out.println( property_list.rent_payment(772) );
-        System.out.println( property_list.rent_payment(777) );
-        System.out.println( property_list.rent_payment(778) );
+        System.out.println(get_Unit_related.size());
+        System.out.println(get_Unit_related.get(1).size());
         ///rent_day_tenant = Integer.valueOf(property_list.rent_payment(AccessLast));
         //System.out.println(property_list.rent_payment(property_per_unit));
-        for (int i =1 ; i <= get_Unit_related.get(1).size() + 1; i++){
+        System.out.println(get_Unit_related);
+        for (int i =1 ; i <= get_Unit_related.size() ; i++){
             ArrayList<String> property_per_unit = get_Unit_related.get(i);
             try {
                 Integer AccessLast = Integer.valueOf(property_per_unit.get(3));
+                // Access Zero for empty unit
+                Integer first_one = Integer.valueOf(property_per_unit.get(0));
+
+
                 String rent_day_tenant = property_list.rent_payment(AccessLast);
+                property_per_unit.add(rent_day_tenant);
+                System.out.println(rent_day_tenant);
+                //replace the key
+                get_Unit_related.replace(first_one,property_per_unit);
                 System.out.println("tenant_id " + AccessLast + "Choosen Day for rent " +  property_per_unit);
                 System.out.println();
             } catch (NumberFormatException e){
@@ -124,6 +124,8 @@ public class Propertyinfo extends ConnectionAccess {
 //            get_Unit_related.addLast(String.valueOf( rent_day_tenant));
 //        }
     }
+
+        System.out.println(get_Unit_related);
 
 }
 }
