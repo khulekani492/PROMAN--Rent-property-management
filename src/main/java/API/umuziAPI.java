@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static API.SessionUtil.fileSessionHandler;
+
+import API_handlers.AddProperty;
+import API_handlers.AddTenant;
+import API_handlers.Signup;
 import API_handlers.apiHandler;
 import Invalidhandler.SameEmialCreator;
-import Invalidhandler.SameUnit;
 import Invalidhandler.SameUnitCreator;
 import Invalidhandler.UpdateUser;
 import io.javalin.Javalin;
@@ -37,7 +40,7 @@ public class umuziAPI {
         app.get("/dashboard",ctx ->{
             String user_name = ctx.sessionAttribute("user_name");
             Map<String, Object> model = new HashMap<>();
-            model.put("name",user_name);
+            model.put("user_name",user_name);
             ctx.render("templates/dashboard.html",model);
         });
 
@@ -57,27 +60,27 @@ public class umuziAPI {
         /**
          * adds new user information to the database
          */
-        app.post("/user_sign_up",controller.sign_up());
+        Signup new_signee = new Signup();
+        app.post("/user_sign_up", new_signee.sign_up());
         app.get("/user_sign_up/error",controller.errorMessage());
 /**
  * adds new user property information to the database
- */
-        app.post("/add_property", controller.addproperty());
+ */     AddProperty propertyInfo = new AddProperty();
+        app.post("/add_property", propertyInfo.addproperty());
         app.get("/add_tenant",ctx -> {
            ctx.render("templates/tenant_form.html");
         });
 /**
  * adds tenant information to the database
- */ app.post("/add_tenants", controller.addTenant());
-
+ */
+AddTenant property_tenant = new AddTenant();
+    app.post("/add_tenants", property_tenant.addTenant());
     UpdateUser feedback;
     feedback = new SameEmialCreator();
     app.get("/error/same_email",feedback.updateUser());
     feedback = new SameUnitCreator();
     app.get("/error/same_unit",feedback.updateUser());
-
     app.post("/updateTenants",ctx -> {
-
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
            // String propertName = dbConnector.getPropertyname();
            // int residenceid = dbConnector.landlordId(propertName);
@@ -92,10 +95,8 @@ public class umuziAPI {
             int tenantsdebt = Integer.parseInt( ctx.formParam("tenant_debt"));
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
-
-
         });
-        app.get("/add_another_unit", ctx -> {
+    app.get("/add_another_unit", ctx -> {
             Map<String, Object> model = new HashMap<>();
             // Example: populate values (replace with actual session or DB data)
             model.put("user_name", ctx.sessionAttribute("user_name"));
