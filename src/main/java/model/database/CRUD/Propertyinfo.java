@@ -83,6 +83,7 @@ public class Propertyinfo extends ConnectionAccess {
                     stmt.execute("DEALLOCATE S_1");
                 } catch (SQLException deallocateEx) {
                     // Handle error during deallocation
+
                     deallocateEx.printStackTrace();
                 }
                 throw new RuntimeException("skip");
@@ -137,12 +138,16 @@ public  HashMap<Integer,ArrayList<String>> fetchALL(String property_name){
         System.out.println(get_Unit_related);
         for (int i =1 ; i <= get_Unit_related.size() ; i++){
             ArrayList<String> property_per_unit = get_Unit_related.get(i);
-            try {
-                Integer AccessLast = Integer.valueOf(property_per_unit.get(3));
 
+            Integer AccessLast = null;
+            //Skip unit with no tenants == null on index 3
+            try {
+                 AccessLast = Integer.valueOf(property_per_unit.get(3));
+            } catch (NumberFormatException e){
+                continue;
+            }
                 // Accessing the unit number which is Identical to the map key
                 Integer first_one = Integer.valueOf(property_per_unit.get(0));
-
                 String rent_day_tenant = null;
                 try {
                     rent_day_tenant = property_list.rent_payment(AccessLast);
@@ -155,16 +160,16 @@ public  HashMap<Integer,ArrayList<String>> fetchALL(String property_name){
 
                 property_per_unit.add(rent_day_tenant);
                 System.out.println(rent_day_tenant);
-                //replace the kefy
+
                 get_tenants.put(first_one,property_per_unit);
                 System.out.println("tenant_id " + AccessLast + "Choosen Day for rent " +  property_per_unit);
                 System.out.println();
-            } catch (NumberFormatException e){
-                continue;
+
+
             }
+        System.out.println(get_tenants);
     }
 
-        System.out.println(get_tenants);
 
-}
+
 }
