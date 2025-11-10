@@ -137,6 +137,9 @@
             <tbody id="unitsTbody">
             <!-- Each row stores the property and tenant as data attributes (used by filters) -->
             <tr class="border-b border-gray-200" data-property="table" data-tenant="John Doe">
+            <tr th:if="${property.empty}">
+                <td colspan="2"> No units </td>
+            </tr>
                 <td class="px-4 py-3" th:text="${_unit}">Unit</td>
                 <td class="px-4 py-3" th:text="${rent}">0</td>
                 <td class="px-4 py-3" th:text="${rent_date}">0</td>
