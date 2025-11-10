@@ -37,7 +37,7 @@ public class Propertyinfo extends ConnectionAccess {
         ArrayList<String> property_status = new ArrayList<>();
         HashMap<Integer,ArrayList<String> > property_tenants = new HashMap<>();
         String propertyinfo = """
-                SELECT property_unit,property_rent,occupation,tenant_user_id FROM properties WHERE property_name = ? """;
+                SELECT property_unit,property_rent,occupation,tenant_user_id FROM properties WHERE property_name = ?""";
         try(PreparedStatement pstm = this.connection.prepareStatement(propertyinfo)){
             pstm.setString(1,property_name);
             ResultSet result = pstm.executeQuery();
@@ -82,14 +82,32 @@ public class Propertyinfo extends ConnectionAccess {
 
 
     static void main(){
-//       Propertyinfo as = new Propertyinfo();
+       Propertyinfo property_list = new Propertyinfo();
 //        System.out.println( as.rent_payment(807));
 //        System.out.println(as.property_tenants());
 //        ArrayList<String> modify = as.property_tenants().get(1);
 //        modify.add(as.rent_payment(778));
 //        System.out.println("List Modified : " + modify);
 //        System.out.println(as.property_tenants());
+        System.out.println(property_list.property_tenants("Thornville_rooms"));
+         HashMap<Integer,ArrayList<String>> get_Unit_related = property_list.property_tenants("Thornville_rooms");
+
+        for (int i =1 ; i <= get_Unit_related.size(); i++){
+//            System.out.println(get_Unit_related.get(i));
+            ArrayList<String> property_per_unit = get_Unit_related.get(i);
+            try {
+                Integer AccessLast = Integer.valueOf(property_per_unit.get(3));
+                System.out.println("The Last index : " + AccessLast);
+            } catch (NumberFormatException e){
+                continue;
+            }
+
+
 //
+//            Integer tenant_id = Integer.valueOf(get_Unit_related.get(3));
+//            Integer rent_day_tenant = Integer.valueOf(property_list.rent_payment(tenant_id));
+//            get_Unit_related.addLast(String.valueOf( rent_day_tenant));
+        }
     }
 
 }
