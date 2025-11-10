@@ -54,6 +54,8 @@ public class umuziAPI {
             ctx.render("templates/property.html");
         });
 
+//        app.get("/property_information",)
+
         /**
          * adds new user information to the database
          */
@@ -83,22 +85,6 @@ public class umuziAPI {
     app.post("/updateTenants",ctx -> {
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
         });
-    app.exception(Exception.class, (e, ctx) -> {
-            e.printStackTrace();
-            if (e.getMessage().contains("UNIQUE constraint failed")) {
-                ctx.status(400).json(Map.of(
-                        "error", "Property already exists",
-                        "field", "property_name"
-                ));
-            } else {
-                ctx.status(500).json(Map.of(
-                        "error", "Database error",
-                        "message",e.getMessage()
-                ));
-            }
-
-        });
-
         // Exception handler for NullPointerException
         app.exception(NullPointerException.class, (e, ctx) -> {
             ctx.status(400);
