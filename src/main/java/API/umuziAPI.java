@@ -25,7 +25,7 @@ public class umuziAPI {
             config.fileRenderer(new JavalinThymeleaf());
             config.staticFiles.add("public"); //Include Dependency to the jarfile
         });
-        //home_page Url_end_point.
+        //home_page
         app.get("/", ctx ->{
            ctx.render("templates/home.html");
         });
@@ -35,11 +35,12 @@ public class umuziAPI {
            ctx.render("/templates/property.html");
         });
         app.get("/dashboard",ctx ->{
+            String user_name = ctx.sessionAttribute("user_name");
             Map<String, Object> model = new HashMap<>();
-            model.put("name","khulekani");
+            model.put("name",user_name);
             ctx.render("templates/dashboard.html",model);
         });
-        //sign_up session order /user_sign_up "/add_property" /addtenants"
+
         app.get("/landlord_sign_up",ctx ->{
             ctx.render("templates/landlord.html");
         });
@@ -63,10 +64,6 @@ public class umuziAPI {
  */
         app.post("/add_property", controller.addproperty());
         app.get("/add_tenant",ctx -> {
-            String pro = ctx.sessionAttribute("property_Name");
-            String getUsername = ctx.sessionAttribute("user_name");
-            System.out.println(getUsername);
-            System.out.println(pro +  "more work to DO");
            ctx.render("templates/tenant_form.html");
         });
 /**
@@ -76,17 +73,10 @@ public class umuziAPI {
     UpdateUser feedback;
     feedback = new SameEmialCreator();
     app.get("/error/same_email",feedback.updateUser());
-
     feedback = new SameUnitCreator();
     app.get("/error/same_unit",feedback.updateUser());
 
-
-        app.get("/rentalmanagemnt@log_in?cuser_profile",ctx ->{
-        });
-
-
-
-        app.post("/updateTenants",ctx -> {
+    app.post("/updateTenants",ctx -> {
 
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
            // String propertName = dbConnector.getPropertyname();
@@ -102,16 +92,14 @@ public class umuziAPI {
             int tenantsdebt = Integer.parseInt( ctx.formParam("tenant_debt"));
             String kin_name = ctx.formParam("kin_name");
             String kin_number = ctx.formParam("kin_number");
-            // dbConnector.roomStatus(name,room,moveIn,employment_status,cell_number,payday,room_price,tenantsdebt,kin_name,kin_number );
+
 
         });
         app.get("/add_another_unit", ctx -> {
             Map<String, Object> model = new HashMap<>();
-            System.out.println("bible studies");
             // Example: populate values (replace with actual session or DB data)
             model.put("user_name", ctx.sessionAttribute("user_name"));
             model.put("residence_name", "My Residence"); // or fetch dynamically
-
             ctx.render("/templates/property_form.html",model);
         });
 
