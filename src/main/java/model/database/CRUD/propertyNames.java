@@ -1,11 +1,10 @@
-package API_handlers;
+package model.database.CRUD;
 
 import model.database.ConnectionAccess;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,8 +29,8 @@ public class propertyNames extends ConnectionAccess {
     }
 
     static public  void main(String[] args) {
-        propertyNames s = new propertyNames();
-
-        System.out.println(s.fetchAllproperty(771));
+        propertyNames getAllproperty = new propertyNames();
+        landlord user_id = new landlord();
+        System.out.println(getAllproperty.fetchAllproperty(user_id.landlordId("khulekaniszondo6@gmail.com")));
     }
 }
