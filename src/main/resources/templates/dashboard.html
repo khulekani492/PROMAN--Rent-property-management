@@ -89,7 +89,6 @@
                     </select>
                     <h2><a href="http://localhost:7070/add_property_unit">Add New property</a></h2>
                 </div>
-
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-600 mb-2">Search tenant</label>
                     <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)"
@@ -131,6 +130,7 @@
                 <th class="px-4 py-3 text-left font-semibold">Overdue (days)</th>
             </tr>
             </thead>
+            <h1 class="px-4 py-3" th:text="${no_units}"></h1>
             <tbody id="unitsTbody">
             <tr class="border-b border-gray-200" data-property="table" data-tenant="John Doe">
                 <td class="px-4 py-3" th:text="${_unit}">Unit</td>
