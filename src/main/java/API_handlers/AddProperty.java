@@ -15,12 +15,13 @@ public class AddProperty {
                 Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
                 String property_Name = ctx.formParam("property_Name");
                 String property_address = ctx.formParam("property_Address");
+                System.out.println(property_address);
                 String occupation = ctx.formParam("occupation");
                 String rent = ctx.formParam("rent");
 
                 ctx.sessionAttribute("property_name", property_Name);
                 ctx.sessionAttribute("property_unit", propertyUnit);
-                ctx.sessionAttribute("property address", property_address);
+                ctx.sessionAttribute("property_address", property_address);
                 ctx.sessionAttribute("occupation", occupation);
                 Integer property_owner = ctx.sessionAttribute("user_ID");
 
@@ -40,12 +41,14 @@ public class AddProperty {
                 Integer owner_property = property_information.UniqueID();
                 System.out.println("properties_id " + owner_property);
                 String property_name = ctx.sessionAttribute("property_name");
+
                 ctx.sessionAttribute("_unit", propertyUnit);
                 String user_name = ctx.sessionAttribute("user_name");
                 Map<String, Object> model = new HashMap<>();
                 model.put("user_name",user_name);
                 model.put("unit_add", propertyUnit);
                 model.put("name", property_name);
+
                 ctx.sessionAttribute("residence", property_name);
 
 
