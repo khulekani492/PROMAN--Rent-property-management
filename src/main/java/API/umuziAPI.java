@@ -67,7 +67,16 @@ public class umuziAPI {
             System.out.println("What they want " + property_name);
             Getunits property_units = new Getunits();
             HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name);
-            System.out.println("Final Modification : " + fetch_all);
+            if(fetch_all.size() == 0){
+                HashMap<String,String> model = new HashMap<>();
+                String property = context.sessionAttribute("property_name");
+                model.put("no_units","No units added for " + property );
+
+                context.render("templates/dashboard.html",model);
+            }else {
+                System.out.println("All units ");
+                System.out.println(fetch_all);
+            }
 
         });
 
