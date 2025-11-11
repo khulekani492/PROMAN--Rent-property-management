@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Getunits {
-    public HashMap<Integer,ArrayList<String>> getOccupiedUnits (String property_name){
+    public HashMap<Integer,ArrayList<String>> getOccupiedUnits (String property_name,Integer landlordId){
         Propertyinfo property_list = new Propertyinfo();
 
-        HashMap<Integer,ArrayList<String>> get_Unit_related = property_list.property_tenants(property_name);
+        HashMap<Integer,ArrayList<String>> get_Unit_related = property_list.property_tenants(property_name,landlordId);
         HashMap<Integer,ArrayList<String>> get_tenants = new HashMap<>();
-        ArrayList<String> property_per_unit  = new ArrayList<>();
+        ArrayList<String> property_per_unit  = null;
 
         for (Integer n : get_Unit_related.keySet()){
              property_per_unit = get_Unit_related.get(n);
@@ -45,7 +45,7 @@ public class Getunits {
     }
 static void main(){
         Getunits per_property = new Getunits();
-    System.out.println(per_property.getOccupiedUnits("Thornville_rooms")    ); ;
+    System.out.println(per_property.getOccupiedUnits("Thornville_rooms",817)    ); ;
 }
 
 }
