@@ -2,6 +2,7 @@ package API;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,7 @@ import Invalidhandler.UpdateUser;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import javassist.util.proxy.ProxyFactory;
+import model.database.CRUD.Getunits;
 import model.database.CRUD.landlord;
 import model.database.CRUD.propertyNames;
 import model.database.general;
@@ -60,9 +62,13 @@ public class umuziAPI {
         app.get("/add_property",ctx ->{
             ctx.render("templates/property.html");
         });
-        app.post("/test",context -> {
-            System.out.println("NAMES");
-            System.out.println(context.formParam("name"));
+        app.post("/fetch_property_units",context -> {
+            String property_name = context.formParam("name");
+            System.out.println("What they want " + property_name);
+            Getunits property_units = new Getunits();
+            HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name);
+            System.out.println("Final Modification : " + fetch_all);
+
         });
 
         app.get("/property_information", new PropertyUnits().property_related_information());
