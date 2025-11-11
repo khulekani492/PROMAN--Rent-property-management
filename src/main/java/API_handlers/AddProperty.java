@@ -45,7 +45,7 @@ public class AddProperty {
                 Map<String, Object> model = new HashMap<>();
                 model.put("user_name",user_name);
                 model.put("unit_add", propertyUnit);
-                model.put("residence_name", property_name);
+                model.put("name", property_name);
                 ctx.sessionAttribute("residence", property_name);
 
 
