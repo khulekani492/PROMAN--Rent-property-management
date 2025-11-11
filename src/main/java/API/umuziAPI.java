@@ -55,8 +55,13 @@ public class umuziAPI {
         });
         app.get("/add_property_unit",ctx ->{
             String getUsername = ctx.sessionAttribute("user_name");
+            String propertyName = ctx.sessionAttribute("property_name");
+            String propertyAddress = ctx.sessionAttribute("property_address");
+            System.out.println(propertyAddress + " played the game");
             HashMap<String,String> model = new HashMap<>();
             model.put("user_name",getUsername);
+            model.put("property_name",propertyName);
+            model.put("property_address",propertyAddress);
             ctx.render("templates/property.html",model);
         });
         app.get("/add_property",ctx ->{
@@ -71,7 +76,6 @@ public class umuziAPI {
                 HashMap<String,String> model = new HashMap<>();
                 String property = context.sessionAttribute("property_name");
                 model.put("no_units","No units added for " + property );
-
                 context.render("templates/dashboard.html",model);
             }else {
                 System.out.println("All units ");
