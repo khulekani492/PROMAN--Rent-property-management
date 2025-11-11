@@ -55,7 +55,7 @@ public class AddProperty {
                     //ctx.render("/templates/tenant_form.html", model);
                 } else {
                     System.out.println("no status");
-                    ctx.render("/templates/dashboard.html", model);
+                    ctx.redirect("/dashboard");
                 }
 
             } catch (Exception e) {
