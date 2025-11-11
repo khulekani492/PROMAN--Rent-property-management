@@ -78,7 +78,16 @@ public class umuziAPI {
                 model.put("no_units","No units added for " + property );
                 context.render("templates/dashboard.html",model);
             }else {
-                System.out.println("All units ");
+                HashMap<String,HashMap<Integer,ArrayList<String>>> model = new HashMap<>();
+                System.out.println(fetch_all + "Occupied units");
+                model.put("units",fetch_all);
+
+//                for ( int c : fetch_all.keySet() ){
+//                    System.out.println(  fetch_all.get(c) );
+//
+//                }
+//                model.put("units",);
+                System.out.println(model);
                 System.out.println(fetch_all);
             }
 
