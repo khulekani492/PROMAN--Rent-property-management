@@ -69,7 +69,7 @@ public class umuziAPI {
         });
         app.post("/fetch_property_units",context -> {
             String property_name = context.formParam("name");
-            String property_email = context.formParam("email");
+            String property_email = context.sessionAttribute("email");
             System.out.println("What they want " + property_name);
 
             Getunits property_units = new Getunits();
@@ -77,6 +77,7 @@ public class umuziAPI {
             ;
             System.out.println("property_landlord " +authenticate.landlordId(property_email) );
             HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name,authenticate.landlordId(property_email));
+            System.out.println("RESULTS : " + fetch_all);
             if(fetch_all.size() == 0){
                 HashMap<String,String> model = new HashMap<>();
                 String property = context.sessionAttribute("property_name");
