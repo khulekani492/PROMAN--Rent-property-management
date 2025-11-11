@@ -6,10 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class propertyNames extends ConnectionAccess {
-    public ArrayList<String> fetchAllproperty(Integer landlordId){
-        ArrayList<String> user_properties = new ArrayList<>();
+    public Set <String> fetchAllproperty(Integer landlordId){
+        Set<String> user_properties = new HashSet<>();
         String sql = """
                 SELECT property_name From properties WHERE landlord_user_id =?;\s
                 """;
@@ -30,6 +32,6 @@ public class propertyNames extends ConnectionAccess {
     static public  void main(String[] args) {
         propertyNames s = new propertyNames();
 
-        System.out.println(s.fetchAllproperty(810));
+        System.out.println(s.fetchAllproperty(771));
     }
 }
