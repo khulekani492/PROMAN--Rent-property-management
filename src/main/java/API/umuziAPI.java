@@ -4,18 +4,19 @@ package API;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static API.SessionUtil.fileSessionHandler;
 
-import API_handlers.AddProperty;
-import API_handlers.AddTenant;
-import API_handlers.Signup;
-import API_handlers.apiHandler;
+import API_handlers.*;
 import Invalidhandler.SameEmialCreator;
 import Invalidhandler.SameUnitCreator;
 import Invalidhandler.UpdateUser;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
+import javassist.util.proxy.ProxyFactory;
+import model.database.CRUD.landlord;
+import model.database.CRUD.propertyNames;
 import model.database.general;
 
 
@@ -36,9 +37,15 @@ public class umuziAPI {
            ctx.render("/templates/property.html");
         });
         app.get("/dashboard",ctx ->{
-            String user_name = ctx.sessionAttribute("user_name");
+            //FETCH landlord properties
+            String email = ctx.sessionAttribute("email");
+            propertyNames default_properties = new propertyNames();
+            landlord user_id = new landlord();
+            //using landlord_unique_id to fetch all of their properties , it accessed with the user_email
+            Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
+
             Map<String, Object> model = new HashMap<>();
-            model.put("user_name",user_name);
+            model.put("names",landlord_properties);
             ctx.render("templates/dashboard.html",model);
         });
         app.get("/landlord_sign_up",ctx ->{
@@ -53,15 +60,19 @@ public class umuziAPI {
         app.get("/add_property",ctx ->{
             ctx.render("templates/property.html");
         });
+        app.post("/test",context -> {
+            System.out.println("NAMES");
+            System.out.println(context.formParam("name"));
+        });
 
-//        app.get("/property_information",)
+        app.get("/property_information", new PropertyUnits().property_related_information());
 
         /**
          * adds new user information to the database
          */
         Signup new_signee = new Signup();
         app.post("/user_sign_up", new_signee.sign_up());
-        app.get("/user_sign_up/error",controller.errorMessage());
+        //app.get("/user_sign_up/error",controller.errorMessage());
 /**
  * adds new user property information to the database
  */     AddProperty propertyInfo = new AddProperty();
