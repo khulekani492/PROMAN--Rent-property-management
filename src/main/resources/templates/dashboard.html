@@ -125,21 +125,31 @@
             <tr>
                 <th class="px-4 py-3 text-left font-semibold">Unit Number</th>
                 <th class="px-4 py-3 text-left font-semibold">Rent</th>
-                <th class="px-4 py-3 text-left font-semibold">Rent Day</th>
-                <th class="px-4 py-3 text-left font-semibold">Payment</th>
-                <th class="px-4 py-3 text-left font-semibold">Overdue (days)</th>
+                <th class="px-4 py-3 text-left font-semibold">Occupation</th>
+                <th class="px-4 py-3 text-left font-semibold">tenant</th>
+                <th class="px-4 py-3 text-left font-semibold">rent_day</th>
+                <th class="px-4 py-3 text-left font-semibold">status</th>
+                <th class="px-4 py-3 text-left font-semibold">Overdue(days)</th>
             </tr>
             </thead>
             <h1 class="px-4 py-3" th:text="${no_units}"></h1>
             <tbody id="unitsTbody">
-            <tr class="border-b border-gray-200" data-property="table" data-tenant="John Doe">
-                <td class="px-4 py-3" th:text="${_unit}">Unit</td>
-                <td class="px-4 py-3" th:text="${rent}">0</td>
-                <td class="px-4 py-3" th:text="${rent_date}">0</td>
+            <tr th:each="entry : ${units}" class="border-b border-gray-200">
+                <!-- entry.key is like 4, 7, 9 -->
+                <td class="px-4 py-3" th:text="${entry.value[0]}">Unit</td>
+                <td class="px-4 py-3" th:text="${entry.value[1]}">0</td>
+                <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
+                <td class="px-4 py-3" th:text="${entry.value[3]}">0</td>
+                <td class="px-4 py-3" th:text="${entry.value[4]}">0</td>
                 <td class="px-4 py-3 payment-hover payment-cell">
-                    <span class="indicator bg-green-100 text-green-800" aria-label="Payment: yes">+</span>
+                <span th:if="${entry.value[2]} == 'yes'"
+                      class="indicator bg-green-100 text-green-800"
+                      aria-label="Payment: yes">+</span>
+                    <span th:if="${entry.value[2]} == 'no'"
+                          class="indicator bg-red-100 text-red-800"
+                          aria-label="Payment: no">−</span>
                 </td>
-                <td class="px-4 py-3 overdue-cell" aria-label="Overdue days">0</td>
+
             </tr>
             </tbody>
         </table>
