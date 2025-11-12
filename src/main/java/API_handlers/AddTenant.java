@@ -47,7 +47,9 @@ public class AddTenant {
 
 
                 try {
+
                     addTenantUnit.Insert_tenatId();
+
                 } catch (SQLException e) {
                     ctx.redirect("/user_sign_up/error");
                     e.printStackTrace();  // <-- ensures the exception appears in your terminal
