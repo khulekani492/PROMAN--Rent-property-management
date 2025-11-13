@@ -1,10 +1,30 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ProMan — Add Tenant</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase setup
+        const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function getUserSession() {
+          const { data: { session }, error } = await supabase.auth.getSession();
+          if (error) {
+            console.error('Error getting session:', error.message);
+          } else if (session) {
+            console.log('Logged-in user:', session.user);
+          } else {
+            console.log('No user is logged in.');
+          }
+        }
+        getUserSession();
+    </script>
+
     <style>
         :root{
             --brand: #8B5E3C;
@@ -12,10 +32,139 @@
             --accent: #D9CBB8;
             --card-bg: #FAF3E0;
             --pill-bg: #FFF8E7;
-            --brand-weak: #E7D9CC;
+            --error: #dc2626;
+            --error-light: #fef2f2;
         }
 
-        /* small helper visuals */
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background-color: #fafaf9;
+            color: #1f2937;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .site-header {
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(16,24,40,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+        .site-header .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .logo-img {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+        .nav-links a {
+            margin-left: 14px;
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: var(--brand);
+        }
+
+        /* Progress / Stepper */
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+        .progress-sep {
+            width: 56px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            border: 1px solid var(--accent);
+        }
+        input, select, .themed-input {
+            background: var(--pill-bg) !important;
+            border: 1px solid var(--accent);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+        .input-focus:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(139,94,60,0.08);
+            border-color: var(--brand);
+        }
+
+        /* Form details */
+        label {
+            font-weight: 600;
+            color: var(--brand-dark);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Error handling */
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #374151;
+        }
+        .btn-secondary:hover {
+            background: #e5e5e5;
+        }
+        button {
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        button:hover {
+            background: var(--brand-dark);
+            transform: scale(1.005);
+        }
+
+        /* Toast */
         .toast {
             position: fixed;
             right: 1rem;
@@ -27,269 +176,236 @@
             font-weight: 600;
         }
 
-        /* subtle required star */
+        /* Required star */
         .required-star { color: #dc2626; margin-left: 0.15rem; }
 
-        /* small input error */
-        .input-error { color: #dc2626; font-size: 0.85rem; margin-top: .25rem; display: none; }
-
-        /* visually emphasize primary action */
-        .btn-primary { background: var(--brand); }
-        .btn-primary:hover { background: var(--brand-dark); }
-
-        /* keep logo size consistent */
-        .logo-img { height: 56px; width: auto; display: block; }
-
-        /* accessible focus rings */
-        input:focus, select:focus, button:focus {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(139,94,60,0.12);
-            border-color: var(--brand);
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+            .form-card { margin: 0 auto; max-width: 680px; }
         }
 
-        /* Progress / stepper */
-        .progress-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 9999px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: white;
-            transition: transform .18s ease, box-shadow .18s ease;
-        }
-        .progress-sep {
-            height: 3px;
-            border-radius: 3px;
-            flex: 0 0 56px;
-        }
-
-        /* Completed and active states */
-        .step-complete .progress-dot { background: var(--brand); box-shadow: 0 6px 14px rgba(139,94,60,0.14); }
-        .step-complete .progress-label { color: #374151; font-weight: 600; }
-        .step-active .progress-dot {
-            background: var(--brand);
-            box-shadow: 0 10px 26px rgba(139,94,60,0.22);
-            border: 3px solid rgba(255,255,255,0.22);
-            width: 28px;
-            height: 28px;
-            font-size: 12px;
-            transform: translateY(-2px);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .step-active .progress-label { color: var(--brand); font-weight: 700; }
-
-        /* subtle pulse to draw attention to active dot */
-        @keyframes pulse {
-            0% { box-shadow: 0 10px 26px rgba(139,94,60,0.18); transform: translateY(-2px) scale(1); }
-            50% { box-shadow: 0 18px 40px rgba(139,94,60,0.12); transform: translateY(-3px) scale(1.04); }
-            100% { box-shadow: 0 10px 26px rgba(139,94,60,0.18); transform: translateY(-2px) scale(1); }
-        }
-        .step-active .progress-dot {
-            animation: pulse 2200ms ease-in-out infinite;
-        }
-
-        /* responsive tweaks */
-        @media (max-width: 640px) {
-            .progress-sep { flex-basis: 28px; }
-            .step-active .progress-dot { width: 22px; height: 22px; font-size: 11px; }
+        @media (max-width: 720px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body>
 
-<!-- Header / Navbar -->
-<header class="bg-white shadow-sm sticky top-0 z-30">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="home.html" class="flex items-center gap-4" aria-label="ProMan home">
+<header class="site-header" role="banner">
+    <div class="container">
+        <a href="home.html" aria-label="ProMan Home" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
             <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="logo-img">
-            <div class="leading-tight">
-                <div class="text-lg md:text-xl font-extrabold text-[var(--brand)]">ProMan</div>
-                <div class="text-xs text-gray-500 -mt-1">Property management simplified</div>
+            <div style="line-height:1;">
+                <div style="color:var(--brand);font-weight:800;font-size:18px;">ProMan</div>
+                <div style="font-size:12px;color:#6b7280;margin-top:2px;">Property management simplified</div>
             </div>
         </a>
 
-        <nav class="hidden sm:flex items-center space-x-6 text-gray-600" aria-label="Main navigation">
-            <a href="home.html" class="hover:text-[var(--brand)] transition">Home</a>
-            <a href="dashboard.html" class="hover:text-[var(--brand)] transition">Dashboard</a>
-            <a href="signup.html" class="hover:text-[var(--brand)] transition">Sign Up</a>
-            <a href="login.html" class="hover:text-[var(--brand)] transition">Login</a>
+        <nav class="nav-links" role="navigation" aria-label="Main navigation">
+            <a href="http://localhost:7070/">Home</a>
+            <a href="http://localhost:7070/dashboard">Dashboard</a>
+            <a href="http://localhost:7070/">Log out</a>
         </nav>
     </div>
 </header>
 
-<main class="max-w-6xl mx-auto px-6 py-10">
-
-    <!-- Top info card with Thymeleaf placeholders preserved -->
-    <div class="max-w-3xl mx-auto mb-6">
-        <div class="bg-[var(--brand)] text-white p-5 rounded-lg shadow-md">
-            <div class="flex items-start justify-between">
-                <div>
-                    <h2 class="text-xl font-semibold" th:text="'Add tenant'">Add tenant</h2>
-                    <p class="text-sm mt-1" th:text="'Unit ' + ${unit_add}">Unit 1</p>
-                </div>
-                <div class="text-right">
-                    <a href="http://localhost:7070/add_property_unit" class="text-sm bg-white/10 px-3 py-1 rounded-md inline-block hover:bg-white/20">Back</a>
-                </div>
+<!-- Progress / Stepper -->
+<div class="bg-transparent py-6 border-b border-[var(--accent)]">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-3">
+        <div class="flex items-center gap-3">
+            <div class="flex flex-col items-center text-sm font-semibold">
+                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
+                <span class="mt-2 text-[var(--brand)]">1. Account</span>
+            </div>
+            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
+            <div class="flex flex-col items-center text-sm font-semibold">
+                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
+                <span class="mt-2 text-[var(--brand)]">2. Add Unit</span>
+            </div>
+            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
+            <div class="flex flex-col items-center text-sm font-semibold">
+                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
+                <span class="mt-2 text-[var(--brand)]">3. Add Tenant</span>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Progress / stepper: Account & Add Unit complete, Add Tenant highlighted -->
-    <div class="max-w-3xl mx-auto mb-6">
-        <div class="flex items-center justify-center gap-4 px-4 py-2">
-            <div class="flex items-center gap-3">
-                <!-- Account (completed) -->
-                <div class="flex flex-col items-center step-complete" title="Account completed">
-                    <div class="progress-dot" aria-hidden="true">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M20 6L9 17l-5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+<!-- Main Content Grid -->
+<main class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+
+        <div class="img-card relative rounded-2xl overflow-hidden shadow-xl border-4 border-white order-2 lg:order-1">
+            <img src="/umuzi/img/pexels-thgusstavo-2102587.jpg" alt="Property Background" class="w-full object-cover object-top h-64 md:h-[520px] lg:h-[560px]"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-[rgba(139,94,60,0.5)] to-[rgba(0,0,0,0.08)] pointer-events-none"></div>
+
+            <div class="absolute top-8 left-8 p-4 bg-white/90 rounded-xl shadow-lg border border-[var(--accent)] max-w-[80%]">
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-10 w-auto">
+                    <h2 class="text-2xl font-bold" style="color:var(--brand)">Welcome to ProMan</h2>
+                </div>
+                <p class="text-gray-700 text-sm font-medium mb-2">
+                    <span class="font-semibold text-[var(--brand-dark)]" th:text="'Hello, ' + ${user_name} + '! '">Hello, User! </span>
+                    Complete your property setup by adding tenant information.
+                </p>
+                <div class="text-xs text-gray-600 space-y-1">
+                    <div class="flex items-start gap-1">
+                        <span>👤</span>
+                        <span>Add tenant personal details and contact information</span>
                     </div>
-                    <div class="progress-label text-sm mt-2">Account</div>
-                </div>
-
-                <div class="progress-sep bg-[var(--brand-weak)]" aria-hidden="true"></div>
-
-                <!-- Add Unit (completed) -->
-                <div class="flex flex-col items-center step-complete" title="Add Unit completed">
-                    <div class="progress-dot" aria-hidden="true">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M20 6L9 17l-5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                    <div class="flex items-start gap-1">
+                        <span>📅</span>
+                        <span>Set move-in date and rent payment schedule</span>
                     </div>
-                    <div class="progress-label text-sm mt-2">ADD UNIT</div>
+                    <div class="flex items-start gap-1">
+                        <span>💼</span>
+                        <span>Record employment status for reference checks</span>
+                    </div>
+                    <div class="flex items-start gap-1">
+                        <span>📞</span>
+                        <span>Add emergency contact information</span>
+                    </div>
                 </div>
-
-                <div class="progress-sep bg-[var(--brand-weak)]" aria-hidden="true"></div>
-
-                <!-- Add Tenant (active) -->
-                <div class="flex flex-col items-center step-active" title="Add Tenant (current step)">
-                    <div class="progress-dot" aria-current="step" aria-hidden="true">3</div>
-                    <div class="progress-label text-sm mt-2">add Tenant</div>
-                </div>
+                <div class="text-xs text-[var(--brand-dark)] font-bold mt-2">— ProMan Team</div>
             </div>
         </div>
+
+        <div class="form-card order-1 lg:order-2" role="main" aria-labelledby="form-title">
+            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4" style="color:var(--brand)">Tenant Information</h2>
+            <p class="text-center text-gray-500 mb-6" th:text="'Adding tenant for Unit ' + ${unit_add}">Adding tenant for Unit 1</p>
+
+            <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST" novalidate>
+                <!-- Personal Details Section -->
+                <div class="form-section mb-6">
+                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Personal Details</h3>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="tenant_name">Full Name <span class="required-star">*</span></label>
+                            <input id="tenant_name" name="tenant_name" type="text" required
+                                   placeholder="e.g. Thabo Ndlovu"
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Enter the tenant's full legal name</p>
+                            <div id="tenant_name_error" class="error-message">Please enter the tenant's full name.</div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="cell_number">Phone Number <span class="required-star">*</span></label>
+                            <input id="cell_number" name="cell_number" type="tel" pattern="[0-9]{7,15}"
+                                   placeholder="e.g. 0712345678" required
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">No spaces or symbols</p>
+                            <div id="cell_number_error" class="error-message">Enter a valid phone number (7–15 digits).</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="move_in">Move-in Date <span class="required-star">*</span></label>
+                            <input id="move_in" name="move_in" type="date" required
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Tenant's move-in date</p>
+                            <div id="move_in_error" class="error-message">Please select a move-in date.</div>
+                        </div>
+
+                        <div class="form-field">
+                            <label>Employment Status <span class="required-star">*</span></label>
+                            <div class="flex gap-4 mt-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="employment" value="yes" required
+                                           class="h-4 w-4 text-[var(--brand)]">
+                                    <span class="text-gray-700">Employed</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="employment" value="no"
+                                           class="h-4 w-4 text-[var(--brand)]">
+                                    <span class="text-gray-700">Not Employed</span>
+                                </label>
+                            </div>
+                            <div id="employment_error" class="error-message">Please indicate employment status.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next of Kin Section -->
+                <div class="form-section mb-6">
+                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Emergency Contact</h3>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="kin_name">Next of Kin Name</label>
+                            <input id="kin_name" name="kin_name" type="text"
+                                   placeholder="e.g. Naledi Mokoena"
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Emergency contact person</p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="kin_number">Next of Kin Phone</label>
+                            <input id="kin_number" name="kin_number" type="tel" pattern="[0-9]{7,15}"
+                                   placeholder="e.g. 0712345678"
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Emergency contact number</p>
+                            <div id="kin_number_error" class="error-message">Enter a valid phone number (7–15 digits) or leave blank.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Details Section -->
+                <div class="form-section mb-6">
+                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Financial Details</h3>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="rent_day">Rent Payment Day <span class="required-star">*</span></label>
+                            <input id="rent_day" name="rent_payment_day" type="number" min="1" max="31"
+                                   placeholder="8" required
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Day of month when rent is due (1-31)</p>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="debt">Outstanding Debt <span class="required-star">*</span></label>
+                            <input id="debt" name="debt" type="text"
+                                   placeholder="e.g. R200" required
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Any existing debt carried forward</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden field preserving unit context -->
+                <input type="hidden" name="unit" th:value="${unit_add}" />
+
+                <!-- Form actions -->
+                <div class="form-actions flex gap-4 justify-center mt-8">
+                    <button type="button" class="btn-secondary px-6" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="px-6" aria-label="Add Tenant">Add Tenant</button>
+                </div>
+            </form>
+        </div>
+
     </div>
-
-    <!-- Form card -->
-    <section class="max-w-3xl mx-auto bg-white rounded-2xl p-8 border border-[var(--accent)] shadow form-card">
-        <h3 class="text-2xl font-extrabold text-[var(--brand)] mb-4 text-center">Add Tenant</h3>
-
-        <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST" class="space-y-4" novalidate>
-            <!-- NAME -->
-            <div>
-                <label for="tenant_name" class="block text-sm font-medium text-gray-700">Full name <span class="required-star">*</span></label>
-                <input id="tenant_name" name="tenant_name" type="text" required
-                       placeholder="e.g. Thabo Ndlovu"
-                       class="mt-1 block w-full rounded-md border border-gray-200 bg-[var(--pill-bg)] px-3 py-2" />
-                <div id="tenant_name_error" class="input-error">Please enter the tenant's full name.</div>
-            </div>
-
-            <!-- PHONE and MOVE-IN (side-by-side on wide screens) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="cell_number" class="block text-sm font-medium text-gray-700">Phone number <span class="required-star">*</span></label>
-                    <input id="cell_number" name="cell_number" type="tel" pattern="[0-9]{7,15}" placeholder="e.g. 0712345678" required
-                           class="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2" />
-                    <div id="cell_number_error" class="input-error">Enter a valid phone number (7–15 digits).</div>
-                    <p class="text-xs text-gray-500 mt-1">No spaces or symbols. Country code optional (e.g. 2781...)</p>
-                </div>
-
-                <div>
-                    <label for="move_in" class="block text-sm font-medium text-gray-700">Move-in date <span class="required-star">*</span></label>
-                    <input id="move_in" name="move_in" type="date" required class="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2 bg-white" />
-                    <div id="move_in_error" class="input-error">Please select a move-in date.</div>
-                    <p class="text-xs text-gray-500 mt-1">You can change this later if needed.</p>
-                </div>
-            </div>
-
-            <!-- EMPLOYMENT -->
-            <div>
-                <div class="flex items-center justify-between">
-                    <label class="block text-sm font-medium text-gray-700">Employment <span class="required-star">*</span></label>
-                    <button type="button" id="employmentHelpBtn" aria-label="Employment help" class="text-xs text-gray-500 hover:underline">Why we ask</button>
-                </div>
-                <div class="mt-2 flex items-center gap-6" role="radiogroup" aria-labelledby="employment-label">
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="employment" value="yes" required class="h-4 w-4 text-[var(--brand)]">
-                        <span class="text-sm text-gray-700">Yes</span>
-                    </label>
-                    <label class="inline-flex items-center gap-2">
-                        <input type="radio" name="employment" value="no" class="h-4 w-4 text-[var(--brand)]">
-                        <span class="text-sm text-gray-700">No</span>
-                    </label>
-                </div>
-                <div id="employment_error" class="input-error">Please indicate employment status.</div>
-            </div>
-
-            <!-- NEXT OF KIN -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="kin_name" class="block text-sm font-medium text-gray-700">Next of kin name</label>
-                    <input id="kin_name" name="kin_name" type="text" placeholder="e.g. Naledi Mokoena"
-                           class="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2" />
-                </div>
-
-                <div>
-                    <label for="kin_number" class="block text-sm font-medium text-gray-700">Next of kin phone</label>
-                    <input id="kin_number" name="kin_number" type="tel" pattern="[0-9]{7,15}" placeholder="e.g. 0712345678"
-                           class="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2" />
-                    <div id="kin_number_error" class="input-error">Enter a valid phone number (7–15 digits) or leave blank.</div>
-                </div>
-            </div>
-            <!-- RENT & DEBT (Side by Side at Bottom) -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="rent_day" class="block text-sm font-medium text-gray-700">
-                        Rent day
-                    </label>
-                    <input id="rent_day" name="rent_payment_day" type="number" placeholder="8"
-                           class="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2" required/>
-                </div>
-
-                <div>
-                    <label for="debt" class="block text-sm font-medium text-gray-700">
-                        Outstanding debt
-                    </label>
-                    <input id="debt" name="debt" type="text" placeholder="e.g. R200"
-                           class="mt-1 block w-full rounded-md border border-gray-200 px-3 py-2" required/>
-                </div>
-            </div>
-
-
-            <!-- Form actions -->
-            <div class="flex items-center gap-3 pt-2">
-                <button id="submitBtn" type="submit" class="btn-primary text-white px-4 py-3 rounded-lg font-semibold flex-1">
-                    Add Tenant
-                </button>
-                <a href="dashboard.html" class="px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-700 inline-flex items-center justify-center">Cancel</a>
-            </div>
-
-            <!-- hidden field preserving unit context (optional) -->
-            <input type="hidden" name="unit" th:value="${unit_add}" />
-        </form>
-    </section>
 </main>
 
-<!-- Footer -->
 <footer class="mt-12 py-8 bg-white border-t">
     <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
         <div>
-            <a href="home.html" class="text-lg font-extrabold text-[var(--brand)]">ProMan</a>
-            <p class="text-sm text-gray-500 mt-2">Make property management simple and reliable.</p>
+            <a href="home.html" class="text-lg font-extrabold" style="color:var(--brand)">ProMan</a>
+            <p class="mt-2 text-gray-500">Make property management simple and reliable.</p>
         </div>
-
         <div class="flex flex-col">
             <h4 class="font-semibold text-gray-700 mb-2">Product</h4>
             <a href="dashboard.html" class="text-sm text-gray-600 hover:underline">Dashboard</a>
             <a href="signup.html" class="text-sm text-gray-600 hover:underline mt-1">Sign Up</a>
-            <a href="login.html" class="text-sm text-gray-600 hover:underline mt-1">Login</a>
+            <a href="login.html" class="text-sm text-gray-600 hover:underline mt-1">Log in</a>
         </div>
-
         <div class="text-right md:text-left">
             <div>© ProMan — Property Management</div>
             <a href="mailto:ProMan@gmail.com" class="text-[var(--brand)] hover:underline">ProMan@gmail.com</a>
@@ -380,10 +496,6 @@
             toastContainer.appendChild(el);
             setTimeout(() => { el.remove(); }, opts.duration || 1800);
         }
-
-        document.getElementById('employmentHelpBtn').addEventListener('click', () => {
-            showToast('We ask about employment to better assess affordability and provide faster reference checks.', { bg: '#eef2ff', color: '#3730a3', duration: 3000 });
-        });
 
         function normalizeDigits(e) {
             const start = e.target.selectionStart;
