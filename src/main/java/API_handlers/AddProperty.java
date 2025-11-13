@@ -33,6 +33,7 @@ public class AddProperty {
                 //TRY AND EXCEPT
                 //entity relationship with the Users table
                 try {
+                    System.out.println("Bricks");
                     property_information.insert_information();
                 } catch (Exception e) {
                     ctx.redirect("/error/same_unit");
