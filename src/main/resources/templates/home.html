@@ -22,91 +22,102 @@
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 
-<!-- Header: compact, clear actions -->
-<header class="bg-white shadow-sm sticky top-0 z-30">
+<header class="bg-white shadow-md sticky top-0 z-30">
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div class="flex items-center gap-4">
-            <!-- Increased logo size: larger on desktop, slightly smaller on mobile -->
-            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-16 md:h-20 w-auto object-contain">
+            <a href="home.html" class="flex items-center">
+                <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-20 md:h-24 w-auto object-contain">
+            </a>
             <div>
-                <a href="home.html" class="text-lg font-extrabold text-[#8B5E3C]">ProMan</a>
+                <a href="home.html" class="text-xl font-extrabold text-[#8B5E3C]">ProMan</a>
                 <div class="text-xs text-gray-500 -mt-1">Property management simplified</div>
             </div>
         </div>
-
-        <nav class="flex items-center gap-4">
-            <a href="home.html" class="text-gray-600 hover:text-[#70472E] transition">Home</a>
-            <a href="signup.html" class="text-gray-600 hover:text-[#70472E] transition">Log in</a>
-            <a href="http://localhost:7070/landlord_sign_up" class="hidden sm:inline-block bg-[#8B5E3C] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#70472E] transition">
-                Sign up
+        <nav class="flex items-center gap-4 text-sm font-medium">
+            <a href="#property-search"
+               class="hidden sm:inline-block text-gray-700 hover:text-[#70472E] border-b-2 border-transparent hover:border-[#8B5E3C] transition-colors duration-200">
+                Find Nearby Properties
             </a>
-            <!-- Mobile sign up visible as icon -->
-            <a href="http://localhost:7070/landlord_sign_up" class="sm:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#8B5E3C] text-white">
-                Sign up
+            <a href="signup.html"
+               class="text-gray-700 hover:text-[#70472E] border-b-2 border-transparent hover:border-[#8B5E3C] transition-colors duration-200">
+                Log In
+            </a>
+            <a href="http://localhost:7070/landlord_sign_up"
+               class="bg-[#8B5E3C] text-white px-4 py-2 rounded-lg font-semibold shadow-sm hover:bg-[#70472E] transition-all duration-200">
+                Sign Up
             </a>
         </nav>
+
     </div>
 </header>
 
-<!-- Hero: clear value prop + primary CTA + secondary CTA -->
 <section class="hero-gradient text-white">
     <div class="max-w-6xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+
         <div>
+            <span class="text-lg font-extrabold uppercase tracking-widest text-white mb-3 block border-b border-white/50 pb-1">
+                For Properties Owner
+            </span>
             <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4">Manage properties, collect rent, and keep tenants happy — all in one place.</h1>
-            <p class="text-lg md:text-xl text-yellow-50 mb-6">A simple, reliable dashboard to track tenant payments, monitor overdue amounts and list units so tenants can easily find them.</p>
+            <p class="text-lg md:text-xl text-yellow-50 mb-8">A simple, reliable dashboard to track tenant payments, monitor overdue amounts and list units so tenants can easily find them.</p>
 
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <a href="http://localhost:7070/landlord_sign_up" class="inline-flex items-center justify-center px-6 py-3 bg-white text-[#8B5E3C] font-semibold rounded-lg shadow hover:bg-gray-100 transition" aria-label="Sign up for ProMan">
+                <a href="http://localhost:7070/landlord_sign_up" class="inline-flex items-center justify-center px-8 py-3 bg-white text-[#8B5E3C] font-bold text-lg rounded-lg shadow-xl hover:bg-gray-100 transition transform hover:scale-[1.02]" aria-label="Sign up for ProMan">
                     Get started — it's free
-                </a>
-                <a href="http://localhost:7070/landlord_sign_up" class="inline-flex items-center justify-center px-6 py-3 border border-white/30 text-white rounded-lg hover:bg-white/10 transition" aria-label="Log in to ProMan">
-                    Log in
                 </a>
             </div>
 
             <ul class="mt-6 text-sm text-yellow-100 space-y-2">
-                <li>• Automated rent reminders and quick payment status</li>
-                <li>• Search properties near a location and list availability</li>
-                <li>• Export monthly financial reports</li>
+                <li><strong class="font-bold">✓</strong> Automated rent reminders and quick payment status</li>
+                <li><strong class="font-bold">✓</strong> Search properties near a location and list availability</li>
+                <li><strong class="font-bold">✓</strong> Export monthly financial reports</li>
             </ul>
         </div>
 
-        <div>
-            <div class="bg-white rounded-2xl p-6 shadow-md text-gray-800">
-                <h3 class="text-lg font-semibold mb-3">Find properties nearby</h3>
-                <form class="flex gap-2" role="search" aria-label="Find properties">
-                    <input type="text" name="location" placeholder="Enter a suburb or address" required
-                           class="flex-grow rounded-lg border border-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#D9CBB8]" />
-                    <button type="submit" class="rounded-lg bg-[#8B5E3C] text-white px-4 py-2 font-medium hover:bg-[#70472E] transition">
+        <div class="pt-8 md:pt-0 md:-mt-10">
+            <div id="property-search" class="bg-white rounded-2xl p-6 shadow-2xl text-gray-800 border-b-4 border-yellow-500">
+
+                <h3 class="text-xl font-bold text-[#8B5E3C] mb-3 border-b pb-2">Search for Rental Properties Nearby</h3>
+
+                <form class="flex flex-col sm:flex-row gap-3" role="search" aria-label="Find properties">
+                    <input type="text" name="location" placeholder="Enter a suburb, address, or city" required
+                           class="flex-grow rounded-lg border border-gray-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] transition" />
+                    <button type="submit" class="rounded-lg bg-[#8B5E3C] text-white px-6 py-3 font-semibold hover:bg-[#70472E] transition shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 inline-block mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
                         Search
                     </button>
                 </form>
 
+                <p class="text-sm text-gray-600 mt-4 mb-2">Looking for a place to rent close to a certain place like a town or taxi rank? Search active listings below.</p>
+
                 <div class="mt-4 text-sm text-gray-500">
-                    Tip: Try “Cape Town” or “Johannesburg CBD”.
+                    <span class="font-semibold">Quick Tip:</span> Try “Pretoria” or "Durban North".
                 </div>
 
-                <div class="mt-6 grid grid-cols-2 gap-3">
-                    <div class="bg-[#F7F5F2] p-3 rounded-lg">
-                        <div class="text-sm text-gray-600">Available units</div>
-                        <div class="text-2xl font-bold text-[#8B5E3C]">24</div>
+                <div class="mt-6 pt-4 border-t grid grid-cols-2 gap-3">
+                    <div class="bg-[#FFF4E6] p-3 rounded-lg text-center">
+                        <div class="text-sm text-gray-600 font-medium">Available units now</div>
+                        <div class="text-3xl font-extrabold text-[#8B5E3C]">24</div>
                     </div>
-                    <div class="bg-[#F7F5F2] p-3 rounded-lg">
-                        <div class="text-sm text-gray-600">Active properties</div>
-                        <div class="text-2xl font-bold text-[#8B5E3C]">8</div>
+                    <div class="bg-[#FFF4E6] p-3 rounded-lg text-center">
+                        <div class="text-sm text-gray-600 font-medium">Total active properties</div>
+                        <div class="text-3xl font-extrabold text-[#8B5E3C]">8</div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </section>
 
-<!-- Features: simple icons + one-line benefit -->
-<section class="max-w-6xl mx-auto px-6 py-14">
-    <h2 class="text-2xl font-bold text-center text-[#8B5E3C] mb-8">Why ProMan works</h2>
+<section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-3xl font-bold text-center text-[#8B5E3C] mb-4">Powerful Features for Peace of Mind</h2>
+    <p class="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">Focus on growing your portfolio, not paperwork. We handle the rest.</p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div class="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-[#8B5E3C] hover:shadow-xl transition transform hover:-translate-y-0.5">
             <div class="flex items-start gap-4">
                 <div class="feature-icon bg-[#FFF4E6] text-[#8B5E3C]">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
@@ -115,13 +126,13 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-lg text-[#8B5E3C]">Payments & Reminders</h3>
-                    <p class="text-sm text-gray-600 mt-1">Send reminders, mark payments, and track overdue balances quickly.</p>
+                    <h3 class="font-extrabold text-xl text-[#8B5E3C] mb-1">Automated Payments</h3>
+                    <p class="text-sm text-gray-600">Send reminders, mark payments, and track overdue balances quickly.</p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
+        <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-green-600 hover:shadow-xl transition transform hover:-translate-y-0.5">
             <div class="flex items-start gap-4">
                 <div class="feature-icon bg-[#F0FDF4] text-green-700">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
@@ -129,13 +140,13 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-lg text-[#8B5E3C]">Listing & Search</h3>
-                    <p class="text-sm text-gray-600 mt-1">List units with locations and let tenants find them using search filters.</p>
+                    <h3 class="font-extrabold text-xl text-[#8B5E3C] mb-1">Targeted Listings</h3>
+                    <p class="text-sm text-gray-600">List units with locations and let tenants find them using search filters.</p>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
+        <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-indigo-600 hover:shadow-xl transition transform hover:-translate-y-0.5">
             <div class="flex items-start gap-4">
                 <div class="feature-icon bg-[#EEF2FF] text-indigo-700">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
@@ -144,75 +155,91 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-lg text-[#8B5E3C]">Reports & Export</h3>
-                    <p class="text-sm text-gray-600 mt-1">Download monthly reports for accounting and visibility into performance.</p>
+                    <h3 class="font-extrabold text-xl text-[#8B5E3C] mb-1">Financial Reporting</h3>
+                    <p class="text-sm text-gray-600">Download monthly reports for accounting and visibility into performance.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- How it works: 3 step flow -->
 <section class="max-w-6xl mx-auto px-6 py-10">
-    <h3 class="text-xl font-bold text-[#8B5E3C] text-center mb-6">How it works</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow text-center">
-            <div class="text-2xl font-bold text-[#8B5E3C] mb-2">1</div>
-            <div class="font-semibold mb-1">List your units</div>
-            <div class="text-sm text-gray-600">Add property details, rent and photos so tenants see accurate listings.</div>
+    <h3 class="text-2xl font-bold text-[#8B5E3C] text-center mb-8">Simple 3-Step Process for Success</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-xl shadow-lg text-center border-t-2 border-[#8B5E3C]">
+            <div class="text-5xl font-extrabold text-[#D9CBB8] mb-4">1</div>
+            <div class="font-extrabold text-lg text-[#8B5E3C] mb-1">Onboard & List Units</div>
+            <div class="text-sm text-gray-600">Add property details, rent, and photos so tenants see accurate listings.</div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow text-center">
-            <div class="text-2xl font-bold text-[#8B5E3C] mb-2">2</div>
-            <div class="font-semibold mb-1">Manage tenants</div>
+        <div class="bg-white p-6 rounded-xl shadow-lg text-center border-t-2 border-[#8B5E3C]">
+            <div class="text-5xl font-extrabold text-[#D9CBB8] mb-4">2</div>
+            <div class="font-extrabold text-lg text-[#8B5E3C] mb-1">Manage Tenants & Data</div>
             <div class="text-sm text-gray-600">Record tenant info, rent due dates and payment history in one place.</div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow text-center">
-            <div class="text-2xl font-bold text-[#8B5E3C] mb-2">3</div>
-            <div class="font-semibold mb-1">Collect & report</div>
+        <div class="bg-white p-6 rounded-xl shadow-lg text-center border-t-2 border-[#8B5E3C]">
+            <div class="text-5xl font-extrabold text-[#D9CBB8] mb-4">3</div>
+            <div class="font-extrabold text-lg text-[#8B5E3C] mb-1">Collect & Report Instantly</div>
             <div class="text-sm text-gray-600">Send reminders, mark payments and export financial summaries for accounting.</div>
         </div>
     </div>
 </section>
 
-<!-- Testimonials (small) -->
 <section class="max-w-6xl mx-auto px-6 py-10">
-    <h3 class="text-xl font-bold text-[#8B5E3C] text-center mb-6">Trusted by landlords and managers</h3>
+    <h3 class="text-2xl font-bold text-[#8B5E3C] text-center mb-6">Trusted by Landlords and Managers</h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <blockquote class="bg-white p-6 rounded-lg shadow">
-            <p class="text-gray-600">"ProMan cut my admin time in half — rent tracking and reminders are brilliant."</p>
-            <div class="mt-4 text-sm text-gray-500">— N. Mthembu, landlord</div>
+        <blockquote class="bg-white p-6 rounded-lg shadow-inner border-l-4 border-[#8B5E3C]">
+            <p class="text-gray-700 italic">"ProMan cut my admin time in half — rent tracking and reminders are brilliant. Highly recommend!"</p>
+            <div class="mt-4 text-sm font-semibold text-gray-500">— N. Mthembu, Independent Landlord</div>
         </blockquote>
 
-        <blockquote class="bg-white p-6 rounded-lg shadow">
-            <p class="text-gray-600">"Easy to list units and find tenants near the area we want."</p>
-            <div class="mt-4 text-sm text-gray-500">— J. Patel, property manager</div>
+        <blockquote class="bg-white p-6 rounded-lg shadow-inner border-l-4 border-gray-300">
+            <p class="text-gray-700 italic">"Easy to list units and find tenants near the exact area we want."</p>
+            <div class="mt-4 text-sm font-semibold text-gray-500">— J. Patel, Property Manager</div>
         </blockquote>
 
-        <blockquote class="bg-white p-6 rounded-lg shadow">
-            <p class="text-gray-600">"Reports are simple to export and hand over to our accountant."</p>
-            <div class="mt-4 text-sm text-gray-500">— S. Dlamini, agency</div>
+        <blockquote class="bg-white p-6 rounded-lg shadow-inner border-l-4 border-gray-300">
+            <p class="text-gray-700 italic">"Reports are simple to export and hand over to our accountant every month. Seamless."</p>
+            <div class="mt-4 text-sm font-semibold text-gray-500">— S. Dlamini, Agency Owner</div>
         </blockquote>
     </div>
 </section>
 
-<!-- Footer: improved links & accessibility -->
-<footer class="mt-12 py-10 bg-white border-t">
-    <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+<section class="bg-[#8B5E3C] mt-12 py-16 text-white">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-3xl font-extrabold mb-4">Ready to Simplify Your Property Management?</h2>
+        <p class="text-xl text-yellow-100 mb-8">Join hundreds of landlords making property management simple and reliable.</p>
+        <a href="http://localhost:7070/landlord_sign_up" class="inline-flex items-center justify-center px-10 py-4 bg-white text-[#8B5E3C] font-bold text-xl rounded-lg shadow-2xl hover:bg-gray-100 transition transform hover:scale-105" aria-label="Sign up now for ProMan">
+            Start Your Free Account Today
+        </a>
+    </div>
+</section>
+
+
+<footer class="py-10 bg-white border-t">
+    <div class="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div>
-            <a href="home.html" class="text-lg font-extrabold text-[#8B5E3C]">ProMan</a>
+            <a href="home.html" class="text-xl font-extrabold text-[#8B5E3C]">ProMan</a>
             <p class="text-sm text-gray-500 mt-2">Make property management simple and reliable.</p>
+            <p class="text-xs text-gray-400 mt-4">© ProMan — Property Management</p>
         </div>
 
         <div class="flex flex-col">
-            <h4 class="font-semibold text-gray-700 mb-2">Product</h4>
-            <a href="dashboard.html" class="text-sm text-gray-600 hover:underline">Dashboard</a>
-            <a href="signup.html" class="text-sm text-gray-600 hover:underline mt-1">Log in</a>
-            <a href="http://localhost:7070/ayi" class="text-sm text-gray-600 hover:underline mt-1">Sign up</a>
+            <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm tracking-wider">For Landlords</h4>
+            <a href="http://localhost:7070/ayi" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Sign up to manage</a>
+            <a href="signup.html" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Landlord Log in</a>
+            <a href="dashboard.html" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Dashboard overview</a>
         </div>
 
-        <div class="text-sm text-gray-500 text-right md:text-left">
-            <div>© ProMan — Property Management</div>
-            <a href="mailto:ProMan@gmail.com" class="text-[#8B5E3C] hover:underline">ProMan@gmail.com</a>
+        <div class="flex flex-col">
+            <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm tracking-wider">For Tenants</h4>
+            <a href="#property-search" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1 font-semibold">Find a Property</a>
+            <a href="#" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Maintenance Requests</a>
+        </div>
+
+        <div class="flex flex-col">
+            <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm tracking-wider">Contact</h4>
+            <a href="mailto:ProMan@gmail.com" class="text-sm text-[#8B5E3C] hover:underline mt-1 font-medium">ProMan@gmail.com</a>
+            <a href="#" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Help Center</a>
         </div>
     </div>
 </footer>
