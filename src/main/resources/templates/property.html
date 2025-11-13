@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ProMan — Add Unit</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 1️⃣ Create Supabase client correctly
+        // Supabase setup
         const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); // ✅ correct if using window.supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 2️⃣ Wrap async code in a function
         async function getUserSession() {
           const { data: { session }, error } = await supabase.auth.getSession();
-
           if (error) {
             console.error('Error getting session:', error.message);
           } else if (session) {
@@ -24,145 +22,37 @@
             console.log('No user is logged in.');
           }
         }
-
-        // 3️⃣ Call the function
         getUserSession();
     </script>
 
     <style>
         :root{
             --brand: #8B5E3C;
-            --brand-weak: #D9CBB8;
-            --bg: #fafaf9;
-            --card: #ffffff;
-            --accent-pill: #FFF8E7;
+            --brand-dark: #70472E;
+            --accent: #D9CBB8;
+            --card-bg: #FAF3E0;
+            --pill-bg: #FFF8E7;
             --error: #dc2626;
             --error-light: #fef2f2;
         }
 
         body {
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background: var(--bg);
-            color: #1f2937; /* gray-800 */
+            background-color: #fafaf9;
+            color: #1f2937;
             margin: 0;
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Progress / stepper styles */
-        .progress-wrap {
-            width: 100%;
-            max-width: 900px;
-            margin: 18px auto;
-        }
-        .progress-inner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 8px 12px;
-        }
-        .progress-step {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .progress-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #6b7280; /* gray-600 */
-        }
-        .progress-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 9999px;
-            display: inline-block;
-            background: var(--brand-weak);
-            border: 2px solid transparent;
-        }
-        .progress-sep {
-            width: 56px;
-            height: 3px;
-            background: var(--brand-weak);
-            border-radius: 3px;
-        }
-        .progress-col.active {
-            color: var(--brand);
-            font-weight: 700;
-        }
-        .progress-col.active .progress-dot {
-            background: var(--brand);
-            box-shadow: 0 6px 16px rgba(139,94,60,0.18);
-            border-color: rgba(139,94,60,0.06);
-        }
-
-        /* small form card styles */
-        .form-card {
-            background: var(--card);
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(16,24,40,0.06);
-            border: 1px solid rgba(0,0,0,0.04);
-            max-width: 680px;
-            margin: 0 auto 40px;
-        }
-
-        .message {
-            background: var(--brand);
-            color: white;
-            padding: 14px 20px;
-            border-radius: 10px;
-            box-shadow: 0 6px 18px rgba(16,24,40,0.06);
-            text-align: center;
-            margin: 18px auto;
-            width: 100%;
-            max-width: 680px;
-        }
-
-        label {
-            font-weight: 600;
-            color: #374151; /* gray-700 */
-            display: block;
-            margin-bottom: 6px;
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #e6e6e6;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            box-shadow: 0 0 0 6px rgba(139,94,60,0.06);
-            border-color: var(--brand);
-        }
-
-        button {
-            background: var(--brand);
-            color: #fff;
-            font-weight: 700;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        button:hover { background: #70472E; }
-
-        /* Header / Footer consistency */
-        .site-header, .site-footer {
+        /* Header */
+        .site-header {
             background: #ffffff;
-            border-top: 1px solid rgba(0,0,0,0.04);
-            box-shadow: 0 2px 6px rgba(16,24,40,0.03);
+            box-shadow: 0 2px 6px rgba(16,24,40,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 30;
         }
-        .site-header .container, .site-footer .container {
+        .site-header .container {
             max-width: 1100px;
             margin: 0 auto;
             padding: 16px 20px;
@@ -171,165 +61,144 @@
             justify-content: space-between;
             gap: 12px;
         }
+        .logo-img {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
         .nav-links a {
             margin-left: 14px;
             color: #6b7280;
             text-decoration: none;
             font-weight: 600;
+            transition: color 0.2s;
         }
-        .nav-links a:hover { color: var(--brand); }
-
-        .logo-img { height: 56px; width: auto; display: block; }
-
-        .footer-grid {
-            max-width: 1100px;
-            margin: 24px auto;
-            padding: 24px 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            align-items: start;
-        }
-        .footer-grid a { color: #6b7280; text-decoration: none; display: block; margin-top: 6px; }
-        .footer-grid a:hover { color: var(--brand); text-decoration: underline; }
-
-        /* New styles for improved form */
-        .form-section {
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .form-section-title {
-            font-size: 18px;
-            font-weight: 700;
+        .nav-links a:hover {
             color: var(--brand);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .form-section-title:before {
-            content: "";
+        /* Progress / Stepper */
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+        .progress-sep {
+            width: 56px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            border: 1px solid var(--accent);
+        }
+        input, select, .themed-input {
+            background: var(--pill-bg) !important;
+            border: 1px solid var(--accent);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+        .input-focus:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(139,94,60,0.08);
+            border-color: var(--brand);
+        }
+
+        /* Form details */
+        label {
+            font-weight: 600;
+            color: var(--brand-dark);
             display: block;
-            width: 6px;
-            height: 20px;
-            background: var(--brand);
-            border-radius: 2px;
+            margin-bottom: 6px;
         }
-
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
             margin-bottom: 16px;
         }
-
-        .form-field {
-            margin-bottom: 16px;
-        }
-
-        .field-help {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 4px;
-            margin-bottom: 0;
-        }
-
-        .currency-input {
-            position: relative;
-        }
-
-        .currency-input:before {
-            content: "R";
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6b7280;
-            font-weight: 600;
-        }
-
         .currency-input input {
             padding-left: 28px;
         }
-
-        .occupation-status {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
         .occupation-option {
             flex: 1;
-            border: 1px solid #e6e6e6;
+            border: 1px solid var(--accent);
             border-radius: 8px;
             padding: 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
         }
-
         .occupation-option:hover {
-            border-color: var(--brand-weak);
+            border-color: var(--brand);
         }
-
         .occupation-option.selected {
             border-color: var(--brand);
             background-color: rgba(139,94,60,0.05);
         }
-
-        .occupation-option input {
-            display: none;
-        }
-
-        /* Error state for occupation status */
-        .occupation-status.error {
-            border: 1px solid var(--error);
-            border-radius: 8px;
-            padding: 12px;
-            background-color: var(--error-light);
-        }
-
-        .error-message {
-            color: var(--error);
-            font-size: 13px;
-            margin-top: 6px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
         .btn-secondary {
             background: #f5f5f5;
             color: #374151;
         }
-
         .btn-secondary:hover {
             background: #e5e5e5;
         }
+        button {
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        button:hover {
+            background: var(--brand-dark);
+            transform: scale(1.005);
+        }
 
+        /* Error handling */
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .occupation-status.error {
+            border: 1px solid var(--error);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        /* Responsive */
         @media (max-width: 720px) {
-            .site-header .container, .site-footer .container { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .footer-grid { grid-template-columns: 1fr; }
-            .form-row { grid-template-columns: 1fr; }
-            .form-actions { flex-direction: column; }
-            .occupation-status { flex-direction: column; }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .occupation-status {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- Header / Navbar (Tailwind-like look but plain CSS for compatibility) -->
 <header class="site-header" role="banner">
     <div class="container">
         <a href="home.html" aria-label="ProMan Home" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
@@ -348,197 +217,190 @@
     </div>
 </header>
 
-<!-- Welcome message section (Thymeleaf placeholders preserved) -->
-<div class="message" role="status" aria-live="polite">
-    <h2 th:text="'Welcome, ' + ${user_name}"></h2>
-    <p th:text="'Property: ' + (${residence_name} ?: 'Unknown') + ' — Kindly add unit or property information.'"></p>
-</div>
-<!-- Progress / stepper: ADD UNIT highlighted -->
-<div class="progress-wrap" aria-hidden="false">
-    <div class="progress-inner" role="navigation" aria-label="Sign-up progress">
-        <div class="progress-step">
-            <div class="progress-col">
-                <span class="progress-dot" aria-hidden="true" style="background:var(--brand)"></span>
-                <span>Account</span>
+<!-- Progress / Stepper -->
+<div class="bg-transparent py-6 border-b border-[var(--accent)]">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-3">
+        <div class="flex items-center gap-3">
+            <div class="flex flex-col items-center text-sm font-semibold">
+                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
+                <span class="mt-2 text-[var(--brand)]">1. Account</span>
             </div>
-            <div class="progress-sep" aria-hidden="true"></div>
-
-            <div class="progress-col active" aria-current="step">
-                <span class="progress-dot" aria-hidden="true"></span>
-                <span>ADD UNIT</span>
+            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
+            <div class="flex flex-col items-center text-sm font-semibold">
+                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
+                <span class="mt-2 text-[var(--brand)]">2. Add Unit</span>
             </div>
-
-            <div class="progress-sep" aria-hidden="true"></div>
-
-            <div class="progress-col">
-                <span class="progress-dot" aria-hidden="true"></span>
-                <span>add Tenant</span>
+            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
+            <div class="flex flex-col items-center text-sm text-gray-600">
+                <span class="progress-dot bg-[var(--accent)]"></span>
+                <span class="mt-2">3. Add Tenant</span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Form card -->
-<main>
-    <div class="form-card" role="main" aria-labelledby="form-title">
-        <h2 id="form-title" style="margin-top:0;margin-bottom:6px;text-align:center;">
-            Property-Unit Information
-        </h2>
+<!-- Main Content Grid -->
+<main class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
-        <p style="text-align:center;color:#6b7280;margin-bottom:24px;">
-            Add a new unit to your property
-        </p>
+        <div class="img-card relative rounded-2xl overflow-hidden shadow-xl border-4 border-white order-2 lg:order-1">
+            <img src="/umuzi/img/pexels-thgusstavo-2102587.jpg" alt="Property Background" class="w-full object-cover object-top h-64 md:h-[520px] lg:h-[560px]"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-[rgba(139,94,60,0.5)] to-[rgba(0,0,0,0.08)] pointer-events-none"></div>
 
-        <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
-
-            <!-- Unit Details Section -->
-            <div class="form-section">
-                <h3 class="form-section-title">Unit Details</h3>
-
-                <!-- Property Name & Address side-by-side -->
-                <div class="form-row" style="display: flex; gap: 16px;">
-                    <div class="form-field" style="flex: 1;">
-                        <label for="property_Name">Property Name:</label>
-                        <input id="property_Name" name="property_Name" type="text" th:value="${property_name}" required>
-                        <p class="field-help">Enter the name of the property</p>
+            <div class="absolute top-8 left-8 p-4 bg-white/90 rounded-xl shadow-lg border border-[var(--accent)] max-w-[80%]">
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-10 w-auto">
+                    <h2 class="text-2xl font-bold" style="color:var(--brand)">Welcome to ProMan</h2>
+                </div>
+                <p class="text-gray-700 text-sm font-medium mb-2">
+                    <span class="font-semibold text-[var(--brand-dark)]" th:text="'Hello, ' + ${user_name} + '! '">Hello, User! </span>
+                    Start managing your properties in minutes.
+                </p>
+                <div class="text-xs text-gray-600 space-y-1">
+                    <div class="flex items-start gap-1">
+                        <span>🏠</span>
+                        <span>Add property details & unit information</span>
                     </div>
-
-                    <div class="form-field" style="flex: 1;">
-                        <label for="property_Address">Property Address:</label>
-                        <input id="property_Address" name="property_Address" type="text" th:value="${property_address}" required>
-                        <p class="field-help">Enter the address of the property</p>
+                    <div class="flex items-start gap-1">
+                        <span>🔑</span>
+                        <span>Specify if units are occupied or vacant</span>
+                    </div>
+                    <div class="flex items-start gap-1">
+                        <span>👤</span>
+                        <span>Add tenant details for occupied units</span>
+                    </div>
+                    <div class="flex items-start gap-1">
+                        <span>📊</span>
+                        <span>Access dashboard to manage all properties</span>
                     </div>
                 </div>
+                <div class="text-xs text-[var(--brand-dark)] font-bold mt-2">— ProMan Team</div>
+            </div>
+        </div>
 
-                <!-- Unit Number & Occupancy -->
-                <div class="form-row" style="display: flex; gap: 16px;">
-                    <div class="form-field" style="flex: 1;">
-                        <label for="property_unit">Unit Number</label>
-                        <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required>
-                        <p class="field-help">The unique number identifying this unit</p>
-                        <p th:text="${error}"></p>
-                    </div>
+        <div class="form-card order-1 lg:order-2" role="main" aria-labelledby="form-title">
+            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4" style="color:var(--brand)">Property-Unit Information</h2>
+            <p class="text-center text-gray-500 mb-6">Add a new unit to your property</p>
 
-                    <div class="form-field" style="flex: 1;">
-                        <label id="occupation_status">Occupancy Status</label>
-                        <div id="occupationContainer" class="occupation-status">
-                            <label class="occupation-option" for="occupied" th:value="${occupation_status}">
-                                <input type="radio" id="occupied" name="occupation" value="yes" required>
-                                <div>Occupied</div>
-                            </label>
-                            <label class="occupation-option" for="vacant">
-                                <input type="radio" id="vacant" name="occupation" value="no" required>
-                                <div>Vacant</div>
-                            </label>
+            <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
+                <div class="form-section mb-6">
+                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Unit Details</h3>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="property_Name">Property Name:</label>
+                            <input id="property_Name" name="property_Name" type="text" th:value="${property_name}" required class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Enter the name of the property</p>
                         </div>
-                        <p class="field-help">Specify the unit occupation status</p>
-                        <div id="occupationError" class="error-message">Please select an occupation status</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Financial Details Section -->
-            <div class="form-section">
-                <h3 class="form-section-title">Financial Details</h3>
-
-                <div class="form-row" style="display: flex; gap: 16px;">
-                    <div class="form-field" style="flex: 1;">
-                        <label for="rent">Monthly Rent</label>
-                        <div class="currency-input">
-                            <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00" th:value="${property_rent}" required>
+                        <div class="form-field">
+                            <label for="property_Address">Property Address:</label>
+                            <input id="property_Address" name="property_Address" type="text" th:value="${property_address}" required class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">Enter the address of the property</p>
                         </div>
-                        <p class="field-help">The monthly rental amount for this unit</p>
                     </div>
 
-                    <div class="form-field" style="flex: 1;">
-                        <!-- Empty div for layout consistency -->
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="property_unit">Unit Number</label>
+                            <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required class="themed-input input-focus">
+                            <p class="text-xs text-gray-500 mt-1">The unique number identifying this unit</p>
+                        </div>
+                        <div class="form-field">
+                            <label id="occupation_status">Occupancy Status</label>
+                            <div id="occupationContainer" class="occupation-status flex gap-2 mt-1">
+                                <label class="occupation-option" for="occupied" th:classappend="${occupation_status == 'yes' ? 'selected' : ''}">
+                                    <input type="radio" id="occupied" name="occupation" value="yes" required th:checked="${occupation_status == 'yes'}" class="hidden">
+                                    <div>Occupied</div>
+                                </label>
+                                <label class="occupation-option" for="vacant" th:classappend="${occupation_status == 'no' ? 'selected' : ''}">
+                                    <input type="radio" id="vacant" name="occupation" value="no" required th:checked="${occupation_status == 'no'}" class="hidden">
+                                    <div>Vacant</div>
+                                </label>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Specify the unit occupation status</p>
+                            <div id="occupationError" class="error-message">Please select an occupation status</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Form Actions -->
-            <div class="form-actions" style="text-align:center; margin-top:24px;">
-                <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
-                <button type="submit" aria-label="Save Property">Save Unit</button>
-            </div>
-        </form>
+                <div class="form-section mb-6">
+                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Financial Details</h3>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="rent">Monthly Rent</label>
+                            <div class="currency-input">
+                                <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00" th:value="${property_rent}" required class="themed-input input-focus">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">The monthly rental amount for this unit</p>
+                        </div>
+                        <div class="form-field">
+                            <label for="deposit">Security Deposit (Optional)</label>
+                            <div class="currency-input">
+                                <input type="number" id="deposit" name="deposit" step="0.01" min="0" placeholder="0.00" th:value="${property_deposit}" class="themed-input input-focus">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">The amount held as a security deposit.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions flex gap-4 justify-center mt-8">
+                    <button type="button" class="btn-secondary px-6" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="px-6" aria-label="Save Property">Save Unit</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </main>
 
-<!-- Footer -->
-<footer class="site-footer" role="contentinfo">
-    <div class="container">
-        <div style="display:flex;gap:12px;align-items:center;">
-            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="logo-img" style="height:48px;">
-            <div>
-                <div style="font-weight:700;color:var(--brand);">ProMan</div>
-                <div style="font-size:13px;color:#6b7280;margin-top:4px;">Property management simplified</div>
-            </div>
-        </div>
-
-        <div style="text-align:right;">
-            <div style="color:#6b7280;">© ProMan — Property Management</div>
-            <a href="mailto:ProMan@gmail.com" style="color:var(--brand);text-decoration:none;">ProMan@gmail.com</a>
-        </div>
-    </div>
-
-    <div class="footer-grid" aria-hidden="true">
+<footer class="mt-12 py-8 bg-white border-t">
+    <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
         <div>
-            <h4 style="margin:0 0 8px 0;color:#374151;">Product</h4>
-            <a href="http://localhost:7070/dashboard">Dashboard</a>
-            <a href="http://localhost:7070/add_property">Add new property</a>
-            <a href="http://localhost:7070/">Log out</a>
+            <a href="home.html" class="text-lg font-extrabold" style="color:var(--brand)">ProMan</a>
+            <p class="mt-2 text-gray-500">Make property management simple and reliable.</p>
         </div>
-
-        <div style="text-align:right;">
-            <h4 style="margin:0 0 8px 0;color:#374151;">Contact</h4>
-            <div style="color:#6b7280;">Need help? Email us</div>
-            <a href="mailto:ProMan@gmail.com">ProMan@gmail.com</a>
+        <div class="flex flex-col">
+            <h4 class="font-semibold text-gray-700 mb-2">Product</h4>
+            <a href="dashboard.html" class="text-sm text-gray-600 hover:underline">Dashboard</a>
+            <a href="signup.html" class="text-sm text-gray-600 hover:underline mt-1">Sign Up</a>
+            <a href="login.html" class="text-sm text-gray-600 hover:underline mt-1">Log in</a>
+        </div>
+        <div class="text-right md:text-left">
+            <div>© ProMan — Property Management</div>
+            <a href="mailto:ProMan@gmail.com" class="text-[var(--brand)] hover:underline">ProMan@gmail.com</a>
         </div>
     </div>
 </footer>
 
 <script>
-    // Add interactivity to occupation options
+    // Occupation option selection
     document.querySelectorAll('.occupation-option').forEach(option => {
         option.addEventListener('click', function() {
-            // Remove selected class from all options
-            document.querySelectorAll('.occupation-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-
-            // Add selected class to clicked option
+            document.querySelectorAll('.occupation-option').forEach(opt => opt.classList.remove('selected'));
             this.classList.add('selected');
-
-            // Check the radio button
             const radio = this.querySelector('input[type="radio"]');
-            if (radio) {
-                radio.checked = true;
-                // Remove error state when an option is selected
-                document.getElementById('occupationContainer').classList.remove('error');
-                document.getElementById('occupationError').classList.remove('show');
-            }
+            if(radio) radio.checked = true;
+            document.getElementById('occupationContainer').classList.remove('error');
+            document.getElementById('occupationError').classList.remove('show');
         });
     });
 
     // Form validation
     document.getElementById('unitForm').addEventListener('submit', function(event) {
         const occupationSelected = document.querySelector('input[name="occupation"]:checked');
-
         if (!occupationSelected) {
-            // Prevent form submission
             event.preventDefault();
-
-            // Highlight the occupation status field
             document.getElementById('occupationContainer').classList.add('error');
             document.getElementById('occupationError').classList.add('show');
-
-            // Scroll to the error for better UX
-            document.getElementById('occupationContainer').scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
+            document.getElementById('occupationContainer').scrollIntoView({behavior: 'smooth', block: 'center'});
         }
+    });
+
+    // Initialize state from Thymeleaf
+    document.addEventListener('DOMContentLoaded', () => {
+        const occupiedInput = document.getElementById('occupied');
+        const vacantInput = document.getElementById('vacant');
+        if (occupiedInput && occupiedInput.checked) occupiedInput.parentElement.classList.add('selected');
+        else if (vacantInput && vacantInput.checked) vacantInput.parentElement.classList.add('selected');
     });
 </script>
 
