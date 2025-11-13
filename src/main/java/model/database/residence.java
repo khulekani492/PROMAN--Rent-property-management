@@ -125,7 +125,7 @@ public class residence extends ConnectionAccess implements  Property {
     @Override
     public void insert_information() throws SQLException {
         String propertySQL = """
-    INSERT INTO properties (property_unit,property_rent,occupation,landlord_user_id,property_name,property_address,)
+    INSERT INTO properties (property_unit,property_rent,occupation,landlord_user_id,property_name,property_address)
     VALUES (?, ?, ?, ?,?,?)
 """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
