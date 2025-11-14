@@ -138,7 +138,7 @@ public class residence extends ConnectionAccess implements  Property {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
-                // rethrow to be caught in your route handle
+                // rethrow to be caught in your route handler
                 throw new SQLException("exists");
             } else {
                 throw new SQLException("Insert failed: " + e.getMessage(), e);
