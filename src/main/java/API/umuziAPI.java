@@ -33,6 +33,14 @@ public class umuziAPI {
         app.get("/", ctx ->{
            ctx.render("templates/home.html");
         });
+
+        app.get("/log_in",
+                ctx -> {
+                  ctx.render("/templates/login.html");
+                });
+
+        app.post("/verify_user",new Validate_login().authuticate());
+
         app.get("/tenant_form",ctx ->{
            ctx.render("/templates/property.html");
         });
