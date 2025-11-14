@@ -28,6 +28,17 @@
             background-color: #f7f7f7;
             box-shadow: inset 0 0 0 2px rgba(210, 180, 140, 0.12);
         }
+        .progress-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 9999px;
+            display: inline-block;
+            background: #D9CBB8;
+            border: 2px solid transparent;
+        }
+        :root {
+            --accent: #8B5E3C;
+        }
     </style>
 </head>
 
@@ -51,109 +62,94 @@
 </header>
 
 <main class="max-w-6xl mx-auto px-6 pb-12">
-    <div class="bg-transparent py-6">
-        <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-3">
-            <div class="flex items-center gap-3">
-                <div class="flex flex-col items-center text-sm text-gray-600">
-                    <span class="progress-dot" style="background:var(--accent)"></span>
-                    <span class="mt-2">ADD UNIT</span>
+
+    <!-- Side-by-side layout with equal height -->
+    <div class="flex flex-col lg:flex-row gap-10 mb-6 items-stretch"> <!-- Updated gap from 6 to 10 -->
+        <!-- Left side: Property info and image -->
+        <div class="lg:w-1/3 h-full">
+            <div class="bg-white rounded-lg shadow p-6 h-full flex flex-col">
+                <!-- Property form -->
+                <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Property Name</label>
+                            <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0">
+                                <option value="">Select property</option>
+                                <option value="all">All properties</option>
+                                <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Search tenant</label>
+                            <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)"
+                                   class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0" />
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Property image -->
+                <div class="mt-4 flex-1">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Property Image</label>
+                    <div class="border border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center h-60">
+                        <img src="/umuzi/img/mypromann.png" alt="Property image" class="max-h-full max-w-full object-contain">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h2><a href="http://localhost:7070/add_property_unit" class="text-[#8B5E3C] hover:underline">Add New property</a></h2>
+                </div>
+
+                <p class="mt-4 text-sm text-gray-500">
+                    Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right side: Table -->
+        <div class="lg:w-2/3 h-full">
+            <div class="bg-white rounded-lg shadow p-6 h-full flex flex-col">
+                <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
+                    <button id="btnPaid" type="button" class="px-4 py-2 rounded-md bg-green-600 text-white font-semibold shadow hover:bg-green-700">
+                        Mark Paid (+)
+                    </button>
+
+                    <button id="btnUnpaid" type="button" class="px-4 py-2 rounded-md bg-red-600 text-white font-semibold shadow hover:bg-red-700">
+                        Mark Unpaid (-)
+                    </button>
+
+                    <div class="text-sm text-gray-600 ml-2">Select a row, then click a button to update the Payment box only.</div>
+                </div>
+
+                <div class="overflow-x-auto flex-1">
+                    <table class="min-w-full border border-[#D2B48C] rounded-lg shadow-md bg-white">
+                        <thead class="bg-[#FAF3E0] border-b border-[#D2B48C]">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold">Unit Number</th>
+                            <th class="px-4 py-3 text-left font-semibold">Rent</th>
+                            <th class="px-4 py-3 text-left font-semibold">Occupation</th>
+                            <th class="px-4 py-3 text-left font-semibold">Tenant</th>
+                            <th class="px-4 py-3 text-left font-semibold">Rent Day</th>
+                            <th class="px-4 py-3 text-left font-semibold">Status</th>
+                            <th class="px-4 py-3 text-left font-semibold">Overdue(days)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="unitsTbody">
+                        <tr th:each="entry : ${units}" class="border-b border-gray-200">
+                            <td class="px-4 py-3" th:text="${entry.value[0]}">Unit</td>
+                            <td class="px-4 py-3" th:text="${entry.value[1]}">0</td>
+                            <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
+                            <td class="px-4 py-3" th:text="${entry.value[3]}">0</td>
+                            <td class="px-4 py-3" th:text="${entry.value[4]}">0</td>
+                            <td class="px-4 py-3 payment-hover payment-cell">
+                                <span th:if="${entry.value[2]} == 'yes'" class="indicator bg-green-100 text-green-800" aria-label="Payment: yes">+</span>
+                                <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800" aria-label="Payment: no">−</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
-
-    <h1 class="text-3xl font-extrabold text-[#8B5E3C] mb-2 text-center">
-        Property<span th:text="${user_name}">Name</span>
-    </h1>
-
-    <div class="flex justify-center mb-6">
-        <a href="home.html" aria-label="ProMan Home">
-            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-12 md:h-14 w-auto object-contain">
-        </a>
-    </div>
-
-    <section class="bg-white rounded-lg shadow p-6 mb-4">
-        <!-- FORM UPDATED -->
-        <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-2">Property Name</label>
-                    <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0">
-                        <option value="">Select property</option>
-                        <option value="all">All properties</option>
-                        <option th:each="name : ${names}"
-                                th:value="${name}"
-                                th:text="${name}">
-                            Default Name
-                        </option>
-                    </select>
-                    <h2><a href="http://localhost:7070/add_property_unit">Add New property</a></h2>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-600 mb-2">Search tenant</label>
-                    <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)"
-                           class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0" />
-                </div>
-            </div>
-        </form>
-        <p class="mt-4 text-sm text-gray-500">
-            Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.
-        </p>
-    </section>
-
-    <div id="controlsWrapper" class="max-w-6xl mx-auto px-6 mb-4 flex flex-wrap gap-3 items-center">
-        <button id="btnPaid" type="button" class="px-4 py-2 rounded-md bg-green-600 text-white font-semibold shadow hover:bg-green-700">
-            Mark Paid (+)
-        </button>
-
-        <button id="btnUnpaid" type="button" class="px-4 py-2 rounded-md bg-red-600 text-white font-semibold shadow hover:bg-red-700">
-            Mark Unpaid (-)
-        </button>
-
-        <a href="http://localhost:7070/add_property_unit"
-           class="inline-flex items-center px-4 py-2 rounded-md bg-[#8B5E3C] text-white font-semibold shadow hover:bg-[#70472E] transition"
-           role="button" aria-label="Add Unit">
-            Add Unit
-        </a>
-
-        <div class="text-sm text-gray-600 ml-2">Select a row, then click a button to update the Payment box only.</div>
-    </div>
-
-    <div class="overflow-x-auto">
-        <table class="min-w-full border border-[#D2B48C] rounded-lg shadow-md bg-white">
-            <thead class="bg-[#FAF3E0] border-b border-[#D2B48C]">
-            <tr>
-                <th class="px-4 py-3 text-left font-semibold">Unit Number</th>
-                <th class="px-4 py-3 text-left font-semibold">Rent</th>
-                <th class="px-4 py-3 text-left font-semibold">Occupation</th>
-                <th class="px-4 py-3 text-left font-semibold">tenant</th>
-                <th class="px-4 py-3 text-left font-semibold">rent_day</th>
-                <th class="px-4 py-3 text-left font-semibold">status</th>
-                <th class="px-4 py-3 text-left font-semibold">Overdue(days)</th>
-            </tr>
-            </thead>
-            <h1 class="px-4 py-3" th:text="${no_units}"></h1>
-            <tbody id="unitsTbody">
-            <tr th:each="entry : ${units}" class="border-b border-gray-200">
-                <!-- entry.key is like 4, 7, 9 -->
-                <td class="px-4 py-3" th:text="${entry.value[0]}">Unit</td>
-                <td class="px-4 py-3" th:text="${entry.value[1]}">0</td>
-                <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
-                <td class="px-4 py-3" th:text="${entry.value[3]}">0</td>
-                <td class="px-4 py-3" th:text="${entry.value[4]}">0</td>
-                <td class="px-4 py-3" th:if="${entry.value[4]}">0</td>
-
-                <td class="px-4 py-3 payment-hover payment-cell">
-                <span th:if="${entry.value[2]} == 'yes'"
-                      class="indicator bg-green-100 text-green-800"
-                      aria-label="Payment: yes">+</span>
-                    <span th:if="${entry.value[2]} == 'no'"
-                          class="indicator bg-red-100 text-red-800"
-                          aria-label="Payment: no">−</span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
     </div>
 </main>
 
@@ -235,6 +231,23 @@
         }
     }
 
+    function togglePaymentStatus(paymentCell) {
+        const paymentIndicator = paymentCell.querySelector('.indicator');
+        if (!paymentIndicator) return;
+
+        const isPaid = paymentIndicator.textContent === '+';
+        updatePaymentForRow(paymentCell.closest('tr'), !isPaid);
+        flashMessage(`Payment status ${!isPaid ? 'set to paid (+)' : 'set to unpaid (-)'}`, !isPaid ? 'green' : 'red');
+    }
+
+    document.querySelectorAll('.payment-cell').forEach(cell => {
+        cell.addEventListener('click', function(e) {
+            if (e.target.closest('.indicator')) {
+                togglePaymentStatus(this);
+            }
+        });
+    });
+
     function flashMessage(msg, color = 'yellow') {
         const el = document.createElement('div');
         el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
@@ -259,7 +272,6 @@
         flashMessage('Payment set to - (unpaid).', 'red');
     });
 
-    // Automatically POST on property change
     propertySelect.addEventListener('change', function () {
         const selectedValue = this.value;
         if (selectedValue && selectedValue !== 'all') {
