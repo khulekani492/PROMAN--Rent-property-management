@@ -35,7 +35,9 @@ public class AddProperty {
                 try {
                     property_information.insert_information();
                 } catch (Exception e) {
+                    ctx.sessionAttribute("error","Unit already taken");
                     ctx.redirect("/error/same_unit");
+                    return;
                 }
 
                 Integer owner_property = property_information.UniqueID();
