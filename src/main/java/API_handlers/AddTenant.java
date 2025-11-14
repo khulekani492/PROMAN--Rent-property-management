@@ -19,11 +19,18 @@ public class AddTenant {
                 String number = ctx.formParam("cell_number");
                 String user_type = "tenant";
 
-                general addnewTenant = new general(name, number, user_type);
-                addnewTenant.landlord_insert_tenant();
+                general add_newTenant = new general(name, number, user_type);
+                try {
+                    System.out.println("name " + add_newTenant.tenant_ID());
+                    add_newTenant.landlord_insert_tenant();
+                } catch (Exception e) {
+                    System.out.println("Ayikhona");
+                    throw new RuntimeException(e);
+                }
+
 
                 // Access the unique ID from the general_user table
-                Integer tenantUniqueID = addnewTenant.tenant_ID();
+                Integer tenantUniqueID = add_newTenant.tenant_ID();
                 System.out.println("Tenant ID: " + tenantUniqueID);
 
                 // Update properties table with tenant unique ID
@@ -42,14 +49,12 @@ public class AddTenant {
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
 
-                String tenant_name = addnewTenant.getTenantnamebyId(tenantUniqueID);
+                String tenant_name = add_newTenant.getTenantnamebyId(tenantUniqueID);
                 System.out.println(tenant_name + " tenant_name by Id");
 
 
                 try {
-
                     addTenantUnit.Insert_tenatId();
-
                 } catch (SQLException e) {
                     ctx.redirect("/user_sign_up/error");
                     e.printStackTrace();  // <-- ensures the exception appears in your terminal
