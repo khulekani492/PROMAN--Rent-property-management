@@ -24,8 +24,6 @@ import model.database.general;
 
 public class umuziAPI {
     public  static Javalin startServer(int port) throws SQLException {
-        apiHandler controller = new apiHandler();
-        general error = new general();
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
@@ -38,78 +36,24 @@ public class umuziAPI {
         app.get("/tenant_form",ctx ->{
            ctx.render("/templates/property.html");
         });
-        app.get("/dashboard",ctx ->{
-            //FETCH landlord properties
-            String email = ctx.sessionAttribute("email");
-            propertyNames default_properties = new propertyNames();
-            landlord user_id = new landlord();
-            //using landlord_unique_id to fetch all of their properties , it accessed with the user_email
-            Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
-            Map<String, Object> model = new HashMap<>();
-            model.put("names",landlord_properties);
-            ctx.render("templates/dashboard.html",model);
-        });
+        app.get("/dashboard",new Dashboard().user_profile());
         app.get("/landlord_sign_up",ctx ->{
             ctx.render("templates/landlord.html");
         });
-        app.get("/add_property_unit",ctx ->{
-            String getUsername = ctx.sessionAttribute("user_name");
-            String propertyName = ctx.sessionAttribute("property_name");
-            String propertyAddress = ctx.sessionAttribute("property_address");
-            System.out.println(propertyAddress + " played the game");
-            HashMap<String,String> model = new HashMap<>();
-            model.put("user_name",getUsername);
-            model.put("property_name",propertyName);
-            model.put("property_address",propertyAddress);
-            ctx.render("templates/property.html",model);
-        });
+        app.get("/add_property_unit",new Save_unit().save_property_unit());
+
+        // Redirects to the unit page
         app.get("/add_property",ctx ->{
+            //Empty the session variables to be blank for generating a new page
+            // include -- <Add New Property>
+
             ctx.render("templates/property.html");
         });
-        app.post("/fetch_property_units",context -> {
-            String property_name = context.formParam("name");
-            String property_email = context.sessionAttribute("email");
-            System.out.println("What they want " + property_name);
 
-            Getunits property_units = new Getunits();
-            landlord authenticate = new landlord();
-            ;
-            System.out.println("property_landlord " +authenticate.landlordId(property_email) );
-            HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name,authenticate.landlordId(property_email));
-            System.out.println("RESULTS : " + fetch_all);
+        Get_properties  properties = new Get_properties();
 
-            if(fetch_all.size() == 0){
-                HashMap<String,String> model = new HashMap<>();
-                String property = context.sessionAttribute("property_name");
-                model.put("no_units","No units added for " + property);
-                context.render("templates/dashboard.html",model);
-            }else {
-                Map<String, Object> data = new HashMap<>();
-
-
-                HashMap<String,HashMap<Integer,ArrayList<String>>> model = new HashMap<>();
-                ;
-                Map<String, Object> model1 = new HashMap<>();
-
-                System.out.println(fetch_all + "Occupied units");
-                model.put("units",fetch_all);
-                System.out.println(model);
-                System.out.println(fetch_all);
-                //using landlord_unique_id to fetch all of their properties ,it accessed with the user_email
-                String email = context.sessionAttribute("email");
-                propertyNames default_properties = new propertyNames();
-                landlord user_id = new landlord();
-                Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
-
-                model1.put("names",landlord_properties);
-                data.putAll(model);
-                data.putAll(model1);
-                System.out.println("woah");
-                System.out.println(data);
-                context.render("templates/dashboard.html",data);
-            }
-        });
+        app.post("/fetch_property_units",properties.display_property_units());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
 
