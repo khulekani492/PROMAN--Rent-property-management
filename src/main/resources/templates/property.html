@@ -303,6 +303,8 @@
                             <label for="property_unit">Unit Number</label>
                             <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required class="themed-input input-focus">
                             <p class="text-xs text-gray-500 mt-1">The unique number identifying this unit</p>
+                            <p th:text="${error}"></p>
+
                         </div>
                         <div class="form-field">
                             <label id="occupation_status">Occupancy Status</label>
