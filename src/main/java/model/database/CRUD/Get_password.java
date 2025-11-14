@@ -30,8 +30,7 @@ public class Get_password extends ConnectionAccess {
             ResultSet result = pstm.executeQuery();
 
             if (result.next()) {
-                String pass = result.getString("password");
-                return pass;
+                return result.getString("password");
             } else {
                     return  "NO USER FOUND";
             }
@@ -41,5 +40,8 @@ public class Get_password extends ConnectionAccess {
         }
     }
 
-
+static void  main(String[] args){
+        Get_password LONDON = new Get_password( "khulekaniszondo6@gmail.com");
+    System.out.println(LONDON.compare());
+}
 }
