@@ -29,7 +29,7 @@ public class umuziAPI {
             config.fileRenderer(new JavalinThymeleaf());
             config.staticFiles.add("public"); //Include Dependency to the jarfile
         });
-        //home_page
+        //home_page.
         app.get("/", ctx ->{
            ctx.render("templates/home.html");
         });
