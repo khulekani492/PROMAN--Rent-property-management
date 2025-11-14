@@ -41,11 +41,5 @@ public class Get_password extends ConnectionAccess {
         }
     }
 
-    static void main(String[] args){
-        Get_password raw = new Get_password("khulekaniszondo6@gmail.com");
-
-        System.out.println(raw.compare());
-        System.out.println(raw.getUser_email());
-    }
 
 }
