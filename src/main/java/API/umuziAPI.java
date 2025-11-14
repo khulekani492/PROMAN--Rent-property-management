@@ -42,7 +42,6 @@ public class umuziAPI {
             ctx.render("templates/landlord.html");
         });
         app.get("/add_property_unit",new Save_unit().save_property_unit());
-
         // Redirects to the unit page
         app.get("/add_property",ctx ->{
             //Empty the session variables to be blank for generating a new page
@@ -62,11 +61,12 @@ public class umuziAPI {
          */
         Signup new_signee = new Signup();
         app.post("/user_sign_up", new_signee.sign_up());
-        //app.get("/user_sign_up/error",controller.errorMessage());
+
 /**
  * adds new user property information to the database
  */     AddProperty propertyInfo = new AddProperty();
         app.post("/add_property", propertyInfo.addproperty());
+
         app.get("/add_tenant",ctx -> {
            ctx.render("templates/tenant_form.html");
         });
@@ -99,14 +99,6 @@ public class umuziAPI {
         return app;
     }
 
-    /**
-     * Main entry point of the application.
-     * <p>
-     * Starts the API server on port 7070.
-     *
-     * @param args command-line arguments (not used)
-     * @throws SQLException if database initialization fails
-     */
     public static void main(String[] args) throws SQLException {
         startServer(7070);
     }
