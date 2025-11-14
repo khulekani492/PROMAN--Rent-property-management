@@ -112,7 +112,7 @@ public class umuziAPI {
         app.get("/property_information", new PropertyUnits().property_related_information());
 
         /**
-         * adds new user information to the database
+         * adds new user information to the databaseg
          */
         Signup new_signee = new Signup();
         app.post("/user_sign_up", new_signee.sign_up());
