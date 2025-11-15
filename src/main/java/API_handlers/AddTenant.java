@@ -49,8 +49,6 @@ public class AddTenant {
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
 
-                String tenant_name = add_newTenant.getTenantnamebyId(tenantUniqueID);
-                System.out.println(tenant_name + " tenant_name by Id");
 
 
                 try {
