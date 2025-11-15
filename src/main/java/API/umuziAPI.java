@@ -54,6 +54,17 @@ public class umuziAPI {
         app.post("/fetch_property_units",properties.display_property_units());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
+        app.post("/payment_status",ctx -> {
+           String rent_amount = ctx.formParam("rent");
+           String unit = ctx.formParam("unit");
+           String tenantId = ctx.formParam("id");
+            System.out.println(tenantId + " tenant ID");
+            System.out.println(rent_amount);
+
+            //query the debt of the tenant user
+
+            System.out.println(unit);
+        });
 
         /**
          * adds new user information to the database
