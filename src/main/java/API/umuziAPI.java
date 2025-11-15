@@ -30,7 +30,7 @@ public class umuziAPI {
                   ctx.render("/templates/login.html");
                 });
 
-        app.post("/verify_user",new Validate_login().authuticate());
+        app.post("/verify_user",new Validate_login().authenticate());
 
         app.get("/tenant_form",ctx ->{
            ctx.render("/templates/property.html");
