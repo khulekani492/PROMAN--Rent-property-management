@@ -7,7 +7,8 @@ import static API.SecurityUtil.checkPassword;
 
 public class Validate_login {
 
-    public Handler authuticate(){
+    public Handler
+    authenticate(){
         return ctx -> {
             String user_email = ctx.formParam("email");
             String password = ctx.formParam("password");
