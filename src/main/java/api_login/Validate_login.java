@@ -1,10 +1,9 @@
-package API_handlers;
+package api_login;
 
 import io.javalin.http.Handler;
 import model.database.CRUD.Get_password;
 
 import static API.SecurityUtil.checkPassword;
-import static API.SecurityUtil.hashPassword;
 
 public class Validate_login {
 
@@ -33,9 +32,12 @@ public class Validate_login {
             try {
                 if (isMatch){
                     ctx.sessionAttribute("email",user_email);
+
                     ctx.redirect("dashboard");
                 } else {
-                    ctx.result("wrong password");
+                    ctx.sessionAttribute("login_password",password);
+                    ctx.redirect("/error/wrong_password");
+
                 }
 
             } catch (RuntimeException e) {
