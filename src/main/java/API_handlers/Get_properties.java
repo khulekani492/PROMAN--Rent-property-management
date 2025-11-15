@@ -13,14 +13,29 @@ import java.util.Set;
 public class Get_properties {
     public Handler display_property_units(){
         return context -> {
-            String property_name = context.formParam("name");
+            String property_name = "";
+            try{
+                 property_name = context.formParam("name");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                //Handler auto_submit of empty space
+                throw new RuntimeException(e);
+            }
+
             String property_email = context.sessionAttribute("email");
-            System.out.println("What they want " + property_name);
+            System.out.println();
+            System.out.println("What they want " +  " " + property_email);
 
             Getunits property_units = new Getunits();
             landlord authenticate = new landlord();
             ;
-            System.out.println("property_landlord " +authenticate.landlordId(property_email) );
+            System.out.println("property_landlord "  );
+            try{
+                authenticate.landlordId(property_email);
+            } catch (Exception e) {
+                System.out.println("something wrong");
+                throw new RuntimeException(e);
+            }
             HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name,authenticate.landlordId(property_email));
             System.out.println("RESULTS : " + fetch_all);
 
