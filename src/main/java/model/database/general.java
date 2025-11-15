@@ -187,36 +187,4 @@ public void  landlord_insert_tenant(){
 
     }
 
-    public void assignProperty(Integer december) {
-        String propertySQL = """
-    INSERT INTO properties (landlord_user_id)
-    VALUES (?);
-""";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
-            pstmt.setInt(1, december);
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String getTenantnamebyId(Integer tenantUniqueID) {
-
-        String reference_key = """
-        SELECT name FROM general_users WHERE id = ?;
-    """;
-        try (PreparedStatement pstmt = this.connection.prepareStatement(reference_key)) {
-            pstmt.setInt(1, tenantUniqueID);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("name");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null; // if not found
-    }
 }
