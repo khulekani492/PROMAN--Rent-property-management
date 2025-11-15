@@ -10,6 +10,7 @@ import java.util.Set;
 import static API.SessionUtil.fileSessionHandler;
 
 import API_handlers.*;
+import Invalidhandler.NoEmailCreator;
 import Invalidhandler.SameEmialCreator;
 import Invalidhandler.SameUnitCreator;
 import Invalidhandler.UpdateUser;
@@ -34,7 +35,7 @@ public class umuziAPI {
            ctx.render("templates/home.html");
         });
 
-        app.get("/log_in",
+        app.get("/login",
                 ctx -> {
                   ctx.render("/templates/login.html");
                 });
@@ -90,6 +91,9 @@ public class umuziAPI {
 
     feedback = new SameUnitCreator();
     app.get("/error/same_unit",feedback.updateUser());
+
+    feedback = new NoEmailCreator();
+    app.get("/error/no_email",feedback.updateUser());
 
     app.post("/updateTenants",ctx -> {
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
