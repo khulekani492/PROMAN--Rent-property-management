@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,6 +84,14 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg form-focus transition duration-200"
                             placeholder="Enter your email"
                     >
+                    <label
+                            th:text="${error}"
+                            class="text-sm text-red-600 mt-1 block">
+                    </label>
+                    <a th:text="${Create}"
+                       class="text-sm text-blue-600 mt-1 block"
+                       href="http://localhost:7070/landlord_sign_up">
+                    </a>
                 </div>
 
                 <div>
