@@ -2,25 +2,15 @@ package API;
 
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static API.SessionUtil.fileSessionHandler;
 
 import API_handlers.*;
-import Invalidhandler.NoEmailCreator;
-import Invalidhandler.SameEmialCreator;
-import Invalidhandler.SameUnitCreator;
-import Invalidhandler.UpdateUser;
+import Invalidhandler.*;
+import api_login.Validate_login;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
-import javassist.util.proxy.ProxyFactory;
-import model.database.CRUD.Getunits;
-import model.database.CRUD.landlord;
-import model.database.CRUD.propertyNames;
-import model.database.general;
 
 
 public class umuziAPI {
@@ -94,6 +84,9 @@ public class umuziAPI {
 
     feedback = new NoEmailCreator();
     app.get("/error/no_email",feedback.updateUser());
+
+    feedback = new WrongPasswordCreator();
+    app.get("/error/wrong_password",feedback.updateUser());
 
     app.post("/updateTenants",ctx -> {
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
