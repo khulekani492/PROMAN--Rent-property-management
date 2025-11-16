@@ -112,8 +112,13 @@
                     </button>
                     <div class="text-sm text-gray-600 ml-2">Select a row, then click a button to update the Payment box only.</div>
                 </div>
-                <p th:text="|You have already marked unit ${unit} as paid this month.|"></p>
+                <p th:if="${unit != null and unit != ''}"
+                   th:text="|You have already marked Unit ${unit} as paid this month.|">
+                </p>
 
+                <p th:if="${success != null and success != ''}"
+                   th:text="|Unit ${success} marked as paid this month.|">
+                </p>
                 <div class="overflow-x-auto flex-1">
                     <table class="min-w-full border border-[#D2B48C] rounded-lg shadow-md bg-white">
                         <thead class="bg-[#FAF3E0] border-b border-[#D2B48C]">
