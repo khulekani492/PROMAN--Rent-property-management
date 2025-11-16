@@ -31,6 +31,7 @@ public class Propertyinfo extends ConnectionAccess {
 
     }
 
+    //Gets property unit of property name for a specefic landlord
     public HashMap<Integer,ArrayList<String>> property_tenants(String property_name,Integer landlord){
         ArrayList<String> property_status = new ArrayList<>();
         HashMap<Integer,ArrayList<String> > property_tenants = new HashMap<>();
@@ -59,21 +60,26 @@ public class Propertyinfo extends ConnectionAccess {
         return property_tenants;
     }
 
-
-    public String rent_payment(Integer tenantID) {
+//Query the entity table of a specific tenant and return rent
+    public ArrayList<String> Finances(Integer tenantID) {
         String ery = """
-        SELECT rent_payment_day\s
-        FROM tenants_information\s
-        WHERE tenant_user_id = ?;
+
+      SELECT tenants_information.debt, tenants_information.rent_payment_day
+       FROM tenants_information inner join properties ON tenants_information.tenant_user_id = properties.tenant_user_id\s
+       WHERE properties.tenant_user_id = ? ;
+       \s
    \s""";
 
-        String rent = null;
+        ArrayList<String> rent_and_debt = new ArrayList<>();
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(ery)) {
             pstmt.setInt(1, tenantID);
             try (ResultSet result = pstmt.executeQuery()) {
                 if (result.next()) {
-                    rent = result.getString("rent_payment_day");
+                     rent_and_debt.add(result.getString("rent_payment_day"));
+                     rent_and_debt.add(String.valueOf(result.getInt("debt")));
+
+                     return rent_and_debt;
                 }
             }
         } catch (SQLException e) {
@@ -88,22 +94,20 @@ public class Propertyinfo extends ConnectionAccess {
                 throw new RuntimeException("skip");
 
 
-            } else if ("ERROR: prepared statement \"s_1\" already exists".equals(e.getMessage())) {
-
-                try (Statement stmt = connection.createStatement()) {
-                    stmt.execute("DEALLOCATE s_1");
-                } catch (SQLException deallocateEx) {
-                    deallocateEx.printStackTrace();
-                }
-                throw new RuntimeException("skip");
             }
 
         }
 
-        return rent;
+        return null;
     }
 
 
+    public void main(String[] args) throws SQLException {
+        Propertyinfo pocket_it = new Propertyinfo();
+        for(int i = 0; i < 90;i++){
+            System.out.println(pocket_it.Finances(778));
 
+        }
 
+    }
 }
