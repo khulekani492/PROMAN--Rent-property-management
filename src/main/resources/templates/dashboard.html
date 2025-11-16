@@ -122,8 +122,8 @@
                             <th class="px-4 py-3 text-left font-semibold">Occupation</th>
                             <th class="px-4 py-3 text-left font-semibold">Tenant</th>
                             <th class="px-4 py-3 text-left font-semibold">Rent Day</th>
-                            <th class="px-4 py-3 text-left font-semibold">Status</th>
                             <th class="px-4 py-3 text-left font-semibold">Overdue(days)</th>
+                            <th class="px-4 py-3 text-left font-semibold">Status</th>
                         </tr>
                         </thead>
                         <tbody id="unitsTbody">
@@ -132,7 +132,8 @@
                             <td class="px-4 py-3 rent-amount" th:text="${entry.value[1]}">0</td>
                             <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
                             <td class="px-4 py-3 unit-id" th:text="${entry.value[3]}">0</td>
-                            <td class="px-4 py-3 unit-tenant" th:text="${entry.value[4]}">0</td>
+                            <td class="px-4 py-3 unit-tenant" th:text="${entry.value[4]}">70</td>
+                            <td class="px-4 py-3 unit-tenant" th:text="${entry.value[5]}">0</td>
                             <td class="px-4 py-3 payment-hover payment-cell">
                                 <span th:if="${entry.value[2]} == 'yes'"
                                       class="indicator bg-green-100 text-green-800 open-pay"
