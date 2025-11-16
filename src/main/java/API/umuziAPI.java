@@ -53,6 +53,7 @@ public class umuziAPI {
         Get_properties  properties = new Get_properties();
 
         app.post("/fetch_property_units",properties.display_property_units());
+        app.get("/unit_already_paid/{property_name}/{user_email}",properties.display_property_units());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
 
@@ -91,6 +92,9 @@ public class umuziAPI {
 
     feedback = new WrongPasswordCreator();
     app.get("/error/wrong_password",feedback.updateUser());
+
+    feedback = new DuplicateCreator();
+    app.get("/error/duplicate_payment", feedback.updateUser());
 
     app.post("/updateTenants",ctx -> {
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
