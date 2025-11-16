@@ -22,24 +22,19 @@ public class Get_properties {
                 System.out.println("prperty_first time"  + context.sessionAttribute("dashBoard_current_property"));
 
                  if(property_name == null){
-                     System.out.println("siyafika kodwa");
                     String clone_property = context.pathParam("property_name");
                     String clone_email = context.pathParam("user_email");
-                     System.out.println("BackUp " + clone_property);
-                     System.out.println("BackUp  email" + clone_email);
+                     String clone_unit = context.pathParam("unit");
                     Getunits property_units = new Getunits();
                     landlord authenticate = new landlord();
 
                      try{
                          authenticate.landlordId(clone_email);
-                         System.out.println(authenticate.landlordId(clone_email));
                      } catch (Exception e) {
                          System.out.println("something wrong");
                          throw new RuntimeException(e);
                      }
                      HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(clone_property,authenticate.landlordId(clone_email));
-                     System.out.println("RESULTS : " + fetch_all);
-
 
                      if(fetch_all.size() == 0){
                          HashMap<String,String> model = new HashMap<>();
@@ -48,25 +43,24 @@ public class Get_properties {
                          context.render("templates/dashboard.html",model);
                      }else {
                          Map<String, Object> data = new HashMap<>();
-
-
                          HashMap<String,HashMap<Integer,ArrayList<String>>> model = new HashMap<>();
-                         ;
+                         HashMap<String,String> model2 = new HashMap<>();
                          Map<String, Object> model1 = new HashMap<>();
-
                          System.out.println(fetch_all + "Occupied units");
                          model.put("units",fetch_all);
-                         System.out.println(model);
-                         System.out.println(fetch_all);
                          //using landlord_unique_id to fetch all of their properties ,it accessed with the user_email
                          String email = context.sessionAttribute("email");
                          propertyNames default_properties = new propertyNames();
 //                         landlord user_id = new landlord();
                          Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
+
                          model1.put("names",landlord_properties);
+                         model2.put("unit",clone_unit);
                          data.putAll(model);
                          data.putAll(model1);
+                         data.putAll(model2);
+
                          System.out.println("backup_dashboard");
                          System.out.println(data);
                          context.render("templates/dashboard.html",data);
