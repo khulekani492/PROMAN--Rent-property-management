@@ -27,6 +27,7 @@ public class Record_rent {
 
             try{
                 _payment.setStatus(true);
+                _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
                 _payment.record_payment();
             } catch (SQLException e) {
                 System.out.println("Payment DID NOT GOT THROUGH " + e.getMessage());
