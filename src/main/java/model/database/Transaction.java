@@ -26,6 +26,22 @@ public class Transaction extends  ConnectionAccess {
    public void setAmount_paid(Integer amount_paid){
         this.tenant_Id = amount_paid;
    }
+
+   public  void update_tenant_status(){
+       String SQL = """
+                INSERT INTO tenants_information (tenant_user_id,status) VALUES (?,?)
+                """;
+       try(PreparedStatement  pstm = this.connection.prepareStatement(SQL)){
+           pstm.setInt(1,this.tenant_Id);
+           pstm.setBoolean(2,this.status);
+           pstm.executeUpdate();
+       } catch (SQLException e) {
+           System.out.println(e.getMessage() + " with candles lit");
+           throw new RuntimeException(e);
+       }
+
+
+   }
     public  void  record_payment() throws SQLException {
         String SQL = """
                 INSERT INTO rent_book (tenant_user_id,amount_paid,status) VALUES (?,?,?)
@@ -44,7 +60,9 @@ public class Transaction extends  ConnectionAccess {
 
 static  void main() throws SQLException {
         Transaction test = new Transaction();
-        test.record_payment();
+        test.setStatus(true);
+        test.setTenant_Id(807);
+        test.update_tenant_status();
 
 }
 }
