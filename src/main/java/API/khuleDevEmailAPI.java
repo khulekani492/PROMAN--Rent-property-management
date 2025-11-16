@@ -6,7 +6,8 @@ import com.mailersend.sdk.Recipient;
 import com.mailersend.sdk.emails.Email;
 import com.mailersend.sdk.exceptions.MailerSendException;
 
-public class khuleDevEmailAPI {
+public class
+khuleDevEmailAPI {
 
     public void sendEmail() {
 
@@ -30,7 +31,7 @@ public class khuleDevEmailAPI {
 
         MailerSend ms = new MailerSend();
 
-        ms.setToken("mlsn.e900adf7a44ad1c4a816314bf8477b5be8b8930bd64298d8cd8b6ce2f861ee6e");
+     //   ms.setToken("mlsn.e900adf7a44ad1c4a816314bf8477b5be8b8930bd64298d8cd8b6ce2f861ee6e");
 
         try {
             MailerSendResponse response = ms.emails().send(email);
