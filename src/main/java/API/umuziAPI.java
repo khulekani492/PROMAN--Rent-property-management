@@ -53,7 +53,7 @@ public class umuziAPI {
         Get_properties  properties = new Get_properties();
 
         app.post("/fetch_property_units",properties.display_property_units());
-        app.get("/unit_already_paid/{property_name}/{user_email}",properties.display_property_units());
+        app.get("/unit_already_paid/{property_name}/{user_email}/{unit}",properties.display_property_units());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
 
