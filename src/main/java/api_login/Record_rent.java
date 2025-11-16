@@ -32,9 +32,12 @@ public class Record_rent {
                 throw new RuntimeException(e);
             }
 
-
+            HashMap<String,String> model = new HashMap<>();
             try{
                 _payment.record_payment();
+                String unit_paid = ctx.sessionAttribute("unit");
+                model.put("success",unit_paid);
+                ctx.render("templates/dashboard.html",model);
             } catch (SQLException e) {
                 if("paid".equals(e.getMessage())){
                     ctx.sessionAttribute("error",e.getMessage());
