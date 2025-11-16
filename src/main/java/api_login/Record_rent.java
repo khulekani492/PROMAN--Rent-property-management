@@ -24,13 +24,25 @@ public class Record_rent {
             } catch (NumberFormatException e) {
                 throw new RuntimeException(e);
             }
+            _payment.setStatus(true);
+            try{
+                _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
+            } catch (SQLException e) {
+                System.out.println(e.getMessage() + " stay the same");
+                throw new RuntimeException(e);
+            }
+
 
             try{
-                _payment.setStatus(true);
-                _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
                 _payment.record_payment();
             } catch (SQLException e) {
-                System.out.println("Payment DID NOT GOT THROUGH " + e.getMessage());
+                if("paid".equals(e.getMessage())){
+                    ctx.sessionAttribute("error",e.getMessage());
+                    ctx.sessionAttribute("unit",unit);
+                    ctx.redirect("/error/duplicate_payment");
+                    return;
+                }
+
                 throw new RuntimeException(e);
             }
 
