@@ -8,6 +8,7 @@ import static API.SessionUtil.fileSessionHandler;
 
 import API_handlers.*;
 import Invalidhandler.*;
+import api_login.Record_rent;
 import api_login.Validate_login;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
@@ -54,17 +55,9 @@ public class umuziAPI {
         app.post("/fetch_property_units",properties.display_property_units());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
-        app.post("/payment_status",ctx -> {
-           String rent_amount = ctx.formParam("rent");
-           String unit = ctx.formParam("unit");
-           String tenantId = ctx.formParam("id");
-            System.out.println(tenantId + " tenant ID");
-            System.out.println(rent_amount);
 
-            //query the debt of the tenant user
-
-            System.out.println(unit);
-        });
+        Record_rent complete_payment_record = new Record_rent();
+        app.post("/payment_status",complete_payment_record.payment());
 
         /**
          * adds new user information to the database
