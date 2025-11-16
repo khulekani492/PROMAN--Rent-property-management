@@ -23,21 +23,27 @@ public class Transaction extends  ConnectionAccess {
    public void setTenant_Id(Integer id){
         this.tenant_Id = id;
    }
-   public void setAmount_paid(Integer amount_paid){
-        this.tenant_Id = amount_paid;
+
+    public Integer getTenant_Id() {
+        return tenant_Id;
+    }
+
+    public void setAmount_paid(Integer amount_paid){
+        this.amount_paid = amount_paid;
    }
 
-   public  void update_tenant_status(){
+   public  void update_tenant_status() throws SQLException {
        String SQL = """
-                INSERT INTO tenants_information (tenant_user_id,status) VALUES (?,?)
+                UPDATE  tenants_information  SET status= ? WHERE tenant_user_id=?
                 """;
        try(PreparedStatement  pstm = this.connection.prepareStatement(SQL)){
-           pstm.setInt(1,this.tenant_Id);
-           pstm.setBoolean(2,this.status);
+           pstm.setBoolean(1,this.status);
+           pstm.setInt(2,this.tenant_Id);
            pstm.executeUpdate();
        } catch (SQLException e) {
            System.out.println(e.getMessage() + " with candles lit");
-           throw new RuntimeException(e);
+           throw new SQLException("already paid");
+
        }
 
 
@@ -52,8 +58,9 @@ public class Transaction extends  ConnectionAccess {
             pstm.setBoolean(3,this.status);
             pstm.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage() + " with candles lit");
-            throw new RuntimeException(e);
+            throw new SQLException("paid");
+
+
         }
 
     }
