@@ -19,7 +19,7 @@ public class Rent_due_tenants extends ConnectionAccess {
         ArrayList<Integer> tenants_due = new ArrayList<>();
 
         String sql = """
-            SELECT properties.tenant_user_id FROM properties INNER JOIN tenants_information ON properties.tenant_user_id = tenants_information.tenant_user_id 
+            SELECT properties.property_unit FROM properties INNER JOIN tenants_information ON properties.tenant_user_id = tenants_information.tenant_user_id 
             WHERE properties.landlord_user_id=? AND tenants_information.status=false;
             \s""";
 
@@ -28,8 +28,7 @@ public class Rent_due_tenants extends ConnectionAccess {
                 pstm.setInt(1,landlord);
                 ResultSet result = pstm.executeQuery();
                 while (result.next()){
-                    tenants_due.add(result.getInt("tenant_user_id"));
-
+                    tenants_due.add(result.getInt("property_unit"));
                 }
             }
 
