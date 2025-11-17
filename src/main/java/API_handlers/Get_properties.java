@@ -18,6 +18,7 @@ public class Get_properties {
             landlord user_id = new landlord();
             try{
                  property_name = context.formParam("name");
+                System.out.println(property_name + "Family");
                  context.sessionAttribute("dashBoard_current_property",property_name);
                 System.out.println("prperty_first time"  + context.sessionAttribute("dashBoard_current_property"));
 
@@ -109,8 +110,6 @@ public class Get_properties {
                 //using landlord_unique_id to fetch all of their properties ,it accessed with the user_email
                 String email = context.sessionAttribute("email");
                 propertyNames default_properties = new propertyNames();
-
-                user_id.store_property_name(property_name);
 
                 Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
