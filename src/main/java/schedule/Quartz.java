@@ -14,7 +14,6 @@ public class Quartz {
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
         scheduler.start();
 
-
         JobDetail test_job = newJob(Reminder.class)
                 .withIdentity("emails","group1")
                 .build();
