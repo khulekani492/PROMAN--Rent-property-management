@@ -53,7 +53,7 @@ public class landlord extends ConnectionAccess {
     public String landlord_property_name(Integer landlordId) {
 
         String sql = """
-                SELECT property_name FROM properties WHERE id=?
+                SELECT property_name FROM properties WHERE landlord_user_id =?
                 limit 1""";
 
         String username = "";
