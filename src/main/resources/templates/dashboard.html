@@ -145,7 +145,8 @@
                                       class="indicator bg-green-100 text-green-800 open-pay"
                                       th:data-unit="${entry.value[0]}"
                                       th:data-rent="${entry.value[1]}"
-                                      th:data-id="${entry.value[3]}">+</span>
+                                      th:data-id="${entry.value[3]}"
+                                      th:data-property-name="${propertyName}">+</span>
                                 <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
                             </td>
                         </tr>
@@ -163,9 +164,10 @@
         <p class="text-gray-700 mb-2">Unit: <span id="modalUnitDisplay" class="font-bold"></span></p>
         <p class="text-gray-700 mb-4 text-sm">Original Rent: <span id="modalOriginalRent" class="font-bold"></span></p>
 
-        <form id="paymentForm" action="http://localhost:7070/payment_status" method="post">
+        <form id="paymentForm" method="post">
             <input type="hidden" name="unit" id="modalUnit">
             <input type="hidden" name="id" id="modalId">
+            <input type="hidden" name="property_name" id="modalPropertyName">
             <input type="hidden" name="paid" value="yes">
 
             <div class="mb-4">
@@ -323,16 +325,23 @@
     const modalOriginalRent = document.getElementById('modalOriginalRent');
     const modalUnit = document.getElementById('modalUnit');
     const modalId = document.getElementById('modalId');
+    const modalPropertyName = document.getElementById('modalPropertyName');
     const modalRentInput = document.getElementById('modalRentInput');
+    const paymentForm = document.getElementById('paymentForm');
 
     // Function to open payment modal with correct row data
-    function openPaymentModal(unit, rent, id) {
+    function openPaymentModal(unit, rent, id, propertyName) {
         modalUnitDisplay.textContent = unit;
         modalOriginalRent.textContent = rent;
         modalUnit.value = unit;
         modalId.value = id;
-        modalRentInput.value = rent; // Pre-fill with original rent amount
-        modalRentInput.focus(); // Focus on the input field
+        modalPropertyName.value = propertyName;
+        modalRentInput.value = rent;
+
+        // Update form action URL with ID in the path
+        paymentForm.action = `http://localhost:7070/payment_status/${id}`;
+
+        modalRentInput.focus();
         paymentModal.classList.remove('hidden');
         paymentModal.classList.add('flex');
     }
@@ -353,21 +362,24 @@
                 const unit = this.dataset.unit;
                 const rent = this.dataset.rent;
                 const id = this.dataset.id;
+                const propertyName = this.dataset.propertyName;
 
-                if (!unit || !rent || !id) {
+                if (!unit || !rent || !id || !propertyName) {
                     // If data attributes are missing, try to get from the row
                     const row = this.closest('tr');
                     const unitCell = row.querySelector('.unit-number');
                     const rentCell = row.querySelector('.rent-amount');
                     const idCell = row.querySelector('.unit-id');
+                    const propertySelect = document.getElementById('propertySelect');
 
                     openPaymentModal(
                         unit || unitCell.textContent,
                         rent || rentCell.textContent,
-                        id || idCell.textContent
+                        id || idCell.textContent,
+                        propertyName || propertySelect.value || 'default'
                     );
                 } else {
-                    openPaymentModal(unit, rent, id);
+                    openPaymentModal(unit, rent, id, propertyName);
                 }
             });
         });
@@ -386,6 +398,7 @@
         const unit = modalUnit.value;
         const rent = modalRentInput.value;
         const id = modalId.value;
+        const propertyName = modalPropertyName.value;
 
         if (!rent || rent <= 0) {
             flashMessage('Please enter a valid rent amount', 'red');
