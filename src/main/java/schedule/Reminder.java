@@ -24,16 +24,18 @@ public class Reminder implements Job {
         GetLandlords get_landlords = new GetLandlords();
         Rent_due_tenants tenants = new Rent_due_tenants();
         Set<Integer> send_email_landlord = get_landlords.fetchAll();
-        boolean available = false;
 
         for (Integer landlordId : send_email_landlord){
             try {
                 HashMap<Integer,ArrayList<Integer>> landlord_map =  tenants.rent_due_tenants(landlordId);
                 Set<Integer> current_landlord = landlord_map.keySet();
-
-                for (Integer wait : current_landlord){
+                System.out.println(landlord_map);
+                for (Integer landlord : current_landlord){
                     //Send email
-                    System.out.println( wait + " Landlord ");
+                    System.out.println( landlord + " Landlord ");
+                    System.out.println(landlord_map.get(landlord) + " List");
+                    PersonEmail notification = new PersonEmail(landlordId,landlord_map.get(landlord));
+                    System.out.println( notification.send_email() );
                 }
 
               } catch (Exception e) {
