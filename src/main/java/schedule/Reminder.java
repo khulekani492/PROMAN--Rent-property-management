@@ -21,7 +21,7 @@ public class Reminder implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         //
-        GetLandlords get_landlords = new GetLandlords();
+        GetLandlords get_landlords = new GetLandlords(); // each instance have
         Rent_due_tenants tenants = new Rent_due_tenants();
         Set<Integer> send_email_landlord = get_landlords.fetchAll();
 
