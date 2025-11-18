@@ -71,12 +71,34 @@ public class landlord extends ConnectionAccess {
         }
         return username;
     }
+    public String landlordEmail(Integer landlordId) {
+
+        String sql = """
+                SELECT email FROM general_users WHERE id =?
+                limit 1""";
+
+        String username_email = "";
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,landlordId);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    username_email = result.getString("email");
+
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return username_email;
+    }
 
     public void main(String[] args){
         landlord baby_wait = new landlord();
 
         System.out.println(baby_wait.landlordId("khulekaniszondo6@gmail.com") );
         System.out.println(baby_wait.landlord_username(771));
+        System.out.println(baby_wait.landlordEmail(771));
     }
 
 
