@@ -52,12 +52,12 @@ public class GetLandlords {
         Set<Integer> landlords = new HashSet<>();
 
         String sql = """
-            SELECT landlord_user_id 
-            FROM properties 
-            INNER JOIN tenants_information 
-            ON properties.tenant_user_id = tenants_information.tenant_user_id 
+            SELECT landlord_user_id\s
+            FROM properties\s
+            INNER JOIN tenants_information\s
+            ON properties.tenant_user_id = tenants_information.tenant_user_id\s
             WHERE tenants_information.status = false
-        """;
+       \s""";
 
         try (Connection connection = newConnection();
              Statement stmt = connection.createStatement();
