@@ -14,26 +14,26 @@ public class Quartz {
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
         scheduler.start();
 
-        JobDetail test_job = newJob(Reminder.class)
+        JobDetail afternoon_reminder = newJob(Reminder.class)
                 .withIdentity("emails","group1")
                 .build();
-        JobDetail test_job2 = newJob(Reminder.class)
+
+        JobDetail morning_reminder = newJob(Reminder.class)
                 .withIdentity("second_reminder","group1")
                 .build();
 
         Trigger trigger = newTrigger().
                 withIdentity("my_trigger","group1")
-                .startNow().withSchedule(dailyAtHourAndMinute(12, 5))
+                .startNow().withSchedule(dailyAtHourAndMinute(10, 5))
                 .build();
 
                   Trigger trigger2 = newTrigger().
                 withIdentity("second_trigger","group2")
-                .startNow().withSchedule(dailyAtHourAndMinute(12,10))
+                .startNow().withSchedule(dailyAtHourAndMinute(17,45))
                 .build();
 
-
-        scheduler.scheduleJob(test_job,trigger);
-        scheduler.scheduleJob(test_job2,trigger2);
+        scheduler.scheduleJob(morning_reminder,trigger);
+        scheduler.scheduleJob(afternoon_reminder,trigger2);
 
 
 
