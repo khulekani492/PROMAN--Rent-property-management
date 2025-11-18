@@ -1,18 +1,13 @@
 package schedule;
 
 import model.database.CRUD.GetLandlords;
-import model.database.CRUD.Rent_due_tenants;
-import model.database.ConnectionAccess;
+import model.database.CRUD.Tenants_rent_day;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 public class Reminder implements Job {
@@ -22,7 +17,7 @@ public class Reminder implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         //
         GetLandlords get_landlords = new GetLandlords(); // each instance have
-        Rent_due_tenants tenants = new Rent_due_tenants();
+        Tenants_rent_day tenants = new Tenants_rent_day();
         Set<Integer> send_email_landlord = get_landlords.fetchAll();
 
         for (Integer landlordId : send_email_landlord){
