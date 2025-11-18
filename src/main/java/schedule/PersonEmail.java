@@ -23,12 +23,17 @@ public String propertyName(){
         return new landlord().landlord_property_name(this.landlordId);
 }
 
+
+public String landlordEmail(){
+        return new landlord().landlordEmail(this.landlordId);
+}
+
 public String send_email(){
     StringBuilder email = new StringBuilder();
     ArrayList<Integer> due_units = this.tenants_due;
-    email.append("Dear ").append(getUsername()).append(",\n\n");
+    email.append("To     :").append(landlordEmail()).append(",\n\n");
     email.append("Subject: Rent Payment Reminder\n\n");
-
+    email.append("Dear ").append(getUsername()).append(",\n\n");
     // If propertyName() returns a String, remove the String.format
     email.append("Property: ").append(propertyName()).append("\n\n");
 
