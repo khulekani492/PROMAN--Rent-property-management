@@ -101,7 +101,7 @@ public class Get_properties {
 
                 HashMap<String,HashMap<Integer,ArrayList<String>>> allPropertyUnits = new HashMap<>();
                 ;
-                Map<String, Object> allProperties = new HashMap<>();
+                Map<String, Object> model1 = new HashMap<>();
 
                 allPropertyUnits.put("units",fetch_all);
                 System.out.println(fetch_all + "Occupied units");
@@ -111,9 +111,9 @@ public class Get_properties {
 
                 Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
-                allProperties.put("names",landlord_properties);
+                model1.put("names",landlord_properties);
                 data.putAll(allPropertyUnits);
-                data.putAll(allProperties);
+                data.putAll(model1);
                 System.out.println("woah");
                 System.out.println(data);
                 context.render("templates/dashboard.html",data);
