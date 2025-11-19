@@ -1,18 +1,16 @@
 package model.database.CRUD;
 
-import model.database.ConnectionAccess;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
-public class Rent_due_tenants {
+public class Tenants_rent_day {
 
     private static final Properties dbProps = new Properties();
 
     static {
-        try (InputStream input = Rent_due_tenants.class
+        try (InputStream input = Tenants_rent_day.class
                 .getClassLoader()
                 .getResourceAsStream("db.properties")) {
 
@@ -42,13 +40,13 @@ public class Rent_due_tenants {
         ArrayList<Integer> tenants_due = new ArrayList<>();
 
         String sql = """
-            SELECT properties.property_unit 
-            FROM properties 
-            INNER JOIN tenants_information 
+            SELECT properties.property_unit\s
+            FROM properties\s
+            INNER JOIN tenants_information\s
             ON properties.tenant_user_id = tenants_information.tenant_user_id
-            WHERE properties.landlord_user_id = ? 
+            WHERE properties.landlord_user_id = ?\s
               AND tenants_information.status = false;
-        """;
+       \s""";
 
         try (Connection connection = newConnection();
              PreparedStatement pstm = connection.prepareStatement(sql)) {
@@ -68,11 +66,44 @@ public class Rent_due_tenants {
         map.put(landlord, tenants_due);
         return map;
     }
+    public HashMap<Integer, ArrayList<Integer>> tenants_rent_date(Integer landlord) {
+
+        HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+        ArrayList<Integer> tenants_due = new ArrayList<>();
+
+        String sql = """
+            SELECT tenants_information.rent_payment_day\s
+            FROM tenants_information\s
+            INNER JOIN properties\s
+            ON tenants_information.tenant_user_id = properties.tenant_user_id
+            WHERE properties.landlord_user_id = ?\s
+              AND tenants_information.status = false;
+       \s""";
+
+        try (Connection connection = newConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql)) {
+
+            pstm.setInt(1, landlord);
+
+            try (ResultSet result = pstm.executeQuery()) {
+                while (result.next()) {
+                    tenants_due.add(result.getInt("rent_payment_day"));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("DB error in rent_due_tenants: " + e.getMessage(), e);
+        }
+
+        map.put(landlord, tenants_due);
+        return map;
+    }
 
 
     public static void main(String[] args) {
-        Rent_due_tenants test = new Rent_due_tenants();
-        System.out.println(test.rent_due_tenants(771));
+        Tenants_rent_day test = new Tenants_rent_day();
+        System.out.println(test.tenants_rent_date(771));
+
     }
 }
 
