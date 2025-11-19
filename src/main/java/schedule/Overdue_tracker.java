@@ -1,7 +1,9 @@
 package schedule;
 
 import model.database.CRUD.GetLandlords;
-import model.database.CRUD.tracker.Tenants_rent_day;
+import model.database.CRUD.Tenants_rent_day;
+
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -10,29 +12,50 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import java.time.LocalDateTime;  // Import the LocalDateTime class
+import java.time.format.DateTimeFormatter;
+
+@DisallowConcurrentExecution
 public class Overdue_tracker implements Job {
 
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         GetLandlords get_landlords = new GetLandlords(); // each instance have
-        model.database.CRUD.Tenants_rent_day tenants_Due_date = new model.database.CRUD.Tenants_rent_day();
+        Tenants_rent_day tenants = new Tenants_rent_day();
 
+        LocalDateTime  current_day = LocalDateTime.now();
+
+        DateTimeFormatter get_day = DateTimeFormatter.ofPattern("dd");
+
+
+        String current_date = current_day.format(get_day);
         Set<Integer> track_tenant = get_landlords.fetchAll();
 
+        //Get all landlord with tenants due
         for (Integer landlordId : track_tenant){
             try {
-                HashMap<Integer,ArrayList<Integer>> track_payment_status =  tenants_Due_date.rent_due_tenants(landlordId);
+                //Get ALL tenants due date who have not been marked "paid" as HASHMAP--->Key --> landlordId : [due_dates]
+                HashMap<Integer,ArrayList<Integer>> track_payment_status =  tenants.tenants_rent_date(landlordId);
+
+                // current units due ---> a list of all the landlords
                 Set<Integer> current_units_due = track_payment_status.keySet();
+
+                // Accessing the due_dates list in the hashMap using landlord keys
                 for (Integer landlord : current_units_due){
-                    //Send email
-                    //if current_dateNow >
-                    System.out.println( landlord + " Landlord ");
-                    System.out.println(track_payment_status.get(landlord) + " tenants_due");
+                      ArrayList<Integer> tenants_still_due = track_payment_status.get(landlord);
+                    System.out.println(landlord);
+                    //Loop through the due_date of each landlord if it  still false to see it not pass the current_date
+                    System.out.println("Date Due:");
+                    for (Integer due_date: tenants_still_due){
+                        if( Integer.parseInt(current_date) > due_date){
+                            //calls the postgres function to update the over_due date
+                            System.out.println(landlord + " the tenat still due " + due_date);
 
+                        }
+
+                    }
                     //
-                    //PersonEmail notification = new PersonEmail(landlordId,track_payment_status.get(landlord));
-
                 }
 
             } catch (Exception e) {
