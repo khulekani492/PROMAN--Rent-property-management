@@ -44,9 +44,8 @@ public class umuziAPI {
         app.get("/add_property_unit",new Save_unit().save_property_unit());
         // Redirects to the unit page
         app.get("/add_property",ctx ->{
-            //Empty the session variables to be blank for generating a new page
+            //TODO Empty the session variables to be blank for generating a new page
             // include -- <Add New Property>
-
             ctx.render("templates/property.html");
         });
 
