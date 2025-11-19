@@ -64,9 +64,9 @@ public class Propertyinfo extends ConnectionAccess {
     public ArrayList<String> Finances(Integer tenantID) {
         String ery = """
 
-      SELECT tenants_information.debt, tenants_information.rent_payment_day
+      SELECT tenants_information.overdue_date, tenants_information.rent_payment_day
        FROM tenants_information inner join properties ON tenants_information.tenant_user_id = properties.tenant_user_id\s
-       WHERE properties.tenant_user_id = ? ;
+       WHERE properties.tenant_user_id = ?  ;
        \s
    \s""";
 
@@ -76,9 +76,8 @@ public class Propertyinfo extends ConnectionAccess {
             pstmt.setInt(1, tenantID);
             try (ResultSet result = pstmt.executeQuery()) {
                 if (result.next()) {
-                     rent_and_debt.add(result.getString("rent_payment_day"));
-                     rent_and_debt.add(String.valueOf(result.getInt("debt")));
-
+                     rent_and_debt.add(String.valueOf(result.getDate("overdue_date"))) ;
+                     rent_and_debt.add(String.valueOf(result.getInt("rent_payment_day")));
                      return rent_and_debt;
                 }
             }
@@ -104,10 +103,7 @@ public class Propertyinfo extends ConnectionAccess {
 
     public void main(String[] args) throws SQLException {
         Propertyinfo pocket_it = new Propertyinfo();
-        for(int i = 0; i < 90;i++){
-            System.out.println(pocket_it.Finances(778));
-
-        }
+        System.out.println(pocket_it.Finances(772));
 
     }
 }
