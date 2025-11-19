@@ -66,19 +66,21 @@ public class Propertyinfo extends ConnectionAccess {
 
       SELECT tenants_information.overdue_date, tenants_information.rent_payment_day
        FROM tenants_information inner join properties ON tenants_information.tenant_user_id = properties.tenant_user_id\s
-       WHERE properties.tenant_user_id = ?  ;
+       WHERE properties.tenant_user_id = ? ;
        \s
    \s""";
 
         ArrayList<String> rent_and_debt = new ArrayList<>();
+        Get_date extract_date = new Get_date();
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(ery)) {
             pstmt.setInt(1, tenantID);
             try (ResultSet result = pstmt.executeQuery()) {
                 if (result.next()) {
+                    rent_and_debt.add(String.valueOf(result.getInt("rent_payment_day")));
                      rent_and_debt.add(String.valueOf(result.getDate("overdue_date"))) ;
-                     rent_and_debt.add(String.valueOf(result.getInt("rent_payment_day")));
-                     return rent_and_debt;
+
+                    return extract_date.tenant_current_date(rent_and_debt);
                 }
             }
         } catch (SQLException e) {
@@ -97,7 +99,7 @@ public class Propertyinfo extends ConnectionAccess {
 
         }
 
-        return null;
+        return rent_and_debt;
     }
 
 
