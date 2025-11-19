@@ -31,7 +31,7 @@ public class Propertyinfo extends ConnectionAccess {
 
     }
 
-    //Gets property unit of property name for a specefic landlord
+    //Gets property unit of property name for a specific landlord
     public HashMap<Integer,ArrayList<String>> property_tenants(String property_name,Integer landlord){
         ArrayList<String> property_status = new ArrayList<>();
         HashMap<Integer,ArrayList<String> > property_tenants = new HashMap<>();
