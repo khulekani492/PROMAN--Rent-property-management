@@ -22,6 +22,14 @@ public class Quartz {
                 .withIdentity("second_reminder","group1")
                 .build();
 
+        JobDetail overdue_tracker = newJob(Overdue_tracker.class)
+                .withIdentity("due_date","group1")
+                .build();
+
+        Trigger trigger0 = newTrigger().withIdentity("update_trigger")
+                .startNow().withSchedule(cronSchedule("0 0/2 * * * ? *"))
+                .build();
+
         Trigger trigger = newTrigger().
                 withIdentity("my_trigger","group1")
                 .startNow().withSchedule(dailyAtHourAndMinute(10, 5))
@@ -34,6 +42,7 @@ public class Quartz {
 
         scheduler.scheduleJob(morning_reminder,trigger);
         scheduler.scheduleJob(afternoon_reminder,trigger2);
+        scheduler.scheduleJob(overdue_tracker,trigger0);
 
 
 
