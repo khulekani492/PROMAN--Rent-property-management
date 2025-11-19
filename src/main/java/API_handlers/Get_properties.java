@@ -99,23 +99,21 @@ public class Get_properties {
                 Map<String, Object> data = new HashMap<>();
 
 
-                HashMap<String,HashMap<Integer,ArrayList<String>>> model = new HashMap<>();
+                HashMap<String,HashMap<Integer,ArrayList<String>>> allPropertyUnits = new HashMap<>();
                 ;
-                Map<String, Object> model1 = new HashMap<>();
+                Map<String, Object> allProperties = new HashMap<>();
 
+                allPropertyUnits.put("units",fetch_all);
                 System.out.println(fetch_all + "Occupied units");
-                model.put("units",fetch_all);
-                System.out.println(model);
-                System.out.println(fetch_all);
                 //using landlord_unique_id to fetch all of their properties ,it accessed with the user_email
                 String email = context.sessionAttribute("email");
                 propertyNames default_properties = new propertyNames();
 
                 Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
-                model1.put("names",landlord_properties);
-                data.putAll(model);
-                data.putAll(model1);
+                allProperties.put("names",landlord_properties);
+                data.putAll(allPropertyUnits);
+                data.putAll(allProperties);
                 System.out.println("woah");
                 System.out.println(data);
                 context.render("templates/dashboard.html",data);
