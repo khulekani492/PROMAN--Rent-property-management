@@ -16,50 +16,35 @@ public class Record_rent {
     public Handler payment(){
         return ctx ->{
             Transaction _payment = new Transaction();
-            String tenant_id = ctx.sessionAttribute("tenant");
-            try{
-                Integer rent_amount = Integer.parseInt( ctx.formParam("rent") );
-                _payment.setAmount_paid(rent_amount);
-            } catch (NumberFormatException e) {
-                throw new RuntimeException(e);            }
 
+            Integer rent_amount = Integer.parseInt( ctx.formParam("rent") );
             String unit = ctx.formParam("unit");
-            try {
-                Integer  tenantId = Integer.parseInt(ctx.formParam("id"));
-                _payment.setTenant_Id(tenantId);
-            } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
-            }
+            Integer  tenantId = Integer.parseInt(ctx.formParam("id"));
+            String property_name = String.valueOf(ctx.formParam("property_name"));
+            System.out.println(property_name);
+            System.out.println("rent : " + rent_amount );
+            System.out.println("ID : " + tenantId );
+
+
+            _payment.setTenant_Id(tenantId);
+            _payment.setAmount_paid(rent_amount);
             _payment.setStatus(true);
-            try{
-                _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
-            } catch (SQLException e) {
-                System.out.println(e.getMessage() + " stay the same");
-                throw new RuntimeException(e);
-            }
+            _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
 
             HashMap<String,String> MODEL = new HashMap<>();
-
             try{
                 _payment.record_payment();
+                String email1 = ctx.sessionAttribute("email");
+                System.out.print(email1 + "weeeh");
                 String unit_paid = ctx.sessionAttribute("unit");
                 MODEL.put("success",unit_paid);
-                MODEL.put("","");
-                //class clone jutsu DashBoard
-                String clone_property = ctx.pathParam("property_name");
-                String clone_email = ctx.pathParam("user_email");
                 String clone_unit = ctx.pathParam("id");
-                System.out.println(clone_unit + "Tenant ID");
+//                System.out.println(clone_unit + "Tenant ID");
                 Getunits property_units = new Getunits();
                 landlord authenticate = new landlord();
 
-                try{
-                    authenticate.landlordId(clone_email);
-                } catch (Exception e) {
-                    System.out.println("something wrong");
-                    throw new RuntimeException(e);
-                }
-                HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(clone_property,authenticate.landlordId(clone_email));
+
+                HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name,authenticate.landlordId(email1));
 
                 if(fetch_all.size() == 0){
 
@@ -80,7 +65,7 @@ public class Record_rent {
                     landlord user_id = new landlord();
                     Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
-
+                    model.put("units",fetch_all);
                     model1.put("names",landlord_properties);
                     model2.put("unit",clone_unit);
                     data.putAll(model);
@@ -88,10 +73,9 @@ public class Record_rent {
                     data.putAll(model2);
                     data.putAll(MODEL);
 
-                    System.out.println("backup_dashboard");
                     System.out.println(data);
                     ctx.render("templates/dashboard.html",data);
-            }
+                }
                 {
                 }
             } catch (SQLException e) {
