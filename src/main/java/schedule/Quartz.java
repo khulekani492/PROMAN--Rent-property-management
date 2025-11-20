@@ -13,24 +13,19 @@ public class Quartz {
       static void main() throws SchedulerException {
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
         scheduler.start();
-
           // first round of emails for tenants due date  -->Job if landlord has tenants due that day a reminder
-          // second round of emails for tenants due date -->Job if landlord has tenants due that day a  second reminder
-          //Fires  update tenant who are pass due date overdue_date column
-          //Fires at the first day of a new month --> Job reset over_due_date == to the first day of the month  and reset all payment_status.
-
           JobDetail morning_reminder = newJob(Reminder.class)
                   .withIdentity("second_reminder","group1")
                   .build();
-
+          // second round of emails for tenants due date -->Job if landlord has tenants due that day a  second reminder
           JobDetail afternoon_reminder = newJob(Reminder.class)
                 .withIdentity("emails","group1")
                 .build();
-
+          //Fires  update tenant who are pass due date overdue_date column
         JobDetail overdue_tracker = newJob(Overdue_tracker.class)
                 .withIdentity("due_date","group1")
                 .build();
-
+          //Fires at the first day of a new month --> Job reset over_due_date == to the first day of the month  and reset all payment_status.
         JobDetail reset_pay_status = newJob(Reset_status.class)
                 .withIdentity("new_month","group2")
                 .build();
