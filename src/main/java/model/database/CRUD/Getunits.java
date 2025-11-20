@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Getunits {
     public HashMap<Integer,ArrayList<String>> getOccupiedUnits (String property_name,Integer landlordId){
-        Propertyinfo property_list = new Propertyinfo();
+        Property_Status property_list = new Property_Status();
 
         HashMap<Integer,ArrayList<String>> get_Unit_related = property_list.property_tenants(property_name,landlordId);
         HashMap<Integer,ArrayList<String>> get_tenants = new HashMap<>();
@@ -14,12 +14,12 @@ public class Getunits {
         for (Integer n : get_Unit_related.keySet()){
              property_per_unit = get_Unit_related.get(n);
 
-
             Integer AccessLast = null;
             //Skip unit with no tenants == null on index 3
             try {
                 AccessLast = Integer.valueOf(property_per_unit.get(3));
             } catch (NullPointerException e){
+                System.out.println();
                 continue;
             } catch (NumberFormatException e){
                 continue;
@@ -30,6 +30,7 @@ public class Getunits {
 
             try {
                 rent_day_tenant = property_list.Finances(AccessLast);
+                System.out.println(rent_day_tenant + " wait");
             } catch (RuntimeException e) {
                 if("skip".equals(e.getMessage())){
                     continue;
