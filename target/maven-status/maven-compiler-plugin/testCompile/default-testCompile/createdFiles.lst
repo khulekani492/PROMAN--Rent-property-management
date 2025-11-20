@@ -1,2 +1,2 @@
-model/database/testSchema.class
-model/database/TenantTest.class
+model\database\TenantTest.class
+model\database\testSchema.class
