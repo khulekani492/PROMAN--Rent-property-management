@@ -54,6 +54,10 @@ public class Record_rent {
                     System.out.println(" email in Memory is session " + email);
                     propertyNames default_properties = new propertyNames();
                     landlord user_id = new landlord();
+                    Integer landlordId = user_id.landlordId(email);
+                    String landlord_propertyName = user_id.landlord_property_name(landlordId);
+
+
                     Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
                     model_units.put("units",fetch_all);
