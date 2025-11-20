@@ -2,6 +2,7 @@ package schedule;
 
 import model.database.CRUD.GetLandlords;
 import model.database.CRUD.Tenants_rent_day;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+@DisallowConcurrentExecution
 public class Reminder implements Job {
 
 
