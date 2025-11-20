@@ -5,11 +5,11 @@ import model.database.ConnectionAccess;
 import java.sql.*;
 import java.util.*;
 
-public class Propertyinfo extends ConnectionAccess {
+public class Property_Status extends ConnectionAccess {
     private String property_name;
     private Integer tenant;
 
-    public Propertyinfo(){
+    public Property_Status(){
         this.property_name = null;
         this.tenant = null;
     }
@@ -104,7 +104,7 @@ public class Propertyinfo extends ConnectionAccess {
 
 
     public void main(String[] args) throws SQLException {
-        Propertyinfo pocket_it = new Propertyinfo();
+        Property_Status pocket_it = new Property_Status();
         System.out.println(pocket_it.Finances(772));
 
     }
