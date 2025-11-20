@@ -2,7 +2,7 @@ package API_handlers;
 
 import io.javalin.http.Handler;
 import model.database.CRUD.Getunits;
-import model.database.CRUD.Propertyinfo;
+
 
 import java.util.ArrayList;
 
