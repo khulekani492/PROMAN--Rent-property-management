@@ -66,6 +66,7 @@ public class Tenants_rent_day {
         map.put(landlord, tenants_due);
         return map;
     }
+    //Get landlord tenants due date of the tenants who tenants_information.status == false, meaning the landlord has not marked this unit paid as of yet
     public HashMap<Integer, ArrayList<Integer>> tenants_rent_date(Integer landlord) {
 
         HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
