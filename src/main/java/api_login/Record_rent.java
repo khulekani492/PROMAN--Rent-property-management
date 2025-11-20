@@ -63,7 +63,8 @@ public class Record_rent {
                     data.putAll(model_property_names);
                     data.putAll(success_status);
                     System.out.println("Successful new updates");
-                    ctx.render("templates/dashboard.html",data);
+                    ctx.redirect("/payment_status/" + property_name +"/"+ email +"/" +unit);
+                    //ctx.render("templates/dashboard.html",data);
                 }
                 {
                 }
