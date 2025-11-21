@@ -339,7 +339,7 @@
         modalRentInput.value = rent;
 
         // Update form action URL with ID in the path
-        paymentForm.action = `http://localhost:7070/payment_status/${id}`;
+        paymentForm.action = `http://localhost:7070/payment_status/${id}/${propertyName}`;
 
         modalRentInput.focus();
         paymentModal.classList.remove('hidden');
