@@ -32,7 +32,7 @@ public class Type_of_payments {
                 return ;
             } else if ( debt > recieved_amount) {
                 Integer money_paid_left = debt - recieved_amount;
-                System.out.println("Deducts " + money_paid_left);
+                System.out.println("Deducts ;" + money_paid_left);
                 new Tenant().update_debt(money_paid_left,tenantId);
                 if (money_paid_left.equals(original_rent)) {
                     System.out.println("2");
