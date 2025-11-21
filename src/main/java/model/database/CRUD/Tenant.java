@@ -69,17 +69,83 @@ public class Tenant extends ConnectionAccess {
         return username;
     }
 
+        public void update_debt(Integer new_amount,Integer tenant_Id) {
 
+            String sql = """
+    UPDATE tenants_information t1
+    SET debt = ?
+    FROM properties p
+    WHERE t1.tenant_user_id = ?
+      AND t1.tenant_user_id = p.tenant_user_id;
+""";
+            Integer updated_debt = null;
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,new_amount);
+                pstm.setInt(2,tenant_Id);
+                 pstm.execute();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-    public void main(String[] args){
-        Tenant baby_wait = new Tenant();
-        System.out.println("DOING GOOD");
-        System.out.println(baby_wait.tenant_property_name(772) );
-       // System.out.println(baby_wait.landlord_username(772));
-        //System.out.println(baby_wait.landlordEmail(772));
+    }
+
+    public Integer tenant_debt(Integer tenant_Id) {
+
+        String sql = """
+               SELECT tenants_information.debt FROM tenants_information\s
+               inner join\s
+               properties\s
+               ON tenants_information.tenant_user_id =properties.tenant_user_id WHERE tenants_information.tenant_user_id=? ;""";
+            Integer updated_debt = null;
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,tenant_Id);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    updated_debt = result.getInt("debt");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return updated_debt;
     }
 
 
 
 
+    public Integer tenant_property_rent(Integer tenant_Id) {
+        String sql = """
+               SELECT property_rent FROM properties\s
+               inner join\s
+               tenants_information\s
+               ON tenants_information.tenant_user_id =properties.tenant_user_id WHERE tenants_information.tenant_user_id=? ;""";
+
+        Integer property_rent = null;
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,tenant_Id);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    property_rent = result.getInt("property_rent");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return property_rent;
+    }
+
+
+
+    public void main(String[] args){
+        Tenant baby_wait = new Tenant();
+        System.out.println("DOING GOOD");
+        System.out.println(baby_wait.tenant_property_rent(772) );
+        System.out.println(baby_wait.tenant_debt(772));
+       // System.out.println(baby_wait.landlord_username(772));
+        //System.out.println(baby_wait.landlordEmail(772));
+    }
 }

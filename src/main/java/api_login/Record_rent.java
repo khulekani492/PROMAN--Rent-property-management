@@ -24,20 +24,30 @@ public class Record_rent {
 
             //Get tenant_property_name
             Tenant tenant_property = new Tenant();
+
             String property_name = tenant_property.tenant_property_name(tenantId);
 
+            //Get property_rent
+            Integer property_rent = tenant_property.tenant_property_rent(tenantId);
             //Set the property_name to the session
             ctx.sessionAttribute("propertyName",property_name);
+
+            //Run the payments, check the tenant debt if they exist makes required deduction
+            Type_of_payments determine_pay = new Type_of_payments();
+            determine_pay.type_of_payment(rent_amount,property_rent,tenant_property.tenant_debt(tenantId),tenantId,_payment);
+
+            ctx.sessionAttribute("propertyRent",property_rent);
             //
             System.out.println("LATEST UPDATE: ");
             System.out.println("property_name : " + property_name);
             System.out.println("rent : " + rent_amount );
+          //  determine_pay.type_of_payment(rent_amount);
             System.out.println("ID : " + tenantId );
-
-            _payment.setTenant_Id(tenantId);
-            _payment.setAmount_paid(rent_amount);
-            _payment.setStatus(true);
-            _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
+//              insert to rent_book the correct amount the type_of_payments determines the final calculation
+//            _payment.setTenant_Id(tenantId);
+//            _payment.setAmount_paid(rent_amount);
+//            _payment.setStatus(true);
+//            _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
 
             HashMap<String,String> success_status = new HashMap<>();
             try{

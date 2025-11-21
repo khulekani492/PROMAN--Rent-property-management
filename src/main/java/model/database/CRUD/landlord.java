@@ -49,7 +49,6 @@ public class landlord extends ConnectionAccess {
         return username;
     }
 
-
     public String landlord_property_name(Integer landlordId) {
 
         String sql = """
