@@ -2,6 +2,7 @@ package api_login;
 
 import io.javalin.http.Handler;
 import model.database.CRUD.Getunits;
+import model.database.CRUD.Tenant;
 import model.database.CRUD.landlord;
 import model.database.CRUD.propertyNames;
 import model.database.Transaction;
@@ -20,8 +21,16 @@ public class Record_rent {
             String unit = ctx.formParam("unit");
             ctx.sessionAttribute("unit",unit);
             Integer  tenantId = Integer.parseInt(ctx.formParam("id"));
-            String property_name = String.valueOf(ctx.formParam("property_name"));
-            System.out.println("amount : " + property_name);
+
+            //Get tenant_property_name
+            Tenant tenant_property = new Tenant();
+            String property_name = tenant_property.tenant_property_name(tenantId);
+
+            //Set the property_name to the session
+            ctx.sessionAttribute("propertyName",property_name);
+            //
+            System.out.println("LATEST UPDATE: ");
+            System.out.println("property_name : " + property_name);
             System.out.println("rent : " + rent_amount );
             System.out.println("ID : " + tenantId );
 
