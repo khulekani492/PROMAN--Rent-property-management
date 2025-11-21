@@ -45,11 +45,11 @@ public class Record_rent {
                 String email1 = ctx.sessionAttribute("email");
                 System.out.print(email1 + "current email in ram memory");
                 String unit_paid = ctx.sessionAttribute("unit");
-                success_status.put("success",unit_paid);
                 Getunits property_units = new Getunits();
                 landlord authenticate = new landlord();
                 HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name,authenticate.landlordId(email1));
                 if(fetch_all.size() == 0){
+
                     String property = ctx.sessionAttribute("property_name");
                     success_status.put("no_units","No units added for " + property);
                     ctx.render("templates/dashboard.html",success_status);
@@ -63,22 +63,22 @@ public class Record_rent {
                     System.out.println(" email in Memory is session " + email);
                     propertyNames default_properties = new propertyNames();
                     landlord user_id = new landlord();
-                    Integer landlordId = user_id.landlordId(email);
-                    String landlord_propertyName = user_id.landlord_property_name(landlordId);
 
-
+                    success_status.put("success",unit_paid);
+                    System.out.println("Wait Now");
+                    System.out.println(success_status);
                     Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
 
                     model_units.put("units",fetch_all);
                     model_property_names.put("names",landlord_properties);
 
+
                     data.putAll(model_units);
                     data.putAll(model_property_names);
                     data.putAll(success_status);
                     System.out.println("Successful new updates");
-
-                    ctx.redirect("/payment_status/" + property_name +"/"+ email +"/" +unit);
-                    //ctx.render("templates/dashboard.html",data);
+                    //ctx.redirect("/payment_status/" + property_name +"/"+ email +"/" +unit);
+                    ctx.render("templates/dashboard.html",data);
                 }
                 {
                 }
