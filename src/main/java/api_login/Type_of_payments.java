@@ -72,7 +72,10 @@ public class Type_of_payments {
             HashMap<Integer,Integer> add_to_Map = sharedMap_advance_pays.current_property_advancePayments;
             Integer period = recieved_amount / original_rent;
             add_to_Map.put(tenantId,period);
-
+            approve_to_rentBook.setAmount_paid(recieved_amount);
+            approve_to_rentBook.setStatus(true);
+            approve_to_rentBook.setTenant_Id(tenantId);
+            approve_to_rentBook.update_tenant_status();
         }
         // if money received is lesser than original_rent , record the outstanding fee
         else {
