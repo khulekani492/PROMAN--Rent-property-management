@@ -34,7 +34,7 @@ public class Type_of_payments {
             else if ( debt > recieved_amount) {
                 Integer remaining_debt = debt - recieved_amount; //Minus the debt with the money received
                 System.out.println("Deducts ;" + remaining_debt);
-                new Tenant().update_debt(remaining_debt + original_rent,tenantId); //update tenant to the remaining debt
+                new Tenant().update_debt(remaining_debt ,tenantId); //update tenant to the remaining debt
                 approve_to_rentBook.setAmount_paid(original_rent);
                 approve_to_rentBook.setStatus(true);
                 approve_to_rentBook.setTenant_Id(tenantId);
@@ -89,7 +89,7 @@ public class Type_of_payments {
             else if ( debt > recieved_amount) {
                 Integer remaining_debt = debt - recieved_amount; //Minus the debt with the money received
                 System.out.println("Deducts :" + remaining_debt);
-                new Tenant().update_debt(remaining_debt + original_rent,tenantId); //update tenant to the remaining debt
+                new Tenant().update_debt(remaining_debt,tenantId); //update tenant to the remaining debt
                 approve_to_rentBook.setAmount_paid(original_rent);
                 approve_to_rentBook.setStatus(true);
                 approve_to_rentBook.setTenant_Id(tenantId);
@@ -119,7 +119,7 @@ public class Type_of_payments {
                 }
             }
             else {
-                System.out.println("MOney less");
+                System.out.println("Money less");
                 //When payment_paid equals to debt owed by tenant ,settle debt of the previous, updates the tenant debt of the new month
 //                The amount received is exactly equal to the outstanding debt.
 //                This means the tenant pays precisely the amount they owe, no more, no less.
@@ -144,7 +144,7 @@ public class Type_of_payments {
             Type_of_payments update_debt = new Type_of_payments();
             Tenant tenantTest = new Tenant();
             // tenantTest.
-            update_debt.type_of_payment( 2000, 400, tenantTest.tenant_debt(772), 772,new Transaction());
+            update_debt.type_of_payment( 400, 400, tenantTest.tenant_debt(772), 772,new Transaction());
             //Output debt = 800
         }
 
