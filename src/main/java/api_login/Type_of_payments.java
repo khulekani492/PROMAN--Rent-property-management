@@ -32,9 +32,9 @@ public class Type_of_payments {
             }
             //else if the tenant existing debt ia greater than money recieved
             else if ( debt > recieved_amount) {
-                Integer money_paid_left = debt - recieved_amount;
-                System.out.println("Deducts ;" + money_paid_left);
-                new Tenant().update_debt(money_paid_left,tenantId); //update tenant to the remaining debt
+                Integer remaining_debt = debt - recieved_amount; //Minus the debt with the money received
+                System.out.println("Deducts ;" + remaining_debt);
+                new Tenant().update_debt(remaining_debt + original_rent,tenantId); //update tenant to the remaining debt
                 approve_to_rentBook.setAmount_paid(original_rent);
                 approve_to_rentBook.setStatus(true);
                 approve_to_rentBook.setTenant_Id(tenantId);
