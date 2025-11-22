@@ -6,19 +6,6 @@
     <title>ProMan — Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --accent: #8B5E3C;
-            --light-brown: #F3E6DC; /* page background (kept as a variable for reuse) */
-            --header-bg: #FAF3E0;   /* table header background */
-            --row-bg: #FFFFFF;      /* table row background */
-            --row-shadow: rgba(139,94,60,0.06);
-        }
-
-        /* Page background - changed to white as requested */
-        body {
-            background-color: #FFFFFF;
-        }
-
         .payment-hover {
             transition: background-color .15s, color .15s;
         }
@@ -49,86 +36,24 @@
             background: #D9CBB8;
             border: 2px solid transparent;
         }
-
-        /*
-         Improved table styling:
-         - Use separate border model to create vertical spacing between header and body rows.
-         - Give body cells a white card-like look with rounded corners and subtle shadow.
-         - Add clear spacing between header and first row.
-        */
-        .units-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px; /* vertical gap between rows (and header/body) */
+        :root {
+            --accent: #8B5E3C;
         }
-
-        .units-table thead th {
-            background: var(--header-bg);
-            border-bottom: none;
-            padding: 14px 12px;
-            font-weight: 700;
-            color: #5a432f;
-            text-align: left;
-            position: sticky;
-            top: 0;
-            z-index: 2;
+        .hero-gradient {
+            background: linear-gradient(180deg, #8B5E3C 0%, #7a4f30 100%);
         }
-
-        /* Body cells styled as cards */
-        .units-table tbody tr td {
-            background: var(--row-bg);
-            padding: 14px 12px;
-            vertical-align: middle;
-            box-shadow: 0 6px 14px var(--row-shadow);
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
         }
-
-        /* Rounded corners across the row: apply to first/last cell */
-        .units-table tbody tr td:first-child {
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-        }
-        .units-table tbody tr td:last-child {
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-
-        /* Slightly bolder text for key columns */
-        .units-table tbody tr td.unit-number,
-        .units-table tbody tr td.rent-amount,
-        .units-table tbody tr td.payment-cell {
-            font-weight: 600;
-            color: #4b3728;
-        }
-
-        /* Header / body separation line optional accent */
-        .table-header-separator {
-            height: 10px;
-            background: transparent;
-        }
-
-        /* Make the small "cards" responsive on very small widths */
-        @media (max-width: 640px) {
-            .units-table thead {
-                display: none; /* hide header on tiny screens; content remains */
-            }
-            .units-table tbody tr {
-                display: block;
-                margin-bottom: 10px;
-            }
-            .units-table tbody tr td {
-                display: flex;
-                justify-content: space-between;
-            }
-        }
-
-        /* Keep existing thin utility classes that were used */
-        header .text-[#8B5E3C] { color: var(--accent); }
-        footer a.text-[#8B5E3C] { color: var(--accent); }
-
     </style>
 </head>
 
-<body class="text-gray-800 antialiased min-h-screen">
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen">
 <header class="bg-white shadow-sm sticky top-0 z-30">
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div class="flex items-center gap-4">
@@ -147,103 +72,146 @@
     </div>
 </header>
 
-<!-- Center the main content area on the page (keeps header/footer where they are) -->
-<main class="max-w-6xl mx-auto px-6 pb-12" style="min-height: calc(100vh - 220px); display:flex; align-items:center; justify-content:center; width:100%;">
-    <div style="width:100%;">
-        <div class="flex flex-col lg:flex-row gap-10 mb-6 items-stretch">
-            <div class="lg:w-1/3 h-full">
-                <div class="bg-white rounded-lg shadow p-6 h-full flex flex-col">
-                    <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-2">Property Name</label>
-                                <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0">
-                                    <option value="">Select property</option>
-                                    <option value="all">All properties</option>
-                                    <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-2">Search tenant</label>
-                                <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)"
-                                       class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0" />
-                            </div>
-                        </div>
-                    </form>
+<main class="max-w-6xl mx-auto px-6 pb-12">
 
-                    <div class="mt-4 flex-1">
-                        <label class="block text-sm font-medium text-gray-600 mb-2">Property Image</label>
-                        <div class="border border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center h-60">
-                            <img src="/umuzi/img/mypromann.png" alt="Property image" class="max-h-full max-w-full object-contain">
-                        </div>
+    <!-- Portfolio Overview Section -->
+    <section class="mb-10">
+        <h2 class="text-3xl font-bold text-center text-[#8B5E3C] mb-4">Portfolio Overview</h2>
+        <p class="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">Quick overview of your property portfolio performance.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-[#8B5E3C] hover:shadow-xl transition transform hover:-translate-y-0.5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Properties</p>
+                        <p class="text-3xl font-bold text-[#8B5E3C]">8</p>
                     </div>
-
-                    <div class="mt-4">
-                        <h2><a href="http://localhost:7070/add_property_unit" class="text-[#8B5E3C] hover:underline">Add New property</a></h2>
+                    <div class="feature-icon bg-[#FFF4E6] text-[#8B5E3C]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
                     </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">+2 from last month</p>
+            </div>
 
-                    <p class="mt-4 text-sm text-gray-500">
-                        Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.
-                    </p>
+            <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-green-600 hover:shadow-xl transition transform hover:-translate-y-0.5">
+                    <div class="feature-icon bg-[#F0FDF4] text-green-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
 
-            <div class="lg:w-2/3 h-full">
-                <div class="bg-white rounded-lg shadow p-6 h-full flex flex-col">
-                    <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
-                        <button id="btnPaid" type="button" class="px-4 py-2 rounded-md bg-green-600 text-white font-semibold shadow hover:bg-green-700">
-                            Mark Paid (+)
-                        </button>
-                        <button id="btnUnpaid" type="button" class="px-4 py-2 rounded-md bg-red-600 text-white font-semibold shadow hover:bg-red-700">
-                            Mark Unpaid (-)
-                        </button>
-                        <div class="text-sm text-gray-600 ml-2">Select a row, then click a button to update the Payment box only.</div>
+            <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-indigo-600 hover:shadow-xl transition transform hover:-translate-y-0.5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Monthly Revenue</p>
+                        <p class="text-3xl font-bold text-[#8B5E3C]">R42,500</p>
                     </div>
-                    <p th:if="${unit != null and unit != ''}"
-                       th:text="|You have already marked Unit ${unit} as paid this month.|">
-                    </p>
-
-                    <p th:if="${success != null and success != ''}"
-                       th:text="|Unit ${success} marked as paid this month.|">
-                    </p>
-
-                    <div class="overflow-x-auto flex-1">
-                        <!-- improved table uses .units-table for spacing and card-like rows -->
-                        <table class="units-table">
-                            <thead>
-                            <tr>
-                                <th class="px-4 py-3 text-left">Unit Number</th>
-                                <th class="px-4 py-3 text-left">Rent</th>
-                                <th class="px-4 py-3 text-left">Occupation</th>
-                                <th class="px-4 py-3 text-left">Tenant</th>
-                                <th class="px-4 py-3 text-left">Rent Day</th>
-                                <th class="px-4 py-3 text-left">Overdue(days)</th>
-                                <th class="px-4 py-3 text-left">Status</th>
-                            </tr>
-                            </thead>
-
-                            <!-- small spacer between header and body (border-spacing also contributes) -->
-                            <tbody id="unitsTbody">
-                            <tr th:each="entry : ${units}" class="border-b border-transparent" th:data-property="${propertyName}" th:data-tenant="${entry.value[3]}">
-                                <td class="px-4 py-3 unit-number" th:text="${entry.value[0]}">Unit</td>
-                                <td class="px-4 py-3 rent-amount" th:text="${entry.value[1]}">0</td>
-                                <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
-                                <td class="px-4 py-3 unit-id" th:text="${entry.value[3]}">0</td>
-                                <td class="px-4 py-3 unit-tenant" th:text="${entry.value[4]}">70</td>
-                                <td class="px-4 py-3 unit-tenant" th:text="${entry.value[5]}">0</td>
-                                <td class="px-4 py-3 payment-hover payment-cell">
-                                    <span th:if="${entry.value[2]} == 'yes'"
-                                          class="indicator bg-green-100 text-green-800 open-pay"
-                                          th:data-unit="${entry.value[0]}"
-                                          th:data-rent="${entry.value[1]}"
-                                          th:data-id="${entry.value[3]}"
-                                          th:data-property-name="${propertyName}">+</span>
-                                    <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="feature-icon bg-[#EEF2FF] text-indigo-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">+R2,500 from last month</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Original Dashboard Content -->
+    <div class="flex flex-col lg:flex-row gap-10 mb-6 items-stretch">
+        <div class="lg:w-1/3 h-full">
+            <div class="bg-white rounded-lg shadow p-6 h-full flex flex-col">
+                <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Property Name</label>
+                            <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0">
+                                <option value="">Select property</option>
+                                <option value="all">All properties</option>
+                                <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Search tenant</label>
+                            <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)"
+                                   class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0" />
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-4 flex-1">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Property Image</label>
+                    <div class="border border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center h-60">
+                        <img src="/umuzi/img/mypromann.png" alt="Property image" class="max-h-full max-w-full object-contain">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h2><a href="http://localhost:7070/add_property_unit" class="text-[#8B5E3C] hover:underline">Add New property</a></h2>
+                </div>
+
+                <p class="mt-4 text-sm text-gray-500">
+                    Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.
+                </p>
+            </div>
+        </div>
+
+        <div class="lg:w-2/3 h-full">
+            <div class="bg-white rounded-lg shadow p-6 h-full flex flex-col">
+                <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
+                    <button id="btnPaid" type="button" class="px-4 py-2 rounded-md bg-green-600 text-white font-semibold shadow hover:bg-green-700">
+                        Mark Paid (+)
+                    </button>
+                    <button id="btnUnpaid" type="button" class="px-4 py-2 rounded-md bg-red-600 text-white font-semibold shadow hover:bg-red-700">
+                        Mark Unpaid (-)
+                    </button>
+                    <div class="text-sm text-gray-600 ml-2">Select a row, then click a button to update the Payment box only.</div>
+                </div>
+                <p th:if="${unit != null and unit != ''}"
+                   th:text="|You have already marked Unit ${unit} as paid this month.|">
+                </p>
+
+                <p th:if="${success != null and success != ''}"
+                   th:text="|Unit ${success} marked as paid this month.|">
+                </p>
+                <div class="overflow-x-auto flex-1">
+                    <table class="min-w-full border border-[#D2B48C] rounded-lg shadow-md bg-white">
+                        <thead class="bg-[#FAF3E0] border-b border-[#D2B48C]">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold">Unit Number</th>
+                            <th class="px-4 py-3 text-left font-semibold">Rent</th>
+                            <th class="px-4 py-3 text-left font-semibold">Occupation</th>
+                            <th class="px-4 py-3 text-left font-semibold">Tenant</th>
+                            <th class="px-4 py-3 text-left font-semibold">Rent Day</th>
+                            <th class="px-4 py-3 text-left font-semibold">Overdue(days)</th>
+                            <th class="px-4 py-3 text-left font-semibold">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody id="unitsTbody">
+                        <tr th:each="entry : ${units}" class="border-b border-gray-200">
+                            <td class="px-4 py-3 unit-number" th:text="${entry.value[0]}">Unit</td>
+                            <td class="px-4 py-3 rent-amount" th:text="${entry.value[1]}">0</td>
+                            <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
+                            <td class="px-4 py-3 unit-id" th:text="${entry.value[3]}">0</td>
+                            <td class="px-4 py-3 unit-tenant" th:text="${entry.value[4]}">70</td>
+                            <td class="px-4 py-3 unit-tenant" th:text="${entry.value[5]}">0</td>
+                            <td class="px-4 py-3 payment-hover payment-cell">
+                                <span th:if="${entry.value[2]} == 'yes'"
+                                      class="indicator bg-green-100 text-green-800 open-pay"
+                                      th:data-unit="${entry.value[0]}"
+                                      th:data-rent="${entry.value[1]}"
+                                      th:data-id="${entry.value[3]}"
+                                      th:data-property-name="${propertyName}">+</span>
+                                <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -312,19 +280,15 @@
     const propertySelect = document.getElementById('propertySelect');
     const tenantSearch = document.getElementById('tenantSearch');
     const tbody = document.getElementById('unitsTbody');
-
-    // rows must be computed dynamically because thymeleaf may render them
-    function getRows() {
-        return Array.from(tbody.querySelectorAll('tr'));
-    }
+    const rows = Array.from(tbody.querySelectorAll('tr'));
 
     function applyFilters() {
         const prop = propertySelect.value;
         const tenantQuery = tenantSearch.value.trim().toLowerCase();
-        getRows().forEach(row => {
+        rows.forEach(row => {
             const rowProp = row.dataset.property || '';
-            const rowTenant = row.dataset.tenant || row.querySelector('.unit-id')?.textContent || '';
-            const matchesProp = (prop === 'all') || (prop === '') || (rowProp === prop);
+            const rowTenant = row.dataset.tenant || '';
+            const matchesProp = (prop === 'all') || (rowProp === prop);
             const matchesTenant = tenantQuery === '' || rowTenant.toLowerCase().includes(tenantQuery);
             row.style.display = (matchesProp && matchesTenant) ? '' : 'none';
         });
@@ -340,18 +304,14 @@
         selectedRow = null;
     }
 
-    function bindRowSelection() {
-        getRows().forEach(row => {
-            row.addEventListener('click', (e) => {
-                if (e.target.closest('.indicator')) return;
-                if (selectedRow) selectedRow.classList.remove('row-selected');
-                selectedRow = row;
-                selectedRow.classList.add('row-selected');
-            });
+    rows.forEach(row => {
+        row.addEventListener('click', (e) => {
+            if (e.target.closest('.indicator')) return;
+            if (selectedRow) selectedRow.classList.remove('row-selected');
+            selectedRow = row;
+            selectedRow.classList.add('row-selected');
         });
-    }
-
-    bindRowSelection();
+    });
 
     const btnPaid = document.getElementById('btnPaid');
     const btnUnpaid = document.getElementById('btnUnpaid');
@@ -380,12 +340,12 @@
         flashMessage(`Payment status ${!isPaid ? 'set to paid (+)' : 'set to unpaid (-)'}`, !isPaid ? 'green' : 'red');
     }
 
-    // Delegate click for payment cells to support dynamic rows
-    document.addEventListener('click', function (e) {
-        const paymentCell = e.target.closest('.payment-cell');
-        if (paymentCell && e.target.closest('.indicator')) {
-            togglePaymentStatus(paymentCell);
-        }
+    document.querySelectorAll('.payment-cell').forEach(cell => {
+        cell.addEventListener('click', function(e) {
+            if (e.target.closest('.indicator')) {
+                togglePaymentStatus(this);
+            }
+        });
     });
 
     function flashMessage(msg, color = 'yellow') {
@@ -414,7 +374,7 @@
 
     propertySelect.addEventListener('change', function () {
         const selectedValue = this.value;
-        if (selectedValue && selectedValue !== 'all' && selectedValue !== '') {
+        if (selectedValue && selectedValue !== 'all') {
             document.getElementById('propertyForm').submit();
         }
     });
@@ -452,11 +412,8 @@
         paymentModal.classList.remove('flex');
     }
 
-    // Add event listeners to all payment indicators (including those rendered by Thymeleaf)
+    // Add event listeners to all payment indicators
     document.addEventListener('DOMContentLoaded', function() {
-        // in case rows were re-bound after DOM load
-        bindRowSelection();
-
         const openPayButtons = document.querySelectorAll('.open-pay');
 
         openPayButtons.forEach(btn => {
