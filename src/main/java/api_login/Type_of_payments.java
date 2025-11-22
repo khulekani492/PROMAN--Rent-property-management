@@ -133,6 +133,7 @@ public class Type_of_payments {
         }
         // if money received is lesser than original_rent , record the outstanding fee
         else {
+            System.out.println("money received is lesser than original_rent");
             Integer outstanding_fee = original_rent - recieved_amount;
             Integer  add_debt = debt + outstanding_fee;
             new Tenant().update_debt(add_debt,tenantId);
