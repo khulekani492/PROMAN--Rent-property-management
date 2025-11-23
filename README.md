@@ -29,6 +29,8 @@ sign_up_session flow-part1.png
 ![Alt text](System_design/sign_up_systemOverview.png)
 - Setting the databse model for new user.
 - **ProMan REQUIRES each user(property_owner) to provide information about they rental properties**
+- <img width="2884" height="4564" alt="image" src="https://github.com/user-attachments/assets/e87e76d4-e02b-47a3-8929-2ce48dcd72fe" />
+
   
 
 
