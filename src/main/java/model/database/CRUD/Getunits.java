@@ -30,7 +30,6 @@ public class Getunits {
 
             try {
                 rent_day_tenant = property_list.Finances(AccessLast);
-                System.out.println(rent_day_tenant + " wait");
             } catch (RuntimeException e) {
                 if("skip".equals(e.getMessage())){
                     continue;
@@ -47,5 +46,6 @@ static void main(){
         Getunits per_property = new Getunits();
     System.out.println(per_property.getOccupiedUnits("Thornville_rooms",771)    ); ;
 }
+
 
 }

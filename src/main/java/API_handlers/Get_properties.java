@@ -73,10 +73,9 @@ public class Get_properties {
                 //Handler auto_submit of empty space
                 throw new RuntimeException(e);
             }
-
             String property_email = context.sessionAttribute("email");
             context.sessionAttribute("dashBoard_current_email",property_email);
-            System.out.println("What they want " +  " " + property_email);
+            System.out.println("Useremail : " +  " " + property_email);
 
             Getunits property_units = new Getunits();
             landlord authenticate = new landlord();
