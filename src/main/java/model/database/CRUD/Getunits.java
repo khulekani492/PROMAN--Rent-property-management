@@ -28,8 +28,10 @@ public class Getunits {
             Integer first_one = Integer.valueOf(property_per_unit.get(0));
             ArrayList<String> rent_day_tenant = new ArrayList<>();
 
+            String tenant_name = "No name";
             try {
                 rent_day_tenant = property_list.Finances(AccessLast);
+                tenant_name = property_list.tenant_name(AccessLast);
             } catch (RuntimeException e) {
                 if("skip".equals(e.getMessage())){
                     continue;
@@ -37,6 +39,9 @@ public class Getunits {
 
             }
             //adding the rent
+            //Switching Index 3 with tenant name
+            property_per_unit.set(3,tenant_name);
+
             property_per_unit.addAll(rent_day_tenant);
             get_tenants.put(first_one,property_per_unit);
         }
@@ -46,6 +51,5 @@ static void main(){
         Getunits per_property = new Getunits();
     System.out.println(per_property.getOccupiedUnits("Thornville_rooms",771)    ); ;
 }
-
 
 }
