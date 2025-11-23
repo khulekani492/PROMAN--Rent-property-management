@@ -2,6 +2,7 @@ package API;
 
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static API.SessionUtil.fileSessionHandler;
@@ -72,7 +73,16 @@ public class umuziAPI {
         app.post("/add_property", propertyInfo.addproperty());
 
         app.get("/add_tenant",ctx -> {
-           ctx.render("templates/tenant_form.html");
+            Map<String, Object> model = new HashMap<>();
+
+            String user_name = ctx.sessionAttribute("user_name");
+            String  propertyUnit = ctx.sessionAttribute("_unit");
+            String  propertyName = ctx.sessionAttribute("property_name");
+
+            model.put("user_name",user_name);
+            model.put("unit_add", propertyUnit);
+            model.put("name", propertyName);
+           ctx.render("templates/tenant_form.html",model);
         });
 /**
  * adds tenant information to the database
