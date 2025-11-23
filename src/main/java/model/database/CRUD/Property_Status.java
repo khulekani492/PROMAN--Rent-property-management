@@ -108,11 +108,37 @@ public class Property_Status extends ConnectionAccess {
 
         return rent_and_debt;
     }
+    public String tenant_name(Integer tenantID) {
+        String ery = """
+      SELECT general_users.name
+      FROM general_users inner join tenants_information ON tenants_information.tenant_user_id = general_users.id\s
+       WHERE general_users.id = ? ;
+       \s
+   \s""";
+
+        try (PreparedStatement pstmt = newConnection().prepareStatement(ery)) {
+            pstmt.setInt(1, tenantID);
+            try (ResultSet result = pstmt.executeQuery()) {
+                if (result.next()) {
+                     return result.getString("name");
+
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching user_information :" + e.getMessage());
+           throw new RuntimeException(e.getMessage());
+        }
+
+        return null;
+    }
 
 
     public void main(String[] args) throws SQLException {
         Property_Status pocket_it = new Property_Status();
-        System.out.println(pocket_it.Finances(772));
+        ArrayList<String> tools = pocket_it.Finances(772);
+      //  tools.set(1,pocket_it.tenant_name(772));
+       // System.out.println(tools.set(2, pocket_it.tenant_name(772)));
+        System.out.println(tools);
 
     }
 }
