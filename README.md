@@ -30,10 +30,13 @@ sign_up_session flow-part1.png
 - Setting the databse model for new user.
 - **ProMan REQUIRES each user(property_owner) to provide information about they rental properties**
 
-2. Business Logic(Reminders and tracking tenant payemnts
-   
-   
-
+2. Business Logic(Reminders and tracking tenant payemnts)
+3. The functionality of the business depends on QUARTZ APIS<JOBS> w
+   -Jobs is Quarts excute at a given time and run the specefied programm
+   -PROMAN runs serveral jobs, One is sending emails when  a property owner has a tenant due
+   - Another Job tracks tenants overdue tenants
+   - **The Overall design of the business Logic**   
+![Alt text](System_design/automation.drawio.png)
   
 
 
