@@ -32,9 +32,11 @@ sign_up_session flow-part1.png
 
 ## Business Logic(Reminders and tracking tenant payemnts)
 3. The functionality of the business depends on QUARTZ APIS<JOBS> 
-   - Jobs is Quarts excute at a given time and run the specefied programm
-   - PROMAN runs serveral jobs, One is sending emails when  a property owner has a tenant due
-   - Another Job tracks tenants overdue tenants
+   - A Quartz Job is a unit of work that Quartz executes at a scheduled time.
+   - It acts like a small program inside the application that runs automatically based on a Cron expression or trigger.
+   - Each job contains the logic for a specific automated task.
+ 
+   - PROMAN  implements Email Notification Job and Tenant Overdue Tracking Job
    - **The Overall design of the business Logic**   
 ![Alt text](System_design/automation.drawio.png)
   
