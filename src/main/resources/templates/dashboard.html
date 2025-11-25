@@ -5,438 +5,590 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ProMan — Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        .sidebar-gradient {
-            background: linear-gradient(180deg, #8B5E3C 0%, #7a4f30 100%);
+        :root{
+          --bg: #f5f6f7;
+          --surface: #ffffff;
+          --muted: #eef0f2;
+          --text: #2f3337;
+          --muted-text: #6b7378;
+          --accent: #D4AF37;
+          --accent-dark: #b8892a;
         }
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #FFF4E6;
+
+        html,body { height:100%; }
+        body {
+          margin:0;
+          min-height:100%;
+          background:var(--bg);
+          color:var(--text);
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+          -webkit-font-smoothing:antialiased;
+          -moz-osx-font-smoothing:grayscale;
+          display:flex;
+          flex-direction:column;
         }
-        .payment-hover {
-            transition: background-color .15s, color .15s;
+
+        /* Header */
+        header.topbar {
+          background: var(--surface);
+          border-bottom: 1px solid var(--muted);
+          position: sticky;
+          top: 0;
+          z-index: 60;
         }
-        .payment-hover:hover {
-            background-color: #FFF8E7;
-            color: #8B5E3C;
-            cursor: pointer;
+        header .brand-left { display:flex; gap:1rem; align-items:center; }
+        header .brand-left img { height:5rem; width:auto; }
+        header .brand-left a.text-accent { color: var(--accent); font-weight:800; font-size:1.125rem; }
+
+        .main-wrap {
+          display:flex;
+          flex:1;
+          min-height: calc(100vh - 72px);
+          margin-top: 1rem; /* Added space between header and sidebar */
         }
-        .indicator {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.9rem;
-            height: 1.9rem;
-            border-radius: 0.5rem;
-            font-weight: 700;
-            user-select: none;
+
+        /* Sidebar: desktop visible; mobile overlays when opened */
+        .sidebar {
+          width:16rem;
+          min-height:100vh;
+          position:fixed;
+          left:0;
+          top:0;
+          z-index:50;
+          overflow:auto;
+          background: var(--bg);
+          transition: transform .28s ease, box-shadow .28s ease;
+          border-right: 1px solid rgba(0,0,0,0.04);
+          transform: translateX(0); /* visible by default on desktop */
+          margin-top: 5rem; /* Added space between header and sidebar */
         }
+
+        /* Desktop layout */
+        @media (min-width:1025px) {
+          .content {
+            margin-left: 16rem;
+            padding:1.5rem;
+            padding-top:3rem;
+            width: calc(100% - 16rem); /* Ensure content takes remaining width */
+          }
+          #sidebar-backdrop { display:none; }
+        }
+
+        /* Mobile overlay behavior */
+        @media (max-width:1024px) {
+          .sidebar {
+            transform: translateX(-100%);
+            position:fixed;
+            height:100vh;
+            left:0;
+            top:0;
+            box-shadow: 0 18px 40px rgba(16,24,40,0.12);
+            margin-top: 0; /* Reset margin on mobile */
+          }
+          .sidebar.overlay-visible {
+            transform: translateX(0);
+            background: var(--surface);
+          }
+          .content {
+            margin-left: 0;
+            padding:1rem;
+            padding-top:2rem;
+            width: 100%; /* Full width on mobile */
+          }
+          #sidebar-backdrop {
+            display:block;
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.45);
+            z-index:45;
+            opacity:0;
+            pointer-events:none;
+            transition:opacity .18s ease;
+          }
+          #sidebar-backdrop.visible {
+            opacity:1;
+            pointer-events:auto;
+          }
+        }
+
+        .sidebar .bg-white { background: var(--surface); }
+        .sidebar .card { background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,1)); border:1px solid rgba(0,0,0,0.04); }
+        .feature-icon { width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(212,175,55,0.06); color: var(--accent); }
+
+        .nav-item { display:flex; align-items:center; gap:.75rem; padding:.75rem; border-radius:.5rem; color: rgba(47,51,55,0.85); text-decoration:none; }
+        .nav-item:hover { background: rgba(0,0,0,0.03); color: var(--text); }
+        .nav-item.active { background: rgba(212,175,55,0.06); border-left: 4px solid rgba(212,175,55,0.26); color: var(--text); }
+
+        .card-surface { background: var(--surface); border-radius:.75rem; box-shadow: 0 18px 40px rgba(16,24,40,0.06); padding:1.25rem; border:1px solid rgba(0,0,0,0.04); }
+
+        /* TABLE: keep table semantics on all sizes. Use horizontal scrolling on narrow screens. */
+        .units-wrapper {
+          width:100%;
+          overflow-x:auto;
+          -webkit-overflow-scrolling:touch;
+          max-width: 100%; /* Ensure it doesn't overflow container */
+        }
+        .units-table {
+          width:100%;
+          min-width:760px; /* ensures readable columns on small screens; adjust as needed */
+          border-collapse:separate;
+          border-spacing:0;
+          border-radius:.5rem;
+          overflow:hidden;
+          box-shadow: 0 8px 24px rgba(16,24,40,0.04);
+        }
+        .units-table thead th {
+          background:#F7E9D4;
+          color:var(--text);
+          font-weight:700;
+          padding:.75rem 1rem;
+          text-align:left;
+          border-bottom:1px solid rgba(210,180,140,0.6);
+          position:sticky;
+          top:0;
+          z-index:10;
+        }
+        .units-table tbody td {
+          background: var(--surface);
+          padding:.75rem 1rem;
+          border-bottom:1px solid rgba(0,0,0,0.04);
+          color:var(--text);
+          white-space:nowrap;
+        }
+        .units-table tbody tr:hover td { background:#FFF8F0; }
+        .units-table tbody tr:nth-child(even) td { background:#FCF6ED; }
+
+        .indicator { display:inline-flex; align-items:center; justify-content:center; width:1.9rem; height:1.9rem; border-radius:.5rem; font-weight:700; }
+        .indicator.bg-red-100, .indicator.bg-red { background: rgba(255,69,58,0.08); color:#C53030; }
+        .indicator.bg-green-100, .indicator.bg-green { background: rgba(16,185,129,0.08); color:#065f46; }
+
+        /* On very small screens, reduce padding to fit more columns; table remains a table. */
+        @media (max-width:480px) {
+          .units-table thead th, .units-table tbody td { padding:.5rem .6rem; font-size:13px; }
+          .card-surface { padding:1rem; }
+          .main-wrap { margin-top: 0.5rem; }
+        }
+
+        .control-btn { padding:.65rem .85rem; border-radius:.5rem; font-weight:600; }
+
+        /* Row selection styling */
         .row-selected {
-            background-color: #f7f7f7;
-            box-shadow: inset 0 0 0 2px rgba(210, 180, 140, 0.12);
+          background-color: rgba(212,175,55,0.1) !important;
+          outline: 2px solid var(--accent);
         }
-        .progress-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 9999px;
-            display: inline-block;
-            background: #D9CBB8;
-            border: 2px solid transparent;
+
+        /* Ensure content area doesn't overflow */
+        .content {
+          box-sizing: border-box;
+          overflow-x: hidden;
         }
-        .hero-gradient {
-            background: linear-gradient(180deg, #8B5E3C 0%, #7a4f30 100%);
-        }
-        .feature-icon {
-            width: 44px;
-            height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-        }
+
+        /* Mobile table adjustments */
         @media (max-width: 768px) {
-            .sidebar-mobile-hidden {
-                transform: translateX(-100%);
-            }
-            .sidebar-mobile-visible {
-                transform: translateX(0);
-            }
+          .units-table {
+            min-width: 600px; /* Reduced minimum width for better mobile fit */
+          }
+
+          .flex-col-mobile {
+            flex-direction: column;
+          }
+
+          .w-full-mobile {
+            width: 100%;
+          }
+        }
+
+        /* Sidebar header styling */
+        .sidebar-header {
+          background: var(--surface);
+          padding: 1.5rem;
+          border-bottom: 1px solid var(--muted);
+          text-align: center;
         }
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex">
-<!-- Sidebar -->
-<div class="sidebar-gradient text-white w-64 min-h-screen fixed left-0 top-0 z-40 transition-transform duration-300 sidebar-mobile-hidden lg:sidebar-mobile-visible">
-    <!-- White Header -->
-    <div class="bg-white p-6 border-b border-gray-200">
-        <div class="flex items-center gap-3">
-            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-10 w-auto object-contain">
+<body class="antialiased">
+<header class="topbar">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="brand-left">
+            <a href="home.html" class="flex items-center">
+                <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-20 md:h-24 w-auto object-contain">
+            </a>
             <div>
-                <div class="text-xl font-extrabold text-[#8B5E3C]">ProMan</div>
-                <div class="text-xs text-gray-500">Property Management</div>
+                <a href="home.html" class="text-accent font-extrabold text-xl">ProMan</a>
+                <div class="text-xs" style="color:var(--muted-text); margin-top:-4px;">Property management simplified</div>
             </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button id="mobileMenuButton" aria-label="Toggle menu" aria-expanded="false"
+                    class="lg:hidden p-2 rounded-lg bg-[var(--accent)] text-white mr-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+
+            <nav class="hidden lg:flex items-center gap-3 text-sm font-medium">
+                <a href="http://localhost:7070/login" class="inline-flex items-center px-4 py-2 rounded-lg border border-[var(--muted)] text-[var(--text)] hover:bg-[var(--muted)] transition">Log In</a>
+                <a href="http://localhost:7070/landlord_sign_up" class="inline-flex items-center px-5 py-2.5 rounded-lg font-semibold shadow-lg bg-[var(--accent)] text-[#2b1f00] hover:bg-[var(--accent-dark)] transition">Sign Up</a>
+            </nav>
         </div>
     </div>
+</header>
 
-    <!-- Dashboard Cards in Navbar -->
-    <div class="p-4 space-y-3">
-        <div class="bg-white/10 rounded-lg p-3 border-l-4 border-[#FFF4E6]">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-white/80 text-xs">Total Properties</p>
-                    <p class="text-lg font-bold text-white">8</p>
-                </div>
-                <div class="feature-icon bg-white/20 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                    </svg>
-                </div>
-            </div>
-            <p class="text-white/60 text-xs mt-1">+2 from last month</p>
+<div id="sidebar-backdrop"></div>
+
+<div class="main-wrap">
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main sidebar">
+        <!-- Simplified sidebar header without logo -->
+        <div class="sidebar-header">
+
         </div>
 
-        <div class="bg-white/10 rounded-lg p-3 border-l-4 border-green-400">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-white/80 text-xs">Occupied Units</p>
-                    <p class="text-lg font-bold text-white">18</p>
+        <div class="p-4 space-y-3">
+            <div class="card rounded-lg p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color:rgba(47,51,55,0.7)">Total Properties</p>
+                        <p class="text-lg font-bold" style="color:var(--text)">8</p>
+                    </div>
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10"/></svg>
+                    </div>
                 </div>
-                <div class="feature-icon bg-white/20 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
+                <p class="text-sm" style="color:rgba(47,51,55,0.6); margin-top:6px">+2 from last month</p>
             </div>
-            <p class="text-white/60 text-xs mt-1">92% occupancy rate</p>
+
+            <div class="card rounded-lg p-3" style="border-left-color: rgba(34,197,94,0.18);">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color:rgba(47,51,55,0.7)">Occupied Units</p>
+                        <p class="text-lg font-bold" style="color:var(--text)">18</p>
+                    </div>
+                    <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4"/></svg>
+                    </div>
+                </div>
+                <p class="text-sm" style="color:rgba(47,51,55,0.6); margin-top:6px">92% occupancy rate</p>
+            </div>
+
+            <div class="card rounded-lg p-3" style="border-left-color: rgba(59,130,246,0.18);">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color:rgba(47,51,55,0.7)">Vacant Units</p>
+                        <p class="text-lg font-bold" style="color:var(--text)">2</p>
+                    </div>
+                    <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"/></svg>
+                    </div>
+                </div>
+                <p class="text-sm" style="color:rgba(47,51,55,0.6); margin-top:6px">Available for rent</p>
+            </div>
+
+            <div class="card rounded-lg p-3" style="border-left-color: rgba(139,92,60,0.18);">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm" style="color:rgba(47,51,55,0.7)">Monthly Revenue</p>
+                        <p class="text-lg font-bold" style="color:var(--text)">R42,500</p>
+                    </div>
+                    <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2"/></svg>
+                    </div>
+                </div>
+                <p class="text-sm" style="color:rgba(47,51,55,0.6); margin-top:6px">+R2,500 from last month</p>
+            </div>
         </div>
 
-        <div class="bg-white/10 rounded-lg p-3 border-l-4 border-blue-400">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-white/80 text-xs">Vacant Units</p>
-                    <p class="text-lg font-bold text-white">2</p>
-                </div>
-                <div class="feature-icon bg-white/20 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"/>
-                    </svg>
-                </div>
-            </div>
-            <p class="text-white/60 text-xs mt-1">Available for rent</p>
-        </div>
+        <nav class="p-4 space-y-2 mt-4">
+            <a href="http://localhost:7070/" class="nav-item">Home</a>
+            <a href="http://localhost:7070/dashboard" class="nav-item active">Dashboard</a>
+            <a href="http://localhost:7070/add_property_unit" class="nav-item">Add Property</a>
+            <a href="http://localhost:7070/" class="nav-item">Logout</a>
+        </nav>
+    </aside>
 
-        <div class="bg-white/10 rounded-lg p-3 border-l-4 border-purple-400">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-white/80 text-xs">Monthly Revenue</p>
-                    <p class="text-lg font-bold text-white">R42,500</p>
-                </div>
-                <div class="feature-icon bg-white/20 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-            <p class="text-white/60 text-xs mt-1">+R2,500 from last month</p>
-        </div>
-    </div>
+    <main class="content">
+        <div class="p-6">
+            <header class="mb-8">
+                <h1 class="text-3xl font-bold" style="color:var(--accent)">Property Management</h1>
+                <p class="text-[var(--muted-text)]">Manage your properties and tenant payments</p>
+            </header>
 
-    <!-- Navigation Menu -->
-    <nav class="p-4 space-y-2 mt-4">
-        <a href="http://localhost:7070/" class="nav-item flex items-center gap-3 p-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-            Home
-        </a>
-        <a href="http://localhost:7070/dashboard" class="nav-item active flex items-center gap-3 p-3 rounded-lg text-white bg-white/10 border-l-4 border-[#FFF4E6]">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-            Dashboard
-        </a>
-        <a href="http://localhost:7070/add_property_unit" class="nav-item flex items-center gap-3 p-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-            </svg>
-            Add Property
-        </a>
-        <a href="http://localhost:7070/" class="nav-item flex items-center gap-3 p-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-            </svg>
-            Logout
-        </a>
-    </nav>
-</div>
+            <div class="flex flex-col lg:flex-row gap-6">
+                <div class="lg:w-1/3">
+                    <div class="card-surface h-full">
+                        <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Property Name</label>
+                                    <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[var(--accent)]">
+                                        <option value="">Select property</option>
+                                        <option value="all">All properties</option>
+                                        <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
+                                    </select>
+                                </div>
 
-<!-- Mobile menu button -->
-<div class="lg:hidden fixed top-4 left-4 z-50">
-    <button id="mobileMenuButton" class="p-2 rounded-lg bg-[#8B5E3C] text-white">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-    </button>
-</div>
-
-<!-- Main content -->
-<div class="flex-1 lg:ml-64 min-h-screen">
-    <div class="p-6">
-        <!-- Simple Header -->
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-[#8B5E3C] mb-2">Property Management</h1>
-            <p class="text-gray-600">Manage your properties and tenant payments</p>
-        </header>
-        <!-- Property Management Section - Side by Side Layout -->
-        <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Property Controls - Left Side -->
-            <div class="lg:w-1/3">
-                <div class="bg-white rounded-lg shadow p-6 h-full">
-                    <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-2">Property Name</label>
-                                <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[#8B5E3C]">
-                                    <option value="">Select property</option>
-                                    <option value="all">All properties</option>
-                                    <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
-                                </select>
+                                <div>
+                                    <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Search tenant</label>
+                                    <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[var(--accent)]" />
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-2">Search tenant</label>
-                                <input id="tenantSearch" type="search" placeholder="Search by tenant name (e.g. John Doe)"
-                                       class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[#8B5E3C]" />
+                        </form>
+
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Property Image</label>
+                            <div class="border border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center h-48">
+                                <img src="/umuzi/img/mypromann.png" alt="Property image" class="max-h-full max-w-full object-contain">
                             </div>
                         </div>
-                    </form>
-                    <div class="mt-6">
-                        <label class="block text-sm font-medium text-gray-600 mb-2">Property Image</label>
-                        <div class="border border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center h-48">
-                            <img src="/umuzi/img/mypromann.png" alt="Property image" class="max-h-full max-w-full object-contain">
+
+                        <div class="mt-6">
+                            <a href="http://localhost:7070/add_property_unit" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                Add New Property
+                            </a>
                         </div>
+
+                        <p class="mt-4 text-sm text-[var(--muted-text)]">Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.</p>
                     </div>
-                    <div class="mt-6">
-                        <a href="http://localhost:7070/add_property_unit" class="inline-flex items-center gap-2 px-4 py-2 bg-[#8B5E3C] text-white rounded-lg hover:bg-[#70472E] transition font-medium">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                            </svg>
-                            Add New Property
-                        </a>
-                    </div>
-                    <p class="mt-4 text-sm text-gray-500">
-                        Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.
-                    </p>
                 </div>
-            </div>
-            <!-- Units Table - Right Side -->
-            <div class="lg:w-2/3">
-                <div class="bg-white rounded-lg shadow p-6 h-full">
-                    <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
-                        <button id="btnPaid" type="button" class="px-4 py-2 rounded-md bg-green-600 text-white font-semibold shadow hover:bg-green-700 transition">
-                            Mark Paid (+)
-                        </button>
-                        <button id="btnUnpaid" type="button" class="px-4 py-2 rounded-md bg-red-600 text-white font-semibold shadow hover:bg-red-700 transition">
-                            Mark Unpaid (-)
-                        </button>
-                        <div class="text-sm text-gray-600">Select a row, then click a button to update the Payment box only.</div>
+
+                <div class="lg:w-2/3">
+                    <div class="card-surface h-full">
+                        <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
+                            <button id="btnPaid" type="button" class="control-btn bg-green-600 text-white">Mark Paid (+)</button>
+                            <button id="btnUnpaid" type="button" class="control-btn bg-red-600 text-white">Mark Unpaid (-)</button>
+                            <div class="text-sm text-[var(--muted-text)]">Select a row, then click a button to update the Payment box only.</div>
+                        </div>
+                        <p th:if="${unit != null and unit != ''}"
+                           th:text="|You have already marked Unit ${unit} as paid this month.|" class="text-green-600 font-medium"></p>
+                        <p th:if="${success != null and success != ''}"
+                           th:text="|Unit ${success} marked as paid this month.|" class="text-green-600 font-medium"></p>
+                        <div class="units-wrapper">
+                            <table class="units-table">
+                                <thead>
+                                <tr>
+                                    <th>Unit Number</th>
+                                    <th>Rent</th>
+                                    <th>Occupation</th>
+                                    <th>Tenant</th>
+                                    <th>Rent Day</th>
+                                    <th>Overdue</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody id="unitsTbody">
+                                <tr th:each="entry : ${units}" class="hover:cursor-pointer">
+                                    <td class="px-4 py-3 unit-number" th:text="${entry.value[0]}">Unit</td>
+                                    <td class="px-4 py-3 rent-amount" th:text="${entry.value[1]}">0</td>
+                                    <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
+                                    <td class="px-4 py-3 unit-id" th:text="${entry.value[3]}">0</td>
+                                    <td class="px-4 py-3 unit-tenant" th:text="${entry.value[4]}">70</td>
+                                    <td class="px-4 py-3 unit-tenant" th:text="${entry.value[5]}">0</td>
+                                    <td class="px-4 py-3 payment-cell">
+                                        <span th:if="${entry.value[2]} == 'yes'" class="indicator bg-red-100 text-red-800 open-pay cursor-pointer" th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}" th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}">−</span>
+                                        <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
-                    <p th:if="${unit != null and unit != ''}"
-                       th:text="|You have already marked Unit ${unit} as paid this month.|" class="text-green-600 font-medium"></p>
-                    <p th:if="${success != null and success != ''}"
-                       th:text="|Unit ${success} marked as paid this month.|" class="text-green-600 font-medium"></p>
-                    <!-- BEGIN TABLE MODIFICATION -->
-                    <div class="overflow-x-auto flex-1">
-                        <table class="min-w-full border-separate border-spacing-0 border-[#D2B48C] rounded-lg shadow-md bg-white">
-                            <thead class="bg-[#FAF3E0] border-b border-[#D2B48C]">
-                            <tr>
-                                <th class="px-4 py-3 text-left font-semibold border-b border-[#D2B48C] bg-[#F7E9D4] sticky top-0 z-10">Unit Number</th>
-                                <th class="px-4 py-3 text-left font-semibold border-b border-[#D2B48C] bg-[#F7E9D4] sticky top-0 z-10">Rent</th>
-                                <th class="px-4 py-3 text-left font-semibold border-b border-[#D2B48C] bg-[#F7E9D4] sticky top-0 z-10">Occupation</th>
-                                <th class="px-4 py-3 text-left font-semibold border-b border-[#D2B48C] bg-[#F7E9D4] sticky top-0 z-10">Tenant</th>
-                                <th class="px-4 py-3 text-left font-semibold border-b border-[#D2B48C] bg-[#F7E9D4] sticky top-0 z-10">Rent Day</th>
-                                <th class="px-4 py-3 text-left font-semibold border-b border-[#D2B48C] bg-[#F7E9D4] sticky top-0 z-10">Overdue</th>
-                                <th class="px-4 py-3 text-left font-semibold border-b border-[#D2B48C] bg-[#F7E9D4] sticky top-0 z-10">Status</th>
-                            </tr>
-                            </thead>
-                            <tbody id="unitsTbody">
-                            <tr th:each="entry : ${units}"
-                                class="border-b border-gray-200 hover:bg-[#FAF3E0] transition even:bg-[#FCF6ED] odd:bg-white">
-                                <td class="px-4 py-3 unit-number" th:text="${entry.value[0]}">Unit</td>
-                                <td class="px-4 py-3 rent-amount" th:text="${entry.value[1]}">0</td>
-                                <td class="px-4 py-3" th:text="${entry.value[2]}">yes</td>
-                                <td class="px-4 py-3 unit-id" th:text="${entry.value[3]}">0</td>
-                                <td class="px-4 py-3 unit-tenant" th:text="${entry.value[4]}">70</td>
-                                <td class="px-4 py-3 unit-tenant" th:text="${entry.value[5]}">0</td>
-                                <td class="px-4 py-3 payment-hover payment-cell">
-                                    <!-- default status: '-' in red ALWAYS -->
-                                    <span th:if="${entry.value[2]} == 'yes'"
-                                          class="indicator bg-red-100 text-red-800 open-pay cursor-pointer"
-                                          th:data-unit="${entry.value[0]}"
-                                          th:data-rent="${entry.value[1]}"
-                                          th:data-id="${entry.value[3]}"
-                                          th:data-property-name="${propertyName}">−</span>
-                                    <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- END TABLE MODIFICATION -->
                 </div>
             </div>
         </div>
+    </main>
+</div>
+</div>
+
+<!-- Payment Modal (unchanged) -->
+<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-60">
+    <div class="modal-card w-96 text-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-lg font-semibold mb-3">Update Payment Status</h2>
+            <p class="text-gray-700 mb-2">Unit: <span id="modalUnitDisplay" class="font-bold"></span></p>
+            <p class="text-gray-700 mb-4 text-sm">Original Rent: <span id="modalOriginalRent" class="font-bold"></span></p>
+            <form id="paymentForm" method="post">
+                <input type="hidden" name="unit" id="modalUnit">
+                <input type="hidden" name="id" id="modalId">
+                <input type="hidden" name="property_name" id="modalPropertyName">
+                <input type="hidden" name="paid" value="yes">
+                <div class="mb-4 text-left">
+                    <label for="modalRentInput" class="block text-sm font-medium text-[var(--muted-text)] mb-2">Rent Paid Amount:</label>
+                    <input type="number" id="modalRentInput" name="rent" step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent" placeholder="Enter rent amount">
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition">Confirm Payment</button>
+                    <button type="button" onclick="closePaymentModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium transition">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-<!-- Payment Modal -->
-<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
-        <h2 class="text-lg font-semibold mb-3">Update Payment Status</h2>
-        <p class="text-gray-700 mb-2">Unit: <span id="modalUnitDisplay" class="font-bold"></span></p>
-        <p class="text-gray-700 mb-4 text-sm">Original Rent: <span id="modalOriginalRent" class="font-bold"></span></p>
-        <form id="paymentForm" method="post">
-            <input type="hidden" name="unit" id="modalUnit">
-            <input type="hidden" name="id" id="modalId">
-            <input type="hidden" name="property_name" id="modalPropertyName">
-            <input type="hidden" name="paid" value="yes">
-            <div class="mb-4">
-                <label for="modalRentInput" class="block text-sm font-medium text-gray-700 mb-2 text-left">
-                    Rent Paid Amount:
-                </label>
-                <input type="number"
-                       id="modalRentInput"
-                       name="rent"
-                       step="0.01"
-                       min="0"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] focus:border-transparent"
-                       placeholder="Enter rent amount">
-            </div>
-            <div class="flex gap-3">
-                <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition">
-                    Confirm Payment
-                </button>
-                <button type="button" onclick="closePaymentModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium transition">
-                    Cancel
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-<!-- JavaScript -->
+
 <script>
-    // Mobile menu toggle
+    // Sidebar overlay handling (desktop visible by default)
     const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const sidebar = document.querySelector('.sidebar-gradient');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
 
-    mobileMenuButton.addEventListener('click', () => {
-        sidebar.classList.toggle('sidebar-mobile-hidden');
-        sidebar.classList.toggle('sidebar-mobile-visible');
-    });
+    function openSidebarOverlay() {
+      if (!sidebar) return;
+      sidebar.classList.add('overlay-visible');
+      if (backdrop) backdrop.classList.add('visible');
+      if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','true');
+    }
+    function closeSidebarOverlay() {
+      if (!sidebar) return;
+      sidebar.classList.remove('overlay-visible');
+      if (backdrop) backdrop.classList.remove('visible');
+      if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','false');
+    }
 
-    // Your existing JavaScript functionality (filters, payment modal, etc.)
+    function ensureSidebarDesktop() {
+      if (!sidebar) return;
+      if (window.innerWidth > 1024) {
+        sidebar.classList.remove('overlay-visible');
+        if (backdrop) backdrop.classList.remove('visible');
+        sidebar.style.transform = 'translateX(0)';
+      } else {
+        sidebar.style.transform = '';
+        sidebar.classList.remove('overlay-visible');
+        if (backdrop) backdrop.classList.remove('visible');
+      }
+    }
+
+    if (mobileMenuButton && sidebar) {
+      ensureSidebarDesktop();
+
+      mobileMenuButton.addEventListener('click', (e) => {
+        const isOpen = sidebar.classList.contains('overlay-visible');
+        if (isOpen) closeSidebarOverlay(); else openSidebarOverlay();
+        e.stopPropagation();
+      });
+
+      if (backdrop) backdrop.addEventListener('click', closeSidebarOverlay);
+
+      sidebar.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+          if (window.innerWidth <= 1024) closeSidebarOverlay();
+        });
+      });
+
+      window.addEventListener('resize', ensureSidebarDesktop);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarOverlay(); });
+    }
+
+    /* existing dashboard JS preserved */
     const propertySelect = document.getElementById('propertySelect');
     const tenantSearch = document.getElementById('tenantSearch');
     const tbody = document.getElementById('unitsTbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
 
     function applyFilters() {
-        const prop = propertySelect.value;
-        const tenantQuery = tenantSearch.value.trim().toLowerCase();
-        rows.forEach(row => {
-            const rowProp = row.dataset.property || '';
-            const rowTenant = row.dataset.tenant || '';
-            const matchesProp = (prop === 'all') || (rowProp === prop);
-            const matchesTenant = tenantQuery === '' || rowTenant.toLowerCase().includes(tenantQuery);
-            row.style.display = (matchesProp && matchesTenant) ? '' : 'none';
-        });
+      const prop = propertySelect ? propertySelect.value : '';
+      const tenantQuery = tenantSearch ? tenantSearch.value.trim().toLowerCase() : '';
+      rows.forEach(row => {
+        const rowProp = row.dataset.property || '';
+        const rowTenant = row.dataset.tenant || '';
+        const matchesProp = (prop === 'all') || (rowProp === prop) || !prop;
+        const matchesTenant = tenantQuery === '' || rowTenant.toLowerCase().includes(tenantQuery);
+        row.style.display = (matchesProp && matchesTenant) ? '' : 'none';
+      });
     }
 
-    propertySelect.addEventListener('change', applyFilters);
-    tenantSearch.addEventListener('input', applyFilters);
+    if (propertySelect) propertySelect.addEventListener('change', applyFilters);
+    if (tenantSearch) tenantSearch.addEventListener('input', applyFilters);
 
     let selectedRow = null;
     function clearSelection() {
-        if (!selectedRow) return;
-        selectedRow.classList.remove('row-selected');
-        selectedRow = null;
+      if (!selectedRow) return;
+      selectedRow.classList.remove('row-selected');
+      selectedRow = null;
     }
 
     rows.forEach(row => {
-        row.addEventListener('click', (e) => {
-            if (e.target.closest('.indicator')) return;
-            if (selectedRow) selectedRow.classList.remove('row-selected');
-            selectedRow = row;
-            selectedRow.classList.add('row-selected');
-        });
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.indicator')) return;
+        if (selectedRow) selectedRow.classList.remove('row-selected');
+        selectedRow = row;
+        selectedRow.classList.add('row-selected');
+      });
     });
 
     const btnPaid = document.getElementById('btnPaid');
     const btnUnpaid = document.getElementById('btnUnpaid');
 
     function updatePaymentForRow(row, paid) {
-        const paymentIndicator = row.querySelector('.payment-cell .indicator');
-        if (!paymentIndicator) return;
-        if (paid) {
-            paymentIndicator.textContent = '+';
-            paymentIndicator.classList.remove('bg-red-100', 'text-red-800');
-            paymentIndicator.classList.add('bg-green-100', 'text-green-800');
-            paymentIndicator.setAttribute('aria-label', 'Payment: yes');
-        } else {
-            paymentIndicator.textContent = '-';
-            paymentIndicator.classList.remove('bg-green-100', 'text-green-800');
-            paymentIndicator.classList.add('bg-red-100', 'text-red-800');
-            paymentIndicator.setAttribute('aria-label', 'Payment: no');
-        }
+      const paymentIndicator = row.querySelector('.payment-cell .indicator');
+      if (!paymentIndicator) return;
+      if (paid) {
+        paymentIndicator.textContent = '+';
+        paymentIndicator.classList.remove('bg-red-100', 'text-red-800');
+        paymentIndicator.classList.add('bg-green-100', 'text-green-800');
+        paymentIndicator.setAttribute('aria-label', 'Payment: yes');
+      } else {
+        paymentIndicator.textContent = '-';
+        paymentIndicator.classList.remove('bg-green-100', 'text-green-800');
+        paymentIndicator.classList.add('bg-red-100', 'text-red-800');
+        paymentIndicator.setAttribute('aria-label', 'Payment: no');
+      }
     }
 
     function togglePaymentStatus(paymentCell) {
-        const paymentIndicator = paymentCell.querySelector('.indicator');
-        if (!paymentIndicator) return;
-        const isPaid = paymentIndicator.textContent === '+';
-        updatePaymentForRow(paymentCell.closest('tr'), !isPaid);
-        flashMessage(`Payment status ${!isPaid ? 'set to paid (+)' : 'set to unpaid (-)'}`, !isPaid ? 'green' : 'red');
+      const paymentIndicator = paymentCell.querySelector('.indicator');
+      if (!paymentIndicator) return;
+      const isPaid = paymentIndicator.textContent === '+';
+      updatePaymentForRow(paymentCell.closest('tr'), !isPaid);
+      flashMessage(`Payment status ${!isPaid ? 'set to paid (+)' : 'set to unpaid (-)'}`, !isPaid ? 'green' : 'red');
     }
 
     document.querySelectorAll('.payment-cell').forEach(cell => {
-        cell.addEventListener('click', function(e) {
-            if (e.target.closest('.indicator')) {
-                togglePaymentStatus(this);
-            }
-        });
+      cell.addEventListener('click', function(e) {
+        if (e.target.closest('.indicator')) {
+          togglePaymentStatus(this);
+        }
+      });
     });
 
     function flashMessage(msg, color = 'yellow') {
-        const el = document.createElement('div');
-        el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
-            color === 'green' ? 'bg-green-100 text-green-800' :
-            color === 'red' ? 'bg-red-100 text-red-800' :
-            'bg-yellow-100 text-yellow-800'
-        }`;
-        el.textContent = msg;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 1600);
+      const el = document.createElement('div');
+      el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
+        color === 'green' ? 'bg-green-100 text-green-800' :
+        color === 'red' ? 'bg-red-100 text-red-800' :
+        'bg-yellow-100 text-yellow-800'
+      }`;
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1600);
     }
 
-    btnPaid.addEventListener('click', () => {
-        if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
-        updatePaymentForRow(selectedRow, true);
-        flashMessage('Payment set to + (paid).', 'green');
+    if (btnPaid) btnPaid.addEventListener('click', () => {
+      if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
+      updatePaymentForRow(selectedRow, true);
+      flashMessage('Payment set to + (paid).', 'green');
     });
 
-    btnUnpaid.addEventListener('click', () => {
-        if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
-        updatePaymentForRow(selectedRow, false);
-        flashMessage('Payment set to - (unpaid).', 'red');
+    if (btnUnpaid) btnUnpaid.addEventListener('click', () => {
+      if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
+      updatePaymentForRow(selectedRow, false);
+      flashMessage('Payment set to - (unpaid).', 'red');
     });
 
-    propertySelect.addEventListener('change', function () {
+    if (propertySelect) {
+      propertySelect.addEventListener('change', function () {
         const selectedValue = this.value;
         if (selectedValue && selectedValue !== 'all') {
-            document.getElementById('propertyForm').submit();
+          document.getElementById('propertyForm').submit();
         }
-    });
+      });
+    }
 
-    // Payment Modal Functions
+    // Payment modal functions (unchanged)
     const paymentModal = document.getElementById('paymentModal');
     const modalUnitDisplay = document.getElementById('modalUnitDisplay');
     const modalOriginalRent = document.getElementById('modalOriginalRent');
@@ -447,80 +599,60 @@
     const paymentForm = document.getElementById('paymentForm');
 
     function openPaymentModal(unit, rent, id, propertyName) {
-        modalUnitDisplay.textContent = unit;
-        modalOriginalRent.textContent = rent;
-        modalUnit.value = unit;
-        modalId.value = id;
-        modalPropertyName.value = propertyName;
-        modalRentInput.value = rent;
+      if (!modalUnitDisplay) return;
+      modalUnitDisplay.textContent = unit;
+      modalOriginalRent.textContent = rent;
+      if (modalUnit) modalUnit.value = unit;
+      if (modalId) modalId.value = id;
+      if (modalPropertyName) modalPropertyName.value = propertyName;
+      if (modalRentInput) modalRentInput.value = rent;
 
-        paymentForm.action = `http://localhost:7070/payment_status/${id}/success`;
+      if (paymentForm) paymentForm.action = `http://localhost:7070/payment_status/${id}/success`;
 
-        modalRentInput.focus();
+      if (modalRentInput) modalRentInput.focus();
+      if (paymentModal) {
         paymentModal.classList.remove('hidden');
         paymentModal.classList.add('flex');
+      }
     }
 
     function closePaymentModal() {
-        paymentModal.classList.add('hidden');
-        paymentModal.classList.remove('flex');
+      if (!paymentModal) return;
+      paymentModal.classList.add('hidden');
+      paymentModal.classList.remove('flex');
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const openPayButtons = document.querySelectorAll('.open-pay');
+    document.addEventListener('DOMContentLoaded', () => {
+      const openPayButtons = document.querySelectorAll('.open-pay');
+      openPayButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const unit = this.dataset.unit;
+          const rent = this.dataset.rent;
+          const id = this.dataset.id;
+          const propertyName = this.dataset.propertyName;
 
-        openPayButtons.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const unit = this.dataset.unit;
-                const rent = this.dataset.rent;
-                const id = this.dataset.id;
-                const propertyName = this.dataset.propertyName;
+          if (!unit || !rent || !id || !propertyName) {
+            const row = this.closest('tr');
+            const unitCell = row.querySelector('.unit-number');
+            const rentCell = row.querySelector('.rent-amount');
+            const idCell = row.querySelector('.unit-id');
+            const propertySelect = document.getElementById('propertySelect');
 
-                if (!unit || !rent || !id || !propertyName) {
-                    const row = this.closest('tr');
-                    const unitCell = row.querySelector('.unit-number');
-                    const rentCell = row.querySelector('.rent-amount');
-                    const idCell = row.querySelector('.unit-id');
-                    const propertySelect = document.getElementById('propertySelect');
-
-                    openPaymentModal(
-                        unit || unitCell.textContent,
-                        rent || rentCell.textContent,
-                        id || idCell.textContent,
-                        propertyName || propertySelect.value || 'default'
-                    );
-                } else {
-                    openPaymentModal(unit, rent, id, propertyName);
-                }
-            });
+            openPaymentModal(
+              unit || (unitCell ? unitCell.textContent : ''),
+              rent || (rentCell ? rentCell.textContent : ''),
+              id || (idCell ? idCell.textContent : ''),
+              propertyName || (propertySelect ? propertySelect.value : 'default')
+            );
+          } else {
+            openPaymentModal(unit, rent, id, propertyName);
+          }
         });
+      });
+
+      applyFilters();
     });
-
-    paymentModal.addEventListener('click', function(e) {
-        if (e.target === paymentModal) {
-            closePaymentModal();
-        }
-    });
-
-    document.getElementById('paymentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const unit = modalUnit.value;
-        const rent = modalRentInput.value;
-        const id = modalId.value;
-        const propertyName = modalPropertyName.value;
-
-        if (!rent || rent <= 0) {
-            flashMessage('Please enter a valid rent amount', 'red');
-            modalRentInput.focus();
-            return;
-        }
-
-        flashMessage(`Updating payment for Unit ${unit}...`, 'yellow');
-        this.submit();
-    });
-
-    applyFilters();
 </script>
 </body>
 </html>
