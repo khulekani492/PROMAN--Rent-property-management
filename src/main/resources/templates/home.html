@@ -182,31 +182,25 @@
 </section>
 
 <footer class="py-12 bg-white border-t">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-        <div class="mb-8">
-            <a href="home.html" class="text-2xl font-extrabold text-[#8B5E3C]">ProMan</a>
-            <p class="text-sm text-gray-500 mt-2">Make property management simple and reliable.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div class="flex flex-col">
-                <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm tracking-wider">For Landlords</h4>
-                <a href="http://localhost:7070/ayi" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Sign up to manage</a>
-                <a href="signup.html" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Landlord Log in</a>
-                <a href="dashboard.html" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Dashboard overview</a>
-            </div>
-            <div class="flex flex-col">
-                <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm tracking-wider">For Tenants</h4>
-                <a href="#property-search" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1 font-semibold">Find a Property</a>
-                <a href="#" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Maintenance Requests</a>
-            </div>
-            <div class="flex flex-col">
-                <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm tracking-wider">Contact</h4>
-                <a href="mailto:ProMan@gmail.com" class="text-sm text-[#8B5E3C] hover:underline mt-1 font-medium">ProMan@gmail.com</a>
-                <a href="#" class="text-sm text-gray-600 hover:text-[#8B5E3C] mt-1">Help Center</a>
+    <div class="flex flex-col items-center text-center space-y-8 mb-8">
+        <!-- For Landlords Section -->
+        <div class="flex flex-col items-center">
+            <h4 class="font-bold text-gray-800 mb-4 uppercase text-sm tracking-wider">For Landlords</h4>
+            <div class="space-y-2">
+                <a href="http://localhost:7070/ayi" class="block text-sm text-gray-600 hover:text-[#8B5E3C] transition-colors duration-200">Sign up to manage property</a>
             </div>
         </div>
-        <p class="text-xs text-gray-400">© ProMan — Property Management</p>
+
+        <!-- Contact Section -->
+        <div class="flex flex-col items-center">
+            <h4 class="font-bold text-gray-800 mb-4 uppercase text-sm tracking-wider">Contact</h4>
+            <div class="space-y-2">
+                <a href="mailto:ProMan@gmail.com" class="block text-sm text-[#8B5E3C] hover:underline font-medium transition-colors duration-200">ProMan@gmail.com</a>
+                <a href="#" class="block text-sm text-gray-600 hover:text-[#8B5E3C] transition-colors duration-200">Help Center</a>
+            </div>
+        </div>
     </div>
+    <p class="text-xs text-gray-400 text-center">© ProMan — Property Management</p>
 </footer>
 
 </body>
