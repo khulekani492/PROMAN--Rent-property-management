@@ -709,7 +709,9 @@
       if (modalPropertyName) modalPropertyName.value = propertyName;
       if (modalRentInput) modalRentInput.value = rent;
 
-      if (paymentForm) paymentForm.action = `http://localhost:7070/payment_status/${id}/success`;
+      if (paymentForm) paymentForm.action = `http://localhost:7070/payment_status/${id}/${unit}`;
+
+
 
       if (modalRentInput) modalRentInput.focus();
       if (paymentModal) {

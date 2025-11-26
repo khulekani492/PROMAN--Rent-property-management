@@ -6,117 +6,89 @@
     <title>ProMan — Add Unit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Supabase setup
-        const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function getUserSession() {
-          const { data: { session }, error } = await supabase.auth.getSession();
-          if (error) {
-            console.error('Error getting session:', error.message);
-          } else if (session) {
-            console.log('Logged-in user:', session.user);
-          } else {
-            console.log('No user is logged in.');
-          }
-        }
-        getUserSession();
-    </script>
 
     <style>
         :root{
-            --brand: #8B5E3C;
-            --brand-dark: #70472E;
-            --accent: #D9CBB8;
-            --card-bg: #FAF3E0;
-            --pill-bg: #FFF8E7;
+            /* Smoke white theme variables */
+            --bg: #f5f6f7;         /* overall smoke-white page background */
+            --surface: #ffffff;    /* card / surface white */
+            --muted: #eef0f2;      /* slightly darker smoke for surfaces */
+            --text: #2f3337;       /* primary text (soft charcoal) */
+            --muted-text: #6b7378; /* secondary text */
+            --accent: #D4AF37;     /* warm gold accent (complements logo) */
+            --accent-dark: #b8892a;/* darker accent for hover */
+            --glass: rgba(255,255,255,0.6);
             --error: #dc2626;
             --error-light: #fef2f2;
         }
 
         body {
+            background: var(--bg);
+            color: var(--text);
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background-color: #fafaf9;
-            color: #1f2937;
             margin: 0;
             min-height: 100vh;
         }
 
-        /* Header */
-        .site-header {
-            background: #ffffff;
-            box-shadow: 0 2px 6px rgba(16,24,40,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 30;
-        }
-        .site-header .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .logo-img {
-            height: 60px;
-            width: auto;
-            display: block;
-        }
-        .nav-links a {
-            margin-left: 14px;
-            color: #6b7280;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover {
-            color: var(--brand);
+        .text-accent { color: var(--accent) !important; }
+        .bg-accent { background-color: var(--accent) !important; }
+        .bg-accent-dark { background-color: var(--accent-dark) !important; }
+        .bg-surface { background-color: var(--surface) !important; }
+        .bg-muted { background-color: var(--muted) !important; }
+        .text-muted { color: var(--muted-text) !important; }
+
+        .hero-surface {
+            background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.9));
+            box-shadow: 0 6px 20px rgba(31,41,55,0.06);
         }
 
-        /* Progress / Stepper */
-        .progress-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 9999px;
-            display: inline-block;
+        .card-highlight { border-top-width: 4px; border-top-style: solid; border-color: rgba(212,175,55,0.26); }
+
+        .progress-dot { width: 12px; height: 12px; border-radius: 9999px; display: inline-block; }
+        .input-focus:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+            border-color: var(--accent);
         }
-        .progress-sep {
-            width: 56px;
-            height: 3px;
+
+        .login-btn{
+            color: var(--text);
+            border-color: var(--muted);
+            background: var(--surface);
+        }
+        .login-btn:hover{
+            background: var(--muted);
+        }
+        .signup-btn{
             background: var(--accent);
-            border-radius: 3px;
+            color: #2b1f00; /* readable on gold */
+        }
+        .signup-btn:hover{
+            background: var(--accent-dark);
+            color: white;
         }
 
         /* Form Card */
         .form-card {
-            background: var(--card-bg);
+            background: var(--surface);
             padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-            border: 1px solid var(--accent);
+            border: 1px solid var(--muted);
         }
         input, select, .themed-input {
-            background: var(--pill-bg) !important;
-            border: 1px solid var(--accent);
+            background: var(--surface) !important;
+            border: 1px solid var(--muted);
             padding: 10px 12px;
             border-radius: 8px;
             font-size: 14px;
             width: 100%;
         }
-        .input-focus:focus {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(139,94,60,0.08);
-            border-color: var(--brand);
-        }
 
         /* Form details */
         label {
             font-weight: 600;
-            color: var(--brand-dark);
+            color: var(--text);
             display: block;
             margin-bottom: 6px;
         }
@@ -131,7 +103,7 @@
         }
         .occupation-option {
             flex: 1;
-            border: 1px solid var(--accent);
+            border: 1px solid var(--muted);
             border-radius: 8px;
             padding: 12px;
             text-align: center;
@@ -139,11 +111,11 @@
             transition: all 0.2s;
         }
         .occupation-option:hover {
-            border-color: var(--brand);
+            border-color: var(--accent);
         }
         .occupation-option.selected {
-            border-color: var(--brand);
-            background-color: rgba(139,94,60,0.05);
+            border-color: var(--accent);
+            background-color: rgba(212,175,55,0.05);
         }
         .btn-secondary {
             background: #f5f5f5;
@@ -153,8 +125,8 @@
             background: #e5e5e5;
         }
         button {
-            background: var(--brand);
-            color: #fff;
+            background: var(--accent);
+            color: #2b1f00;
             font-weight: 700;
             border: none;
             padding: 12px;
@@ -163,7 +135,8 @@
             transition: background 0.2s, transform 0.2s;
         }
         button:hover {
-            background: var(--brand-dark);
+            background: var(--accent-dark);
+            color: white;
             transform: scale(1.005);
         }
 
@@ -195,158 +168,210 @@
                 flex-direction: column;
             }
         }
+
+        /* Welcome card styling */
+        .welcome-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            border: 1px solid var(--muted);
+            width: 100%;
+        }
+
+        /* Mobile-first layout */
+        @media (max-width: 1023px) {
+            .main-content {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+                align-items: start;
+            }
+        }
     </style>
 </head>
 <body>
 
-<header class="site-header" role="banner">
-    <div class="container">
-        <a href="home.html" aria-label="ProMan Home" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
-            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="logo-img">
-            <div style="line-height:1;">
-                <div style="color:var(--brand);font-weight:800;font-size:18px;">ProMan</div>
-                <div style="font-size:12px;color:#6b7280;margin-top:2px;">Property management simplified</div>
+<header class="bg-surface shadow sticky top-0 z-30">
+    <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
+        <div class="flex items-center gap-3">
+            <a href="home.html" class="flex items-center">
+                <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-20 md:h-24 w-auto object-contain">
+            </a>
+            <div>
+                <a href="home.html" class="text-xl font-extrabold text-accent">ProMan</a>
+                <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
-        </a>
+        </div>
 
-        <nav class="nav-links" role="navigation" aria-label="Main navigation">
-            <a href="http://localhost:7070/">Home</a>
-            <a href="http://localhost:7070/dashboard">Dashboard</a>
-            <a href="http://localhost:7070/">Log out</a>
+        <!-- Hamburger for mobile -->
+        <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
+            <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+
+        <!-- Desktop / Mobile Nav -->
+        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
+            <a href="http://localhost:7070/"
+               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                Home
+            </a>
+            <a href="http://localhost:7070/dashboard"
+               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                Dashboard
+            </a>
+            <a href="http://localhost:7070/"
+               class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                Log out
+            </a>
         </nav>
+    </div>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
+        <a href="http://localhost:7070/"
+           class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+            HOME
+        </a>
+        <a href="http://localhost:7070/dashboard"
+           class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+            DASHBOARD
+        </a>
+        <a href="http://localhost:7070/"
+           class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+            LOG OUT
+        </a>
     </div>
 </header>
 
+<script>
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
+
 <!-- Progress / Stepper -->
-<div class="bg-transparent py-6 border-b border-[var(--accent)]">
+<div class="bg-transparent py-6 border-b border-muted">
     <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-3">
         <div class="flex items-center gap-3">
             <div class="flex flex-col items-center text-sm font-semibold">
-                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
-                <span class="mt-2 text-[var(--brand)]">1. Account</span>
+                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
+                <span class="mt-2 text-accent">1. Account</span>
             </div>
-            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
+            <div class="w-12 h-[2px] bg-muted"></div>
             <div class="flex flex-col items-center text-sm font-semibold">
-                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
-                <span class="mt-2 text-[var(--brand)]">2. Add Unit</span>
+                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
+                <span class="mt-2 text-accent">2. Add Unit</span>
             </div>
-            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
-            <div class="flex flex-col items-center text-sm text-gray-600">
-                <span class="progress-dot bg-[var(--accent)]"></span>
+            <div class="w-12 h-[2px] bg-muted"></div>
+            <div class="flex flex-col items-center text-sm text-muted">
+                <span class="progress-dot bg-muted"></span>
                 <span class="mt-2">3. Add Tenant</span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Main Content Grid -->
-<main class="max-w-6xl mx-auto px-6 py-12">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-6 py-8">
+    <div class="main-content">
 
-        <div class="img-card relative rounded-2xl overflow-hidden shadow-xl border-4 border-white order-2 lg:order-1">
-            <img src="/umuzi/img/pexels-thgusstavo-2102587.jpg" alt="Property Background" class="w-full object-cover object-top h-64 md:h-[520px] lg:h-[560px]"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-[rgba(139,94,60,0.5)] to-[rgba(0,0,0,0.08)] pointer-events-none"></div>
-
-            <div class="absolute top-8 left-8 p-4 bg-white/90 rounded-xl shadow-lg border border-[var(--accent)] max-w-[80%]">
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-10 w-auto">
-                    <h2 class="text-2xl font-bold" style="color:var(--brand)">Welcome to ProMan</h2>
-                </div>
-                <p class="text-gray-700 text-sm font-medium mb-2">
-                    <span class="font-semibold text-[var(--brand-dark)]" th:text="'Hello, ' + ${user_name} + '! '">Hello, User! </span>
-                    Start managing your properties in minutes.
-                </p>
-                <div class="text-xs text-gray-600 space-y-1">
-                    <div class="flex items-start gap-1">
-                        <span>🏠</span>
-                        <span>Add property details & unit information</span>
-                    </div>
-                    <div class="flex items-start gap-1">
-                        <span>🔑</span>
-                        <span>Specify if units are occupied or vacant</span>
-                    </div>
-                    <div class="flex items-start gap-1">
-                        <span>👤</span>
-                        <span>Add tenant details for occupied units</span>
-                    </div>
-                    <div class="flex items-start gap-1">
-                        <span>📊</span>
-                        <span>Access dashboard to manage all properties</span>
+        <!-- Welcome Card - Always appears first on mobile, left on desktop -->
+        <div class="welcome-card">
+            <div class="flex items-center gap-3 mb-6">
+                <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-12 w-auto">
+                <h2 class="text-2xl font-bold text-accent">Welcome to ProMan</h2>
+            </div>
+            <p class="text-[var(--text)] text-sm font-medium mb-4">
+                <span class="font-semibold text-accent" th:text="'Hello, ' + ${user_name} + '! '">Hello, User! </span>
+                Start managing your properties in minutes.
+            </p>
+            <div class="text-sm text-muted space-y-3">
+                <div class="flex items-start gap-3">
+                    <span class="text-accent text-lg">🏠</span>
+                    <div>
+                        <h4 class="font-semibold text-[var(--text)]">Add Property Details</h4>
+                        <p class="text-xs">Enter your property information and unit details</p>
                     </div>
                 </div>
-                <div class="text-xs text-[var(--brand-dark)] font-bold mt-2">— ProMan Team</div>
+                <div class="flex items-start gap-3">
+                    <span class="text-accent text-lg">🔑</span>
+                    <div>
+                        <h4 class="font-semibold text-[var(--text)]">Manage Occupancy</h4>
+                        <p class="text-xs">Specify if units are occupied or vacant</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-accent text-lg">👤</span>
+                    <div>
+                        <h4 class="font-semibold text-[var(--text)]">Add Tenant Information</h4>
+                        <p class="text-xs">Provide tenant details for occupied units</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-accent text-lg">📊</span>
+                    <div>
+                        <h4 class="font-semibold text-[var(--text)]">Access Dashboard</h4>
+                        <p class="text-xs">Manage all your properties from one central location</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-muted">
+                <div class="text-xs text-accent font-bold">— ProMan Team</div>
+                <p class="text-xs text-muted mt-1">We're here to help you succeed in property management</p>
             </div>
         </div>
 
-        <div class="form-card order-1 lg:order-2" role="main" aria-labelledby="form-title">
-            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4" style="color:var(--brand)">Property-Unit Information</h2>
-            <p class="text-center text-gray-500 mb-6">Add a new unit to your property</p>
+        <!-- Form Card - Appears second on mobile, right on desktop -->
+        <div class="form-card" role="main" aria-labelledby="form-title">
+            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4 text-accent">Property-Unit Information</h2>
+            <p class="text-center text-muted mb-6">Add a new unit to your property</p>
 
             <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
                 <div class="form-section mb-6">
-                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Unit Details</h3>
+                    <h3 class="text-xl font-bold mb-4 text-accent">Unit Details</h3>
                     <div class="form-row">
                         <div class="form-field">
                             <label for="property_Name">Property Name:</label>
                             <input id="property_Name" name="property_Name" type="text" th:value="${property_name}" required class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">Enter the name of the property</p>
+                            <p class="text-xs text-muted mt-1">Enter the name of the property</p>
                         </div>
                         <div class="form-field">
                             <label for="property_Address">Property Address:</label>
                             <input id="property_Address" name="property_Address" type="text" th:value="${property_address}" required class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">Enter the address of the property</p>
+                            <p class="text-xs text-muted mt-1">Enter the address of the property</p>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="property_unit">Unit Number</label>
+                            <label for="property_unit"> Total Unit Number</label>
                             <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">The unique number identifying this unit</p>
+                            <p class="text-xs text-muted mt-1">The unique number identifying this unit</p>
                             <p th:text="${error}"></p>
-
-                        </div>
-                        <div class="form-field">
-                            <label id="occupation_status">Occupancy Status</label>
-                            <div id="occupationContainer" class="occupation-status flex gap-2 mt-1">
-                                <label class="occupation-option" for="occupied" th:classappend="${occupation_status == 'yes' ? 'selected' : ''}">
-                                    <input type="radio" id="occupied" name="occupation" value="yes" required th:checked="${occupation_status == 'yes'}" class="hidden">
-                                    <div>Occupied</div>
-                                </label>
-                                <label class="occupation-option" for="vacant" th:classappend="${occupation_status == 'no' ? 'selected' : ''}">
-                                    <input type="radio" id="vacant" name="occupation" value="no" required th:checked="${occupation_status == 'no'}" class="hidden">
-                                    <div>Vacant</div>
-                                </label>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Specify the unit occupation status</p>
-                            <div id="occupationError" class="error-message">Please select an occupation status</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-section mb-6">
-                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Financial Details</h3>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label for="rent">Monthly Rent</label>
-                            <div class="currency-input">
-                                <input type="number" id="rent" name="rent" step="0.01" min="0" placeholder="0.00" th:value="${property_rent}" required class="themed-input input-focus">
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">The monthly rental amount for this unit</p>
-                        </div>
-                        <div class="form-field">
-                            <label for="deposit">Security Deposit (Optional)</label>
-                            <div class="currency-input">
-                                <input type="number" id="deposit" name="deposit" step="0.01" min="0" placeholder="0.00" th:value="${property_deposit}" class="themed-input input-focus">
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">The amount held as a security deposit.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-actions flex gap-4 justify-center mt-8">
-                    <button type="button" class="btn-secondary px-6" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" class="px-6" aria-label="Save Property">Save Unit</button>
+                <div class="pt-4">
+                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-accent px-4 py-3 text-[var(--text)] text-md font-bold shadow-lg hover:bg-accent-dark transition transform hover:scale-[1.005]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Property Unit
+                    </button>
                 </div>
             </form>
         </div>
@@ -354,56 +379,52 @@
     </div>
 </main>
 
-<footer class="mt-12 py-8 bg-white border-t">
-    <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
-        <div>
-            <a href="home.html" class="text-lg font-extrabold" style="color:var(--brand)">ProMan</a>
-            <p class="mt-2 text-gray-500">Make property management simple and reliable.</p>
+<footer class="py-12 bg-surface">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="flex flex-col items-center text-center space-y-8 mb-8">
+            <div class="flex flex-col items-center">
+                <h4 class="font-bold text-muted mb-4 uppercase text-sm tracking-wider">For Landlords</h4>
+                <div class="space-y-2">
+                    <a href="http://localhost:7070/ayi" class="block text-sm text-muted hover:text-[var(--text)] transition-colors duration-200">Sign up to manage property</a>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <h4 class="font-bold text-[var(--text)] mb-4 uppercase text-sm tracking-wider">Contact</h4>
+                <div class="space-y-2">
+                    <a href="mailto:ProMan@gmail.com" class="block text-sm text-[var(--text)] hover:underline font-medium transition-colors duration-200">ProMan@gmail.com</a>
+                    <a href="#" class="block text-sm text-muted hover:text-[var(--text)] transition-colors duration-200">Help Center</a>
+                </div>
+            </div>
         </div>
-        <div class="flex flex-col">
-            <h4 class="font-semibold text-gray-700 mb-2">Product</h4>
-            <a href="dashboard.html" class="text-sm text-gray-600 hover:underline">Dashboard</a>
-            <a href="signup.html" class="text-sm text-gray-600 hover:underline mt-1">Sign Up</a>
-            <a href="login.html" class="text-sm text-gray-600 hover:underline mt-1">Log in</a>
-        </div>
-        <div class="text-right md:text-left">
-            <div>© ProMan — Property Management</div>
-            <a href="mailto:ProMan@gmail.com" class="text-[var(--brand)] hover:underline">ProMan@gmail.com</a>
-        </div>
+
+        <p class="text-xs text-muted text-center mb-4">© <span id="pro-man-year"></span> ProMan — Property Management</p>
+
+        <script>
+            try {
+              document.getElementById('pro-man-year').textContent = new Date().getFullYear();
+            } catch (e) { /* ignore if no DOM */ }
+        </script>
     </div>
 </footer>
 
 <script>
-    // Occupation option selection
-    document.querySelectorAll('.occupation-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.occupation-option').forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            const radio = this.querySelector('input[type="radio"]');
-            if(radio) radio.checked = true;
-            document.getElementById('occupationContainer').classList.remove('error');
-            document.getElementById('occupationError').classList.remove('show');
-        });
-    });
+    // Supabase setup
+    const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Form validation
-    document.getElementById('unitForm').addEventListener('submit', function(event) {
-        const occupationSelected = document.querySelector('input[name="occupation"]:checked');
-        if (!occupationSelected) {
-            event.preventDefault();
-            document.getElementById('occupationContainer').classList.add('error');
-            document.getElementById('occupationError').classList.add('show');
-            document.getElementById('occupationContainer').scrollIntoView({behavior: 'smooth', block: 'center'});
-        }
-    });
-
-    // Initialize state from Thymeleaf
-    document.addEventListener('DOMContentLoaded', () => {
-        const occupiedInput = document.getElementById('occupied');
-        const vacantInput = document.getElementById('vacant');
-        if (occupiedInput && occupiedInput.checked) occupiedInput.parentElement.classList.add('selected');
-        else if (vacantInput && vacantInput.checked) vacantInput.parentElement.classList.add('selected');
-    });
+    async function getUserSession() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting session:', error.message);
+      } else if (session) {
+        console.log('Logged-in user:', session.user);
+      } else {
+        console.log('No user is logged in.');
+      }
+    }
+    getUserSession();
 </script>
 
 </body>
