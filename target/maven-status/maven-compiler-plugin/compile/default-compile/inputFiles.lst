@@ -11,6 +11,7 @@ C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\datab
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\Invalidhandler\SameUnit.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\schedule\Overdue_tracker.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\API_handlers\Save_unit.java
+C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\database\CRUD\Tenant.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\api_login\Record_rent.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\database\CRUD\tracker\Tenants_rent_day.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\database\CRUD\TenantOverdueTracker.java
@@ -37,6 +38,8 @@ C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\datab
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\Invalidhandler\NoEmail.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\API\state.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\API_handlers\UpdateTenants.java
+C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\api_login\Record_advance_payment.java
+C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\api_login\Type_of_payments.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\API\khuleDevEmailAPI.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\schedule\PersonEmail.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\API_handlers\PropertyUnits.java
@@ -51,11 +54,9 @@ C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\datab
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\database\CRUD\Tenants_rent_day.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\database\CRUD\Get_password.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\database\Database_access.java
-C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\schedule\QuartzTest.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\Invalidhandler\SameEmail.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\Invalidhandler\SameEmialCreator.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\schedule\Reminder.java
-C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\schedule\Sawubona.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\API_handlers\loginAPIhandler.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\API_handlers\AddProperty.java
 C:\Users\Mkhulex\LAST\PROMAN--Rent-property-management\src\main\java\model\database\tenant.java

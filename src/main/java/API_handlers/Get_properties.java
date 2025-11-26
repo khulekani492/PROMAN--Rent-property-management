@@ -1,7 +1,8 @@
 package API_handlers;
 
 import io.javalin.http.Handler;
-import model.database.CRUD.Getunits;
+import model.database.CRUD.Property_Status;
+
 import model.database.CRUD.landlord;
 import model.database.CRUD.propertyNames;
 
@@ -26,8 +27,9 @@ public class Get_properties {
                     String clone_property = context.pathParam("property_name");
                     String clone_email = context.pathParam("user_email");
                      String clone_unit = context.pathParam("unit");
-                    Getunits property_units = new Getunits();
+                    Property_Status property_units = new Property_Status();
                     landlord authenticate = new landlord();
+
 
                      try{
                          authenticate.landlordId(clone_email);
@@ -35,7 +37,7 @@ public class Get_properties {
                          System.out.println("something wrong");
                          throw new RuntimeException(e);
                      }
-                     HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(clone_property,authenticate.landlordId(clone_email));
+                     HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(clone_property,authenticate.landlordId(clone_email));
 
                      if(fetch_all.size() == 0){
                          HashMap<String,String> model = new HashMap<>();
@@ -77,7 +79,7 @@ public class Get_properties {
             context.sessionAttribute("dashBoard_current_email",property_email);
             System.out.println("Useremail : " +  " " + property_email);
 
-            Getunits property_units = new Getunits();
+            Property_Status property_units = new Property_Status();
             landlord authenticate = new landlord();
 
             try{
@@ -86,7 +88,7 @@ public class Get_properties {
                 System.out.println("something wrong");
                 throw new RuntimeException(e);
             }
-            HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name,authenticate.landlordId(property_email));
+            HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name,authenticate.landlordId(property_email));
             System.out.println("RESULTS : " + fetch_all);
 
             if(fetch_all.size() == 0){

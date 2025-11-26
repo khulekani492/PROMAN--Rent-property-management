@@ -13,6 +13,7 @@ Invalidhandler\Duplicate_payment.class
 model\database\counter.class
 api_login\Record_rent.class
 Invalidhandler\SameUnitCreator.class
+model\database\CRUD\Tenant.class
 API_handlers\Dashboard.class
 API_handlers\UpdateTenants.class
 model\database\CRUD\landlord.class
@@ -20,16 +21,15 @@ schedule\Overdue_tracker.class
 Invalidhandler\NoEmailCreator.class
 model\database\Property.class
 model\database\CRUD\GetLandlords.class
-schedule\Sawubona.class
 model\database\CRUD\Getunits.class
 API_handlers\Signup.class
+api_login\Type_of_payments.class
 Invalidhandler\NoEmail.class
 model\database\tenant.class
 model\database\CRUD\Property_Status.class
 API_handlers\loginAPIhandler.class
 Invalidhandler\ErrorHandler.class
 model\database\general.class
-schedule\QuartzTest.class
 API\khuleDevEmailAPI.class
 API_handlers\Get_properties.class
 model\database\Database_access.class
@@ -59,6 +59,7 @@ model\database\ConnectionAccess.class
 model\database\CRUD\propertyNames.class
 API\SecurityUtil.class
 schedule\Reset_status.class
+api_login\Record_advance_payment.class
 model\database\grossIncome.class
 Invalidhandler\SameEmail.class
 model\database\residence.class
