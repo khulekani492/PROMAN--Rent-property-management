@@ -10,7 +10,7 @@ public class Get_date  {
         String regex = "[-]";
 
         if (Objects.equals(date.get(1), "null")){
-            date.set(1,"0");
+            date.set(5,"0");
             return  date;
         };
         ArrayList<String> usuku = new ArrayList<>();
@@ -43,6 +43,8 @@ public class Get_date  {
     static  void main(String[] args){
         Get_date test = new Get_date();
         ArrayList<String> aibo = new ArrayList<>();
+        aibo.add("25");
+        aibo.add("25");
         aibo.add("25");
         aibo.add("2025-11-19");
 
