@@ -52,9 +52,24 @@ public class Property_Status extends ConnectionAccess {
     //Gets property unit of property name for a specific landlord
     public HashMap<Integer,ArrayList<String>> property_tenants(String property_name,Integer landlord){
         ArrayList<String> property_status = new ArrayList<>();
+        Get_date extract_date = new Get_date();
+
         HashMap<Integer,ArrayList<String> > property_tenants = new HashMap<>();
         String propertyinfo = """
-                SELECT property_unit,property_rent,occupation,tenant_user_id FROM properties WHERE property_name = ? AND landlord_user_id= ?""";
+                
+                SELECT\s
+                    properties.property_unit,
+                    properties.property_rent,
+                    properties.occupation,
+                    general_users.name,
+                    tenants_information.overdue_date,
+                    tenants_information.rent_payment_day
+                FROM properties
+                INNER JOIN tenants_information ON properties.tenant_user_id = tenants_information.tenant_user_id
+                INNER JOIN general_users ON tenants_information.tenant_user_id = general_users.id
+                WHERE properties.property_name = ?\s
+                    AND properties.landlord_user_id = ?;"""
+                ;
         try(PreparedStatement pstm = newConnection().prepareStatement(propertyinfo)){
             pstm.setString(1,property_name);
             pstm.setInt(2,landlord);
@@ -65,7 +80,11 @@ public class Property_Status extends ConnectionAccess {
                 property_status.add(String.valueOf(unit_number));
                 property_status.add(result.getString("property_rent"));
                 property_status.add(result.getString("occupation"));
-                property_status.add(result.getString("tenant_user_id"));
+                property_status.add(result.getString("name"));
+                property_status.add(String.valueOf(result.getInt("rent_payment_day")));
+                if (result.getDate("overdue_date") == null){
+                    property_status.add("0") ;
+                };
                 property_tenants.put(unit_number,property_status);
                 property_status = new ArrayList<>();
 
@@ -75,13 +94,12 @@ public class Property_Status extends ConnectionAccess {
             throw new RuntimeException(e);
         }
 
-        return property_tenants;
+        return property_tenants ;
     }
 
 //Query the entity table of a specific tenant and return rent
     public ArrayList<String> Finances(Integer tenantID) {
         String ery = """
-
       SELECT tenants_information.overdue_date, tenants_information.rent_payment_day
        FROM tenants_information inner join properties ON tenants_information.tenant_user_id = properties.tenant_user_id\s
        WHERE properties.tenant_user_id = ? ;
@@ -96,9 +114,11 @@ public class Property_Status extends ConnectionAccess {
             try (ResultSet result = pstmt.executeQuery()) {
                 if (result.next()) {
                     rent_and_debt.add(String.valueOf(result.getInt("rent_payment_day")));
-                     rent_and_debt.add(String.valueOf(result.getDate("overdue_date"))) ;
-
-                    return extract_date.tenant_current_date(rent_and_debt);
+                    if (result.getDate("overdue_date") == null){
+                        System.out.println("slash out");
+                    };
+                    rent_and_debt.add(String.valueOf(result.getDate("overdue_date"))) ;
+                    return rent_and_debt;
                 }
             }
         } catch (SQLException e) {
@@ -136,9 +156,11 @@ public class Property_Status extends ConnectionAccess {
     public void main(String[] args) throws SQLException {
         Property_Status pocket_it = new Property_Status();
         ArrayList<String> tools = pocket_it.Finances(772);
+        System.out.println(tools);
+//        pocket_it.property_tenants();
       //  tools.set(1,pocket_it.tenant_name(772));
        // System.out.println(tools.set(2, pocket_it.tenant_name(772)));
-        System.out.println(tools);
+        System.out.println(pocket_it.property_tenants("Thornville_rooms",771));
 
     }
 }
