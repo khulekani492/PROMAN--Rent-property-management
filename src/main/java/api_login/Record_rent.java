@@ -17,11 +17,13 @@ public class Record_rent {
     public Handler payment(){
         return ctx ->{
             Transaction _payment = new Transaction();
+            Tenant tenant_relatedInfo = new Tenant();
             Integer rent_amount = Integer.parseInt( ctx.formParam("rent") );
             String unit = ctx.formParam("unit");
             ctx.sessionAttribute("unit",unit);
-            Integer  tenantId = Integer.parseInt(ctx.formParam("id"));
 
+            String  tenant_name =  String.valueOf (ctx.formParam("id"));
+            Integer tenantId = tenant_relatedInfo.tenant_ID(tenant_name);
             //Get tenant_property_name
             Tenant tenant_property = new Tenant();
 

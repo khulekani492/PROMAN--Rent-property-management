@@ -68,6 +68,28 @@ public class Tenant extends ConnectionAccess {
         }
         return username;
     }
+    public Integer tenant_ID(String property_name) {
+
+        String sql = """
+               SELECT general_users.id FROM general_users\s
+               inner join\s
+               properties\s
+               ON properties.tenant_user_id = general_users.id WHERE general_users.name=? ;""";
+
+            Integer id = null;
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setString(1,property_name);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    id = result.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
+    }
 
         public void update_debt(Integer new_amount,Integer tenant_Id) {
 
@@ -143,8 +165,8 @@ public class Tenant extends ConnectionAccess {
     public void main(String[] args){
         Tenant baby_wait = new Tenant();
         System.out.println("DOING GOOD");
-        System.out.println(baby_wait.tenant_property_rent(772) );
-        System.out.println(baby_wait.tenant_debt(772));
+
+        System.out.println(baby_wait.tenant_ID("Andiswa Mandoda"));
        // System.out.println(baby_wait.landlord_username(772));
         //System.out.println(baby_wait.landlordEmail(772));
     }
