@@ -6,117 +6,91 @@
     <title>ProMan — Add Tenant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Supabase setup
-        const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function getUserSession() {
-          const { data: { session }, error } = await supabase.auth.getSession();
-          if (error) {
-            console.error('Error getting session:', error.message);
-          } else if (session) {
-            console.log('Logged-in user:', session.user);
-          } else {
-            console.log('No user is logged in.');
-          }
-        }
-        getUserSession();
-    </script>
 
     <style>
         :root{
-            --brand: #8B5E3C;
-            --brand-dark: #70472E;
-            --accent: #D9CBB8;
-            --card-bg: #FAF3E0;
-            --pill-bg: #FFF8E7;
+            /* Smoke white theme variables */
+            --bg: #f5f6f7;         /* overall smoke-white page background */
+            --surface: #ffffff;    /* card / surface white */
+            --muted: #eef0f2;      /* slightly darker smoke for surfaces */
+            --text: #2f3337;       /* primary text (soft charcoal) */
+            --muted-text: #6b7378; /* secondary text */
+            --accent: #D4AF37;     /* warm gold accent (complements logo) */
+            --accent-dark: #b8892a;/* darker accent for hover */
+            --glass: rgba(255,255,255,0.6);
             --error: #dc2626;
             --error-light: #fef2f2;
         }
 
         body {
+            background: var(--bg);
+            color: var(--text);
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background-color: #fafaf9;
-            color: #1f2937;
             margin: 0;
             min-height: 100vh;
         }
 
-        /* Header */
-        .site-header {
-            background: #ffffff;
-            box-shadow: 0 2px 6px rgba(16,24,40,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 30;
-        }
-        .site-header .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .logo-img {
-            height: 60px;
-            width: auto;
-            display: block;
-        }
-        .nav-links a {
-            margin-left: 14px;
-            color: #6b7280;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover {
-            color: var(--brand);
+        .text-accent { color: var(--accent) !important; }
+        .bg-accent { background-color: var(--accent) !important; }
+        .bg-accent-dark { background-color: var(--accent-dark) !important; }
+        .bg-surface { background-color: var(--surface) !important; }
+        .bg-muted { background-color: var(--muted) !important; }
+        .text-muted { color: var(--muted-text) !important; }
+
+        .hero-surface {
+            background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.9));
+            box-shadow: 0 6px 20px rgba(31,41,55,0.06);
         }
 
-        /* Progress / Stepper */
-        .progress-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 9999px;
-            display: inline-block;
+        .card-highlight { border-top-width: 4px; border-top-style: solid; border-color: rgba(212,175,55,0.26); }
+
+        .progress-dot { width: 12px; height: 12px; border-radius: 9999px; display: inline-block; }
+        .input-focus:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+            border-color: var(--accent);
         }
-        .progress-sep {
-            width: 56px;
-            height: 3px;
+
+        .login-btn{
+            color: var(--text);
+            border-color: var(--muted);
+            background: var(--surface);
+        }
+        .login-btn:hover{
+            background: var(--muted);
+        }
+        .signup-btn{
             background: var(--accent);
-            border-radius: 3px;
+            color: #2b1f00; /* readable on gold */
+        }
+        .signup-btn:hover{
+            background: var(--accent-dark);
+            color: white;
         }
 
         /* Form Card */
         .form-card {
-            background: var(--card-bg);
+            background: var(--surface);
             padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-            border: 1px solid var(--accent);
+            border: 1px solid var(--muted);
+            max-width: 680px;
+            margin: 0 auto;
         }
         input, select, .themed-input {
-            background: var(--pill-bg) !important;
-            border: 1px solid var(--accent);
+            background: var(--surface) !important;
+            border: 1px solid var(--muted);
             padding: 10px 12px;
             border-radius: 8px;
             font-size: 14px;
             width: 100%;
         }
-        .input-focus:focus {
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(139,94,60,0.08);
-            border-color: var(--brand);
-        }
 
         /* Form details */
         label {
             font-weight: 600;
-            color: var(--brand-dark);
+            color: var(--text);
             display: block;
             margin-bottom: 6px;
         }
@@ -143,15 +117,16 @@
         }
 
         .btn-secondary {
-            background: #f5f5f5;
-            color: #374151;
+            background: var(--muted);
+            color: var(--text);
+            border: 1px solid var(--muted);
         }
         .btn-secondary:hover {
             background: #e5e5e5;
         }
         button {
-            background: var(--brand);
-            color: #fff;
+            background: var(--accent);
+            color: #2b1f00;
             font-weight: 700;
             border: none;
             padding: 12px;
@@ -160,7 +135,8 @@
             transition: background 0.2s, transform 0.2s;
         }
         button:hover {
-            background: var(--brand-dark);
+            background: var(--accent-dark);
+            color: white;
             transform: scale(1.005);
         }
 
@@ -180,11 +156,6 @@
         .required-star { color: #dc2626; margin-left: 0.15rem; }
 
         /* Responsive */
-        @media (max-width: 1024px) {
-            .main-content-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
-            .form-card { margin: 0 auto; max-width: 680px; }
-        }
-
         @media (max-width: 720px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -193,97 +164,145 @@
                 flex-direction: column;
             }
         }
+
+        /* Centered layout */
+        .centered-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 60vh;
+        }
+
+        /* Unit info display */
+        .unit-info {
+            background: rgba(212,175,55,0.05);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-<header class="site-header" role="banner">
-    <div class="container">
-        <a href="home.html" aria-label="ProMan Home" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
-            <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="logo-img">
-            <div style="line-height:1;">
-                <div style="color:var(--brand);font-weight:800;font-size:18px;">ProMan</div>
-                <div style="font-size:12px;color:#6b7280;margin-top:2px;">Property management simplified</div>
+<header class="bg-surface shadow sticky top-0 z-30">
+    <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
+        <div class="flex items-center gap-3">
+            <a href="home.html" class="flex items-center">
+                <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-20 md:h-24 w-auto object-contain">
+            </a>
+            <div>
+                <a href="home.html" class="text-xl font-extrabold text-accent">ProMan</a>
+                <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
-        </a>
+        </div>
 
-        <nav class="nav-links" role="navigation" aria-label="Main navigation">
-            <a href="http://localhost:7070/">Home</a>
-            <a href="http://localhost:7070/dashboard">Dashboard</a>
-            <a href="http://localhost:7070/">Log out</a>
+        <!-- Hamburger for mobile -->
+        <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
+            <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+
+        <!-- Desktop / Mobile Nav -->
+        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
+            <a href="http://localhost:7070/"
+               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                Home
+            </a>
+            <a href="http://localhost:7070/dashboard"
+               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                Dashboard
+            </a>
+            <a href="http://localhost:7070/"
+               class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                Log out
+            </a>
         </nav>
+    </div>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
+        <a href="http://localhost:7070/"
+           class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+            HOME
+        </a>
+        <a href="http://localhost:7070/dashboard"
+           class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+            DASHBOARD
+        </a>
+        <a href="http://localhost:7070/"
+           class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+            LOG OUT
+        </a>
     </div>
 </header>
 
+<script>
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
+
 <!-- Progress / Stepper -->
-<div class="bg-transparent py-6 border-b border-[var(--accent)]">
+<div class="bg-transparent py-6 border-b border-muted">
     <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-3">
         <div class="flex items-center gap-3">
             <div class="flex flex-col items-center text-sm font-semibold">
-                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
-                <span class="mt-2 text-[var(--brand)]">1. Account</span>
+                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
+                <span class="mt-2 text-accent">1. Account</span>
             </div>
-            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
+            <div class="w-12 h-[2px] bg-muted"></div>
             <div class="flex flex-col items-center text-sm font-semibold">
-                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
-                <span class="mt-2 text-[var(--brand)]">2. Add Unit</span>
+                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
+                <span class="mt-2 text-accent">2. Add Unit</span>
             </div>
-            <div class="w-12 h-[2px] bg-[var(--accent)]"></div>
+            <div class="w-12 h-[2px] bg-muted"></div>
             <div class="flex flex-col items-center text-sm font-semibold">
-                <span class="progress-dot ring-2 ring-[var(--brand)]" style="background:var(--brand)"></span>
-                <span class="mt-2 text-[var(--brand)]">3. Add Tenant</span>
+                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
+                <span class="mt-2 text-accent">3. Add Tenant</span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Main Content Grid -->
+<!-- Main Content -->
 <main class="max-w-6xl mx-auto px-6 py-12">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-
-        <div class="img-card relative rounded-2xl overflow-hidden shadow-xl border-4 border-white order-2 lg:order-1">
-            <img src="/umuzi/img/pexels-thgusstavo-2102587.jpg" alt="Property Background" class="w-full object-cover object-top h-64 md:h-[520px] lg:h-[560px]"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-[rgba(139,94,60,0.5)] to-[rgba(0,0,0,0.08)] pointer-events-none"></div>
-
-            <div class="absolute top-8 left-8 p-4 bg-white/90 rounded-xl shadow-lg border border-[var(--accent)] max-w-[80%]">
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-10 w-auto">
-                    <h2 class="text-2xl font-bold" style="color:var(--brand)">Welcome to ProMan</h2>
-                </div>
-                <p class="text-gray-700 text-sm font-medium mb-2">
-                    <span class="font-semibold text-[var(--brand-dark)]" th:text="'Hello, ' + ${user_name} + '! '">Hello, User! </span>
-                    Complete your property setup by adding tenant information.
-                </p>
-                <div class="text-xs text-gray-600 space-y-1">
-                    <div class="flex items-start gap-1">
-                        <span>👤</span>
-                        <span>Add tenant personal details and contact information</span>
-                    </div>
-                    <div class="flex items-start gap-1">
-                        <span>📅</span>
-                        <span>Set move-in date and rent payment schedule</span>
-                    </div>
-                    <div class="flex items-start gap-1">
-                        <span>💼</span>
-                        <span>Record employment status for reference checks</span>
-                    </div>
-                    <div class="flex items-start gap-1">
-                        <span>📞</span>
-                        <span>Add emergency contact information</span>
-                    </div>
-                </div>
-                <div class="text-xs text-[var(--brand-dark)] font-bold mt-2">— ProMan Team</div>
-            </div>
-        </div>
-
-        <div class="form-card order-1 lg:order-2" role="main" aria-labelledby="form-title">
-            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4" style="color:var(--brand)">Tenant Information</h2>
-            <p class="text-center text-gray-500 mb-6" th:text="'Adding tenant for Unit ' + ${unit_add}">Adding tenant for Unit 1</p>
+    <div class="centered-container">
+        <div class="form-card" role="main" aria-labelledby="form-title">
+            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4 text-accent text-center">ADD TENANT TO UNIT</h2>
 
             <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST" novalidate>
+                <!-- Unit Selection -->
+                <div class="form-section mb-6">
+                    <h3 class="text-xl font-bold mb-4 text-accent">Unit Information</h3>
+
+                    <div class="unit-info">
+                        <p class="text-sm font-semibold text-accent">Maximum Available Units: <span th:text="${unit_add}">5</span></p>
+                        <p class="text-xs text-muted mt-1">Please select a unit number between 1 and the maximum available</p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="unit_number">Unit Number <span class="required-star">*</span></label>
+                            <input id="unit_number" name="unit_number" type="number" min="1"
+                                   th:attr="max=${unit_add}"
+                                   th:value="${unit_add}" required
+                                   class="themed-input input-focus text-center"
+                                   placeholder="Enter unit number">
+                            <p class="text-xs text-muted mt-1 text-center">Select unit number from 1 to <span th:text="${unit_add}">5</span></p>
+                            <div id="unit_number_error" class="error-message">Unit number must be between 1 and <span th:text="${unit_add}">5</span></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Personal Details Section -->
                 <div class="form-section mb-6">
-                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Personal Details</h3>
+                    <h3 class="text-xl font-bold mb-4 text-accent">Personal Details</h3>
 
                     <div class="form-row">
                         <div class="form-field">
@@ -291,7 +310,7 @@
                             <input id="tenant_name" name="tenant_name" type="text" required
                                    placeholder="e.g. Thabo Ndlovu"
                                    class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">Enter the tenant's full legal name</p>
+                            <p class="text-xs text-muted mt-1">Enter the tenant's full legal name</p>
                             <div id="tenant_name_error" class="error-message">Please enter the tenant's full name.</div>
                         </div>
 
@@ -300,7 +319,7 @@
                             <input id="cell_number" name="cell_number" type="tel" pattern="[0-9]{7,15}"
                                    placeholder="e.g. 0712345678" required
                                    class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">No spaces or symbols</p>
+                            <p class="text-xs text-muted mt-1">No spaces or symbols</p>
                             <div id="cell_number_error" class="error-message">Enter a valid phone number (7–15 digits).</div>
                         </div>
                     </div>
@@ -310,7 +329,7 @@
                             <label for="move_in">Move-in Date <span class="required-star">*</span></label>
                             <input id="move_in" name="move_in" type="date" required
                                    class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">Tenant's move-in date</p>
+                            <p class="text-xs text-muted mt-1">Tenant's move-in date</p>
                             <div id="move_in_error" class="error-message">Please select a move-in date.</div>
                         </div>
 
@@ -319,13 +338,13 @@
                             <div class="flex gap-4 mt-2">
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="employment" value="yes" required
-                                           class="h-4 w-4 text-[var(--brand)]">
-                                    <span class="text-gray-700">Employed</span>
+                                           class="h-4 w-4 text-accent">
+                                    <span class="text-[var(--text)]">Employed</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="radio" name="employment" value="no"
-                                           class="h-4 w-4 text-[var(--brand)]">
-                                    <span class="text-gray-700">Not Employed</span>
+                                           class="h-4 w-4 text-accent">
+                                    <span class="text-[var(--text)]">Not Employed</span>
                                 </label>
                             </div>
                             <div id="employment_error" class="error-message">Please indicate employment status.</div>
@@ -335,7 +354,7 @@
 
                 <!-- Next of Kin Section -->
                 <div class="form-section mb-6">
-                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Emergency Contact</h3>
+                    <h3 class="text-xl font-bold mb-4 text-accent">Emergency Contact</h3>
 
                     <div class="form-row">
                         <div class="form-field">
@@ -343,7 +362,7 @@
                             <input id="kin_name" name="kin_name" type="text"
                                    placeholder="e.g. Naledi Mokoena"
                                    class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">Emergency contact person</p>
+                            <p class="text-xs text-muted mt-1">Emergency contact person</p>
                         </div>
 
                         <div class="form-field">
@@ -351,7 +370,7 @@
                             <input id="kin_number" name="kin_number" type="tel" pattern="[0-9]{7,15}"
                                    placeholder="e.g. 0712345678"
                                    class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">Emergency contact number</p>
+                            <p class="text-xs text-muted mt-1">Emergency contact number</p>
                             <div id="kin_number_error" class="error-message">Enter a valid phone number (7–15 digits) or leave blank.</div>
                         </div>
                     </div>
@@ -359,7 +378,7 @@
 
                 <!-- Financial Details Section -->
                 <div class="form-section mb-6">
-                    <h3 class="text-xl font-bold mb-4" style="color:var(--brand-dark)">Financial Details</h3>
+                    <h3 class="text-xl font-bold mb-4 text-accent">Financial Details</h3>
 
                     <div class="form-row">
                         <div class="form-field">
@@ -367,7 +386,7 @@
                             <input id="rent_day" name="rent_payment_day" type="number" min="1" max="31"
                                    placeholder="8" required
                                    class="themed-input input-focus">
-                            <p class="text-xs text-gray-500 mt-1">Day of month when rent is due (1-31)</p>
+                            <p class="text-xs text-muted mt-1">Day of month when rent is due (1-31)</p>
                         </div>
 
                         <div class="form-field">
@@ -375,7 +394,7 @@
                             <input id="debt" name="debt" type="text"
                                    placeholder="e.g. R200" required
                                    class="themed-input input-focus" value="0">
-                            <p class="text-xs text-gray-500 mt-1">Any existing debt carried forward</p>
+                            <p class="text-xs text-muted mt-1">Any existing debt carried forward</p>
                         </div>
                     </div>
                 </div>
@@ -385,30 +404,29 @@
 
                 <!-- Form actions -->
                 <div class="form-actions flex gap-4 justify-center mt-8">
-                    <button type="button" class="btn-secondary px-6" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" class="px-6" aria-label="Add Tenant">Add Tenant</button>
+                    <button type="button" class="btn-secondary px-6 py-2 rounded-lg" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="px-6 py-2 rounded-lg" aria-label="Add Tenant">Add Tenant</button>
                 </div>
             </form>
         </div>
-
     </div>
 </main>
 
-<footer class="mt-12 py-8 bg-white border-t">
-    <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-gray-600">
+<footer class="mt-12 py-8 bg-surface border-t">
+    <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-muted">
         <div>
-            <a href="home.html" class="text-lg font-extrabold" style="color:var(--brand)">ProMan</a>
-            <p class="mt-2 text-gray-500">Make property management simple and reliable.</p>
+            <a href="home.html" class="text-lg font-extrabold text-accent">ProMan</a>
+            <p class="mt-2">Make property management simple and reliable.</p>
         </div>
         <div class="flex flex-col">
-            <h4 class="font-semibold text-gray-700 mb-2">Product</h4>
-            <a href="dashboard.html" class="text-sm text-gray-600 hover:underline">Dashboard</a>
-            <a href="signup.html" class="text-sm text-gray-600 hover:underline mt-1">Sign Up</a>
-            <a href="login.html" class="text-sm text-gray-600 hover:underline mt-1">Log in</a>
+            <h4 class="font-semibold text-[var(--text)] mb-2">Product</h4>
+            <a href="dashboard.html" class="text-sm hover:underline">Dashboard</a>
+            <a href="signup.html" class="text-sm hover:underline mt-1">Sign Up</a>
+            <a href="login.html" class="text-sm hover:underline mt-1">Log in</a>
         </div>
         <div class="text-right md:text-left">
             <div>© ProMan — Property Management</div>
-            <a href="mailto:ProMan@gmail.com" class="text-[var(--brand)] hover:underline">ProMan@gmail.com</a>
+            <a href="mailto:ProMan@gmail.com" class="text-accent hover:underline">ProMan@gmail.com</a>
         </div>
     </div>
 </footer>
@@ -417,10 +435,31 @@
 <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+    // Supabase setup
+    const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function getUserSession() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting session:', error.message);
+      } else if (session) {
+        console.log('Logged-in user:', session.user);
+      } else {
+        console.log('No user is logged in.');
+      }
+    }
+    getUserSession();
+
     (function() {
         const form = document.getElementById('tenantForm');
-        const submitBtn = document.getElementById('submitBtn');
+        const submitBtn = form.querySelector('button[type="submit"]');
         const toastContainer = document.getElementById('toastContainer');
+        const unitNumberInput = document.getElementById('unit_number');
+
+        // Get the max unit value from Thymeleaf attribute
+        const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
 
         const showError = (id, msg) => {
             const el = document.getElementById(id);
@@ -439,6 +478,17 @@
         const moveInInput = document.getElementById('move_in');
         const kinPhoneInput = document.getElementById('kin_number');
 
+        function validateUnitNumber() {
+            const unitValue = parseInt(unitNumberInput.value);
+            if (isNaN(unitValue) || unitValue < 1 || unitValue > maxUnits) {
+                showError('unit_number_error', `Unit number must be between 1 and ${maxUnits}`);
+                return false;
+            } else {
+                hideError('unit_number_error');
+                return true;
+            }
+        }
+
         function employmentSelected() {
             const radios = form.querySelectorAll('input[name="employment"]');
             return Array.from(radios).some(r => r.checked);
@@ -446,6 +496,11 @@
 
         function validate() {
             let ok = true;
+
+            // Validate unit number
+            if (!validateUnitNumber()) {
+                ok = false;
+            }
 
             if (!nameInput.value.trim()) {
                 showError('tenant_name_error', "Please enter the tenant's full name.");
@@ -504,6 +559,16 @@
             e.target.value = digits;
             try { e.target.setSelectionRange(start, start); } catch (err) {}
         }
+
+        // Prevent user from typing values beyond max
+        unitNumberInput.addEventListener('input', function(e) {
+            const value = parseInt(e.target.value);
+            if (!isNaN(value) && value > maxUnits) {
+                e.target.value = maxUnits;
+            }
+            validateUnitNumber();
+        });
+
         phoneInput.addEventListener('input', normalizeDigits);
         kinPhoneInput.addEventListener('input', normalizeDigits);
 
@@ -524,7 +589,7 @@
             }, 5000);
         });
 
-        [nameInput, phoneInput, moveInInput, kinPhoneInput].forEach(inp => {
+        [nameInput, phoneInput, moveInInput, kinPhoneInput, unitNumberInput].forEach(inp => {
             inp.addEventListener('blur', validate);
         });
         form.querySelectorAll('input[name="employment"]').forEach(r => r.addEventListener('change', validate));

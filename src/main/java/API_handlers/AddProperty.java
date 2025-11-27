@@ -60,7 +60,7 @@ public class AddProperty {
                     //ctx.render("/templates/tenant_form.html", model);
                 } else {
                     System.out.println("no status");
-                    ctx.redirect("/dashboard");
+                    ctx.redirect("/add_tenant");
                 }
 
             } catch (Exception e) {

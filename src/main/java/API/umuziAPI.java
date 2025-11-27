@@ -76,7 +76,7 @@ public class umuziAPI {
             Map<String, Object> model = new HashMap<>();
 
             String user_name = ctx.sessionAttribute("user_name");
-            String  propertyUnit = ctx.sessionAttribute("_unit");
+            Integer  propertyUnit = ctx.sessionAttribute("_unit");
             String  propertyName = ctx.sessionAttribute("property_name");
 
             model.put("user_name",user_name);

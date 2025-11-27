@@ -27,6 +27,7 @@ public class Get_properties {
                     String clone_property = context.pathParam("property_name");
                     String clone_email = context.pathParam("user_email");
                      String clone_unit = context.pathParam("unit");
+                     System.out.println(clone_unit + "Rhymes ");
                     Property_Status property_units = new Property_Status();
                     landlord authenticate = new landlord();
 
