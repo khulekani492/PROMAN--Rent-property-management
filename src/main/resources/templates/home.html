@@ -39,14 +39,19 @@
             align-items: center;
             justify-content: center;
             border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
         }
 
+        /* The bell only rings on hover of the parent feature card */
+        .card-highlight:hover .ringing-bell {
+             animation: ring 0.75s ease-in-out 3; /* Ring a few times, then stop */
+        }
         @keyframes ring {
             0%, 100% { transform: rotate(0deg); }
             25% { transform: rotate(10deg); }
             75% { transform: rotate(-10deg); }
         }
-        .ringing-bell { animation: ring 2s ease-in-out infinite; }
+
         @keyframes wink {
             0%, 90%, 100% { opacity: 1; }
             95% { opacity: 0; }
@@ -137,17 +142,25 @@
                 For Property Owners
             </span>
             <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-[var(--text)]">Manage properties, collect rent, and keep tenants happy — all in one place.</h1>
-            <p class="text-lg md:text-xl text-muted mb-8">A simple, reliable dashboard to track tenant payments, monitor overdue amounts and list units so tenants can easily find them.</p>
 
-            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <a href="http://localhost:7070/landlord_sign_up" class="inline-flex items-center justify-center px-8 py-3 bg-surface text-accent font-bold text-lg rounded-lg shadow transition transform hover:scale-[1.02]">
-                    Get started — it's free
-                </a>
-            </div>
+            <!-- Updated website description text -->
+            <p class="text-lg md:text-xl text-muted mb-4">
+                <!-- You can add description text here if needed -->
+            </p>
 
             <ul class="mt-6 text-sm text-muted space-y-2">
                 <li><strong class="font-bold text-accent">✓</strong> Automated rent reminders and quick payment status</li>
             </ul>
+
+            <!-- Added space before button -->
+            <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <a href="http://localhost:7070/landlord_sign_up"
+                   class="inline-flex items-center justify-center px-8 py-3 bg-surface text-accent font-bold text-lg rounded-lg shadow transition transform hover:scale-[1.02]">
+                    Get started — it's free
+                </a>
+            </div>
+
+
         </div>
 
         <div class="pt-8 md:pt-0 md:-mt-6 space-y-6">
@@ -155,125 +168,73 @@
             <div class="bg-surface rounded-xl p-6 shadow card-highlight hover:shadow-lg transition transform hover:-translate-y-0.5">
                 <div class="flex items-start gap-4">
                     <div class="feature-icon bg-muted text-[var(--text)] relative">
-                        <!-- Gold-accent bell -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 ringing-bell" fill="none" stroke="none" role="img" aria-label="bell icon">
+                        <!-- Gold-accent bell SVG - now using var(--accent) for gold color -->
+                        <svg xmlns="www.w3.org" viewBox="0 0 24 24" class="w-6 h-6 ringing-bell" fill="none" stroke="none" role="img" aria-label="gold bell icon">
+                            <!-- Bottom clapper (Gold) -->
                             <path fill="var(--accent)" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/>
-                            <path fill="#333" d="M18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                            <!-- Main bell body (Gold) -->
+                            <path fill="var(--accent)" d="M18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                            <!-- Internal details remain neutral for contrast -->
                             <circle fill="#333" cx="9" cy="11" r="1"/>
                             <path class="winking-eye" fill="#333" d="M15 11.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5.22-.5.5-.5.5.22.5.5z"/>
                             <path fill="#333" d="M12 17c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/>
+                            <!-- Highlight reflection (light gold) -->
                             <path fill="#ffefc2" d="M12 2c-.83 0-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2v-5c0-3.07-1.64-5.64-4.5-6.32V3.5c0-.83-.67-1.5-1.5-1.5z" opacity="0.35"/>
                         </svg>
-
-                        <!-- notification ping -->
-                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
-                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                     </div>
-
                     <div>
-                        <h3 class="font-extrabold text-xl text-[var(--text)] mb-1">Automated Payments</h3>
-                        <p class="text-sm text-muted">Send reminders, mark payments, and track overdue balances quickly.</p>
-                        <div class="mt-2 flex items-center gap-2 text-xs text-muted">
-                            <span class="inline-flex items-center gap-1">
-                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                Smart reminders
-                            </span>
-                            <span class="inline-flex items-center gap-1">
-                                <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                                Real-time alerts
-                            </span>
-                        </div>
+                        <h3 class="font-bold text-[var(--text)]">Rent Reminders</h3>
+                        <p class="text-sm text-muted">Receive timely rent collection alerts and see payment history at a glance.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Financial Reporting -->
+            <!-- Tenant Management -->
             <div class="bg-surface rounded-xl p-6 shadow card-highlight hover:shadow-lg transition transform hover:-translate-y-0.5">
                 <div class="flex items-start gap-4">
                     <div class="feature-icon bg-muted text-[var(--text)]">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 17a4 4 0 100-8 4 4 0 000 8z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-4.35-4.35" />
+                        <!-- Users Icon -->
+                        <svg xmlns="www.w3.org" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20v-2a3 3 0 00-5.356-1.857M2 12v6a2 2 0 002 2h10a2 2 0 002-2v-6m-4-6h-4a2 2 0 00-2 2v4h8v-4a2 2 0 00-2-2z" />
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-extrabold text-xl text-[var(--text)] mb-1">Financial Reports</h3>
-                        <p class="text-sm text-muted">Download monthly reports for accounting and visibility into performance.</p>
+                        <h3 class="font-bold text-[var(--text)]">Tenant Management</h3>
+                        <p class="text-sm text-muted">Keep all tenant details, payment history organized.</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Maintenance Requests -->
         </div>
     </div>
 </section>
 
-<div class="my-12"></div>
-
-<section class="max-w-4xl mx-auto px-6 py-16">
-    <h3 class="text-4xl font-bold text-[var(--text)] mb-8 text-center">FROM PROMAN</h3>
-    <div class="bg-surface p-10 rounded-2xl shadow-lg border-t-4 border-[rgba(212,175,55,0.26)]">
-        <p class="text-2xl font-bold text-[var(--text)] leading-relaxed text-center">
-            Stop worrying about keeping up with missed payments. Let ProMan handle that for you automatically with smart reminders and tracking. Know exactly who's overdue and by how many days — all in one simple dashboard.
-        </p>
-    </div>
-</section>
-
-<section class="max-w-6xl mx-auto px-6 py-10">
-    <h3 class="text-2xl font-bold text-[var(--text)] mb-6 text-center">Trusted by Landlords and Managers</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <blockquote class="bg-surface p-6 rounded-lg shadow-inner border-l-4 border-muted">
-            <p class="text-[var(--text)] italic">"ProMan cut my admin time in half — rent tracking and reminders are brilliant. Highly recommend!"</p>
-            <div class="mt-4 text-sm font-semibold text-muted">— N. Mthembu, Independent Landlord</div>
-        </blockquote>
-        <blockquote class="bg-surface p-6 rounded-lg shadow-inner border-l-4 border-muted">
-            <p class="text-[var(--text)] italic">"Easy to list units and find tenants near the exact area we want."</p>
-            <div class="mt-4 text-sm font-semibold text-muted">— J. Patel, Property Manager</div>
-        </blockquote>
-        <blockquote class="bg-surface p-6 rounded-lg shadow-inner border-l-4 border-muted">
-            <p class="text-[var(--text)] italic">"Reports are simple to export and hand over to our accountant every month. Seamless."</p>
-            <div class="mt-4 text-sm font-semibold text-muted">— S. Dlamini, Agency Owner</div>
-        </blockquote>
-    </div>
-</section>
-
-<section class="mt-12 py-16">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-        <div class="bg-surface rounded-2xl p-10 shadow">
-            <h2 class="text-3xl font-extrabold mb-4 text-[var(--text)]">Ready to Simplify Your Property Management?</h2>
-            <p class="text-lg text-muted mb-6">Join hundreds of landlords making property management simple and reliable.</p>
-            <a href="http://localhost:7070/landlord_sign_up" class="inline-flex items-center justify-center px-10 py-4 bg-accent text-[var(--text)] font-bold text-xl rounded-lg shadow-2xl hover:bg-accent-dark transition transform hover:scale-105">
-                Start Your Free Account Today
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Whitesmoke, centered footer — replace your existing footer with this (keeps all content centered) -->
-<footer class="py-12 bg-surface">
+<!-- NEW: About Section Added Below Hero -->
+<section id="about-proman" class="py-20 bg-muted">
     <div class="max-w-6xl mx-auto px-6">
-        <div class="flex flex-col items-center text-center space-y-8 mb-8">
-            <div class="flex flex-col items-center">
-                <h4 class="font-bold text-muted mb-4 uppercase text-sm tracking-wider">For Landlords</h4>
-                <div class="space-y-2">
-                    <a href="http://localhost:7070/ayi" class="block text-sm text-muted hover:text-[var(--text)] transition-colors duration-200">Sign up to manage property</a>
-                </div>
-            </div>
 
-            <div class="flex flex-col items-center">
-                <h4 class="font-bold text-[var(--text)] mb-4 uppercase text-sm tracking-wider">Contact</h4>
-                <div class="space-y-2">
-                    <a href="mailto:ProMan@gmail.com" class="block text-sm text-[var(--text)] hover:underline font-medium transition-colors duration-200">ProMan@gmail.com</a>
-                    <a href="#" class="block text-sm text-muted hover:text-[var(--text)] transition-colors duration-200">Help Center</a>
-                </div>
-            </div>
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold text-[var(--text)] sm:text-4xl">
+                About <span class="text-accent">ProMan</span>
+            </h2>
+
+            <p class="mt-4 text-lg text-muted-text max-w-2xl mx-auto">
+                A property website for property owners to stay track with tenants payment,
+                track overdue date and record tenant debt to the property. All this information
+                available on your own personalized profile.
+            </p>
         </div>
 
-        <p class="text-xs text-muted text-center mb-4">© <span id="pro-man-year"></span> ProMan — Property Management</p>
+    </div>
+</section>
 
-        <script>
-            try {
-              document.getElementById('pro-man-year').textContent = new Date().getFullYear();
-            } catch (e) { /* ignore if no DOM */ }
-        </script>
+
+
+<!-- Placeholder for the rest of your website content -->
+<footer class="mt-12 py-8 bg-surface">
+    <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
+        &copy; 2025 ProMan Property Management Solutions.
     </div>
 </footer>
 

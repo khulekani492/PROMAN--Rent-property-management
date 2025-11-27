@@ -15,6 +15,7 @@
           --muted-text: #6b7378;
           --accent: #D4AF37;
           --accent-dark: #b8892a;
+          --sidebar-bg: #f1f3f4; /* Defined smokish white color */
         }
 
         html,body { height:100%; }
@@ -30,13 +31,14 @@
           flex-direction:column;
         }
 
-        /* Header */
+        /* Header - Added white background */
         header.topbar {
-          background: var(--surface);
+          background: #ffffff; /* Changed to solid white */
           border-bottom: 1px solid var(--muted);
           position: sticky;
           top: 0;
           z-index: 60;
+          height: 80px; /* Fixed header height */
         }
         header .brand-left { display:flex; gap:1rem; align-items:center; }
         header .brand-left img { height:5rem; width:auto; }
@@ -45,24 +47,23 @@
         .main-wrap {
           display:flex;
           flex:1;
-          min-height: calc(100vh - 72px);
-          margin-top: 1rem; /* Added space between header and sidebar */
+          min-height: calc(100vh - 80px); /* Adjusted for header height */
         }
 
-        /* Sidebar: desktop visible; mobile overlays when opened */
+        /* Sidebar: desktop visible; mobile overlays when opened - Enhanced smokish white background */
         .sidebar {
           width:16rem;
           min-height:100vh;
           position:fixed;
           left:0;
-          top:0;
+          top: 80px; /* Start below the header */
           z-index:50;
           overflow:auto;
-          background: var(--bg);
+          background: var(--sidebar-bg); /* Using defined smokish white */
           transition: transform .28s ease, box-shadow .28s ease;
-          border-right: 1px solid rgba(0,0,0,0.04);
+          border-right: 1px solid rgba(0,0,0,0.08); /* Slightly darker border for better definition */
           transform: translateX(0); /* visible by default on desktop */
-          margin-top: 5rem; /* Added space between header and sidebar */
+          /* Removed margin-top since we're using top positioning */
         }
 
         /* Desktop layout */
@@ -70,7 +71,7 @@
           .content {
             margin-left: 16rem;
             padding:1.5rem;
-            padding-top:3rem;
+            padding-top:2rem; /* Reduced top padding since sidebar starts lower */
             width: calc(100% - 16rem); /* Ensure content takes remaining width */
           }
           #sidebar-backdrop { display:none; }
@@ -81,20 +82,20 @@
           .sidebar {
             transform: translateX(-100%);
             position:fixed;
-            height:100vh;
+            height: calc(100vh - 80px); /* Account for header height */
             left:0;
-            top:0;
+            top: 80px; /* Start below the header */
             box-shadow: 0 18px 40px rgba(16,24,40,0.12);
-            margin-top: 0; /* Reset margin on mobile */
+            /* Reset margin on mobile */
           }
           .sidebar.overlay-visible {
             transform: translateX(0);
-            background: var(--surface);
+            background: var(--sidebar-bg); /* Using defined smokish white */
           }
           .content {
             margin-left: 0;
             padding:1rem;
-            padding-top:2rem;
+            padding-top:1.5rem; /* Reduced top padding */
             width: 100%; /* Full width on mobile */
           }
           #sidebar-backdrop {
@@ -114,12 +115,35 @@
         }
 
         .sidebar .bg-white { background: var(--surface); }
-        .sidebar .card { background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,1)); border:1px solid rgba(0,0,0,0.04); }
-        .feature-icon { width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(212,175,55,0.06); color: var(--accent); }
+        .sidebar .card {
+          background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
+          border:1px solid rgba(0,0,0,0.06);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .feature-icon { width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(212,175,55,0.08); color: var(--accent); }
 
-        .nav-item { display:flex; align-items:center; gap:.75rem; padding:.75rem; border-radius:.5rem; color: rgba(47,51,55,0.85); text-decoration:none; }
-        .nav-item:hover { background: rgba(0,0,0,0.03); color: var(--text); }
-        .nav-item.active { background: rgba(212,175,55,0.06); border-left: 4px solid rgba(212,175,55,0.26); color: var(--text); }
+        .nav-item {
+          display:flex;
+          align-items:center;
+          gap:.75rem;
+          padding:.75rem;
+          border-radius:.5rem;
+          color: rgba(47,51,55,0.85);
+          text-decoration:none;
+          transition: all 0.2s ease;
+          background: rgba(255,255,255,0.5);
+        }
+        .nav-item:hover {
+          background: rgba(255,255,255,0.8);
+          color: var(--text);
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .nav-item.active {
+          background: rgba(212,175,55,0.1);
+          border-left: 4px solid var(--accent);
+          color: var(--text);
+          box-shadow: 0 2px 6px rgba(212,175,55,0.1);
+        }
 
         .card-surface { background: var(--surface); border-radius:.75rem; box-shadow: 0 18px 40px rgba(16,24,40,0.06); padding:1.25rem; border:1px solid rgba(0,0,0,0.04); }
 
@@ -168,7 +192,6 @@
         @media (max-width:480px) {
           .units-table thead th, .units-table tbody td { padding:.5rem .6rem; font-size:13px; }
           .card-surface { padding:1rem; }
-          .main-wrap { margin-top: 0.5rem; }
         }
 
         .control-btn { padding:.65rem .85rem; border-radius:.5rem; font-weight:600; }
@@ -202,9 +225,9 @@
 
         /* Sidebar header styling */
         .sidebar-header {
-          background: var(--surface);
+          background: var(--sidebar-bg); /* Using defined smokish white */
           padding: 1.5rem;
-          border-bottom: 1px solid var(--muted);
+          border-bottom: 1px solid rgba(0,0,0,0.08);
           text-align: center;
         }
 
@@ -324,7 +347,7 @@
             </nav>
         </div>
     </div>
-</header>
+</header> <!-- This was the missing closing tag -->
 
 <div id="sidebar-backdrop"></div>
 
@@ -334,8 +357,7 @@
         <div class="sidebar-header">
 
         </div>
-        <nav class="p-4 space-y-2 mt-4">
-
+        <nav class="p-4 space-y-2">
             <a href="http://localhost:7070/dashboard" class="nav-item active">Dashboard</a>
             <a href="http://localhost:7070/add_property_unit" class="nav-item">ADD UNIT</a>
         </nav>
@@ -392,8 +414,6 @@
                 <p class="text-sm" style="color:rgba(47,51,55,0.6); margin-top:6px">+R2,500 from last month</p>
             </div>
         </div>
-
-
     </aside>
 
     <main class="content">
@@ -451,25 +471,27 @@
                            th:text="|You have already marked Unit ${unit} as paid this month.|" class="text-green-600 font-medium"></p>
                         <p th:if="${success != null and success != ''}"
                            th:text="|Unit ${success} marked as paid this month.|" class="text-green-600 font-medium"></p>
-                        <div class="units-wrapper">
-                            <table class="units-table">
+                        <!-- Mobile-friendly wrapper -->
+                        <div class="units-wrapper w-full overflow-x-auto">
+                            <table class="units-table min-w-max w-full border-collapse">
                                 <thead>
                                 <tr>
-                                    <th>Tenant</th>
-                                    <th>Unit Details</th>
-                                    <th>Status</th>
-                                    <th>Rent Day</th>
-                                    <th>Overdue</th>
-                                    <th>Payment</th>
-                                    <th>Actions</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Tenant</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Unit Details</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Status</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Rent Day</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Overdue</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Payment</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody id="unitsTbody">
                                 <tr th:each="entry : ${units}" class="hover:cursor-pointer">
-                                    <td class="px-4 py-3">
+                                    <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="tenant-info">
                                             <div class="profile-placeholder">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                                     <circle cx="12" cy="7" r="4"></circle>
                                                 </svg>
@@ -480,36 +502,36 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="unit-details">
                                             <div class="unit-number" th:text="${entry.value[0]}">Unit Number</div>
                                             <div class="unit-rent" th:text="'R ' + ${entry.value[1]}">Rent Amount</div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-4 py-3 whitespace-nowrap">
                                         <span th:if="${entry.value[2]} == 'yes'" class="status-badge status-active">Occupied</span>
                                         <span th:if="${entry.value[2]} == 'no'" class="status-badge status-vacant">Vacant</span>
                                     </td>
-                                    <td class="px-4 py-3 unit-tenant" th:text="${entry.value[4]}">Rent Day</td>
-                                    <td class="px-4 py-3 unit-tenant" th:text="${entry.value[5]}">Overdue Days</td>
-                                    <td class="px-4 py-3 payment-cell">
-                                        <span th:if="${entry.value[2]} == 'yes'" class="indicator bg-red-100 text-red-800 open-pay cursor-pointer" th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}" th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}">−</span>
+                                    <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[4]}">Rent Day</td>
+                                    <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[5]}">Overdue Days</td>
+                                    <td class="px-4 py-3 whitespace-nowrap payment-cell">
+                <span th:if="${entry.value[2]} == 'yes'" class="indicator bg-red-100 text-red-800 open-pay cursor-pointer"
+                      th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}"
+                      th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}">−</span>
                                         <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-4 py-3 whitespace-nowrap">
                                         <button class="edit-btn">Edit</button>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </main>
-</div>
 </div>
 
 <!-- Payment Modal (unchanged) -->
