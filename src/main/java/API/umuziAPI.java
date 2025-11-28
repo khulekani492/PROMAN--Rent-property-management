@@ -20,7 +20,7 @@ public class umuziAPI {
         Javalin app = Javalin.create(config -> {
             config.jetty.modifyServletContextHandler(handler -> handler.setSessionHandler(fileSessionHandler()));
             config.fileRenderer(new JavalinThymeleaf());
-            config.staticFiles.add("public"); //Include Dependency to the jarfile
+            config.staticFiles.add("public");
         });
         //home_page.
         app.get("/", ctx ->{
