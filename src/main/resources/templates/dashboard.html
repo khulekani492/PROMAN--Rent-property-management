@@ -347,13 +347,10 @@
             </nav>
         </div>
     </div>
-</header> <!-- This was the missing closing tag -->
-
-<div id="sidebar-backdrop"></div>
+</header> <div id="sidebar-backdrop"></div>
 
 <div class="main-wrap">
     <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main sidebar">
-        <!-- Simplified sidebar header without logo -->
         <div class="sidebar-header">
 
         </div>
@@ -467,11 +464,13 @@
                             <button id="btnUnpaid" type="button" class="control-btn bg-red-600 text-white">Mark Unpaid (-)</button>
                             <div class="text-sm text-[var(--muted-text)]">Select a row, then click a button to update the Payment box only.</div>
                         </div>
+
+                        <div id="paymentErrorDisplay" class="hidden p-3 mb-4 rounded-md text-sm font-medium bg-red-100 text-red-800 border border-red-300" role="alert">
+                        </div>
                         <p th:if="${unit != null and unit != ''}"
                            th:text="|You have already marked Unit ${unit} as paid this month.|" class="text-green-600 font-medium"></p>
                         <p th:if="${success != null and success != ''}"
                            th:text="|Unit ${success} marked as paid this month.|" class="text-green-600 font-medium"></p>
-                        <!-- Mobile-friendly wrapper -->
                         <div class="units-wrapper w-full overflow-x-auto">
                             <table class="units-table min-w-max w-full border-collapse">
                                 <thead>
@@ -534,7 +533,6 @@
     </main>
 </div>
 
-<!-- Payment Modal (unchanged) -->
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-60">
     <div class="modal-card w-96 text-center">
         <div class="bg-white p-6 rounded-lg shadow-lg">
@@ -560,6 +558,21 @@
 </div>
 
 <script>
+    // Global function to display errors in the new banner
+    const errorDisplay = document.getElementById('paymentErrorDisplay');
+    function displayErrorBanner(message, isClear = false) {
+        if (isClear || !message) {
+            errorDisplay.classList.add('hidden');
+            errorDisplay.textContent = '';
+        } else {
+            // Use 'alert' style for high visibility
+            errorDisplay.textContent = message;
+            errorDisplay.classList.remove('hidden');
+        }
+        // Also ensure temporary flash message is used for confirmation/quick tips
+        flashMessage(message, 'red');
+    }
+
     // Sidebar overlay handling (desktop visible by default)
     const mobileMenuButton = document.getElementById('mobileMenuButton');
     const sidebar = document.getElementById('sidebar');
@@ -712,7 +725,7 @@
       });
     }
 
-    // Payment modal functions (unchanged)
+    // Payment modal variables
     const paymentModal = document.getElementById('paymentModal');
     const modalUnitDisplay = document.getElementById('modalUnitDisplay');
     const modalOriginalRent = document.getElementById('modalOriginalRent');
@@ -722,18 +735,23 @@
     const modalRentInput = document.getElementById('modalRentInput');
     const paymentForm = document.getElementById('paymentForm');
 
+    // UPDATED openPaymentModal function
     function openPaymentModal(unit, rent, id, propertyName) {
+      // Clear any previous error banner before opening the modal
+      displayErrorBanner(null, true);
+
       if (!modalUnitDisplay) return;
       modalUnitDisplay.textContent = unit;
       modalOriginalRent.textContent = rent;
+
+      // Set hidden input values
       if (modalUnit) modalUnit.value = unit;
       if (modalId) modalId.value = id;
       if (modalPropertyName) modalPropertyName.value = propertyName;
-      if (modalRentInput) modalRentInput.value = rent;
+      // Clean rent string ('R 1000' -> '1000') for the number input field
+      if (modalRentInput) modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
 
-      if (paymentForm) paymentForm.action = `http://localhost:7070/payment_status/${id}/${unit}`;
-
-
+      // Removed previous paymentForm.action assignment; handled by fetch listener
 
       if (modalRentInput) modalRentInput.focus();
       if (paymentModal) {
@@ -748,6 +766,95 @@
       paymentModal.classList.remove('flex');
     }
 
+    // ⭐ NEW ASYNCHRONOUS FORM SUBMISSION LOGIC (WITH CONSOLE LOG) ⭐
+    if (paymentForm) {
+      paymentForm.addEventListener('submit', async (event) => {
+        // 1. Stop the default page reload
+        event.preventDefault();
+        displayErrorBanner(null, true); // Clear error on submission attempt
+
+        // 2. Get form data and construct the URL
+        const formData = new FormData(paymentForm);
+        const tenantName = formData.get('id');
+        const unit = formData.get('unit');
+
+        // Debugging logs to ensure values are correct before fetch
+        console.log("Debug: Attempting to send payment form data.");
+        console.log("Debug: Tenant ID (id):", tenantName);
+        console.log("Debug: Unit Number (unit):", unit);
+
+        const url = `http://localhost:7070/payment_status/${tenantName}/${unit}`;
+        console.log("Debug: Target URL:", url);
+
+
+        try {
+          // 3. Send the POST request
+          const response = await fetch(url, {
+            method: 'POST',
+            body: new URLSearchParams(formData),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          });
+
+          // Debugging log to confirm a response was received
+          console.log(`Debug: Received response status: ${response.status}`);
+
+          // 4. Handle server response
+          if (response.ok) {
+            // Log for debugging confirmation
+            console.log("form sent successfully");
+
+            flashMessage(`Unit ${unit} marked as paid successfully!`, 'green');
+
+            // OPTIONAL: Visually update the table cell immediately
+            const indicator = document.querySelector(`.open-pay[data-unit="${unit}"][data-id="${tenantName}"]`);
+            if (indicator) {
+              indicator.textContent = '+';
+              indicator.classList.remove('bg-red-100', 'text-red-800');
+              indicator.classList.add('bg-green-100', 'text-green-800');
+              indicator.setAttribute('aria-label', 'Payment: yes');
+            }
+
+            closePaymentModal();
+
+          } else {
+            // Read error message from backend
+            const errorText = await response.text();
+            console.error(`Error: Server responded with status ${response.status}`, errorText);
+
+            // Determine user-friendly error message
+            let userMessage = `Payment failed (Status: ${response.status}). Check server logs.`;
+
+            // ⭐ CUSTOM LOGIC TO CATCH DUPLICATE PAYMENT MESSAGE ⭐
+            // We assume the server returns a body containing "Payment already recorded for this month."
+            if (errorText.includes('Payment already recorded for this month.')) {
+                userMessage = `Payment already recorded for Unit ${unit} this month.`;
+                displayErrorBanner(userMessage);
+            }
+            // If the Java code redirected on error (302) or returned a generic error (500)
+            else if (response.status >= 400) {
+                userMessage = `Payment failed (Status: ${response.status}). Details: ${errorText.substring(0, 50)}...`;
+                displayErrorBanner(userMessage);
+            }
+
+            // If the error happens inside the modal, keep the modal open and show the error.
+            // If you want the modal to close: closePaymentModal();
+            flashMessage(userMessage, 'red'); // Still show a temporary flash message
+
+          }
+
+        } catch (error) {
+          // Handle network errors (CORS, server down)
+          console.error("Network Error during fetch:", error);
+          const networkError = `A network error occurred. Server unreachable or CORS block.`;
+          displayErrorBanner(networkError);
+          // If a network error occurs, we typically don't close the modal immediately
+          flashMessage(networkError, 'red');
+        }
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const openPayButtons = document.querySelectorAll('.open-pay');
       openPayButtons.forEach(btn => {
@@ -760,9 +867,10 @@
 
           if (!unit || !rent || !id || !propertyName) {
             const row = this.closest('tr');
+            // Using correct class names for robust selection
             const unitCell = row.querySelector('.unit-number');
-            const rentCell = row.querySelector('.rent-amount');
-            const idCell = row.querySelector('.unit-id');
+            const rentCell = row.querySelector('.unit-rent');
+            const idCell = row.querySelector('.tenant-name');
             const propertySelect = document.getElementById('propertySelect');
 
             openPaymentModal(
@@ -777,6 +885,8 @@
         });
       });
 
+      // Clear any leftover Thymeleaf success/error messages on page load if they exist
+      displayErrorBanner(null, true);
       applyFilters();
     });
 </script>
