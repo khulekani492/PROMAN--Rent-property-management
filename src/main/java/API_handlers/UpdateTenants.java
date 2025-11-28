@@ -1,24 +1,35 @@
 package API_handlers;
 
+import api_login.Type_of_payments;
 import io.javalin.http.Handler;
+import io.javalin.http.HttpStatus;
+import model.database.CRUD.Tenant;
+import model.database.Transaction;
+
+import java.sql.SQLException;
+import java.util.Map;
 
 public class UpdateTenants {
-    public Handler New_tenant_AddToUnit(){
-        return ctx -> {
-            String name = ctx.formParam("tenant_name");
-            String moveIn = ctx.formParam("move_in");
-            String employment_status = ctx.formParam("employment");
-            String cell_number = ctx.formParam("cell_number");
-            String payday = ctx.formParam("pay_day");
-            int room = Integer.parseInt(ctx.formParam("room"));
-            String room_price = ctx.formParam("room_price");
-            //LOGIC update debt column when month ends and payment is still not paid
-            int tenantsdebt = Integer.parseInt( ctx.formParam("tenant_debt"));
-            String kin_name = ctx.formParam("kin_name");
-            String kin_number = ctx.formParam("kin_number");
+    public Handler unmark_payment(){
+        return ctx ->{
+            // --- 1. Data Extraction ---
+            Tenant undo_tenant_payment = new Tenant();
 
-            ctx.redirect("/updateTenants");
+            // Getting IDs and Property Info (Necessary for payment logic and subsequent page reload if needed)
+            String tenant_name = ctx.formParam("id");
+            ctx.sessionAttribute("ID",tenant_name);
+            //Integer
+            Integer tenantId = undo_tenant_payment.tenant_ID(tenant_name);
+            
+            //removes payment from rent_book 
+            undo_tenant_payment.unmark_tenant_rent(tenantId);
+            
+            //Unmark status tenant as paid
+            undo_tenant_payment.reset_payment_status(tenantId);
+            ctx.sessionAttribute("current_tenant_payment",tenantId);
 
-        };
+                    };
     }
-}
+
+    }
+
