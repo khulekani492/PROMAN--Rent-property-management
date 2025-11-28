@@ -1,6 +1,7 @@
 package api_login;
 
 import io.javalin.http.Handler;
+import io.javalin.http.HttpStatus; // Import HttpStatus to return 200 OK
 import model.database.CRUD.Getunits;
 import model.database.CRUD.Tenant;
 import model.database.CRUD.landlord;
@@ -16,95 +17,65 @@ import java.util.Set;
 public class Record_rent {
     public Handler payment(){
         return ctx ->{
+            // --- 1. Data Extraction ---
             Transaction _payment = new Transaction();
             Tenant tenant_relatedInfo = new Tenant();
+
+            // Note: Integer.parseInt will throw NumberFormatException if ctx.formParam("rent") is null or non-numeric.
             Integer rent_amount = Integer.parseInt( ctx.formParam("rent") );
             String unit = ctx.formParam("unit");
-            ctx.sessionAttribute("unit",unit);
 
-            String  tenant_name =  String.valueOf (ctx.formParam("id"));
+            // Getting IDs and Property Info (Necessary for payment logic and subsequent page reload if needed)
+            String tenant_name = ctx.formParam("id");
             Integer tenantId = tenant_relatedInfo.tenant_ID(tenant_name);
-            //Get tenant_property_name
             Tenant tenant_property = new Tenant();
-
             String property_name = tenant_property.tenant_property_name(tenantId);
-
-            //Get property_rent
             Integer property_rent = tenant_property.tenant_property_rent(tenantId);
-            //Set the property_name to the session
-            ctx.sessionAttribute("propertyName",property_name);
 
-            //Run the payments, check the tenant debt if they exist makes required deduction
+            // Set session attributes (needed if you want to redirect later, but not required for AJAX success)
+            ctx.sessionAttribute("unit",unit);
+            ctx.sessionAttribute("propertyName",property_name);
+            ctx.sessionAttribute("propertyRent",property_rent);
+
+            // --- 2. Payment Processing ---
             Type_of_payments determine_pay = new Type_of_payments();
             determine_pay.type_of_payment(rent_amount,property_rent,tenant_property.tenant_debt(tenantId),tenantId,_payment);
 
-            ctx.sessionAttribute("propertyRent",property_rent);
-            //
-            System.out.println("LATEST UPDATE: ");
-            System.out.println("property_name : " + property_name);
-            System.out.println("rent : " + rent_amount );
-          //  determine_pay.type_of_payment(rent_amount);
-            System.out.println("ID : " + tenantId );
-//              insert to rent_book the correct amount the type_of_payments determines the final calculation
-//            _payment.setTenant_Id(tenantId);
-//            _payment.setAmount_paid(rent_amount);
-//            _payment.setStatus(true);
-//            _payment.update_tenant_status(); // updates only the status to true when tenant is marked as paid
+            System.out.println("LATEST UPDATE: Payment processed for ID: " + tenantId + ", Unit: " + unit);
 
-            HashMap<String,String> success_status = new HashMap<>();
+            // --- 3. Database Write & Response ---
             try{
                 _payment.record_payment();
-                String email1 = ctx.sessionAttribute("email");
-                System.out.print(email1 + "current email in ram memory");
-                String unit_paid = ctx.sessionAttribute("unit");
-                Getunits property_units = new Getunits();
-                landlord authenticate = new landlord();
-                HashMap<Integer, ArrayList<String>> fetch_all = property_units.getOccupiedUnits(property_name,authenticate.landlordId(email1));
-                if(fetch_all.size() == 0){
 
-                    String property = ctx.sessionAttribute("property_name");
-                    success_status.put("no_units","No units added for " + property);
-                    ctx.render("templates/dashboard.html",success_status);
-                }else {
-                    Map<String, Object> data = new HashMap<>();
-                    HashMap<String,HashMap<Integer,ArrayList<String>>> model_units = new HashMap<>();
-                    Map<String, Object> model_property_names = new HashMap<>();
-                    System.out.println(fetch_all + " Occupied units");
-                    //using landlord_unique_id to fetch all of their properties ,it accessed with the user_email
-                    String email = ctx.sessionAttribute("email");
-                    System.out.println(" email in Memory is session " + email);
-                    propertyNames default_properties = new propertyNames();
-                    landlord user_id = new landlord();
+                // ⭐ CRITICAL FIX: DO NOT RENDER THE DASHBOARD HERE ⭐
+                // The client-side JavaScript is waiting for a simple confirmation.
 
-                    success_status.put("success",unit_paid);
-                    System.out.println("Wait Now");
-                    System.out.println(success_status);
-                    Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
+                // Return a simple HTTP 200 OK status to the client-side fetch.
+                // The client-side JavaScript will then execute the success block and update the UI.
+                ctx.status(HttpStatus.OK);
+                ctx.json(Map.of("success", true, "unit", unit)); // Optional: send a small JSON response
 
-                    model_units.put("units",fetch_all);
-                    model_property_names.put("names",landlord_properties);
+                // If you absolutely needed to refresh the client side to update the Thymeleaf model:
+                // ctx.status(HttpStatus.OK); // You'd still send 200, then client JS calls window.location.reload();
 
-
-                    data.putAll(model_units);
-                    data.putAll(model_property_names);
-                    data.putAll(success_status);
-                    System.out.println("Successful new updates");
-                    //ctx.redirect("/payment_status/" + property_name +"/"+ email +"/" +unit);
-                    ctx.render("templates/dashboard.html",data);
-                }
-                {
-                }
             } catch (SQLException e) {
                 if("paid".equals(e.getMessage())){
-                    ctx.sessionAttribute("error",e.getMessage());
-                    ctx.sessionAttribute("unit",unit);
-                    ctx.redirect("/error/duplicate_payment");
-                    return;
+                    // If payment is duplicate, return an error status (e.g., 400 Bad Request)
+                    ctx.status(HttpStatus.BAD_REQUEST);
+                    ctx.result("Payment already recorded for this month.");
+                    // The client-side catch block will handle this status.
+                } else {
+                    // For general DB errors, return 500
+                    ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                    ctx.result("Database Error: " + e.getMessage());
+                    throw new RuntimeException(e);
                 }
-
-                throw new RuntimeException(e);
             }
 
+            // --- 4. Removed Code ---
+            // The entire block for fetching units, property names, and calling ctx.render()
+            // has been REMOVED because it was causing the AJAX failure.
+            // When using AJAX, the client handles the display update.
 
         };
     }
