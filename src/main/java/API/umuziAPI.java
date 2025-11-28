@@ -57,6 +57,10 @@ public class umuziAPI {
         app.get("/unit_already_paid/{property_name}/{user_email}/{unit}",properties.display_property_units());
         app.get("/payment_status/{property_name}/{user_email}/{unit}",properties.display_property_units());
 
+
+        UpdateTenants tenant_unit_update = new UpdateTenants();
+        app.post("unmark_payment/{id}/{unit}", tenant_unit_update.unmark_payment());
+
         app.get("/property_information", new PropertyUnits().property_related_information());
 
         Record_rent complete_payment_record = new Record_rent();
