@@ -564,8 +564,37 @@
 </div>
 
 <script>
-    // Global function to display errors in the new banner
+    // Global variable setup (must be defined once in the main script body)
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    const propertySelect = document.getElementById('propertySelect');
+    const tbody = document.getElementById('unitsTbody');
+    const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+
+    const btnPaid = document.getElementById('btnPaid');
+    const btnUnpaid = document.getElementById('btnUnpaid');
+
+    // Payment modal variables
+    const paymentModal = document.getElementById('paymentModal');
+    const modalUnitDisplay = document.getElementById('modalUnitDisplay');
+    const modalOriginalRent = document.getElementById('modalOriginalRent');
+    const modalUnit = document.getElementById('modalUnit');
+    const modalId = document.getElementById('modalId');
+    const modalPropertyName = document.getElementById('modalPropertyName');
+    const modalRentInput = document.getElementById('modalRentInput');
+    const paymentForm = document.getElementById('paymentForm');
+
+    // New: Error display banner and submit button references
     const errorDisplay = document.getElementById('paymentErrorDisplay');
+    const confirmButton = document.querySelector('#paymentForm button[type="submit"]');
+
+
+    // =========================================================================
+    // I. UTILITY FUNCTIONS (Sidebar, Flash Messages, Error Banner, Table Updates)
+    // =========================================================================
+
     function displayErrorBanner(message, isClear = false) {
         if (isClear || !message) {
             errorDisplay.classList.add('hidden');
@@ -576,14 +605,25 @@
             errorDisplay.classList.remove('hidden');
         }
         // Also ensure temporary flash message is used for confirmation/quick tips
-        flashMessage(message, 'red');
+        // We avoid calling flashMessage if isClear is true to prevent double calls on open.
+        if (!isClear && message) {
+            flashMessage(message, 'red');
+        }
     }
 
-    // Sidebar overlay handling (desktop visible by default)
-    const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
+    function flashMessage(msg, color = 'yellow') {
+        const el = document.createElement('div');
+        el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
+            color === 'green' ? 'bg-green-100 text-green-800' :
+            color === 'red' ? 'bg-red-100 text-red-800' :
+            'bg-yellow-100 text-yellow-800'
+        }`;
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1600);
+    }
 
+    // Sidebar Functions
     function openSidebarOverlay() {
       if (!sidebar) return;
       sidebar.classList.add('overlay-visible');
@@ -596,7 +636,6 @@
       if (backdrop) backdrop.classList.remove('visible');
       if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','false');
     }
-
     function ensureSidebarDesktop() {
       if (!sidebar) return;
       if (window.innerWidth > 1024) {
@@ -610,32 +649,7 @@
       }
     }
 
-    if (mobileMenuButton && sidebar) {
-      ensureSidebarDesktop();
-
-      mobileMenuButton.addEventListener('click', (e) => {
-        const isOpen = sidebar.classList.contains('overlay-visible');
-        if (isOpen) closeSidebarOverlay(); else openSidebarOverlay();
-        e.stopPropagation();
-      });
-
-      if (backdrop) backdrop.addEventListener('click', closeSidebarOverlay);
-
-      sidebar.querySelectorAll('a').forEach(a => {
-        a.addEventListener('click', () => {
-          if (window.innerWidth <= 1024) closeSidebarOverlay();
-        });
-      });
-
-      window.addEventListener('resize', ensureSidebarDesktop);
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarOverlay(); });
-    }
-
-    /* existing dashboard JS preserved */
-    const propertySelect = document.getElementById('propertySelect');
-    const tbody = document.getElementById('unitsTbody');
-    const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-
+    // Table Update/Filter Functions
     function applyFilters() {
       const prop = propertySelect ? propertySelect.value : '';
       rows.forEach(row => {
@@ -645,26 +659,12 @@
       });
     }
 
-    if (propertySelect) propertySelect.addEventListener('change', applyFilters);
-
     let selectedRow = null;
     function clearSelection() {
       if (!selectedRow) return;
       selectedRow.classList.remove('row-selected');
       selectedRow = null;
     }
-
-    rows.forEach(row => {
-      row.addEventListener('click', (e) => {
-        if (e.target.closest('.indicator')) return;
-        if (selectedRow) selectedRow.classList.remove('row-selected');
-        selectedRow = row;
-        selectedRow.classList.add('row-selected');
-      });
-    });
-
-    const btnPaid = document.getElementById('btnPaid');
-    const btnUnpaid = document.getElementById('btnUnpaid');
 
     function updatePaymentForRow(row, paid) {
       const paymentIndicator = row.querySelector('.payment-cell .indicator');
@@ -690,58 +690,7 @@
       flashMessage(`Payment status ${!isPaid ? 'set to paid (+)' : 'set to unpaid (-)'}`, !isPaid ? 'green' : 'red');
     }
 
-    document.querySelectorAll('.payment-cell').forEach(cell => {
-      cell.addEventListener('click', function(e) {
-        if (e.target.closest('.indicator')) {
-          togglePaymentStatus(this);
-        }
-      });
-    });
-
-    function flashMessage(msg, color = 'yellow') {
-      const el = document.createElement('div');
-      el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
-        color === 'green' ? 'bg-green-100 text-green-800' :
-        color === 'red' ? 'bg-red-100 text-red-800' :
-        'bg-yellow-100 text-yellow-800'
-      }`;
-      el.textContent = msg;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 1600);
-    }
-
-    if (btnPaid) btnPaid.addEventListener('click', () => {
-      if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
-      updatePaymentForRow(selectedRow, true);
-      flashMessage('Payment set to + (paid).', 'green');
-    });
-
-    if (btnUnpaid) btnUnpaid.addEventListener('click', () => {
-      if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
-      updatePaymentForRow(selectedRow, false);
-      flashMessage('Payment set to - (unpaid).', 'red');
-    });
-
-    if (propertySelect) {
-      propertySelect.addEventListener('change', function () {
-        const selectedValue = this.value;
-        if (selectedValue && selectedValue !== 'all') {
-          document.getElementById('propertyForm').submit();
-        }
-      });
-    }
-
-    // Payment modal variables
-    const paymentModal = document.getElementById('paymentModal');
-    const modalUnitDisplay = document.getElementById('modalUnitDisplay');
-    const modalOriginalRent = document.getElementById('modalOriginalRent');
-    const modalUnit = document.getElementById('modalUnit');
-    const modalId = document.getElementById('modalId');
-    const modalPropertyName = document.getElementById('modalPropertyName');
-    const modalRentInput = document.getElementById('modalRentInput');
-    const paymentForm = document.getElementById('paymentForm');
-
-    // UPDATED openPaymentModal function
+    // Modal Open/Close Functions
     function openPaymentModal(unit, rent, id, propertyName) {
       // Clear any previous error banner before opening the modal
       displayErrorBanner(null, true);
@@ -757,8 +706,6 @@
       // Clean rent string ('R 1000' -> '1000') for the number input field
       if (modalRentInput) modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
 
-      // Removed previous paymentForm.action assignment; handled by fetch listener
-
       if (modalRentInput) modalRentInput.focus();
       if (paymentModal) {
         paymentModal.classList.remove('hidden');
@@ -772,26 +719,30 @@
       paymentModal.classList.remove('flex');
     }
 
-    // ⭐ NEW ASYNCHRONOUS FORM SUBMISSION LOGIC (WITH CONSOLE LOG) ⭐
-    if (paymentForm) {
+
+    // =========================================================================
+    // II. ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
+    // =========================================================================
+
+    if (paymentForm && confirmButton) {
       paymentForm.addEventListener('submit', async (event) => {
         // 1. Stop the default page reload
         event.preventDefault();
         displayErrorBanner(null, true); // Clear error on submission attempt
+
+        // ⭐ Disable button and update text for UX
+        confirmButton.disabled = true;
+        confirmButton.textContent = 'Processing...';
 
         // 2. Get form data and construct the URL
         const formData = new FormData(paymentForm);
         const tenantName = formData.get('id');
         const unit = formData.get('unit');
 
-        // Debugging logs to ensure values are correct before fetch
+        // Debugging logs...
         console.log("Debug: Attempting to send payment form data.");
-        console.log("Debug: Tenant ID (id):", tenantName);
-        console.log("Debug: Unit Number (unit):", unit);
-
         const url = `http://localhost:7070/payment_status/${tenantName}/${unit}`;
         console.log("Debug: Target URL:", url);
-
 
         try {
           // 3. Send the POST request
@@ -803,17 +754,16 @@
             }
           });
 
-          // Debugging log to confirm a response was received
           console.log(`Debug: Received response status: ${response.status}`);
 
           // 4. Handle server response
           if (response.ok) {
-            // Log for debugging confirmation
+            // SUCCESS: Close modal and show flash message
             console.log("form sent successfully");
 
             flashMessage(`Unit ${unit} marked as paid successfully!`, 'green');
 
-            // OPTIONAL: Visually update the table cell immediately
+            // Visually update the table cell immediately
             const indicator = document.querySelector(`.open-pay[data-unit="${unit}"][data-id="${tenantName}"]`);
             if (indicator) {
               indicator.textContent = '+';
@@ -825,28 +775,28 @@
             closePaymentModal();
 
           } else {
-            // Read error message from backend
+            // FAILURE: Show error message, keep modal open
             const errorText = await response.text();
             console.error(`Error: Server responded with status ${response.status}`, errorText);
 
             // Determine user-friendly error message
             let userMessage = `Payment failed (Status: ${response.status}). Check server logs.`;
 
-            // ⭐ CUSTOM LOGIC TO CATCH DUPLICATE PAYMENT MESSAGE ⭐
-            // We assume the server returns a body containing "Payment already recorded for this month."
-            if (errorText.includes('Payment already recorded for this month.')) {
+            // CUSTOM LOGIC TO CATCH DUPLICATE PAYMENT/RATE LIMIT MESSAGE
+            if (errorText.includes("Error: The 'required_data' field must not be empty.")) {
+                userMessage = "Payment rejected: Please wait a moment before trying again (Rate Limit).";
+                displayErrorBanner(userMessage);
+            }
+            else if (errorText.includes('Payment already recorded for this month.')) {
                 userMessage = `Payment already recorded for Unit ${unit} this month.`;
                 displayErrorBanner(userMessage);
             }
-            // If the Java code redirected on error (302) or returned a generic error (500)
             else if (response.status >= 400) {
                 userMessage = `Payment failed (Status: ${response.status}). Details: ${errorText.substring(0, 50)}...`;
                 displayErrorBanner(userMessage);
             }
 
-            // If the error happens inside the modal, keep the modal open and show the error.
-            // If you want the modal to close: closePaymentModal();
-            flashMessage(userMessage, 'red'); // Still show a temporary flash message
+            flashMessage(userMessage, 'red'); // Temporary pop-up
 
           }
 
@@ -855,13 +805,82 @@
           console.error("Network Error during fetch:", error);
           const networkError = `A network error occurred. Server unreachable or CORS block.`;
           displayErrorBanner(networkError);
-          // If a network error occurs, we typically don't close the modal immediately
           flashMessage(networkError, 'red');
+
+        } finally {
+            // ⭐ Re-enable the button and reset text in ALL scenarios
+            if (confirmButton) {
+                confirmButton.disabled = false;
+                confirmButton.textContent = 'Confirm Payment';
+            }
         }
       });
     }
 
+    // =========================================================================
+    // III. INITIALIZATION AND EVENT LISTENERS (DOM Ready)
+    // =========================================================================
+
     document.addEventListener('DOMContentLoaded', () => {
+
+      // 1. Sidebar Event Listeners
+      if (mobileMenuButton && sidebar) {
+        ensureSidebarDesktop();
+        mobileMenuButton.addEventListener('click', (e) => {
+          const isOpen = sidebar.classList.contains('overlay-visible');
+          if (isOpen) closeSidebarOverlay(); else openSidebarOverlay();
+          e.stopPropagation();
+        });
+        if (backdrop) backdrop.addEventListener('click', closeSidebarOverlay);
+        sidebar.querySelectorAll('a').forEach(a => {
+          a.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) closeSidebarOverlay();
+          });
+        });
+        window.addEventListener('resize', ensureSidebarDesktop);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarOverlay(); });
+      }
+
+      // 2. Property Filter (Synchronous Submission)
+      if (propertySelect) {
+        propertySelect.addEventListener('change', function () {
+          const selectedValue = this.value;
+          if (selectedValue && selectedValue !== 'all') {
+            document.getElementById('propertyForm').submit();
+          }
+        });
+      }
+
+      // 3. Row Selection and Status Buttons
+      rows.forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (e.target.closest('.indicator')) return;
+          if (selectedRow) selectedRow.classList.remove('row-selected');
+          selectedRow = row;
+          selectedRow.classList.add('row-selected');
+        });
+      });
+      document.querySelectorAll('.payment-cell').forEach(cell => {
+        cell.addEventListener('click', function(e) {
+          if (e.target.closest('.indicator')) {
+            togglePaymentStatus(this);
+          }
+        });
+      });
+
+      if (btnPaid) btnPaid.addEventListener('click', () => {
+        if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
+        updatePaymentForRow(selectedRow, true);
+        flashMessage('Payment set to + (paid).', 'green');
+      });
+
+      if (btnUnpaid) btnUnpaid.addEventListener('click', () => {
+        if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
+        updatePaymentForRow(selectedRow, false);
+        flashMessage('Payment set to - (unpaid).', 'red');
+      });
+
+      // 4. Payment Modal Trigger
       const openPayButtons = document.querySelectorAll('.open-pay');
       openPayButtons.forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -891,8 +910,8 @@
         });
       });
 
-      // Clear any leftover Thymeleaf success/error messages on page load if they exist
-      displayErrorBanner(null, true);
+      // 5. Initial Load Actions
+      displayErrorBanner(null, true); // Clear any leftover Thymeleaf error messages
       applyFilters();
     });
 </script>

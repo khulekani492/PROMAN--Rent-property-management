@@ -9,10 +9,7 @@ import model.database.CRUD.propertyNames;
 import model.database.Transaction;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Record_rent {
     public Handler payment(){
@@ -21,25 +18,37 @@ public class Record_rent {
             Transaction _payment = new Transaction();
             Tenant tenant_relatedInfo = new Tenant();
 
+
             // Note: Integer.parseInt will throw NumberFormatException if ctx.formParam("rent") is null or non-numeric.
+
             Integer rent_amount = Integer.parseInt( ctx.formParam("rent") );
             String unit = ctx.formParam("unit");
 
+
+
             // Getting IDs and Property Info (Necessary for payment logic and subsequent page reload if needed)
             String tenant_name = ctx.formParam("id");
+
+             ctx.sessionAttribute("ID",tenant_name);
+            //Integer
             Integer tenantId = tenant_relatedInfo.tenant_ID(tenant_name);
+
+            ctx.sessionAttribute("current_tenant_payment",tenantId);
             Tenant tenant_property = new Tenant();
             String property_name = tenant_property.tenant_property_name(tenantId);
             Integer property_rent = tenant_property.tenant_property_rent(tenantId);
 
             // Set session attributes (needed if you want to redirect later, but not required for AJAX success)
-            ctx.sessionAttribute("unit",unit);
+            ctx.sessionAttribute("check_tenant_id",tenantId);
             ctx.sessionAttribute("propertyName",property_name);
             ctx.sessionAttribute("propertyRent",property_rent);
+
+            Integer confirms = ctx.sessionAttribute("check_tenant_id");
 
             // --- 2. Payment Processing ---
             Type_of_payments determine_pay = new Type_of_payments();
             determine_pay.type_of_payment(rent_amount,property_rent,tenant_property.tenant_debt(tenantId),tenantId,_payment);
+
 
             System.out.println("LATEST UPDATE: Payment processed for ID: " + tenantId + ", Unit: " + unit);
 
