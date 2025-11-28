@@ -60,7 +60,7 @@ public class umuziAPI {
         app.get("/property_information", new PropertyUnits().property_related_information());
 
         Record_rent complete_payment_record = new Record_rent();
-        app.post("/payment_status/{id}/success",complete_payment_record.payment());
+        app.post("/payment_status/{id}/{unit}",complete_payment_record.payment());
         /**
          * adds new user information to the database
          */
