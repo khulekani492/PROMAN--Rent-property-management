@@ -318,6 +318,34 @@
         .edit-btn:hover {
             background-color: rgba(59, 130, 246, 0.1);
         }
+
+        /* Header with date display */
+        .header-with-date {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .date-display {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-right: 4px solid #D4AF37;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-with-date {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .date-display {
+                align-self: flex-end;
+            }
+        }
     </style>
 </head>
 
@@ -412,13 +440,20 @@
             </div>
         </div>
     </aside>
-
     <main class="content">
         <div class="p-6">
-            <header class="mb-8">
-                <h1 class="text-3xl font-bold" style="color:var(--accent)">Property Management</h1>
-                <p class="text-[var(--muted-text)]">Manage your properties and tenant payments</p>
-            </header>
+            <!-- Updated header with date display on the right -->
+            <div class="header-with-date">
+                <div>
+                    <h1 class="text-3xl font-bold" style="color:var(--accent)">Property Management</h1>
+                    <p class="text-[var(--muted-text)]">Manage your properties and tenant payments</p>
+                </div>
+
+                <!-- Date display div with gold right border -->
+                <div class="date-display">
+                    <span class="text-lg font-medium" id="currentDate"></span>
+                </div>
+            </div>
 
             <div class="flex flex-col lg:flex-row gap-6">
                 <div class="lg:w-1/3">
@@ -452,17 +487,15 @@
                                 Add New Property
                             </a>
                         </div>
-
-                        <p class="mt-4 text-sm text-[var(--muted-text)]">Tip: Select a row, then use the external controls (+ / -) to update only the Payment box. Overdue shows number of days overdue.</p>
                     </div>
                 </div>
 
                 <div class="lg:w-2/3">
                     <div class="card-surface h-full">
                         <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
-                            <button id="btnPaid" type="button" class="control-btn bg-green-600 text-white">Mark Paid (+)</button>
-                            <button id="btnUnpaid" type="button" class="control-btn bg-red-600 text-white">Mark Unpaid (-)</button>
-                            <div class="text-sm text-[var(--muted-text)]">Select a row, then click a button to update the Payment box only.</div>
+                            <div class="text-sm text-black">
+                                Click the payment column to mark a tenant as paid.
+                            </div>
                         </div>
 
                         <div id="paymentErrorDisplay" class="hidden p-3 mb-4 rounded-md text-sm font-medium bg-red-100 text-red-800 border border-red-300" role="alert">
@@ -535,6 +568,7 @@
             </div>
         </div>
     </main>
+
 </div>
 
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-60">
@@ -684,6 +718,13 @@
       }
     }
 
+    // Format and display the current date
+    function formatDate() {
+        const date = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const formattedDate = date.toLocaleDateString('en-US', options);
+        document.getElementById('currentDate').textContent = formattedDate;
+    }
 
     // Modal Open/Close Functions
     function closePaymentModal() {
@@ -939,6 +980,7 @@
       // Initial Load Actions
       displayErrorBanner(null, true);
       applyFilters();
+      formatDate(); // Call the date formatting function
     });
 </script>
 </body>
