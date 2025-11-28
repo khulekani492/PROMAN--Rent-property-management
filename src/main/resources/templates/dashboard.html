@@ -514,9 +514,15 @@
                                     <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[4]}">Rent Day</td>
                                     <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[5]}">Overdue Days</td>
                                     <td class="px-4 py-3 whitespace-nowrap payment-cell">
-                <span th:if="${entry.value[2]} == 'yes'" class="indicator bg-red-100 text-red-800 open-pay cursor-pointer"
-                      th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}"
-                      th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}">−</span>
+    <span th:if="${entry.value[2]} == 'yes'"
+          th:with="isPaid=${entry.value[6]}"
+          th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+          class="indicator open-pay cursor-pointer"
+          th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}"
+          th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}"
+          th:text="${isPaid} ? '+' : '−'">−</span>
+                                        <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
+                                    </td>
                                         <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
