@@ -7,6 +7,33 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        /* Add these new styles for the view modes */
+        .property-form-container {
+            transition: all 0.3s ease;
+        }
+
+        .property-form-container.hidden {
+            display: none;
+        }
+
+        .full-table-view .lg\:w-2\/3 {
+            width: 100% !important;
+        }
+
+        .change-property-btn {
+            display: none;
+        }
+
+        .full-table-view .change-property-btn {
+            display: block;
+            margin: 0 auto 1rem auto;
+        }
+
+        .view-table-btn {
+            margin-top: 1rem;
+        }
+
+        /* Rest of your existing styles remain the same */
         :root{
           --bg: #f5f6f7;
           --surface: #ffffff;
@@ -455,8 +482,9 @@
                 </div>
             </div>
 
-            <div class="flex flex-col lg:flex-row gap-6">
-                <div class="lg:w-1/3">
+            <div class="flex flex-col lg:flex-row gap-6" id="mainContent">
+                <!-- Property Selection Section -->
+                <div class="lg:w-1/3 property-form-container" id="propertyFormContainer">
                     <div class="card-surface h-full">
                         <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
                             <div class="grid grid-cols-1 gap-4">
@@ -464,14 +492,9 @@
                                     <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Property Name</label>
                                     <p th:each="name, status : ${names}" th:if="${status.first}" th:text="${name}"></p>
                                     <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[var(--accent)]">
-
                                         <option value="">Select property</option>
                                         <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
                                     </select>
-                                </div>
-
-                                <div>
-
                                 </div>
                             </div>
                         </form>
@@ -488,12 +511,28 @@
                                 Add New Property
                             </a>
                         </div>
-                    </div>
 
+                        <!-- View Table Button -->
+                        <button id="viewTableBtn" class="view-table-btn w-full mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                            View Full Table
+                        </button>
+                    </div>
                 </div>
 
-                <div class="lg:w-2/3">
+                <!-- Table Section -->
+                <div class="lg:w-2/3" id="tableContainer">
                     <div class="card-surface h-full">
+                        <!-- Change Property Button (hidden by default) -->
+                        <button id="changePropertyBtn" class="change-property-btn inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                            </svg>
+                            Change Property
+                        </button>
+
                         <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
                             <div class="text-sm text-black">
                                 Click the payment column to mark a tenant as paid.
@@ -570,8 +609,9 @@
             </div>
         </div>
     </main>
-
 </div>
+
+<!-- Rest of your existing code remains the same -->
 <p th:text="${default_name}"></p>
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-60">
     <div class="modal-card w-96 text-center">
@@ -599,6 +639,76 @@
 </div>
 
 <script>
+    // Add view table functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewTableBtn = document.getElementById('viewTableBtn');
+        const changePropertyBtn = document.getElementById('changePropertyBtn');
+        const propertyFormContainer = document.getElementById('propertyFormContainer');
+        const tableContainer = document.getElementById('tableContainer');
+        const mainContent = document.getElementById('mainContent');
+
+        if (viewTableBtn && changePropertyBtn && propertyFormContainer && tableContainer && mainContent) {
+            // View Table functionality
+            viewTableBtn.addEventListener('click', function() {
+                // Hide property form
+                propertyFormContainer.classList.add('hidden');
+                // Make table take full width
+                mainContent.classList.add('full-table-view');
+                // Show change property button
+                changePropertyBtn.style.display = 'block';
+            });
+
+            // Change Property functionality
+            changePropertyBtn.addEventListener('click', function() {
+                // Show property form
+                propertyFormContainer.classList.remove('hidden');
+                // Restore original layout
+                mainContent.classList.remove('full-table-view');
+                // Hide change property button
+                changePropertyBtn.style.display = 'none';
+            });
+        }
+
+        // Your existing initialization code continues here...
+        // Format and display the current date
+        function formatDate() {
+            const date = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options);
+            document.getElementById('currentDate').textContent = formattedDate;
+        }
+        formatDate();
+
+        // Auto-submit functionality for property form
+        const propertySelect = document.getElementById('propertySelect');
+        const propertyForm = document.getElementById('propertyForm');
+        let autoSubmitted = false;
+
+        if (propertySelect && propertyForm) {
+            // Auto-submit on page load if a specific property is already selected
+            const selectedValue = propertySelect.value;
+            if (selectedValue && selectedValue !== '' && selectedValue !== 'all' && !autoSubmitted) {
+                autoSubmitted = true;
+                propertyForm.submit();
+            }
+
+            // Auto-submit on change for specific properties only
+            propertySelect.addEventListener('change', function() {
+                const newValue = this.value;
+
+                // Auto-submit only if:
+                // 1. Value is not empty
+                // 2. Value is not "all" (All properties)
+                // 3. Value is a specific property name
+                if (newValue && newValue !== '' && newValue !== 'all') {
+                    propertyForm.submit();
+                }
+            });
+        }
+
+        // Rest of your existing JavaScript code...
+
+    });
     // =========================================================================
     // I. GLOBAL VARIABLE SETUP
     // =========================================================================
