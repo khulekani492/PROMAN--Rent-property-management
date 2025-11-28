@@ -462,9 +462,10 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Property Name</label>
+                                    <p th:each="name, status : ${names}" th:if="${status.first}" th:text="${name}"></p>
                                     <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[var(--accent)]">
+
                                         <option value="">Select property</option>
-                                        <option value="all">All properties</option>
                                         <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
                                     </select>
                                 </div>
@@ -488,6 +489,7 @@
                             </a>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="lg:w-2/3">
@@ -570,7 +572,7 @@
     </main>
 
 </div>
-
+<p th:text="${default_name}"></p>
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-60">
     <div class="modal-card w-96 text-center">
         <div class="bg-white p-6 rounded-lg shadow-lg">
