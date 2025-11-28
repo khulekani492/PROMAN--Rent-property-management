@@ -136,8 +136,43 @@ public class Tenant extends ConnectionAccess {
     }
 
 
+    public void unmark_tenant_rent(Integer tenant_id){
+        String sql = """
+            DELETE FROM rent_book\s
+            WHERE id = (
+                SELECT MAX(id)\s
+                FROM rent_book\s
+                WHERE tenant_user_id = ?
+            )
+           \s""";
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);
 
+            // Only one parameter needs to be set, as the subquery uses the same tenant_id.
+            pstm.setInt(1, tenant_id);
 
+            // FIX: For DELETE statements, use executeUpdate(), not executeQuery()
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void  reset_payment_status(Integer tenant_Id){
+        String sql = """
+            UPDATE tenants_information SET status=false WHERE tenant_user_id=?;\s
+        """;
+        try (PreparedStatement pstm = this.connection.prepareStatement(sql)) {
+
+            pstm.setInt(1, tenant_Id);
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     public Integer tenant_property_rent(Integer tenant_Id) {
         String sql = """
                SELECT property_rent FROM properties\s
