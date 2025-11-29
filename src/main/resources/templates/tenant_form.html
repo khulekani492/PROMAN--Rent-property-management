@@ -377,32 +377,40 @@
                 </div>
 
                 <!-- Financial Details Section -->
+
                 <div class="form-section mb-6">
                     <h3 class="text-xl font-bold mb-4 text-accent">Financial Details</h3>
 
                     <div class="form-row">
+                        <div class="form-field w-full">
+                            <label for="rent_amount_input">Rent amount : <span class="required-star">*</span></label>
+                            <input id="rent_amount_input" name="rent_amount" type="number" min="1"
+                                   placeholder="3000" required
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-muted mt-1">Monthly rent (Enter numbers only).</p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
                         <div class="form-field">
-                            <label for="rent_day">Rent Payment Day <span class="required-star">*</span></label>
-                            <input id="rent_day" name="rent_payment_day" type="number" min="1" max="31"
+                            <label for="rent_day_input">Rent Payment Day <span class="required-star">*</span></label>
+                            <input id="rent_day_input" name="rent_day" type="number" min="1" max="31"
                                    placeholder="8" required
                                    class="themed-input input-focus">
                             <p class="text-xs text-muted mt-1">Day of month when rent is due (1-31)</p>
                         </div>
 
                         <div class="form-field">
-                            <label for="debt">Outstanding Debt <span class="required-star">*</span></label>
-                            <input id="debt" name="debt" type="text"
-                                   placeholder="e.g. R200" required
+                            <label for="debt_input">Outstanding Debt <span class="required-star">*</span></label>
+                            <input id="debt_input" name="debt" type="number"
+                                   placeholder="e.g. 200" required
                                    class="themed-input input-focus" value="0">
-                            <p class="text-xs text-muted mt-1">Any existing debt carried forward</p>
+                            <p class="text-xs text-muted mt-1">Any existing debt carried forward (Numbers only).</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Hidden field preserving unit context -->
                 <input type="hidden" name="unit" th:value="${unit_add}" />
 
-                <!-- Form actions -->
                 <div class="form-actions flex gap-4 justify-center mt-8">
                     <button type="button" class="btn-secondary px-6 py-2 rounded-lg" onclick="window.history.back()">Cancel</button>
                     <button type="submit" class="px-6 py-2 rounded-lg" aria-label="Add Tenant">Add Tenant</button>
