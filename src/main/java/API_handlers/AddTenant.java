@@ -46,14 +46,19 @@ public class AddTenant {
                 System.out.println("Property unit: " + property_unit);
 
                 residence addTenantUnit = new residence();
+                // create row first Insert information
+
+
                 addTenantUnit.setProperty_unit(property_unit);
                 addTenantUnit.setProperty_Name(property_Name);
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
+                System.out.println("Rent Payment ");
                 addTenantUnit.setRent(rent_pay);
 
                 try {
                     addTenantUnit.Insert_tenatId();
+
                 } catch (SQLException e) {
                     ctx.redirect("/user_sign_up/error");
                     e.printStackTrace();  // <-- ensures the exception appears in your terminal
@@ -67,11 +72,11 @@ public class AddTenant {
                 String kin_number = ctx.formParam("kin_number");
                 String rent_payment_day = ctx.formParam("rent_payment_day");
                 Integer debt = Integer.valueOf(ctx.formParam("debt"));
+
                 try {
                     tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number,rent_payment_day,debt);
                     additional_information.setTenantId(tenantUniqueID);
                     additional_information.insert_information();
-
                 } catch (Exception e) {
 
                     throw new RuntimeException(e);

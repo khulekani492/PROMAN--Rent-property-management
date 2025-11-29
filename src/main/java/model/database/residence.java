@@ -108,13 +108,14 @@ public class residence extends ConnectionAccess implements  Property {
     //prevents adding the tenants to the same  unit based on property_name  and unit number
     public  void  Insert_tenatId() throws SQLException {
         String tenant = """
-                UPDATE properties SET tenant_user_id = ? WHERE landlord_user_id = ? and property_unit= ? and  property_name = ?
+                UPDATE properties SET tenant_user_id = ? ,property_rent =? WHERE landlord_user_id = ? and property_unit= ? and  property_name = ?
                 """;
         try (PreparedStatement pstm = this.connection.prepareStatement(tenant)){
             pstm.setInt(1,this.tenantId);
-            pstm.setInt(2,this.landlordId);
-            pstm.setInt(3,this.property_unit);
-            pstm.setString(4,this.property_name);
+            pstm.setString(2,this.property_rent);
+            pstm.setInt(3,this.landlordId);
+            pstm.setInt(4,this.property_unit);
+            pstm.setString(5,this.property_name);
             pstm.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
