@@ -43,10 +43,8 @@ public class AddTenant {
 
                 general add_newTenant = new general(name, number, user_type);
                 try {
-                    System.out.println("name " + add_newTenant.tenant_ID());
                     add_newTenant.landlord_insert_tenant();
                 } catch (Exception e) {
-                    System.out.println("Ayikhona");
                     throw new RuntimeException(e);
                 }
 
@@ -55,14 +53,12 @@ public class AddTenant {
                 System.out.println("Tenant ID: " + tenantUniqueID);
 
                 // Update properties table with tenant unique ID
-                String property = ctx.sessionAttribute("residence");
-                System.out.println("Property_residence: " + property );
                 System.out.println("Landlord ID: " + landlordId);
 
                 property_information.setTenantId(tenantUniqueID);
-                System.out.println("Rent Payment ");
-                property_information.setRent(rent_pay);
 
+                property_information.setRent(rent_pay);
+                System.out.println(rent_pay +" rent amount");
 
                 try {
                     property_information.Insert_tenatId();
@@ -73,6 +69,8 @@ public class AddTenant {
                     System.err.println("Error: " + e.getMessage());
 
                 }
+
+
                 // Additional tenant info
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
                 String employment_status = ctx.formParam("employment");
@@ -84,7 +82,6 @@ public class AddTenant {
                 try {
                     tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number,rent_payment_day,debt);
                     additional_information.setTenantId(tenantUniqueID);
-                    additional_information.insert_information();
                 } catch (Exception e) {
 
                     throw new RuntimeException(e);
