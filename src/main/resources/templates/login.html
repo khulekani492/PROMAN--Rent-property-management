@@ -209,11 +209,22 @@
                     <div style="margin-bottom:12px;">
                         <label for="email" class="small-muted" style="display:block;margin-bottom:6px;">Email</label>
                         <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="form-input" />
+                        <p th:if="${error != null and error != ''}"
+                           th:text="${error}"
+                           class="text-red-700 font-medium mt-2">
+                        </p>
                     </div>
 
                     <div style="margin-bottom:8px; position:relative;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                             <label for="password" class="small-muted">Password</label>
+
+                            <p th:if="${wrong != null and wrong != ''}"
+                               th:text="${wrong}"
+                               class="text-red-700 font-medium"
+                               style="font-size:13px; margin-top:0;">
+                            </p>
+
                             <a href="#" class="small-muted secondary-link" style="font-size:13px;">Forgot password?</a>
                         </div>
 
