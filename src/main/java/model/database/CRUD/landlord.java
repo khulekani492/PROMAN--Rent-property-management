@@ -49,6 +49,30 @@ public class landlord extends ConnectionAccess {
         return username;
     }
 
+    public String total_property_units( String property_name,Integer landlordId) {
+
+        String sql = """
+                SELECT COUNT(*) AS total_rows
+                FROM properties WHERE property_name=? AND landlord_user_id=?;""";
+
+         Integer total_property_units  = 0;
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setString(1,property_name);
+                pstm.setInt(2,landlordId);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    total_property_units = result.getInt("total_rows");
+
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return String.valueOf(total_property_units) ;
+    }
+
     public String landlord_property_name(Integer landlordId) {
 
         String sql = """
@@ -70,6 +94,35 @@ public class landlord extends ConnectionAccess {
         }
         return username;
     }
+
+    public String property_estimated_profit(Integer landlordId, String property_name) {
+
+        String sql = """
+                SELECT SUM(CAST(property_rent AS NUMERIC)) AS property_estimated_profit
+                FROM properties
+                where landlord_user_id=? AND property_name=? AND occupation='yes' ;
+                """;
+
+        String username = "";
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,landlordId);
+                pstm.setString(2,property_name);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    username = result.getString("property_estimated_profit");
+
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return username;
+    }
+
+
+
+
     public String landlordEmail(Integer landlordId) {
 
         String sql = """
@@ -94,8 +147,9 @@ public class landlord extends ConnectionAccess {
 
     public void main(String[] args){
         landlord baby_wait = new landlord();
-
-        System.out.println(baby_wait.landlordId("khulekaniszondo6@gmail.com") );
+        Integer humble = baby_wait.landlordId("khulekaniszondo6@gmail.com") ;
+        System.out.println(baby_wait.property_estimated_profit(humble,"Thornville_rooms"));
+        System.out.println();
         System.out.println(baby_wait.landlord_username(771));
         System.out.println(baby_wait.landlordEmail(771));
     }
