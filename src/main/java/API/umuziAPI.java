@@ -78,15 +78,16 @@ public class umuziAPI {
 
         app.get("/add_tenant",ctx -> {
             Map<String, Object> model = new HashMap<>();
-
             String user_name = ctx.sessionAttribute("user_name");
-            Integer  propertyUnit = ctx.sessionAttribute("_unit");
             String  propertyName = ctx.sessionAttribute("property_name");
+            Integer  propertyUnit = ctx.sessionAttribute("property_unit");
+
 
             model.put("user_name",user_name);
             model.put("unit_add", propertyUnit);
             model.put("name", propertyName);
-           ctx.render("templates/tenant_form.html",model);
+            ctx.render("templates/tenant_form.html",model);
+
         });
 /**
  * adds tenant information to the database
