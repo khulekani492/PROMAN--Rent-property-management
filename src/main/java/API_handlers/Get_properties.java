@@ -15,26 +15,30 @@ public class Get_properties {
 
     public Handler display_property_units(){
 
-        return context -> {
+        return ctx -> {
+
             String property_name;
             landlord user_id = new landlord();
+            propertyNames default_properties = new propertyNames();
+
+
             try{
-                 property_name = context.formParam("name");
+                 property_name = ctx.formParam("name");
                 System.out.println(property_name + "Family");
-                 context.sessionAttribute("dashBoard_current_property",property_name);
-                System.out.println("prperty_first time"  + context.sessionAttribute("dashBoard_current_property"));
+                 ctx.sessionAttribute("dashBoard_current_property",property_name);
+                System.out.println("prperty_first time"  + ctx.sessionAttribute("dashBoard_current_property"));
 
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 //Handler auto_submit of empty space
                 throw new RuntimeException(e);
             }
-            String property_email = context.sessionAttribute("email");
-            context.sessionAttribute("dashBoard_current_email",property_email);
-            System.out.println("Useremail : " +  " " + property_email);
-
+            String property_email = ctx.sessionAttribute("email");
             Property_Status property_units = new Property_Status();
             landlord authenticate = new landlord();
+            Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(property_email));
+            ArrayList<String> default_property = new ArrayList<>(landlord_properties);
+            Integer  total_properties = default_property.size();
 
             try{
                 authenticate.landlordId(property_email);
@@ -42,35 +46,51 @@ public class Get_properties {
                 System.out.println("something wrong");
                 throw new RuntimeException(e);
             }
-            HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name,authenticate.landlordId(property_email));
-            System.out.println("RESULTS : " + fetch_all);
-            if(fetch_all.size() == 0){
-                HashMap<String,String> model = new HashMap<>();
-                String property = context.sessionAttribute("property_name");
-                model.put("no_units","No units added for " + property);
-                context.render("templates/dashboard.html",model);
-            }else {
+            HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name, authenticate.landlordId(property_email));
+
+
+            Integer occupied_units = fetch_all.size();
+
+
+            //Calculate the occupancy percentage of the property
+            String total_units = user_id.total_property_units(property_name, user_id.landlordId(property_email));
+            double occupancyRate = ((double) occupied_units / Integer.parseInt(total_units) ) * 100;
+
+            //Vacant_rooms
+            Integer vacant = Integer.valueOf( total_units ) - occupied_units;
+            //Expected profit based off the number of units occupied
+            String expected_profit = user_id.property_estimated_profit(user_id.landlordId(property_email),property_name );
+
+            if (fetch_all.size() == 0) {
+                HashMap<String, String> model = new HashMap<>();
+                String property = ctx.sessionAttribute("property_name");
+                model.put("no_units", "No units added for " + property);
+                ctx.render("templates/dashboard.html", model);
+            } else {
                 Map<String, Object> data = new HashMap<>();
-                HashMap<String,HashMap<Integer,ArrayList<String>>> allPropertyUnits = new HashMap<>();
+                HashMap<String, HashMap<Integer, ArrayList<String>>> allPropertyUnits = new HashMap<>();
                 Map<String, Object> model1 = new HashMap<>();
+                HashMap<String, String> model = new HashMap<>();
+                HashMap<String, String> model2 = new HashMap<>();
 
-                allPropertyUnits.put("units",fetch_all);
+                allPropertyUnits.put("units", fetch_all);
                 System.out.println(fetch_all + "Occupied units");
-                //using landlord_unique_id to fetch all of their properties ,it accessed with the user_email
-                String email = context.sessionAttribute("email");
-                propertyNames default_properties = new propertyNames();
+                model.put("total_properties", String.valueOf(total_properties));
+                model.put("occupied_units", String.valueOf(occupied_units));
+                model2.put("occupancyRate",String.valueOf(occupancyRate));
+                model2.put("vacant",String.valueOf(vacant ) );
+                model2.put("expected_profit",expected_profit);
+                //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
+                model1.put("names", landlord_properties);
 
-                Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
-
-                model1.put("names",landlord_properties);
                 data.putAll(allPropertyUnits);
                 data.putAll(model1);
-                System.out.println("woah");
+                data.putAll(model);
+                data.putAll(model2);
                 System.out.println(data);
-                context.render("templates/dashboard.html",data);
+                ctx.render("templates/dashboard.html", data);
             }
         };
     }
-
 
 }
