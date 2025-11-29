@@ -296,6 +296,7 @@
                                    placeholder="Enter unit number">
                             <p class="text-xs text-muted mt-1 text-center">Select unit number from 1 to <span th:text="${unit_add}">5</span></p>
                             <div id="unit_number_error" class="error-message">Unit number must be between 1 and <span th:text="${unit_add}">5</span></div>
+                            <p th:text="Unit +' '+ ${unit_add}+' '+${error} "></p>
                         </div>
                     </div>
                 </div>
