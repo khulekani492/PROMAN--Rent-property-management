@@ -70,6 +70,9 @@ public class residence extends ConnectionAccess implements  Property {
         return this.tenantId;
     }
 
+    public void setRent(String rent_amount){
+        this.property_rent = rent_amount;
+    }
     public void setProperty_Name(String propertyName) {
            this.property_name = propertyName;
     }
@@ -146,39 +149,6 @@ public class residence extends ConnectionAccess implements  Property {
         }
 
     }
-//    public void update_debt(){
-//        String sql = """
-//        UPDATE properties
-//        SET debt = ?
-//        WHERE landlord_user_id = ?;
-//    """;
-//
-//        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
-//            pstmt.setInt(1, this.debt);
-//            pstmt.setInt(2, this.landlordId);
-//            pstmt.executeUpdate();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//    }
-
-//    public void update_payDay(){
-//        String sql = """
-//        UPDATE properties
-//        SET pay_day = ?
-//        WHERE landlord_user_id = ?;
-//    """;
-//
-//        try (PreparedStatement pstmt = connection.prepareStatement(sql )) {
-//            pstmt.setInt(1, this.pay_day);
-//            pstmt.setInt(2, this.landlordId);
-//            pstmt.executeUpdate();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//    }
 
     public Integer querypayDay() {
 
