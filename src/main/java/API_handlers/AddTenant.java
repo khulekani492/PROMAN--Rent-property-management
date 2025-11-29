@@ -17,6 +17,9 @@ public class AddTenant {
                 // Insert tenant into general_user table for landlord manual insertion
                 String name = ctx.formParam("tenant_name");
                 String number = ctx.formParam("cell_number");
+                String rent_pay = ctx.formParam("rent_amount");
+
+                System.out.println("Imali yami " + rent_pay);
                 String user_type = "tenant";
 
                 general add_newTenant = new general(name, number, user_type);
@@ -27,7 +30,6 @@ public class AddTenant {
                     System.out.println("Ayikhona");
                     throw new RuntimeException(e);
                 }
-
 
                 // Access the unique ID from the general_user table
                 Integer tenantUniqueID = add_newTenant.tenant_ID();
@@ -48,8 +50,7 @@ public class AddTenant {
                 addTenantUnit.setProperty_Name(property_Name);
                 addTenantUnit.setlandlord(landlordId);
                 addTenantUnit.setTenantId(tenantUniqueID);
-
-
+                addTenantUnit.setRent(rent_pay);
 
                 try {
                     addTenantUnit.Insert_tenatId();
