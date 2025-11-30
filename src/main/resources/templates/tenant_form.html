@@ -288,7 +288,12 @@
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="unit_number">Unit Number <span class="required-star">*</span></label>
+                            <label for="unit_number"
+                                   class="text-gray-500"
+                                   th:text="${name} + ' property Total Number Of Units:'">
+                                Total Number Of Units <span class="required-star">*</span>
+                            </label>
+
                             <input id="unit_number" name="unit_number" type="number" min="1"
                                    th:attr="max=${unit_add}"
                                    th:value="${unit_add}" required
