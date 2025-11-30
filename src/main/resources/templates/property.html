@@ -291,7 +291,6 @@
         <!-- Welcome Card - Always appears first on mobile, left on desktop -->
         <div class="welcome-card">
             <div class="flex items-center gap-3 mb-6">
-                <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-12 w-auto">
                 <h2 class="text-2xl font-bold text-accent">Welcome to ProMan</h2>
             </div>
             <p class="text-[var(--text)] text-sm font-medium mb-4">
@@ -303,7 +302,10 @@
                     <span class="text-accent text-lg">🏠</span>
                     <div>
                         <h4 class="font-semibold text-[var(--text)]">Add Property Details</h4>
-                        <p class="text-xs">Enter your property information and unit details</p>
+                        <p class="text-xs">
+                            Available property
+                            <span class="font-bold text-blue-500" th:text="${property_name}"></span>
+                        </p>
                     </div>
                 </div>
                 <div class="flex items-start gap-3">
@@ -336,20 +338,20 @@
         <!-- Form Card - Appears second on mobile, right on desktop -->
         <div class="form-card" role="main" aria-labelledby="form-title">
             <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4 text-accent">Property-Unit Information</h2>
-            <p class="text-center text-muted mb-6">Add a new unit to your property</p>
-
             <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
                 <div class="form-section mb-6">
+                    <p class="text-center mb-6 font-semibold text-[black]">Add Property Information</p>
+
                     <h3 class="text-xl font-bold mb-4 text-accent">Unit Details</h3>
                     <div class="form-row">
                         <div class="form-field">
                             <label for="property_Name">Property Name:</label>
-                            <input id="property_Name" name="property_Name" type="text" th:value="${property_name}" required class="themed-input input-focus">
+                            <input id="property_Name" name="property_Name" type="text"  required class="themed-input input-focus">
                             <p class="text-xs text-muted mt-1">Enter the name of the property</p>
                         </div>
                         <div class="form-field">
                             <label for="property_Address">Property Address:</label>
-                            <input id="property_Address" name="property_Address" type="text" th:value="${property_address}" required class="themed-input input-focus">
+                            <input id="property_Address" name="property_Address" type="text" required class="themed-input input-focus">
                             <p class="text-xs text-muted mt-1">Enter the address of the property</p>
                         </div>
                     </div>
@@ -357,9 +359,8 @@
                     <div class="form-row">
                         <div class="form-field">
                             <label for="property_unit"> Total Unit Number</label>
-                            <input id="property_unit" name="property_unit" type="number" min="1" value="1" th:value="${property_unit}" required class="themed-input input-focus">
+                            <input id="property_unit" name="property_unit" type="number" min="1" value="1" required class="themed-input input-focus">
                             <p class="text-xs text-muted mt-1">The unique number identifying this unit</p>
-                            <p th:text="${error}"></p>
                         </div>
                     </div>
                 </div>
@@ -369,7 +370,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
-                        Add Property Unit
+                        Add Property
                     </button>
                 </div>
             </form>
