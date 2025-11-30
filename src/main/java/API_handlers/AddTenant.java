@@ -28,6 +28,7 @@ public class AddTenant {
                 try {
                     property_information.insert_information();
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                     ctx.sessionAttribute("error", "Unit already taken");
                     ctx.redirect("/error/same_unit");
                     return;
@@ -35,8 +36,12 @@ public class AddTenant {
 
                 // Insert tenant into general_user table for landlord manual insertion
                 String name = ctx.formParam("tenant_name");
+                ctx.sessionAttribute("tenant_name",name);
                 String number = ctx.formParam("cell_number");
+                ctx.sessionAttribute("tenant_number",number);
                 String rent_pay = ctx.formParam("rent_amount");
+                ctx.sessionAttribute("tenant_pay",rent_pay);
+
 
                 System.out.println("Imali yami " + rent_pay);
                 String user_type = "tenant";
@@ -73,16 +78,21 @@ public class AddTenant {
 
                 // Additional tenant info
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
+                ctx.sessionAttribute("tenant_moveIn",moveIn);
                 String employment_status = ctx.formParam("employment");
                 String kin_name = ctx.formParam("kin_name");
+                ctx.sessionAttribute("tenant_kin_name",kin_name);
                 String kin_number = ctx.formParam("kin_number");
-                String rent_payment_day = ctx.formParam("rent_payment_day");
+                ctx.sessionAttribute("tenant_kin_number",kin_number);
+                String rent_payment_day = ctx.formParam("rent_day");
+                ctx.sessionAttribute("tenant_rent_payment",rent_payment_day);
                 Integer debt = Integer.valueOf(ctx.formParam("debt"));
-                System.out.println("Move in " + moveIn);
+                ctx.sessionAttribute("tenant_debt",debt);
 
                 try {
                     tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number,rent_payment_day,debt);
                     additional_information.setTenantId(tenantUniqueID);
+
                     additional_information.insert_information();
                 } catch (Exception e) {
 
