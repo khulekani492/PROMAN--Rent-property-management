@@ -78,10 +78,12 @@ public class AddTenant {
                 String kin_number = ctx.formParam("kin_number");
                 String rent_payment_day = ctx.formParam("rent_payment_day");
                 Integer debt = Integer.valueOf(ctx.formParam("debt"));
+                System.out.println("Move in " + moveIn);
 
                 try {
                     tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number,rent_payment_day,debt);
                     additional_information.setTenantId(tenantUniqueID);
+                    additional_information.insert_information();
                 } catch (Exception e) {
 
                     throw new RuntimeException(e);
@@ -95,8 +97,8 @@ public class AddTenant {
 
 //                Map<String, Object> model = new HashMap<>();
 //                model.put("name", property_name);
+             //   ctx.redirect("/dashboard");
                 ctx.redirect("/dashboard");
-                //ctx.render("/templates/dashboard.html", model);
 
             } catch (SQLException e) {
                 ctx.status(500).json("error: " + e.getMessage());
