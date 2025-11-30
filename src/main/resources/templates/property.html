@@ -273,12 +273,12 @@
             <div class="w-12 h-[2px] bg-muted"></div>
             <div class="flex flex-col items-center text-sm font-semibold">
                 <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
-                <span class="mt-2 text-accent">2. Add Unit</span>
+                <span class="mt-2 text-accent">2. Property</span>
             </div>
             <div class="w-12 h-[2px] bg-muted"></div>
             <div class="flex flex-col items-center text-sm text-muted">
                 <span class="progress-dot bg-muted"></span>
-                <span class="mt-2">3. Add Tenant</span>
+                <span class="mt-2">3. Tenants</span>
             </div>
         </div>
     </div>
@@ -337,12 +337,12 @@
 
         <!-- Form Card - Appears second on mobile, right on desktop -->
         <div class="form-card" role="main" aria-labelledby="form-title">
-            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4 text-accent">Property-Unit Information</h2>
+            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4 text-accent text-center">
+                Property Information
+            </h2>
             <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
                 <div class="form-section mb-6">
-                    <p class="text-center mb-6 font-semibold text-[black]">Add Property Information</p>
-
-                    <h3 class="text-xl font-bold mb-4 text-accent">Unit Details</h3>
+                    <h3 class="text-xl font-bold mb-4 text-accent">Property Details</h3>
                     <div class="form-row">
                         <div class="form-field">
                             <label for="property_Name">Property Name:</label>
@@ -358,9 +358,9 @@
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="property_unit"> Total Unit Number</label>
+                            <label for="property_unit"> Total Number of Units:</label>
                             <input id="property_unit" name="property_unit" type="number" min="1" value="1" required class="themed-input input-focus">
-                            <p class="text-xs text-muted mt-1">The unique number identifying this unit</p>
+                            <p class="text-xs text-muted mt-1">The total number of unit for the Property. </p>
                         </div>
                     </div>
                 </div>
@@ -380,20 +380,11 @@
 </main>
 
 <footer class="py-12 bg-surface">
-    <div class="max-w-6xl mx-auto px-6">
-        <div class="flex flex-col items-center text-center space-y-8 mb-8">
-            <div class="flex flex-col items-center">
-                <h4 class="font-bold text-muted mb-4 uppercase text-sm tracking-wider">For Landlords</h4>
-                <div class="space-y-2">
-                    <a href="http://localhost:7070/ayi" class="block text-sm text-muted hover:text-[var(--text)] transition-colors duration-200">Sign up to manage property</a>
-                </div>
-            </div>
 
             <div class="flex flex-col items-center">
                 <h4 class="font-bold text-[var(--text)] mb-4 uppercase text-sm tracking-wider">Contact</h4>
                 <div class="space-y-2">
                     <a href="mailto:ProMan@gmail.com" class="block text-sm text-[var(--text)] hover:underline font-medium transition-colors duration-200">ProMan@gmail.com</a>
-                    <a href="#" class="block text-sm text-muted hover:text-[var(--text)] transition-colors duration-200">Help Center</a>
                 </div>
             </div>
         </div>
