@@ -77,6 +77,7 @@ public class AddTenant {
 
 
                 // Additional tenant info
+
                 Date moveIn = Date.valueOf(ctx.formParam("move_in"));
                 ctx.sessionAttribute("tenant_moveIn",moveIn);
                 String employment_status = ctx.formParam("employment");
@@ -86,9 +87,13 @@ public class AddTenant {
                 ctx.sessionAttribute("tenant_kin_number",kin_number);
                 String rent_payment_day = ctx.formParam("rent_day");
                 ctx.sessionAttribute("tenant_rent_payment",rent_payment_day);
-                Integer debt = Integer.valueOf(ctx.formParam("debt"));
+                Integer debt;
+                try{
+                debt = Integer.valueOf(ctx.formParam("debt"));
+                } catch (NumberFormatException e) {
+                    debt=0;
+                }
                 ctx.sessionAttribute("tenant_debt",debt);
-
                 try {
                     tenant additional_information = new tenant(moveIn, employment_status, kin_name, kin_number,rent_payment_day,debt);
                     additional_information.setTenantId(tenantUniqueID);
