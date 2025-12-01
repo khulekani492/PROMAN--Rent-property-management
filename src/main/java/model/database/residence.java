@@ -37,6 +37,7 @@ public class residence extends ConnectionAccess implements  Property {
 
     }
 
+
     public residence() throws SQLException {
         super();
         this.property_unit = null;
@@ -54,6 +55,13 @@ public class residence extends ConnectionAccess implements  Property {
         this.occupation = occupation;
         this.property_name = propertyName;
     }
+    public residence(String propertyName, String property_address ,Integer propertyUnit) {
+        this.property_name = propertyName;
+        this.property_rent = property_address;
+        this.property_unit = propertyUnit;
+
+    }
+
 
     public void setlandlord(Integer landlordId) {
         this.landlordId = landlordId;
@@ -129,16 +137,14 @@ public class residence extends ConnectionAccess implements  Property {
     @Override
     public void insert_information() throws SQLException {
         String propertySQL = """
-    INSERT INTO properties (property_unit,property_rent,occupation,landlord_user_id,property_name,property_address)
-    VALUES (?, ?, ?, ?,?,?)
+    UPDATE  properties SET tenant_user_id = ?, property_rent = ?, occupation=? WHERE property_unit = ? and property_name = ?;
 """;
         try (PreparedStatement pstmt = connection.prepareStatement(propertySQL)) {
-            pstmt.setInt(1, this.property_unit);
+            pstmt.setInt(1, this.tenantId);
             pstmt.setString(2, this.property_rent);
-            pstmt.setString(3, this.occupation);
-            pstmt.setInt(4,this.landlordId);
-            pstmt.setString(5,this.property_name);
-            pstmt.setString(6,this.property_address);
+            pstmt.setString(3, "yes");
+            pstmt.setInt(4, this.property_unit);
+            pstmt.setString(5, this.property_name);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
@@ -191,6 +197,24 @@ public class residence extends ConnectionAccess implements  Property {
         return null; // if not found
     }
 
+    public void setTotal_units() throws SQLException {
+
+        String sql = """
+                INSERT INTO properties (property_name,property_address,property_unit,landlord_user_id) VALUES (?,?,?,?)
+                """;
+
+        try (PreparedStatement pstm = this.connection.prepareStatement(sql)){
+            pstm.setString(1,this.property_name);
+            pstm.setString(2,this.property_address);
+            pstm.setInt(3,this.property_unit);
+            pstm.setInt(4,this.landlordId);
+            pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+
+    }
+
     /**
      * Updates landlord property information. <br>
      * <p>
@@ -199,5 +223,16 @@ public class residence extends ConnectionAccess implements  Property {
      * to update the table information.
      */
 
+    static void main(String[] args) throws SQLException {
+        residence test_f = new residence();
+        test_f.setProperty_Name("Gangsta");
+        test_f.setProperty_address("paradise");
+        //test_f.setlandlord();
+        for(int i = 0; i <= 3;i++){
+             test_f.setProperty_unit(i);
+             test_f.setTotal_units();
+        }
+
+    }
 }
 
