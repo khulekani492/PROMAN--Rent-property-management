@@ -15,30 +15,26 @@ public class Dashboard {
         return ctx ->
         {
             Get_properties properties = new Get_properties();
-
-
             //FETCH landlord properties
             properties.display_property_units();
             propertyNames default_properties = new propertyNames();
-
-
             landlord user_id = new landlord();
-
             String email = ctx.sessionAttribute("email");
             //using landlord_unique_id to fetch all of their properties , it accessed with the user_email
-
             Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(email));
-
-
             //Access first property name. First convert landlord_properties to ArrayList
             ArrayList<String> default_property = new ArrayList<>(landlord_properties);
             Integer  total_properties = default_property.size();
-
-
+            String property_name = ctx.sessionAttribute("property_name");
             String first_property_name;
             try {
                 first_property_name = default_property.getFirst();
-                System.out.println("default name " + first_property_name);
+                if(!first_property_name.equals(property_name)){
+                    System.out.println("default name " + first_property_name);
+                    first_property_name = property_name;
+                    System.out.println("Updated name " + first_property_name);
+                }
+
             } catch (RuntimeException e) {
                 throw new RuntimeException(e);
 
