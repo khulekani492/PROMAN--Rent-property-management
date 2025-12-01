@@ -24,10 +24,7 @@ public class Get_properties {
 
             try{
                  property_name = ctx.formParam("name");
-                System.out.println(property_name + "Family");
-                 ctx.sessionAttribute("dashBoard_current_property",property_name);
-                System.out.println("prperty_first time"  + ctx.sessionAttribute("dashBoard_current_property"));
-
+                System.out.println(property_name + ".......Fetching units");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 //Handler auto_submit of empty space
@@ -47,11 +44,7 @@ public class Get_properties {
                 throw new RuntimeException(e);
             }
             HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name, authenticate.landlordId(property_email));
-
-
             Integer occupied_units = fetch_all.size();
-
-
             //Calculate the occupancy percentage of the property
             String total_units = user_id.total_property_units(property_name, user_id.landlordId(property_email));
             double occupancyRate = ((double) occupied_units / Integer.parseInt(total_units) ) * 100;
