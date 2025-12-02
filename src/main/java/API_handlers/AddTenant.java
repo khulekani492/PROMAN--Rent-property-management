@@ -72,9 +72,8 @@ public class AddTenant {
                     property_information.insert_information();
                 } catch (SQLException e) {
                     System.out.println("HOLD ON : ");
-                    ctx.redirect("/error/same_cell_number");
-                    e.printStackTrace();  // <-- ensures the exception appears in your terminal
                     System.err.println("Error: " + e.getMessage());
+                    ctx.redirect("/error/same_cell_number");
                     return;
                 }
 
