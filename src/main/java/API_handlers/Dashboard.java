@@ -14,6 +14,7 @@ public class Dashboard {
     public Handler user_profile() {
         return ctx ->
         {
+            ctx.req().getSession(false);
             System.out.println("STory time");
             System.out.println(ctx.cookieMap());
             //FETCH landlord properties
@@ -22,6 +23,7 @@ public class Dashboard {
             Property_Status property_units = new Property_Status();
 
             String email = ctx.sessionAttribute("email");
+            System.out.println("email " + email);
             try {
                 ctx.req().changeSessionId();
                  Integer landlord_id =  authenticate.landlordId(email);
@@ -31,14 +33,17 @@ public class Dashboard {
                 ArrayList<String> default_property = new ArrayList<>(landlord_properties);
                 Integer  total_properties = default_property.size();
                 String property_name = ctx.sessionAttribute("property_name");
+
                 String first_property_name;
 
                 try {
                     first_property_name = default_property.getFirst();
                     if(!first_property_name.equals(property_name)){
                         System.out.println("default name " + first_property_name);
+                    }
+                    else {
                         first_property_name = property_name;
-                        System.out.println("Updated name " + first_property_name);
+                        System.out.println("Updated " + first_property_name);
                     }
 
                 } catch (RuntimeException e) {
@@ -46,18 +51,18 @@ public class Dashboard {
 
                 }
 
+
                 HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(first_property_name,landlord_id);
                 Integer occupied_units = fetch_all.size();
 
                 //Calculate the occupancy percentage of the property
-                Integer total_units = ctx.sessionAttribute("property_unit");
+                String total_units = authenticate.total_property_units(first_property_name, landlord_id);;
 
-                System.out.println("total unit for " + property_name + " " + total_units);
-
-                double occupancyRate = ((double) occupied_units / total_units)  * 100;
+                double occupancyRate = ((double) occupied_units / Integer.parseInt(total_units) ) * 100;
 
                 //Vacant_rooms
-                Integer vacant = Integer.valueOf( total_units ) - occupied_units;
+                Integer vacant = Integer.parseInt( total_units ) - occupied_units;
+
                 //Expected profit based off the number of units occupied
                 String expected_profit = authenticate.property_estimated_profit(landlord_id,first_property_name );
 
