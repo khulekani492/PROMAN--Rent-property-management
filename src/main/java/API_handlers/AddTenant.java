@@ -1,12 +1,15 @@
 package API_handlers;
 
 import io.javalin.http.Handler;
+import model.database.CRUD.Property_Status;
+import model.database.CRUD.landlord;
 import model.database.general;
 import model.database.residence;
 import model.database.tenant;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,10 +18,13 @@ public class AddTenant {
         return ctx -> {
             //access property name and address
             String property_name = ctx.sessionAttribute("property_name");
-            String property_address =  ctx.sessionAttribute("property_address");
-
+            Integer property_total_unit=  ctx.sessionAttribute("property_unit");
+            String email = ctx.sessionAttribute("email");
             Integer chosen_unit = Integer.valueOf(ctx.formParam("unit_number"));
+            System.out.println("chosen unit " + chosen_unit);
+            ctx.sessionAttribute("chosen_unit",chosen_unit);
             ctx.sessionAttribute("occupied_unit_error",chosen_unit);
+
             residence property_information = new residence();
 
             try {
@@ -40,6 +46,23 @@ public class AddTenant {
                 }
                 // Access the unique ID from the general_user table
                 Integer tenantUniqueID = add_newTenant.tenant_ID();
+                landlord getUserID = new landlord();
+                Property_Status property_units = new Property_Status();
+                Integer landlordId = getUserID.landlordId(email);
+
+                HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name,landlordId);
+
+                //Validate the chosen unit is still empty
+                System.out.println("Keyset of current_occupied_management");
+                for( int occupied_unit : fetch_all.keySet()){
+                    System.out.println(occupied_unit );
+                    if(occupied_unit == chosen_unit){
+                        ctx.sessionAttribute("same_unit",chosen_unit);
+                        ctx.redirect("error/same_unit");
+                        return;
+                    }
+                }
+                //fetch_all.keySet();
                 // Update properties table with tenant unique ID
                 property_information.setTenantId(tenantUniqueID);
                 property_information.setRent(rent_pay);
@@ -47,17 +70,29 @@ public class AddTenant {
                 property_information.setProperty_Name(property_name);
                 try {
                     property_information.insert_information();
-
                 } catch (SQLException e) {
-                    ctx.redirect("/user_sign_up/error");
+                    System.out.println("HOLD ON : ");
+                    ctx.redirect("/error/same_cell_number");
                     e.printStackTrace();  // <-- ensures the exception appears in your terminal
                     System.err.println("Error: " + e.getMessage());
-
+                    return;
                 }
 
                 // Additional tenant info
-                Date moveIn = Date.valueOf(ctx.formParam("move_in"));
-                ctx.sessionAttribute("tenant_moveIn",moveIn);
+                Date moveIn = null;   // Declare outside
+                try {
+                    String moveInStr = ctx.formParam("move_in");
+                    // Validate empty input
+                    moveIn = Date.valueOf(moveInStr);  // This may throw IllegalArgumentException
+                    ctx.sessionAttribute("tenant_moveIn", moveIn);
+
+                } catch (IllegalArgumentException e) {
+                    // Handle error (redirect with message or render page)
+                    ctx.sessionAttribute("error_moveIn", "Invalid move-in date format. Use yyyy-mm-dd.");
+                    ctx.redirect("/error/Invalid_date");
+                    return; // stop execution after redirect!
+                }
+
                 String employment_status = ctx.formParam("employment");
                 String kin_name = ctx.formParam("kin_name");
                 ctx.sessionAttribute("tenant_kin_name",kin_name);
@@ -65,6 +100,7 @@ public class AddTenant {
                 ctx.sessionAttribute("tenant_kin_number",kin_number);
                 String rent_payment_day = ctx.formParam("rent_day");
                 ctx.sessionAttribute("tenant_rent_payment",rent_payment_day);
+
                 Integer debt;
                 try{
                 debt = Integer.valueOf(ctx.formParam("debt"));

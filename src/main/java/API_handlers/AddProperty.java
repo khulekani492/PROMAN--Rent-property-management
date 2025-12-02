@@ -26,7 +26,7 @@ public class AddProperty {
 
                 //DE (Data Extraction) get landlordId from the database
                 landlord getUserID = new landlord();
-                Integer landlordId = getUserID.landlordId(user_email); //
+                Integer landlordId = getUserID.landlordId(user_email);
 
                 //DE create rows of the property units for the landlord
                 residence create_rooms = new residence();
@@ -37,7 +37,6 @@ public class AddProperty {
                     create_rooms.setProperty_unit(i);
                     create_rooms.setTotal_units();
                 }
-
                 Map<String, Object> model = new HashMap<>();
                 System.out.println("SET total units to updated " + total_n_units);
                 System.out.println("SET property_name to  updated " + property_name);
