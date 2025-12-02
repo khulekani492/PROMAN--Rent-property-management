@@ -113,6 +113,10 @@ public class umuziAPI {
     feedback = new NoEmailCreator();
     app.get("/error/no_email",feedback.updateUser());
 
+    feedback = new TenantNameCreator();
+    app.get("/error/same_cell_number",feedback.updateUser());
+
+
     feedback = new WrongPasswordCreator();
     app.get("/error/wrong_password",feedback.updateUser());
 
