@@ -331,6 +331,7 @@
                                    class="themed-input input-focus" th:value="${tenant_number}" >
                             <p class="text-xs text-muted mt-1">No spaces or symbols</p>
                             <div id="cell_number_error" class="error-message">Enter a valid phone number (7–15 digits).</div>
+                            <p th:text="${error_tenant}"> </p>
                         </div>
 
                     </div>
