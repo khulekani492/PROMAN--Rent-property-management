@@ -182,6 +182,14 @@
             margin-bottom: 16px;
             text-align: center;
         }
+
+        /* Center the unit input section */
+        .unit-input-section {
+            text-align: center;
+        }
+        .unit-input-section .form-field {
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -282,14 +290,14 @@
                     <h3 class="text-xl font-bold mb-4 text-accent">Unit Information</h3>
 
                     <div class="unit-info">
-                        <p class="text-sm font-semibold text-accent">Maximum Available Units: <span th:text="${property_total_unit}">5</span></p>
-                        <p class="text-xs text-muted mt-1" th:text="'Please select a unit number between 1 and ' + ${property_total_unit} ">No numbers of units for this property <a href="#">Add total number of Unit</a></p>
+                        <p class="text-sm font-semibold text-accent text-center">Maximum Available Units: <span th:text="${property_total_unit}">5</span></p>
+                        <p class="text-xs text-muted mt-1 text-center" th:text="'Please select a unit number between 1 and ' + ${property_total_unit} ">No numbers of units for this property <a href="#">Add total number of Unit</a></p>
                     </div>
 
                     <div class="form-row">
-                        <div class="form-field">
+                        <div class="form-field unit-input-section">
                             <label for="unit_number"
-                                   class="text-gray-500"
+                                   class="text-gray-500 text-center"
                                    th:text="${name} + ' property Total Number Of Units:'">
                                 Total Number Of Units <span class="required-star">*</span>
                             </label>
@@ -300,12 +308,11 @@
                                    class="themed-input input-focus text-center"
                                    placeholder="Enter unit number">
                             <p class="text-xs text-muted mt-1 text-center">Select unit number from 1 to <span  th:text="${unit_add}">5</span></p>
-                            <div id="unit_number_error" class="error-message">Unit number must be between 1 and <span th:text="${unit_add}">5</span></div>
+                            <div id="unit_number_error" class="error-message text-center">Unit number must be between 1 and <span th:text="${unit_add}">5</span></div>
                             <th:block th:if="${error != null and !error.isEmpty()}">
                                 <p class="text-center mt-2" style="color: #dc3545; font-size: 0.875rem;"
                                    th:text="'Unit '+ ' ' + ${unit_add} +  ' ' + ${error}"></p>
                             </th:block>
-
                         </div>
                     </div>
                 </div>
@@ -326,11 +333,11 @@
 
                         <div class="form-field">
                             <label for="cell_number">Phone Number <span class="required-star">*</span></label>
-                            <input id="cell_number" name="cell_number" type="tel" pattern="[0-9]{7,15}"
-                                   placeholder="e.g. 0712345678" required
+                            <input id="cell_number" name="cell_number" type="tel" required
+                                   placeholder="e.g. 0712345678"
                                    class="themed-input input-focus" th:value="${tenant_number}" >
-                            <p class="text-xs text-muted mt-1">No spaces or symbols</p>
-                            <div id="cell_number_error" class="error-message">Enter a valid phone number (7–15 digits).</div>
+                            <p class="text-xs text-muted mt-1">South African mobile number (10 digits starting with 0)</p>
+                            <div id="cell_number_error" class="error-message">Enter a valid South African mobile number (10 digits, starting with 0).</div>
                             <p th:text="${error_tenant}"> </p>
                         </div>
 
@@ -380,17 +387,16 @@
 
                         <div class="form-field">
                             <label for="kin_number">Next of Kin Phone</label>
-                            <input id="kin_number" name="kin_number" type="tel" pattern="[0-9]{7,15}"
+                            <input id="kin_number" name="kin_number" type="tel"
                                    placeholder="e.g. 0712345678" required
                                    class="themed-input input-focus" th:value="${tenant_kin_number}" >
-                            <p class="text-xs text-muted mt-1">Emergency contact number</p>
-                            <div id="kin_number_error" class="error-message">Enter a valid phone number (7–15 digits) or leave blank.</div>
+                            <p class="text-xs text-muted mt-1">South African mobile number (10 digits starting with 0)</p>
+                            <div id="kin_number_error" class="error-message">Enter a valid South African mobile number (10 digits, starting with 0) or leave blank.</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Financial Details Section -->
-
                 <div class="form-section mb-6">
                     <h3 class="text-xl font-bold mb-4 text-accent">Financial Details</h3>
 
@@ -415,10 +421,11 @@
 
                         <div class="form-field">
                             <label for="debt_input">Outstanding Debt <span class="required-star">*</span></label>
-                            <input id="debt_input" name="debt" type="number" th:value="${tenant_debt}"
-                                    required
-                                   class="themed-input input-focus" value="0">
-                            <p class="text-xs text-muted mt-1">Any existing debt carried forward (Numbers only).</p>
+                            <input id="debt_input" name="debt" type="number"
+                                   th:value="${tenant_debt != null ? tenant_debt : '0'}"
+                                   value="0" required
+                                   class="themed-input input-focus">
+                            <p class="text-xs text-muted mt-1">Any existing debt carried forward (Numbers only). Default: 0</p>
                         </div>
                     </div>
                 </div>
@@ -472,6 +479,12 @@
         const submitBtn = form.querySelector('button[type="submit"]');
         const toastContainer = document.getElementById('toastContainer');
         const unitNumberInput = document.getElementById('unit_number');
+        const debtInput = document.getElementById('debt_input');
+
+        // Set default value for debt input
+        if (debtInput && !debtInput.value) {
+            debtInput.value = '0';
+        }
 
         // Get the max unit value from Thymeleaf attribute
         const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
@@ -492,6 +505,23 @@
         const phoneInput = document.getElementById('cell_number');
         const moveInInput = document.getElementById('move_in');
         const kinPhoneInput = document.getElementById('kin_number');
+
+        // South African phone number validation function
+        function isValidSouthAfricanPhoneNumber(phone) {
+            // Remove all non-digit characters
+            const digits = phone.replace(/\D/g, '');
+
+            // South African mobile numbers are 10 digits starting with 0
+            if (!/^0\d{9}$/.test(digits)) {
+                return false;
+            }
+
+            // Check if it's a valid South African mobile prefix
+            const prefix = digits.substring(0, 3);
+            const validPrefixes = ['071', '072', '073', '074', '076', '079', '060', '061', '062', '063', '064', '065', '066', '067', '068', '081', '082', '083', '084'];
+
+            return validPrefixes.includes(prefix);
+        }
 
         function validateUnitNumber() {
             const unitValue = parseInt(unitNumberInput.value);
@@ -524,9 +554,13 @@
                 hideError('tenant_name_error');
             }
 
-            const phoneVal = phoneInput.value.replace(/\D/g,'');
-            if (!/^\d{7,15}$/.test(phoneVal)) {
-                showError('cell_number_error', 'Enter a valid phone number (7–15 digits).');
+            // Validate South African phone number for tenant
+            const phoneVal = phoneInput.value.trim();
+            if (!phoneVal) {
+                showError('cell_number_error', 'Please enter a phone number.');
+                ok = false;
+            } else if (!isValidSouthAfricanPhoneNumber(phoneVal)) {
+                showError('cell_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
                 ok = false;
             } else {
                 hideError('cell_number_error');
@@ -539,10 +573,15 @@
                 hideError('move_in_error');
             }
 
-            const kinVal = kinPhoneInput.value.replace(/\D/g,'');
-            if (kinPhoneInput.value && !/^\d{7,15}$/.test(kinVal)) {
-                showError('kin_number_error', 'Enter a valid phone number (7–15 digits) or clear the field.');
-                ok = false;
+            // Validate South African phone number for next of kin (if provided)
+            const kinVal = kinPhoneInput.value.trim();
+            if (kinVal) {
+                if (!isValidSouthAfricanPhoneNumber(kinVal)) {
+                    showError('kin_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678) or clear the field.');
+                    ok = false;
+                } else {
+                    hideError('kin_number_error');
+                }
             } else {
                 hideError('kin_number_error');
             }
@@ -570,8 +609,16 @@
         function normalizeDigits(e) {
             const start = e.target.selectionStart;
             const raw = e.target.value;
+            // Allow only digits and auto-format for South African numbers
             const digits = raw.replace(/[^\d]/g, '');
-            e.target.value = digits;
+
+            // If starts with 0, limit to 10 digits max
+            if (digits.startsWith('0') && digits.length > 10) {
+                e.target.value = digits.substring(0, 10);
+            } else {
+                e.target.value = digits;
+            }
+
             try { e.target.setSelectionRange(start, start); } catch (err) {}
         }
 
@@ -586,6 +633,19 @@
 
         phoneInput.addEventListener('input', normalizeDigits);
         kinPhoneInput.addEventListener('input', normalizeDigits);
+
+        // Add placeholder formatting for better UX
+        phoneInput.addEventListener('focus', function() {
+            if (!this.value) {
+                this.value = '0';
+            }
+        });
+
+        kinPhoneInput.addEventListener('focus', function() {
+            if (!this.value) {
+                this.value = '0';
+            }
+        });
 
         form.addEventListener('submit', function(evt) {
             if (!validate()) {
