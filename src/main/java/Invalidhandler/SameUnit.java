@@ -10,8 +10,7 @@ public class SameUnit implements  ErrorHandler{
     public Handler error_message() {
         return ctx -> {
             Map<String, Object> model = new HashMap<>();
-            String user_name = ctx.sessionAttribute("user_name");
-
+            Integer property_total_unit = ctx.sessionAttribute("property_unit");
             String tenant_name = ctx.sessionAttribute("tenant_name");
             String tenant_number = ctx.sessionAttribute("tenant_number");
             String tenant_pay = ctx.sessionAttribute("tenant_pay");
@@ -21,9 +20,8 @@ public class SameUnit implements  ErrorHandler{
             String rent_payment_day = ctx.sessionAttribute("tenant_rent_payment");
             Integer tenant_debt = ctx.sessionAttribute("debt");
 
-
             String  propertyName = ctx.sessionAttribute("property_name");
-            Integer  propertyUnit = ctx.sessionAttribute("property_unit");
+            Integer  chosen_unit = ctx.sessionAttribute("chosen_unit");
 
             model.put("tenant_name",tenant_name);
             model.put("tenant_pay",tenant_pay);
@@ -34,10 +32,13 @@ public class SameUnit implements  ErrorHandler{
             model.put("tenant_rent_day",rent_payment_day);
             model.put("tenant_debt",tenant_debt);
 
-            model.put("unit_add", propertyUnit);
+            model.put("unit_add", chosen_unit);
+            model.put("property_total_unit",property_total_unit);
+            ;
             model.put("name", propertyName);
 
             model.put("error","already taken");
+
             System.out.println(model);
             ctx.render("templates/tenant_form.html",model);
         };

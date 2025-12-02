@@ -274,7 +274,7 @@
 <main class="max-w-6xl mx-auto px-6 py-12">
     <div class="centered-container">
         <div class="form-card" role="main" aria-labelledby="form-title">
-            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4 text-accent text-center">ADD TENANT TO UNIT</h2>
+            <h2 id="form-title" class="text-3xl font-extrabold border-b pb-2 mb-4 text-accent text-center"> ADD TENANT TO UNIT</h2>
 
             <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST" >
                 <!-- Unit Selection -->
@@ -282,8 +282,8 @@
                     <h3 class="text-xl font-bold mb-4 text-accent">Unit Information</h3>
 
                     <div class="unit-info">
-                        <p class="text-sm font-semibold text-accent">Maximum Available Units: <span th:text="${unit_add}">5</span></p>
-                        <p class="text-xs text-muted mt-1">Please select a unit number between 1 and the maximum available</p>
+                        <p class="text-sm font-semibold text-accent">Maximum Available Units: <span th:text="${property_total_unit}">5</span></p>
+                        <p class="text-xs text-muted mt-1" th:text="'Please select a unit number between 1 and ' + ${property_total_unit} ">No numbers of units for this property <a href="#">Add total number of Unit</a></p>
                     </div>
 
                     <div class="form-row">
@@ -299,11 +299,11 @@
                                    th:value="${unit_add}" required
                                    class="themed-input input-focus text-center"
                                    placeholder="Enter unit number">
-                            <p class="text-xs text-muted mt-1 text-center">Select unit number from 1 to <span th:text="${unit_add}">5</span></p>
+                            <p class="text-xs text-muted mt-1 text-center">Select unit number from 1 to <span  th:text="${unit_add}">5</span></p>
                             <div id="unit_number_error" class="error-message">Unit number must be between 1 and <span th:text="${unit_add}">5</span></div>
                             <th:block th:if="${error != null and !error.isEmpty()}">
                                 <p class="text-center mt-2" style="color: #dc3545; font-size: 0.875rem;"
-                                   th:text="'Unit ' + 'chosen' + ' ' + ${error}"></p>
+                                   th:text="'Unit '+ ' ' + ${unit_add} +  ' ' + ${error}"></p>
                             </th:block>
 
                         </div>
@@ -332,6 +332,7 @@
                             <p class="text-xs text-muted mt-1">No spaces or symbols</p>
                             <div id="cell_number_error" class="error-message">Enter a valid phone number (7–15 digits).</div>
                         </div>
+
                     </div>
 
                     <div class="form-row">
@@ -341,6 +342,7 @@
                                    class="themed-input input-focus" th:value="${tenant_moveIn}"    >
                             <p class="text-xs text-muted mt-1">Tenant's move-in date</p>
                             <div id="move_in_error" class="error-message">Please select a move-in date.</div>
+                            <p th:text="${Invalid_format}" class="text-xs text-red-600 mt-1"></p>
                         </div>
 
                         <div class="form-field">
@@ -370,7 +372,7 @@
                         <div class="form-field">
                             <label for="kin_name">Next of Kin Name</label>
                             <input id="kin_name" name="kin_name" type="text"
-                                   placeholder="e.g. Naledi Mokoena"
+                                   placeholder="e.g. Naledi Mokoena" required
                                    class="themed-input input-focus" th:value="${tenant_kin_name}">
                             <p class="text-xs text-muted mt-1">Emergency contact person</p>
                         </div>
@@ -378,7 +380,7 @@
                         <div class="form-field">
                             <label for="kin_number">Next of Kin Phone</label>
                             <input id="kin_number" name="kin_number" type="tel" pattern="[0-9]{7,15}"
-                                   placeholder="e.g. 0712345678"
+                                   placeholder="e.g. 0712345678" required
                                    class="themed-input input-focus" th:value="${tenant_kin_number}" >
                             <p class="text-xs text-muted mt-1">Emergency contact number</p>
                             <div id="kin_number_error" class="error-message">Enter a valid phone number (7–15 digits) or leave blank.</div>
@@ -395,7 +397,7 @@
                         <div class="form-field w-full">
                             <label for="rent_amount_input">Rent amount : <span class="required-star">*</span></label>
                             <input id="rent_amount_input" name="rent_amount" type="number" min="1"
-                                   placeholder="3000" required
+                                   placeholder="3000" required th:value=${tenant_rent_payment}
                                    class="themed-input input-focus">
                             <p class="text-xs text-muted mt-1">Monthly rent (Enter numbers only).</p>
                         </div>
@@ -413,7 +415,7 @@
                         <div class="form-field">
                             <label for="debt_input">Outstanding Debt <span class="required-star">*</span></label>
                             <input id="debt_input" name="debt" type="number" th:value="${tenant_debt}"
-                                   placeholder="e.g. 200" required
+                                    required
                                    class="themed-input input-focus" value="0">
                             <p class="text-xs text-muted mt-1">Any existing debt carried forward (Numbers only).</p>
                         </div>
