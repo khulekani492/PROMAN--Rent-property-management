@@ -43,6 +43,8 @@ public class umuziAPI {
             ctx.render("templates/landlord.html");
         });
         app.get("/add_property_unit",new Save_unit().save_property_unit());
+
+        app.get("/log_out",new LogOut().sign_out());
         // Redirects to the unit page
         app.get("/add_property",ctx ->{
             //TODO Empty the session variables to be blank for generating a new page
@@ -98,6 +100,12 @@ public class umuziAPI {
     UpdateUser feedback;
     feedback = new SameEmialCreator();
     app.get("/error/same_email",feedback.updateUser());
+
+
+    feedback = new Invalid_dateCreator();
+    app.get("/error/Invalid_date",feedback.updateUser());
+
+
 
     feedback = new SameUnitCreator();
     app.get("/error/same_unit",feedback.updateUser());
