@@ -627,13 +627,13 @@
                                     <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[4]}">Rent Day</td>
                                     <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[5]}">Overdue Days</td>
                                     <td class="px-4 py-3 whitespace-nowrap payment-cell">
-    <span th:if="${entry.value[2]} == 'yes'"
-          th:with="isPaid=${entry.value[6]}"
-          th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-          class="indicator open-pay cursor-pointer"
-          th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}"
-          th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}"
-          th:text="${isPaid} ? '+' : '−'">−</span>
+            <span th:if="${entry.value[2]} == 'yes'"
+                  th:with="isPaid=${entry.value[6]}"
+                  th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                  class="indicator open-pay cursor-pointer"
+                  th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}"
+                  th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}"
+                  th:text="${isPaid} ? '+' : '−'">−</span>
                                         <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
@@ -644,12 +644,32 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- No Units Message -->
+                    <div th:if="${units.isEmpty()}" class="mt-8 text-center">
+                        <div class="inline-flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg border border-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                            <h3 class="text-lg font-medium text-gray-700 mb-2">No Units Found</h3>
+                            <p class="text-gray-500 mb-4 max-w-md">
+                                You don't have any units added yet. Get started by adding your first unit and tenant.
+                            </p>
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                + Add New Unit
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Alternative: If you want to use the model message directly -->
                 </div>
             </div>
         </div>
     </main>
 </div>
-
 <!-- Rest of your existing code remains the same -->
 <p th:text="${default_name}"></p>
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-[1000]">
