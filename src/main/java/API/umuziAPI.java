@@ -83,10 +83,12 @@ public class umuziAPI {
             Integer  propertyUnit = ctx.sessionAttribute("property_unit");
             String user_name = ctx.sessionAttribute("user_name");
             String  propertyName = ctx.sessionAttribute("property_name");
-            //     ctx.sessionAttribute("property_unit", propertyUnit);
+            ctx.sessionAttribute("property_unit", propertyUnit);
             model.put("user_name",user_name);
             model.put("unit_add", propertyUnit);
             model.put("name", propertyName);
+
+            System.out.println(propertyUnit + "My sins");
             ctx.render("templates/tenant_form.html",model);
 
         });
