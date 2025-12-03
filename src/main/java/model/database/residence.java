@@ -1,8 +1,11 @@
 package model.database;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import model.database.CRUD.Tenants_rent_day;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
+import java.util.Properties;
 
 /**
  * residence class is responsible for inserting property information into the database. <br>
@@ -60,6 +63,31 @@ public class residence extends ConnectionAccess implements  Property {
         this.property_rent = property_address;
         this.property_unit = propertyUnit;
 
+    }
+    private static final Properties dbProps = new Properties();
+
+    static {
+        try (InputStream input = Tenants_rent_day.class
+                .getClassLoader()
+                .getResourceAsStream("db.properties")) {
+
+            if (input == null) {
+                throw new IOException("db.properties not found in resources");
+            }
+            dbProps.load(input);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load db.properties", e);
+        }
+    }
+
+
+    // Create a NEW DB connection every time
+    private Connection newConnection() throws SQLException {
+        String url = dbProps.getProperty("db.url");
+        String user = dbProps.getProperty("db.user");
+        String password = dbProps.getProperty("db.password");
+        return DriverManager.getConnection(url, user, password);
     }
 
 
@@ -202,14 +230,14 @@ public class residence extends ConnectionAccess implements  Property {
         String sql = """
                 INSERT INTO properties (property_name,property_address,property_unit,landlord_user_id) VALUES (?,?,?,?)
                 """;
-
-        try (PreparedStatement pstm = this.connection.prepareStatement(sql)){
+        try (PreparedStatement pstm = newConnection().prepareStatement(sql)){
             pstm.setString(1,this.property_name);
             pstm.setString(2,this.property_address);
             pstm.setInt(3,this.property_unit);
             pstm.setInt(4,this.landlordId);
             pstm.executeUpdate();
         } catch (SQLException e) {
+
             throw new SQLException(e);
         }
 
