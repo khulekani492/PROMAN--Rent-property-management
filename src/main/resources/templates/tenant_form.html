@@ -211,12 +211,20 @@
             background: rgba(212,175,55,0.05);
             border: 1px solid rgba(212,175,55,0.2);
             border-radius: 6px;
-            padding: 8px 12px;
-            margin-bottom: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
             font-size: 13px;
         }
         .unit-info p {
-            margin: 4px 0;
+            margin: 6px 0;
+        }
+        .unit-info .property-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .unit-info .instruction-text {
+            color: var(--muted-text);
+            font-style: italic;
         }
 
         /* Helper text styling */
@@ -285,6 +293,26 @@
             margin-top: 2rem;
             font-size: 0.85rem;
         }
+
+        /* Info box styling */
+        .info-box {
+            background: var(--muted);
+            border-left: 4px solid var(--accent);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .info-box p {
+            margin: 4px 0;
+        }
+
+        /* Validation styling */
+        input:invalid {
+            border-color: var(--error);
+        }
+        input:valid {
+            border-color: #10b981;
+        }
     </style>
 </head>
 <body>
@@ -296,7 +324,7 @@
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-16 md:h-20 w-auto object-contain">
             </a>
             <div>
-                <a href="home.html" class="text-lg font-extrabold text-accent">ProMan</a>
+                <a class="text-lg font-extrabold text-accent">ProMan</a>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
@@ -379,32 +407,32 @@
         <div class="form-card" role="main" aria-labelledby="form-title">
             <h2 id="form-title" class="form-title">ADD TENANT TO UNIT</h2>
 
-            <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST">
-                <!-- Unit Selection -->
-                <div class="form-section">
-                    <h3 class="text-accent">Unit Information</h3>
+            <!-- Information Box -->
+            <div class="info-box">
+                <p class="property-name">Property: <span th:text="${name}">Property Name</span></p>
+                <p>Total Available Units: <strong th:text="${unit_add}">0</strong></p>
+                <p class="instruction-text">Select a unit number between 1 and <span th:text="${unit_add}">0</span></p>
+            </div>
 
-                    <div class="unit-info">
-                        <p class="font-semibold text-accent text-center">Maximum Available Units: <span th:text="${unit_add}">5</span></p>
-                        <p class="text-center" th:text="'Please select a unit number between 1 and ' + ${unit_add}"></p>
-                    </div>
+            <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST">
+                <!-- Unit Selection Section -->
+                <div class="form-section">
+                    <h3 class="text-accent">Unit Selection</h3>
 
                     <div class="form-row full-width">
                         <div class="form-field">
-                            <label for="unit_number" class="text-center"
-                                   th:text="${name} + ' property Total Number Of Units:'">
-                                Total Number Of Units <span class="required-star">*</span>
-                            </label>
+                            <label for="unit_number">Unit Number <span class="required-star">*</span></label>
                             <input id="unit_number" name="unit_number" type="number" min="1"
                                    th:attr="max=${unit_add}"
                                    th:value="${unit_add}" required
-                                   class="themed-input input-focus text-center"
-                                   placeholder="Enter unit number">
-                            <p class="helper-text text-center">Select unit number from 1 to <span th:text="${unit_add}">5</span></p>
-                            <div id="unit_number_error" class="error-message text-center"></div>
+                                   class="themed-input input-focus"
+                                   placeholder="Enter unit number (1 to max)">
+                            <p class="helper-text">Enter a unit number from 1 to <span th:text="${unit_add}">0</span>. This unit will be assigned to the tenant.</p>
+                            <div id="unit_number_error" class="error-message"></div>
                             <th:block th:if="${error != null and !error.isEmpty()}">
-                                <p class="text-center mt-1" style="color: #dc3545; font-size: 0.75rem;"
-                                   th:text="'Unit '+ ' ' + ${unit_add} +  ' ' + ${error}"></p>
+                                <p class="mt-1 text-sm text-red-600">
+                                    <strong>Error:</strong> <span th:text="${error}"></span>
+                                </p>
                             </th:block>
                         </div>
                     </div>
@@ -431,7 +459,9 @@
                                    class="themed-input input-focus" th:value="${tenant_number}">
                             <p class="helper-text">South African mobile number (10 digits starting with 0)</p>
                             <div id="cell_number_error" class="error-message"></div>
-                            <p th:text="${error_tenant}" class="helper-text text-red-600"></p>
+                            <th:block th:if="${error_tenant != null and !error_tenant.isEmpty()}">
+                                <p class="mt-1 text-sm text-red-600" th:text="${error_tenant}"></p>
+                            </th:block>
                         </div>
                     </div>
 
@@ -442,7 +472,9 @@
                                    class="themed-input input-focus" th:value="${tenant_moveIn}">
                             <p class="helper-text">Tenant's move-in date</p>
                             <div id="move_in_error" class="error-message"></div>
-                            <p th:text="${Invalid_format}" class="helper-text text-red-600"></p>
+                            <th:block th:if="${Invalid_format != null and !Invalid_format.isEmpty()}">
+                                <p class="mt-1 text-sm text-red-600" th:text="${Invalid_format}"></p>
+                            </th:block>
                         </div>
 
                         <div class="form-field">
@@ -470,15 +502,15 @@
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="kin_name">Next of Kin Name</label>
+                            <label for="kin_name">Next of Kin Name <span class="required-star">*</span></label>
                             <input id="kin_name" name="kin_name" type="text"
                                    placeholder="e.g. Naledi Mokoena" required
                                    class="themed-input input-focus" th:value="${tenant_kin_name}">
-                            <p class="helper-text">Emergency contact person</p>
+                            <p class="helper-text">Emergency contact person's full name</p>
                         </div>
 
                         <div class="form-field">
-                            <label for="kin_number">Next of Kin Phone</label>
+                            <label for="kin_number">Next of Kin Phone <span class="required-star">*</span></label>
                             <input id="kin_number" name="kin_number" type="tel"
                                    placeholder="e.g. 0712345678" required
                                    class="themed-input input-focus" th:value="${tenant_kin_number}">
@@ -494,11 +526,11 @@
 
                     <div class="form-row full-width">
                         <div class="form-field">
-                            <label for="rent_amount_input">Rent Amount <span class="required-star">*</span></label>
+                            <label for="rent_amount_input">Rent Amount (Monthly) <span class="required-star">*</span></label>
                             <input id="rent_amount_input" name="rent_amount" type="number" min="1"
-                                   placeholder="3000" required th:value=${tenant_rent_payment}
+                                   placeholder="3000" required th:value="${tenant_rent_payment}"
                                    class="themed-input input-focus">
-                            <p class="helper-text">Monthly rent (Enter numbers only)</p>
+                            <p class="helper-text">Monthly rent amount in Rand (enter numbers only)</p>
                         </div>
                     </div>
 
@@ -508,20 +540,21 @@
                             <input id="rent_day_input" name="rent_day" type="number" min="1" max="31"
                                    placeholder="8" required
                                    class="themed-input input-focus" th:value="${tenant_rent_day}">
-                            <p class="helper-text">Day of month when rent is due (1-31)</p>
+                            <p class="helper-text">Day of month when rent is due (enter 1 to 31)</p>
                         </div>
 
                         <div class="form-field">
-                            <label for="debt_input">Outstanding Debt <span class="required-star">*</span></label>
+                            <label for="debt_input">Outstanding Debt</label>
                             <input id="debt_input" name="debt" type="number"
                                    th:value="${tenant_debt != null ? tenant_debt : '0'}"
                                    value="0" required
                                    class="themed-input input-focus">
-                            <p class="helper-text">Any existing debt carried forward (Numbers only). Default: 0</p>
+                            <p class="helper-text">Any existing debt carried forward (enter 0 if none)</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Hidden field for unit -->
                 <input type="hidden" name="unit" th:value="${unit_add}" />
 
                 <div class="form-actions">
@@ -586,12 +619,13 @@
             const el = document.getElementById(id);
             if (!el) return;
             el.textContent = msg;
-            el.style.display = 'block';
+            el.classList.add('show');
         };
         const hideError = (id) => {
             const el = document.getElementById(id);
             if (!el) return;
-            el.style.display = 'none';
+            el.textContent = '';
+            el.classList.remove('show');
         };
 
         const nameInput = document.getElementById('tenant_name');
@@ -666,17 +700,24 @@
                 hideError('move_in_error');
             }
 
-            // Validate South African phone number for next of kin (if provided)
+            // Validate South African phone number for next of kin
             const kinVal = kinPhoneInput.value.trim();
-            if (kinVal) {
-                if (!isValidSouthAfricanPhoneNumber(kinVal)) {
-                    showError('kin_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678) or clear the field.');
-                    ok = false;
-                } else {
-                    hideError('kin_number_error');
-                }
+            if (!kinVal) {
+                showError('kin_number_error', 'Please enter next of kin phone number.');
+                ok = false;
+            } else if (!isValidSouthAfricanPhoneNumber(kinVal)) {
+                showError('kin_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
+                ok = false;
             } else {
                 hideError('kin_number_error');
+            }
+
+            // Validate next of kin name
+            const kinNameInput = document.getElementById('kin_name');
+            if (!kinNameInput.value.trim()) {
+                const kinNameError = document.getElementById('kin_number_error') || document.createElement('div');
+                kinNameError.textContent = 'Please enter next of kin name.';
+                ok = false;
             }
 
             if (!employmentSelected()) {
@@ -740,6 +781,23 @@
             }
         });
 
+        // Real-time validation
+        const inputsToValidate = [nameInput, phoneInput, moveInInput, kinPhoneInput, unitNumberInput];
+        inputsToValidate.forEach(inp => {
+            inp.addEventListener('input', function() {
+                const errorId = this.id + '_error';
+                hideError(errorId);
+            });
+
+            inp.addEventListener('blur', validate);
+        });
+
+        form.querySelectorAll('input[name="employment"]').forEach(r => {
+            r.addEventListener('change', function() {
+                hideError('employment_error');
+            });
+        });
+
         form.addEventListener('submit', function(evt) {
             if (!validate()) {
                 evt.preventDefault();
@@ -749,18 +807,21 @@
 
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
-            showToast('Submitting…', { bg: '#dcfce7', color: '#064e3b', duration: 2000 });
+            showToast('Adding tenant...', { bg: '#dcfce7', color: '#064e3b', duration: 2000 });
 
+            // Re-enable button after 5 seconds if form submission fails
             setTimeout(() => {
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
             }, 5000);
         });
 
-        [nameInput, phoneInput, moveInInput, kinPhoneInput, unitNumberInput].forEach(inp => {
-            inp.addEventListener('blur', validate);
+        // Initialize validation on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today as max date for move-in
+            const today = new Date().toISOString().split('T')[0];
+            moveInInput.max = today;
         });
-        form.querySelectorAll('input[name="employment"]').forEach(r => r.addEventListener('change', validate));
     })();
 </script>
 </body>
