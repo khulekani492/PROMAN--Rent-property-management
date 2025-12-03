@@ -17,7 +17,7 @@ public class AddProperty {
                 String property_Name = ctx.formParam("property_Name");
                 String property_address = ctx.formParam("property_Address");
                 System.out.println(property_address);
-                ctx.sessionAttribute("property_name", property_Name);
+                ctx.sessionAttribute("current_property", property_Name);
                 ctx.sessionAttribute("property_address", property_address);
                 ctx.sessionAttribute("property_unit",propertyUnit);
 
@@ -35,8 +35,8 @@ public class AddProperty {
                 create_rooms.setProperty_Name(property_Name);
                 create_rooms.setProperty_address(property_address);
                 for (int i = 1 ;i <= total_n_units;i++){
-                    create_rooms.setProperty_unit(i);
                     try {
+                        create_rooms.setProperty_unit(i);
                         create_rooms.setTotal_units();
                     } catch (SQLException e) {
                         System.out.println("please");
