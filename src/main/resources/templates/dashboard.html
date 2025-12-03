@@ -15,6 +15,118 @@
         .property-form-container.hidden {
             display: none;
         }
+ <style>
+        .property-name-display {
+            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
+            border: 1.5px solid rgba(212,175,55,0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(212,175,55,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .property-name-display:hover {
+            box-shadow: 0 6px 16px rgba(212,175,55,0.12);
+            border-color: rgba(212,175,55,0.4);
+            transform: translateY(-2px);
+        }
+
+        .property-name-display svg {
+            color: var(--accent);
+            flex-shrink: 0;
+            stroke-width: 1.8;
+        }
+
+        .property-name-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            flex-grow: 1;
+            letter-spacing: -0.3px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .property-badge {
+            background: var(--accent);
+            color: #2b1f00;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(212,175,55,0.3);
+        }
+
+        /* Alternative design options (choose one): */
+
+        /* Option 2: More elegant design */
+        /*
+        .property-name-display {
+            background: var(--surface);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .property-name-text {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            flex-grow: 1;
+        }
+
+        .property-name-display svg {
+            color: var(--accent);
+            stroke-width: 1.6;
+        }
+        */
+
+        /* Option 3: Simple yet prominent */
+        /*
+        .property-name-display {
+            background: rgba(212,175,55,0.1);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-name-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+        }
+
+        .property-name-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            display: block;
+        }
+
+        .property-subtext {
+            font-size: 11px;
+            color: var(--muted-text);
+            margin-top: 4px;
+            display: block;
+        }
 
         .full-table-view .lg\:w-2\/3 {
             width: 100% !important;
@@ -418,7 +530,7 @@
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-20 md:h-24 w-auto object-contain">
             </a>
             <div>
-                <a href="home.html" class="text-accent font-extrabold text-xl">ProMan</a>
+                <a class="text-accent font-extrabold text-xl">ProMan</a>
                 <div class="text-xs" style="color:var(--muted-text); margin-top:-4px;">Property management simplified</div>
             </div>
         </div>
@@ -437,16 +549,22 @@
         </div>
     </div>
 </header><div id="sidebar-backdrop"></div>
-
 <div class="main-wrap">
     <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main sidebar">
         <div class="sidebar-content">
             <div class="sidebar-header">
-
+                <!-- Property name made to stand out -->
+                <div class="property-name-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    <span class="property-name-text" th:text="${name}">Property Name</span>
+                    <span class="property-badge">ACTIVE</span>
+                </div>
             </div>
             <nav class="mb-4 space-y-2">
-                <a href="http://localhost:7070/add_property_unit " class="nav-item active">ADD PROPERTY </a>
-                <a href="http://localhost:7070/add_tenant" class="nav-item">ADD UNITS</a>
+                <a href="http://localhost:7070/add_property_unit " class="nav-item active">ADD PROPERTY</a>
+                <a href="http://localhost:7070/add_tenant" class="nav-item active">ADD UNITS</a>
             </nav>
             <div class="sidebar-stats">
                 <div class="card rounded-lg p-3">
