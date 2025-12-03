@@ -54,18 +54,42 @@ public class Get_properties {
             //Expected profit based off the number of units occupied
             String expected_profit = user_id.property_estimated_profit(user_id.landlordId(property_email),property_name );
 
-            if (fetch_all.size() == 0) {
-                HashMap<String, String> model = new HashMap<>();
-                String property = ctx.sessionAttribute("property_name");
-                model.put("no_units", "No units added for " + property);
-                ctx.render("templates/dashboard.html", model);
-            } else {
+            if (fetch_all.isEmpty()) {
                 Map<String, Object> data = new HashMap<>();
                 HashMap<String, HashMap<Integer, ArrayList<String>>> allPropertyUnits = new HashMap<>();
                 Map<String, Object> model1 = new HashMap<>();
                 HashMap<String, String> model = new HashMap<>();
                 HashMap<String, String> model2 = new HashMap<>();
 
+                ctx.sessionAttribute("current_property",property_name);
+
+                allPropertyUnits.put("units", fetch_all);
+                System.out.println(fetch_all + "Occupied units");
+                model.put("total_properties", String.valueOf(total_properties));
+                model.put("occupied_units", String.valueOf(occupied_units));
+                model2.put("occupancyRate",String.valueOf(occupancyRate));
+                model2.put("vacant",String.valueOf(vacant ) );
+                model2.put("expected_profit","0");
+                model1.put("no_units","No Units. press  +Add New Unit to add tenants ");
+                //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
+                model1.put("names", landlord_properties);
+                model1.put("name",property_name);
+                System.out.println("model_1 " + model1);
+                data.putAll(allPropertyUnits);
+                data.putAll(model1);
+                data.putAll(model);
+                data.putAll(model2);
+                ctx.render("templates/dashboard.html", data);
+            } else {
+                Map<String, Object> data = new HashMap<>();
+                HashMap<String, HashMap<Integer, ArrayList<String>>> allPropertyUnits = new HashMap<>();
+                Map<String, Object> model1 = new HashMap<>();
+                HashMap<String, String> model = new HashMap<>();
+                HashMap<String, String> model2 = new HashMap<>();
+                HashMap<String, String> model5 = new HashMap<>();
+
+
+                ctx.sessionAttribute("current_property",property_name);
                 allPropertyUnits.put("units", fetch_all);
                 System.out.println(fetch_all + "Occupied units");
                 model.put("total_properties", String.valueOf(total_properties));
@@ -75,14 +99,18 @@ public class Get_properties {
                 model2.put("expected_profit",expected_profit);
                 //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                 model1.put("names", landlord_properties);
-
+                model5.put("name",property_name);
+                System.out.println(model5
+                );
                 data.putAll(allPropertyUnits);
                 data.putAll(model1);
                 data.putAll(model);
                 data.putAll(model2);
+                data.putAll(model5);
                 System.out.println(data);
                 ctx.render("templates/dashboard.html", data);
             }
+
         };
     }
 
