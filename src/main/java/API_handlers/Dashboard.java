@@ -32,7 +32,7 @@ public class Dashboard {
                 Set<String> landlord_properties = default_properties.fetchAllproperty(landlord_id);
                 ArrayList<String> default_property = new ArrayList<>(landlord_properties);
                 Integer  total_properties = default_property.size();
-                String property_name = ctx.sessionAttribute("property_name");
+                String property_name = ctx.sessionAttribute("current_property");
                 System.out.println("Current property in memory : " + property_name);
                 String first_property_name;
                 try {
@@ -71,6 +71,9 @@ public class Dashboard {
                     Map<String, Object> model1 = new HashMap<>();
                     HashMap<String, String> model = new HashMap<>();
                     HashMap<String, String> model2 = new HashMap<>();
+
+                    //Keeps track of the updated name
+                    ctx.sessionAttribute("current_property",first_property_name);
                     allPropertyUnits.put("units", fetch_all);
                     System.out.println(fetch_all + "Occupied units");
                     model.put("total_properties", String.valueOf(total_properties));
@@ -81,6 +84,7 @@ public class Dashboard {
                     model1.put("no_units","No Units. press  +Add New Unit to add tenants ");
                     //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                     model1.put("names", landlord_properties);
+                    model1.put("name",property_name);
                     System.out.println("model_1 " + model1);
                     data.putAll(allPropertyUnits);
                     data.putAll(model1);
@@ -93,6 +97,8 @@ public class Dashboard {
                     Map<String, Object> model1 = new HashMap<>();
                     HashMap<String, String> model = new HashMap<>();
                     HashMap<String, String> model2 = new HashMap<>();
+                    ctx.sessionAttribute("current_property",first_property_name);
+
                     allPropertyUnits.put("units", fetch_all);
                     System.out.println(fetch_all + "Occupied units");
                     model.put("total_properties", String.valueOf(total_properties));
@@ -102,6 +108,7 @@ public class Dashboard {
                     model2.put("expected_profit",expected_profit);
                     //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                     model1.put("names", landlord_properties);
+                    model1.put("name",property_name);
 
                     data.putAll(allPropertyUnits);
                     data.putAll(model1);
