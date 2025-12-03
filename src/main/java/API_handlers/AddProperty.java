@@ -54,7 +54,8 @@ public class AddProperty {
                 model.put("user_name",user_name);
                 model.put("unit_add", propertyUnit);
                 model.put("name", propertyName);
-                ctx.render("templates/tenant_form.html",model);
+                //ctx.render("templates/tenant_form.html",model);
+                ctx.redirect("/add_tenant");
 
             } catch (Exception e) {
                 ctx.status(400).result("Error chill: " + e.getMessage());
