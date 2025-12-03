@@ -82,13 +82,16 @@ public class umuziAPI {
             Map<String, Object> model = new HashMap<>();
             Integer  propertyUnit = ctx.sessionAttribute("property_unit");
             String user_name = ctx.sessionAttribute("user_name");
-            String  propertyName = ctx.sessionAttribute("property_name");
+            String  propertyName = ctx.sessionAttribute("current_property" );
+            System.out.println("property_name "+ propertyName);
             ctx.sessionAttribute("property_unit", propertyUnit);
             model.put("user_name",user_name);
             model.put("unit_add", propertyUnit);
             model.put("name", propertyName);
 
-            System.out.println(propertyUnit + "My sins");
+            System.out.println(propertyUnit + "  property unit ");
+            System.out.println(model + "  property model ");
+
             ctx.render("templates/tenant_form.html",model);
 
         });
