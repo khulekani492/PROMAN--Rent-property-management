@@ -105,7 +105,8 @@ public class umuziAPI {
     feedback = new Invalid_dateCreator();
     app.get("/error/Invalid_date",feedback.updateUser());
 
-
+    feedback = new InvalidPropertyCreator();
+    app.get("/error/same_address",feedback.updateUser());
 
     feedback = new SameUnitCreator();
     app.get("/error/same_unit",feedback.updateUser());
