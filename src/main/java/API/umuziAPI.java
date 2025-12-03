@@ -80,11 +80,10 @@ public class umuziAPI {
 
         app.get("/add_tenant",ctx -> {
             Map<String, Object> model = new HashMap<>();
+            Integer  propertyUnit = ctx.sessionAttribute("property_unit");
             String user_name = ctx.sessionAttribute("user_name");
             String  propertyName = ctx.sessionAttribute("property_name");
-            Integer  propertyUnit = ctx.sessionAttribute("property_unit");
-
-
+            //     ctx.sessionAttribute("property_unit", propertyUnit);
             model.put("user_name",user_name);
             model.put("unit_add", propertyUnit);
             model.put("name", propertyName);
@@ -101,7 +100,6 @@ public class umuziAPI {
     feedback = new SameEmialCreator();
     app.get("/error/same_email",feedback.updateUser());
 
-
     feedback = new Invalid_dateCreator();
     app.get("/error/Invalid_date",feedback.updateUser());
 
@@ -116,7 +114,6 @@ public class umuziAPI {
 
     feedback = new TenantNameCreator();
     app.get("/error/same_cell_number",feedback.updateUser());
-
 
     feedback = new WrongPasswordCreator();
     app.get("/error/wrong_password",feedback.updateUser());
