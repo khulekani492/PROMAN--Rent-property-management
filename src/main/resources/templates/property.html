@@ -374,6 +374,9 @@
                     </button>
                 </div>
             </form>
+            <p th:if="${property_error}" style="color: #dc2626; margin-top: 0.5rem;">
+                A property with the address <strong th:text="${property_address}"></strong> (<span th:text="${property_name}"></span>) already exists on <span style="color: #CFB53B; font-weight: bold;">ProMan</span>
+            </p>
         </div>
 
     </div>
