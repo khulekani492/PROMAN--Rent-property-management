@@ -4,6 +4,7 @@ import io.javalin.http.Handler;
 import model.database.CRUD.landlord;
 import model.database.residence;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,7 +36,14 @@ public class AddProperty {
                 create_rooms.setProperty_address(property_address);
                 for (int i = 1 ;i <= total_n_units;i++){
                     create_rooms.setProperty_unit(i);
-                    create_rooms.setTotal_units();
+                    try {
+                        create_rooms.setTotal_units();
+                    } catch (SQLException e) {
+                        System.out.println("please");
+                        ctx.redirect("error/same_address");
+                        return;
+                    }
+
                 }
                 Map<String, Object> model = new HashMap<>();
                 System.out.println("SET total units to updated " + total_n_units);
