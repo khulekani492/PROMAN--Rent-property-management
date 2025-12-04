@@ -88,7 +88,7 @@ public class Get_properties {
                 HashMap<String, String> model2 = new HashMap<>();
                 HashMap<String, String> model5 = new HashMap<>();
 
-
+                String themeColor = ctx.sessionAttribute("theme_color");
                 ctx.sessionAttribute("current_property",property_name);
                 allPropertyUnits.put("units", fetch_all);
                 System.out.println(fetch_all + "Occupied units");
@@ -99,7 +99,9 @@ public class Get_properties {
                 model2.put("expected_profit",expected_profit);
                 //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                 model1.put("names", landlord_properties);
+                model1.put("user_chosen_theme",themeColor);
                 model5.put("name",property_name);
+
                 System.out.println(model5
                 );
                 data.putAll(allPropertyUnits);
