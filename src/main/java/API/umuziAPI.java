@@ -80,7 +80,7 @@ public class umuziAPI {
 
         app.get("/add_tenant",ctx -> {
             Map<String, Object> model = new HashMap<>();
-            Integer  propertyUnit = ctx.sessionAttribute("property_unit");
+            String  propertyUnit = ctx.sessionAttribute("property_unit");
             String user_name = ctx.sessionAttribute("user_name");
             String  propertyName = ctx.sessionAttribute("current_property" );
             System.out.println("property_name "+ propertyName);
