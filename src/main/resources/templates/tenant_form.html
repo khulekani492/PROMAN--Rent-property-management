@@ -7,9 +7,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- Store Thymeleaf variable in JavaScript -->
+    <script>
+        // This gets rendered server-side by Thymeleaf
+        const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
+    </script>
+
     <style>
         :root{
-            /* Smoke white theme variables */
+            /* Default light theme variables */
             --bg: #f5f6f7;         /* overall smoke-white page background */
             --surface: #ffffff;    /* card / surface white */
             --muted: #eef0f2;      /* slightly darker smoke for surfaces */
@@ -22,12 +28,27 @@
             --error-light: #fef2f2;
         }
 
+        /* Dark theme variables */
+        body.dark {
+            --bg: #0f172a;          /* dark blue-gray background */
+            --surface: #1e293b;     /* dark surface */
+            --muted: #334155;       /* muted dark */
+            --text: #f1f5f9;        /* light text */
+            --muted-text: #94a3b8;  /* muted light text */
+            --accent: #F4B342;      /* brighter gold for dark mode */
+            --accent-dark: #E0A028; /* darker gold for hover */
+            --glass: rgba(30, 41, 59, 0.6);
+            --error: #f87171;
+            --error-light: #450a0a;
+        }
+
         body {
             background: var(--bg);
             color: var(--text);
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             margin: 0;
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .text-accent { color: var(--accent) !important; }
@@ -42,13 +63,30 @@
             box-shadow: 0 6px 20px rgba(31,41,55,0.06);
         }
 
-        .card-highlight { border-top-width: 4px; border-top-style: solid; border-color: rgba(212,175,55,0.26); }
+        body.dark .hero-surface {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-highlight {
+            border-top-width: 4px;
+            border-top-style: solid;
+            border-color: rgba(212,175,55,0.26);
+        }
+
+        body.dark .card-highlight {
+            border-color: rgba(244, 179, 66, 0.26);
+        }
 
         .progress-dot { width: 12px; height: 12px; border-radius: 9999px; display: inline-block; }
         .input-focus:focus {
             outline: none;
             box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
             border-color: var(--accent);
+        }
+
+        body.dark .input-focus:focus {
+            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
         }
 
         .login-btn{
@@ -63,6 +101,11 @@
             background: var(--accent);
             color: #2b1f00; /* readable on gold */
         }
+
+        body.dark .signup-btn {
+            color: #1a1400;
+        }
+
         .signup-btn:hover{
             background: var(--accent-dark);
             color: white;
@@ -77,7 +120,13 @@
             border: 1px solid var(--muted);
             max-width: 900px;
             margin: 0 auto;
+            transition: all 0.3s ease;
         }
+
+        body.dark .form-card {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -4px rgba(0,0,0,0.2);
+        }
+
         input, select, .themed-input {
             background: var(--surface) !important;
             border: 1px solid var(--muted);
@@ -86,6 +135,8 @@
             font-size: 14px;
             width: 100%;
             box-sizing: border-box;
+            color: var(--text);
+            transition: all 0.3s ease;
         }
 
         /* Form details - More compact */
@@ -124,7 +175,8 @@
             font-size: 16px;
             margin-bottom: 12px;
             padding-bottom: 6px;
-            border-bottom: 2px solid rgba(212,175,55,0.2);
+            border-bottom: 2px solid var(--accent);
+            color: var(--accent);
         }
 
         /* Error handling */
@@ -150,8 +202,10 @@
             transition: all 0.2s;
         }
         .btn-secondary:hover {
-            background: #e5e5e5;
+            background: var(--muted);
+            filter: brightness(0.9);
         }
+
         button[type="submit"] {
             background: var(--accent);
             color: #2b1f00;
@@ -162,6 +216,11 @@
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
         }
+
+        body.dark button[type="submit"] {
+            color: #1a1400;
+        }
+
         button[type="submit"]:hover {
             background: var(--accent-dark);
             color: white;
@@ -181,7 +240,7 @@
         }
 
         /* Required star */
-        .required-star { color: #dc2626; margin-left: 0.1rem; font-size: 0.9em; }
+        .required-star { color: var(--error); margin-left: 0.1rem; font-size: 0.9em; }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -215,12 +274,19 @@
             margin-bottom: 16px;
             font-size: 13px;
         }
+
+        body.dark .unit-info {
+            background: rgba(244, 179, 66, 0.08);
+            border: 1px solid rgba(244, 179, 66, 0.2);
+        }
+
         .unit-info p {
             margin: 6px 0;
         }
         .unit-info .property-name {
             font-size: 14px;
             font-weight: 600;
+            color: var(--text);
         }
         .unit-info .instruction-text {
             color: var(--muted-text);
@@ -250,6 +316,10 @@
             font-size: 14px;
         }
 
+        input[type="radio"] {
+            accent-color: var(--accent);
+        }
+
         /* Form title */
         .form-title {
             font-size: 20px;
@@ -257,6 +327,7 @@
             text-align: center;
             padding-bottom: 8px;
             border-bottom: 2px solid var(--accent);
+            color: var(--text);
         }
 
         /* Action buttons */
@@ -276,6 +347,9 @@
         .stepper {
             padding: 0.5rem 0;
             font-size: 12px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--muted);
+            transition: all 0.3s ease;
         }
         .stepper .progress-dot {
             width: 10px;
@@ -285,6 +359,8 @@
         /* Main content area - less padding */
         main {
             padding: 1rem 0;
+            background: var(--bg);
+            transition: background-color 0.3s ease;
         }
 
         /* Footer compact */
@@ -292,6 +368,9 @@
             padding: 1.5rem 0;
             margin-top: 2rem;
             font-size: 0.85rem;
+            background: var(--surface);
+            border-top: 1px solid var(--muted);
+            transition: all 0.3s ease;
         }
 
         /* Info box styling */
@@ -313,14 +392,22 @@
         input:valid {
             border-color: #10b981;
         }
+
+        /* Header transition */
+        header {
+            background: var(--surface);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
     </style>
 </head>
-<body>
 
-<header class="bg-surface shadow sticky top-0 z-30">
+<!-- Apply dark class based on user_chosen_theme from server -->
+<body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-3 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a href="home.html" class="flex items-center">
+            <a class="flex items-center">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
@@ -372,16 +459,21 @@
 </header>
 
 <script>
+    console.log("Server theme from Thymeleaf:", serverTheme); // Will show 'light' or 'dark'
+
+    // Mobile menu functionality
     const menuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
-    menuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
 </script>
 
 <!-- Progress / Stepper - Compact -->
-<div class="bg-transparent py-3 border-b border-muted stepper">
+<div class="stepper">
     <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-2">
         <div class="flex items-center gap-2">
             <div class="flex flex-col items-center text-xs font-semibold">
@@ -584,246 +676,279 @@
 <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script>
-    // Supabase setup
-    const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Function to send theme preference to server
+    function sendThemePreference(theme) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'http://localhost:7070/page_theme';
 
-    async function getUserSession() {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error getting session:', error.message);
-      } else if (session) {
-        console.log('Logged-in user:', session.user);
-      } else {
-        console.log('No user is logged in.');
-      }
+        const themeInput = document.createElement('input');
+        themeInput.type = 'hidden';
+        themeInput.name = 'user_theme';
+        themeInput.value = theme;
+
+        form.appendChild(themeInput);
+        document.body.appendChild(form);
+        form.submit();
+
+        setTimeout(() => {
+            document.body.removeChild(form);
+        }, 100);
     }
-    getUserSession();
 
-    (function() {
-        const form = document.getElementById('tenantForm');
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const toastContainer = document.getElementById('toastContainer');
-        const unitNumberInput = document.getElementById('unit_number');
-        const debtInput = document.getElementById('debt_input');
+    // Initialize everything on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Use server theme as primary source
+        const serverTheme = window.serverTheme || 'light';
 
-        // Set default value for debt input
-        if (debtInput && !debtInput.value) {
-            debtInput.value = '0';
-        }
+        // Sync localStorage with server theme
+        localStorage.setItem('user_chosen_theme', serverTheme);
 
-        // Get the max unit value from Thymeleaf attribute
-        const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const showError = (id, msg) => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.textContent = msg;
-            el.classList.add('show');
-        };
-        const hideError = (id) => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.textContent = '';
-            el.classList.remove('show');
-        };
-
-        const nameInput = document.getElementById('tenant_name');
-        const phoneInput = document.getElementById('cell_number');
-        const moveInInput = document.getElementById('move_in');
-        const kinPhoneInput = document.getElementById('kin_number');
-
-        // South African phone number validation function
-        function isValidSouthAfricanPhoneNumber(phone) {
-            // Remove all non-digit characters
-            const digits = phone.replace(/\D/g, '');
-
-            // South African mobile numbers are 10 digits starting with 0
-            if (!/^0\d{9}$/.test(digits)) {
-                return false;
-            }
-
-            // Check if it's a valid South African mobile prefix
-            const prefix = digits.substring(0, 3);
-            const validPrefixes = ['071', '072', '073', '074', '076', '079', '060', '061', '062', '063', '064', '065', '066', '067', '068', '081', '082', '083', '084'];
-
-            return validPrefixes.includes(prefix);
-        }
-
-        function validateUnitNumber() {
-            const unitValue = parseInt(unitNumberInput.value);
-            if (isNaN(unitValue) || unitValue < 1 || unitValue > maxUnits) {
-                showError('unit_number_error', `Unit number must be between 1 and ${maxUnits}`);
-                return false;
+        async function getUserSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) {
+                console.error('Error getting session:', error.message);
+            } else if (session) {
+                console.log('Logged-in user:', session.user);
             } else {
-                hideError('unit_number_error');
-                return true;
+                console.log('No user is logged in.');
             }
         }
+        getUserSession();
 
-        function employmentSelected() {
-            const radios = form.querySelectorAll('input[name="employment"]');
-            return Array.from(radios).some(r => r.checked);
-        }
+        // Form validation code
+        (function() {
+            const form = document.getElementById('tenantForm');
+            if (!form) return;
 
-        function validate() {
-            let ok = true;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const toastContainer = document.getElementById('toastContainer');
+            const unitNumberInput = document.getElementById('unit_number');
+            const debtInput = document.getElementById('debt_input');
 
-            // Validate unit number
-            if (!validateUnitNumber()) {
-                ok = false;
+            // Set default value for debt input
+            if (debtInput && !debtInput.value) {
+                debtInput.value = '0';
             }
 
-            if (!nameInput.value.trim()) {
-                showError('tenant_name_error', "Please enter the tenant's full name.");
-                ok = false;
-            } else {
-                hideError('tenant_name_error');
+            // Get the max unit value from Thymeleaf attribute
+            const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
+
+            const showError = (id, msg) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.textContent = msg;
+                el.classList.add('show');
+            };
+            const hideError = (id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.textContent = '';
+                el.classList.remove('show');
+            };
+
+            const nameInput = document.getElementById('tenant_name');
+            const phoneInput = document.getElementById('cell_number');
+            const moveInInput = document.getElementById('move_in');
+            const kinPhoneInput = document.getElementById('kin_number');
+
+            // South African phone number validation function
+            function isValidSouthAfricanPhoneNumber(phone) {
+                // Remove all non-digit characters
+                const digits = phone.replace(/\D/g, '');
+
+                // South African mobile numbers are 10 digits starting with 0
+                if (!/^0\d{9}$/.test(digits)) {
+                    return false;
+                }
+
+                // Check if it's a valid South African mobile prefix
+                const prefix = digits.substring(0, 3);
+                const validPrefixes = ['071', '072', '073', '074', '076', '079', '060', '061', '062', '063', '064', '065', '066', '067', '068', '081', '082', '083', '084'];
+
+                return validPrefixes.includes(prefix);
             }
 
-            // Validate South African phone number for tenant
-            const phoneVal = phoneInput.value.trim();
-            if (!phoneVal) {
-                showError('cell_number_error', 'Please enter a phone number.');
-                ok = false;
-            } else if (!isValidSouthAfricanPhoneNumber(phoneVal)) {
-                showError('cell_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
-                ok = false;
-            } else {
-                hideError('cell_number_error');
+            function validateUnitNumber() {
+                const unitValue = parseInt(unitNumberInput.value);
+                if (isNaN(unitValue) || unitValue < 1 || unitValue > maxUnits) {
+                    showError('unit_number_error', `Unit number must be between 1 and ${maxUnits}`);
+                    return false;
+                } else {
+                    hideError('unit_number_error');
+                    return true;
+                }
             }
 
-            if (!moveInInput.value) {
-                showError('move_in_error', 'Please select a move-in date.');
-                ok = false;
-            } else {
-                hideError('move_in_error');
+            function employmentSelected() {
+                const radios = form.querySelectorAll('input[name="employment"]');
+                return Array.from(radios).some(r => r.checked);
             }
 
-            // Validate South African phone number for next of kin
-            const kinVal = kinPhoneInput.value.trim();
-            if (!kinVal) {
-                showError('kin_number_error', 'Please enter next of kin phone number.');
-                ok = false;
-            } else if (!isValidSouthAfricanPhoneNumber(kinVal)) {
-                showError('kin_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
-                ok = false;
-            } else {
-                hideError('kin_number_error');
+            function validate() {
+                let ok = true;
+
+                // Validate unit number
+                if (!validateUnitNumber()) {
+                    ok = false;
+                }
+
+                if (!nameInput.value.trim()) {
+                    showError('tenant_name_error', "Please enter the tenant's full name.");
+                    ok = false;
+                } else {
+                    hideError('tenant_name_error');
+                }
+
+                // Validate South African phone number for tenant
+                const phoneVal = phoneInput.value.trim();
+                if (!phoneVal) {
+                    showError('cell_number_error', 'Please enter a phone number.');
+                    ok = false;
+                } else if (!isValidSouthAfricanPhoneNumber(phoneVal)) {
+                    showError('cell_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
+                    ok = false;
+                } else {
+                    hideError('cell_number_error');
+                }
+
+                if (!moveInInput.value) {
+                    showError('move_in_error', 'Please select a move-in date.');
+                    ok = false;
+                } else {
+                    hideError('move_in_error');
+                }
+
+                // Validate South African phone number for next of kin
+                const kinVal = kinPhoneInput.value.trim();
+                if (!kinVal) {
+                    showError('kin_number_error', 'Please enter next of kin phone number.');
+                    ok = false;
+                } else if (!isValidSouthAfricanPhoneNumber(kinVal)) {
+                    showError('kin_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
+                    ok = false;
+                } else {
+                    hideError('kin_number_error');
+                }
+
+                // Validate next of kin name
+                const kinNameInput = document.getElementById('kin_name');
+                if (!kinNameInput.value.trim()) {
+                    const kinNameError = document.getElementById('kin_number_error') || document.createElement('div');
+                    kinNameError.textContent = 'Please enter next of kin name.';
+                    ok = false;
+                }
+
+                if (!employmentSelected()) {
+                    showError('employment_error', 'Please indicate employment status.');
+                    ok = false;
+                } else {
+                    hideError('employment_error');
+                }
+
+                return ok;
             }
 
-            // Validate next of kin name
-            const kinNameInput = document.getElementById('kin_name');
-            if (!kinNameInput.value.trim()) {
-                const kinNameError = document.getElementById('kin_number_error') || document.createElement('div');
-                kinNameError.textContent = 'Please enter next of kin name.';
-                ok = false;
+            function showToast(msg, opts = {}) {
+                const el = document.createElement('div');
+                el.className = 'toast';
+                el.style.background = opts.bg || '#fff3cd';
+                el.style.color = opts.color || '#92400e';
+                el.textContent = msg;
+                toastContainer.appendChild(el);
+                setTimeout(() => { el.remove(); }, opts.duration || 1800);
             }
 
-            if (!employmentSelected()) {
-                showError('employment_error', 'Please indicate employment status.');
-                ok = false;
-            } else {
-                hideError('employment_error');
+            function normalizeDigits(e) {
+                const start = e.target.selectionStart;
+                const raw = e.target.value;
+                // Allow only digits and auto-format for South African numbers
+                const digits = raw.replace(/[^\d]/g, '');
+
+                // If starts with 0, limit to 10 digits max
+                if (digits.startsWith('0') && digits.length > 10) {
+                    e.target.value = digits.substring(0, 10);
+                } else {
+                    e.target.value = digits;
+                }
+
+                try { e.target.setSelectionRange(start, start); } catch (err) {}
             }
 
-            return ok;
-        }
-
-        function showToast(msg, opts = {}) {
-            const el = document.createElement('div');
-            el.className = 'toast';
-            el.style.background = opts.bg || '#fff3cd';
-            el.style.color = opts.color || '#92400e';
-            el.textContent = msg;
-            toastContainer.appendChild(el);
-            setTimeout(() => { el.remove(); }, opts.duration || 1800);
-        }
-
-        function normalizeDigits(e) {
-            const start = e.target.selectionStart;
-            const raw = e.target.value;
-            // Allow only digits and auto-format for South African numbers
-            const digits = raw.replace(/[^\d]/g, '');
-
-            // If starts with 0, limit to 10 digits max
-            if (digits.startsWith('0') && digits.length > 10) {
-                e.target.value = digits.substring(0, 10);
-            } else {
-                e.target.value = digits;
-            }
-
-            try { e.target.setSelectionRange(start, start); } catch (err) {}
-        }
-
-        // Prevent user from typing values beyond max
-        unitNumberInput.addEventListener('input', function(e) {
-            const value = parseInt(e.target.value);
-            if (!isNaN(value) && value > maxUnits) {
-                e.target.value = maxUnits;
-            }
-            validateUnitNumber();
-        });
-
-        phoneInput.addEventListener('input', normalizeDigits);
-        kinPhoneInput.addEventListener('input', normalizeDigits);
-
-        // Add placeholder formatting for better UX
-        phoneInput.addEventListener('focus', function() {
-            if (!this.value) {
-                this.value = '0';
-            }
-        });
-
-        kinPhoneInput.addEventListener('focus', function() {
-            if (!this.value) {
-                this.value = '0';
-            }
-        });
-
-        // Real-time validation
-        const inputsToValidate = [nameInput, phoneInput, moveInInput, kinPhoneInput, unitNumberInput];
-        inputsToValidate.forEach(inp => {
-            inp.addEventListener('input', function() {
-                const errorId = this.id + '_error';
-                hideError(errorId);
+            // Prevent user from typing values beyond max
+            unitNumberInput.addEventListener('input', function(e) {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value) && value > maxUnits) {
+                    e.target.value = maxUnits;
+                }
+                validateUnitNumber();
             });
 
-            inp.addEventListener('blur', validate);
-        });
+            phoneInput.addEventListener('input', normalizeDigits);
+            kinPhoneInput.addEventListener('input', normalizeDigits);
 
-        form.querySelectorAll('input[name="employment"]').forEach(r => {
-            r.addEventListener('change', function() {
-                hideError('employment_error');
+            // Add placeholder formatting for better UX
+            phoneInput.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = '0';
+                }
             });
-        });
 
-        form.addEventListener('submit', function(evt) {
-            if (!validate()) {
-                evt.preventDefault();
-                showToast('Please fix the highlighted fields', { bg: '#ffe4e6', color: '#991b1b' });
-                return;
-            }
+            kinPhoneInput.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = '0';
+                }
+            });
 
-            submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
-            showToast('Adding tenant...', { bg: '#dcfce7', color: '#064e3b', duration: 2000 });
+            // Real-time validation
+            const inputsToValidate = [nameInput, phoneInput, moveInInput, kinPhoneInput, unitNumberInput];
+            inputsToValidate.forEach(inp => {
+                if (inp) {
+                    inp.addEventListener('input', function() {
+                        const errorId = this.id + '_error';
+                        hideError(errorId);
+                    });
 
-            // Re-enable button after 5 seconds if form submission fails
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
-            }, 5000);
-        });
+                    inp.addEventListener('blur', validate);
+                }
+            });
 
-        // Initialize validation on load
-        document.addEventListener('DOMContentLoaded', function() {
+            form.querySelectorAll('input[name="employment"]').forEach(r => {
+                r.addEventListener('change', function() {
+                    hideError('employment_error');
+                });
+            });
+
+            form.addEventListener('submit', function(evt) {
+                if (!validate()) {
+                    evt.preventDefault();
+                    showToast('Please fix the highlighted fields', { bg: '#ffe4e6', color: '#991b1b' });
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+                showToast('Adding tenant...', { bg: '#dcfce7', color: '#064e3b', duration: 2000 });
+
+                // Re-enable button after 5 seconds if form submission fails
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+                }, 5000);
+            });
+
             // Set today as max date for move-in
             const today = new Date().toISOString().split('T')[0];
-            moveInInput.max = today;
-        });
-    })();
+            if (moveInInput) {
+                moveInInput.max = today;
+            }
+        })();
+    });
 </script>
 </body>
 </html>
