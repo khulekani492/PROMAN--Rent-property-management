@@ -56,7 +56,8 @@ public class Dashboard {
                 Integer occupied_units = fetch_all.size();
 
                 //Calculate the occupancy percentage of the property
-                String total_units = authenticate.total_property_units(first_property_name, landlord_id);;
+                String total_units = authenticate.total_property_units(first_property_name, landlord_id);
+                ctx.sessionAttribute("property_unit",total_units);
 
                 double occupancyRate = ((double) occupied_units / Integer.parseInt(total_units) ) * 100;
 
@@ -121,6 +122,8 @@ public class Dashboard {
             } catch (Exception e) {
                 System.out.println("something wrong");
                 throw new RuntimeException(e);
+
+
 
           }
 
