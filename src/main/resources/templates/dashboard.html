@@ -7,379 +7,355 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Add these new styles for the view modes */
-        .property-form-container {
-            transition: all 0.3s ease;
+        /* CSS Variables for Light/Dark Themes */
+        :root {
+            /* Light Theme (Default) */
+            --bg: #f5f6f7;
+            --surface: #ffffff;
+            --muted: #eef0f2;
+            --text: #2f3337;
+            --muted-text: #6b7378;
+            --accent: #D4AF37;
+            --accent-dark: #b8892a;
+            --sidebar-bg: #f1f3f4;
+            --card-bg: #ffffff;
+            --table-header-bg: rgba(212,175,55,0.1);
+            --table-row-even: rgba(212,175,55,0.02);
+            --table-row-hover: rgba(212,175,55,0.05);
+            --table-border: rgba(212,175,55,0.3);
+            --modal-bg: #ffffff;
+            --modal-text: #2f3337;
+            --error-bg: #fef2f2;
+            --error-text: #991b1b;
+            --success-bg: #f0fdf4;
+            --success-text: #166534;
         }
 
-        .property-form-container.hidden {
-            display: none;
-        }
- <style>
-        .property-name-display {
-            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
-            border: 1.5px solid rgba(212,175,55,0.3);
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(212,175,55,0.08);
-            transition: all 0.3s ease;
-        }
-
-        .property-name-display:hover {
-            box-shadow: 0 6px 16px rgba(212,175,55,0.12);
-            border-color: rgba(212,175,55,0.4);
-            transform: translateY(-2px);
-        }
-
-        .property-name-display svg {
-            color: var(--accent);
-            flex-shrink: 0;
-            stroke-width: 1.8;
+        body.dark {
+            /* Dark Theme */
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --muted: #334155;
+            --text: #f1f5f9;
+            --muted-text: #94a3b8;
+            --accent: #F4B342;
+            --accent-dark: #E0A028;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --table-header-bg: rgba(244, 179, 66, 0.15);
+            --table-row-even: rgba(244, 179, 66, 0.05);
+            --table-row-hover: rgba(244, 179, 66, 0.1);
+            --table-border: rgba(244, 179, 66, 0.3);
+            --modal-bg: #1e293b;
+            --modal-text: #f1f5f9;
+            --error-bg: #450a0a;
+            --error-text: #fca5a5;
+            --success-bg: #052e16;
+            --success-text: #86efac;
         }
 
-        .property-name-text {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
-            flex-grow: 1;
-            letter-spacing: -0.3px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .property-badge {
-            background: var(--accent);
-            color: #2b1f00;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(212,175,55,0.3);
-        }
-
-        /* Alternative design options (choose one): */
-
-        /* Option 2: More elegant design */
-        /*
-        .property-name-display {
-            background: var(--surface);
-            border-left: 4px solid var(--accent);
-            border-radius: 0 8px 8px 0;
-            padding: 14px 16px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .property-name-text {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--text);
-            flex-grow: 1;
-        }
-
-        .property-name-display svg {
-            color: var(--accent);
-            stroke-width: 1.6;
-        }
-        */
-
-        /* Option 3: Simple yet prominent */
-        /*
-        .property-name-display {
-            background: rgba(212,175,55,0.1);
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .property-name-display::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
-        }
-
-        .property-name-text {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
-            display: block;
-        }
-
-        .property-subtext {
-            font-size: 11px;
-            color: var(--muted-text);
-            margin-top: 4px;
-            display: block;
-        }
-
-        .full-table-view .lg\:w-2\/3 {
-            width: 100% !important;
-        }
-
-        .change-property-btn {
-            display: none;
-        }
-
-        .full-table-view .change-property-btn {
-            display: block;
-            margin: 0 auto 1rem auto;
-        }
-
-        .view-table-btn {
-            margin-top: 1rem;
-        }
-
-        /* Rest of your existing styles remain the same */
-        :root{
-          --bg: #f5f6f7;
-          --surface: #ffffff;
-          --muted: #eef0f2;
-          --text: #2f3337;
-          --muted-text: #6b7378;
-          --accent: #D4AF37;
-          --accent-dark: #b8892a;
-          --sidebar-bg: #f1f3f4; /* Defined smokish white color */
-        }
-
+        /* Base Styles */
         html,body { height:100%; }
         body {
-          margin:0;
-          min-height:100%;
-          background:var(--bg);
-          color:var(--text);
-          font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-          -webkit-font-smoothing:antialiased;
-          -moz-osx-font-smoothing:grayscale;
-          display:flex;
-          flex-direction:column;
+            margin:0;
+            min-height:100%;
+            background:var(--bg);
+            color:var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            display:flex;
+            flex-direction:column;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Header - Increased height */
         header.topbar {
-          background: #ffffff; /* Changed to solid white */
-          border-bottom: 1px solid var(--muted);
-          position: sticky;
-          top: 0;
-          z-index: 60;
-          height: 100px; /* Increased header height */
+            background: var(--surface);
+            border-bottom: 1px solid var(--muted);
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            height: 100px;
         }
+
         header .brand-left { display:flex; gap:1rem; align-items:center; }
         header .brand-left img { height:5rem; width:auto; }
         header .brand-left a.text-accent { color: var(--accent); font-weight:800; font-size:1.125rem; }
 
         .main-wrap {
-          display:flex;
-          flex:1;
-          min-height: calc(100vh - 100px); /* Adjusted for increased header height */
+            display:flex;
+            flex:1;
+            min-height: calc(100vh - 100px);
         }
 
-        /* Sidebar: desktop visible; mobile overlays when opened - Enhanced smokish white background */
+        /* Sidebar */
         .sidebar {
-          width:16rem;
-          height: calc(100vh - 100px); /* Full height minus header */
-          position:fixed;
-          left:0;
-          top: 100px; /* Start below the increased header */
-          z-index:50;
-          overflow: hidden; /* Changed to hidden to contain scrolling */
-          background: var(--sidebar-bg); /* Using defined smokish white */
-          transition: transform .28s ease, box-shadow .28s ease;
-          border-right: 1px solid rgba(0,0,0,0.08); /* Slightly darker border for better definition */
-          transform: translateX(0); /* visible by default on desktop */
-          display: flex;
-          flex-direction: column;
+            width:16rem;
+            height: calc(100vh - 100px);
+            position:fixed;
+            left:0;
+            top: 100px;
+            z-index:50;
+            overflow: hidden;
+            background: var(--sidebar-bg);
+            transition: transform .28s ease, box-shadow .28s ease, background-color 0.3s ease;
+            border-right: 1px solid var(--muted);
+            transform: translateX(0);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Sidebar content area that scrolls */
         .sidebar-content {
-          flex: 1;
-          overflow-y: auto;
-          padding: 1rem;
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
         }
 
         /* Desktop layout */
         @media (min-width:1025px) {
-          .content {
-            margin-left: 16rem;
-            padding:1.5rem;
-            padding-top:2rem; /* Reduced top padding since sidebar starts lower */
-            width: calc(100% - 16rem); /* Ensure content takes remaining width */
-          }
-          #sidebar-backdrop { display:none; }
+            .content {
+                margin-left: 16rem;
+                padding:1.5rem;
+                padding-top:2rem;
+                width: calc(100% - 16rem);
+            }
+            #sidebar-backdrop { display:none; }
         }
 
         /* Mobile overlay behavior */
         @media (max-width:1024px) {
-          .sidebar {
-            transform: translateX(-100%);
-            position:fixed;
-            height: calc(100vh - 100px); /* Account for increased header height */
-            left:0;
-            top: 100px; /* Start below the increased header */
-            box-shadow: 0 18px 40px rgba(16,24,40,0.12);
-          }
-          .sidebar.overlay-visible {
-            transform: translateX(0);
-            background: var(--sidebar-bg); /* Using defined smokish white */
-          }
-          .content {
-            margin-left: 0;
-            padding:1rem;
-            padding-top:1.5rem; /* Reduced top padding */
-            width: 100%; /* Full width on mobile */
-          }
-          #sidebar-backdrop {
-            display:block;
-            position:fixed;
-            inset:0;
-            background:rgba(0,0,0,0.45);
-            z-index:45;
-            opacity:0;
-            pointer-events:none;
-            transition:opacity .18s ease;
-          }
-          #sidebar-backdrop.visible {
-            opacity:1;
-            pointer-events:auto;
-          }
+            .sidebar {
+                transform: translateX(-100%);
+                position:fixed;
+                height: calc(100vh - 100px);
+                left:0;
+                top: 100px;
+                box-shadow: 0 18px 40px rgba(16,24,40,0.12);
+            }
+            body.dark .sidebar {
+                box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+            }
+            .sidebar.overlay-visible {
+                transform: translateX(0);
+                background: var(--sidebar-bg);
+            }
+            .content {
+                margin-left: 0;
+                padding:1rem;
+                padding-top:1.5rem;
+                width: 100%;
+            }
+            #sidebar-backdrop {
+                display:block;
+                position:fixed;
+                inset:0;
+                background:rgba(0,0,0,0.45);
+                z-index:45;
+                opacity:0;
+                pointer-events:none;
+                transition:opacity .18s ease;
+            }
+            #sidebar-backdrop.visible {
+                opacity:1;
+                pointer-events:auto;
+            }
         }
 
-        .sidebar .bg-white { background: var(--surface); }
         .sidebar .card {
-          background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
-          border:1px solid rgba(0,0,0,0.06);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-          border-left: 3px solid rgba(212,175,55,0.18); /* Light yellow left border */
+            background: linear-gradient(180deg, var(--surface), var(--surface));
+            border:1px solid var(--muted);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 3px solid rgba(212,175,55,0.18);
+            transition: all 0.3s ease;
         }
-        .feature-icon { width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(212,175,55,0.08); color: var(--accent); }
+
+        body.dark .sidebar .card {
+            border-left: 3px solid rgba(244, 179, 66, 0.18);
+        }
+
+        .feature-icon {
+            width:44px;
+            height:44px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:8px;
+            background: rgba(212,175,55,0.08);
+            color: var(--accent);
+        }
+
+        body.dark .feature-icon {
+            background: rgba(244, 179, 66, 0.08);
+        }
 
         .nav-item {
-          display:flex;
-          align-items:center;
-          gap:.75rem;
-          padding:.75rem;
-          border-radius:.5rem;
-          color: rgba(47,51,55,0.85);
-          text-decoration:none;
-          transition: all 0.2s ease;
-          background: rgba(255,255,255,0.5);
+            display:flex;
+            align-items:center;
+            gap:.75rem;
+            padding:.75rem;
+            border-radius:.5rem;
+            color: var(--text);
+            text-decoration:none;
+            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.05);
         }
+
+        body.dark .nav-item {
+            background: rgba(255,255,255,0.05);
+        }
+
         .nav-item:hover {
-          background: rgba(255,255,255,0.8);
-          color: var(--text);
-          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
+
+        body.dark .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
         .nav-item.active {
-          background: rgba(212,175,55,0.1);
-          border-left: 4px solid var(--accent);
-          color: var(--text);
-          box-shadow: 0 2px 6px rgba(212,175,55,0.1);
+            background: rgba(212,175,55,0.1);
+            border-left: 4px solid var(--accent);
+            color: var(--text);
+            box-shadow: 0 2px 6px rgba(212,175,55,0.1);
         }
 
-        .card-surface { background: var(--surface); border-radius:.75rem; box-shadow: 0 18px 40px rgba(16,24,40,0.06); padding:1.25rem; border:1px solid rgba(0,0,0,0.04); }
+        body.dark .nav-item.active {
+            background: rgba(244, 179, 66, 0.1);
+            box-shadow: 0 2px 6px rgba(244, 179, 66, 0.1);
+        }
 
-        /* TABLE: Updated to use the same color as Dashboard sidebar menu */
+        .card-surface {
+            background: var(--surface);
+            border-radius:.75rem;
+            box-shadow: 0 18px 40px rgba(16,24,40,0.06);
+            padding:1.25rem;
+            border:1px solid var(--muted);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .card-surface {
+            box-shadow: 0 18px 40px rgba(0,0,0,0.2);
+        }
+
+        /* TABLE Styles */
         .units-wrapper {
-          width:100%;
-          overflow-x:auto;
-          -webkit-overflow-scrolling:touch;
-          max-width: 100%; /* Ensure it doesn't overflow container */
+            width:100%;
+            overflow-x:auto;
+            -webkit-overflow-scrolling:touch;
+            max-width: 100%;
         }
+
         .units-table {
-          width:100%;
-          min-width:760px; /* ensures readable columns on small screens; adjust as needed */
-          border-collapse:separate;
-          border-spacing:0;
-          border-radius:.5rem;
-          overflow:hidden;
-          box-shadow: 0 8px 24px rgba(16,24,40,0.04);
+            width:100%;
+            min-width:760px;
+            border-collapse:separate;
+            border-spacing:0;
+            border-radius:.5rem;
+            overflow:hidden;
+            box-shadow: 0 8px 24px rgba(16,24,40,0.04);
         }
+
+        body.dark .units-table {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
         .units-table thead th {
-          background: rgba(212,175,55,0.1); /* Same as Dashboard active menu background */
-          color:var(--text);
-          font-weight:700;
-          padding:.75rem 1rem;
-          text-align:left;
-          border-bottom: 1px solid rgba(212,175,55,0.3); /* Gold accent border */
-          position:sticky;
-          top:0;
-          z-index:10;
+            background: var(--table-header-bg);
+            color:var(--text);
+            font-weight:700;
+            padding:.75rem 1rem;
+            text-align:left;
+            border-bottom: 1px solid var(--table-border);
+            position:sticky;
+            top:0;
+            z-index:10;
         }
+
         .units-table tbody td {
-          background: var(--surface);
-          padding:.75rem 1rem;
-          border-bottom:1px solid rgba(0,0,0,0.04);
-          color:var(--text);
-          white-space:nowrap;
+            background: var(--surface);
+            padding:.75rem 1rem;
+            border-bottom:1px solid var(--muted);
+            color:var(--text);
+            white-space:nowrap;
         }
+
         .units-table tbody tr:hover td {
-          background: rgba(212,175,55,0.05); /* Light gold hover effect */
+            background: var(--table-row-hover);
         }
+
         .units-table tbody tr:nth-child(even) td {
-          background: rgba(212,175,55,0.02); /* Very light gold for alternating rows */
+            background: var(--table-row-even);
         }
 
-        .indicator { display:inline-flex; align-items:center; justify-content:center; width:1.9rem; height:1.9rem; border-radius:.5rem; font-weight:700; }
-        .indicator.bg-red-100, .indicator.bg-red { background: rgba(255,69,58,0.08); color:#C53030; }
-        .indicator.bg-green-100, .indicator.bg-green { background: rgba(16,185,129,0.08); color:#065f46; }
+        .indicator {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:1.9rem;
+            height:1.9rem;
+            border-radius:.5rem;
+            font-weight:700;
+        }
 
-        /* On very small screens, reduce padding to fit more columns; table remains a table. */
-        @media (max-width:480px) {
-          .units-table thead th, .units-table tbody td { padding:.5rem .6rem; font-size:13px; }
-          .card-surface { padding:1rem; }
+        .indicator.bg-red-100, .indicator.bg-red {
+            background: rgba(255,69,58,0.08);
+            color:#C53030;
+        }
+
+        body.dark .indicator.bg-red-100, body.dark .indicator.bg-red {
+            background: rgba(239,68,68,0.15);
+            color:#fca5a5;
+        }
+
+        .indicator.bg-green-100, .indicator.bg-green {
+            background: rgba(16,185,129,0.08);
+            color:#065f46;
+        }
+
+        body.dark .indicator.bg-green-100, body.dark .indicator.bg-green {
+            background: rgba(34,197,94,0.15);
+            color:#86efac;
         }
 
         .control-btn { padding:.65rem .85rem; border-radius:.5rem; font-weight:600; }
 
         /* Row selection styling */
         .row-selected {
-          background-color: rgba(212,175,55,0.1) !important;
-          outline: 2px solid var(--accent);
+            background-color: rgba(212,175,55,0.1) !important;
+            outline: 2px solid var(--accent);
         }
 
-        /* Ensure content area doesn't overflow */
+        body.dark .row-selected {
+            background-color: rgba(244, 179, 66, 0.1) !important;
+        }
+
         .content {
-          box-sizing: border-box;
-          overflow-x: hidden;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         /* Mobile table adjustments */
         @media (max-width: 768px) {
-          .units-table {
-            min-width: 600px; /* Reduced minimum width for better mobile fit */
-          }
-
-          .flex-col-mobile {
-            flex-direction: column;
-          }
-
-          .w-full-mobile {
-            width: 100%;
-          }
+            .units-table {
+                min-width: 600px;
+            }
+            .flex-col-mobile {
+                flex-direction: column;
+            }
+            .w-full-mobile {
+                width: 100%;
+            }
         }
 
         /* Sidebar header styling */
         .sidebar-header {
-          background: var(--sidebar-bg); /* Using defined smokish white */
-          padding: 1.5rem;
-          border-bottom: 1px solid rgba(0,0,0,0.08);
-          text-align: center;
+            background: var(--sidebar-bg);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--muted);
+            text-align: center;
         }
 
         /* Enhanced table styling */
@@ -393,11 +369,11 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            background-color: #e0e0e0;
+            background-color: var(--muted);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #9e9e9e;
+            color: var(--muted-text);
         }
 
         .tenant-details {
@@ -446,14 +422,29 @@
             color: #065f46;
         }
 
+        body.dark .status-active {
+            background-color: rgba(34,197,94,0.15);
+            color: #86efac;
+        }
+
         .status-pending {
             background-color: rgba(245,158,11,0.1);
             color: #92400e;
         }
 
+        body.dark .status-pending {
+            background-color: rgba(245,158,11,0.15);
+            color: #fcd34d;
+        }
+
         .status-vacant {
             background-color: rgba(239,68,68,0.1);
             color: #991b1b;
+        }
+
+        body.dark .status-vacant {
+            background-color: rgba(239,68,68,0.15);
+            color: #fca5a5;
         }
 
         .edit-btn {
@@ -466,8 +457,16 @@
             border-radius: 6px;
         }
 
+        body.dark .edit-btn {
+            color: #60a5fa;
+        }
+
         .edit-btn:hover {
             background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        body.dark .edit-btn:hover {
+            background-color: rgba(96, 165, 250, 0.1);
         }
 
         /* Header with date display */
@@ -479,12 +478,16 @@
         }
 
         .date-display {
-            background: white;
+            background: var(--surface);
             border-radius: 0.5rem;
             padding: 0.75rem 1.5rem;
-            border-right: 4px solid #D4AF37;
+            border-right: 4px solid var(--accent);
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             margin-top: 0.5rem;
+        }
+
+        body.dark .date-display {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         @media (max-width: 768px) {
@@ -492,7 +495,6 @@
                 flex-direction: column;
                 gap: 1rem;
             }
-
             .date-display {
                 align-self: flex-end;
             }
@@ -505,50 +507,281 @@
             gap: 0.75rem;
         }
 
-        /* Payment Modal Styling - Fixed z-index issue */
+        /* Payment Modal Styling */
         #paymentModal {
-            z-index: 1000; /* Higher z-index to prevent table header overlap */
+            z-index: 1000;
         }
 
         .modal-card {
-            z-index: 1001; /* Ensure modal content is above backdrop */
+            z-index: 1001;
             position: relative;
         }
 
-        /* Prevent body scroll when modal is open */
         body.modal-open {
             overflow: hidden;
+        }
+
+        /* View modes */
+        .property-form-container {
+            transition: all 0.3s ease;
+        }
+
+        .property-form-container.hidden {
+            display: none;
+        }
+
+        .property-name-display {
+            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
+            border: 1.5px solid rgba(212,175,55,0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(212,175,55,0.08);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .property-name-display {
+            background: linear-gradient(135deg, rgba(244, 179, 66, 0.12), rgba(244, 179, 66, 0.06));
+            border: 1.5px solid rgba(244, 179, 66, 0.3);
+            box-shadow: 0 4px 12px rgba(244, 179, 66, 0.08);
+        }
+
+        .property-name-display:hover {
+            box-shadow: 0 6px 16px rgba(212,175,55,0.12);
+            border-color: rgba(212,175,55,0.4);
+            transform: translateY(-2px);
+        }
+
+        body.dark .property-name-display:hover {
+            box-shadow: 0 6px 16px rgba(244, 179, 66, 0.12);
+            border-color: rgba(244, 179, 66, 0.4);
+        }
+
+        .property-name-display svg {
+            color: var(--accent);
+            flex-shrink: 0;
+            stroke-width: 1.8;
+        }
+
+        .property-name-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            flex-grow: 1;
+            letter-spacing: -0.3px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .property-badge {
+            background: var(--accent);
+            color: #2b1f00;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(212,175,55,0.3);
+        }
+
+        body.dark .property-badge {
+            color: #1a1400;
+            box-shadow: 0 2px 4px rgba(244, 179, 66, 0.3);
+        }
+
+        .full-table-view .lg\:w-2\/3 {
+            width: 100% !important;
+        }
+
+        .change-property-btn {
+            display: none;
+        }
+
+        .full-table-view .change-property-btn {
+            display: block;
+            margin: 0 auto 1rem auto;
+        }
+
+        .view-table-btn {
+            margin-top: 1rem;
+        }
+
+        /* Modal styling */
+        #paymentModal .bg-white {
+            background: var(--modal-bg) !important;
+            color: var(--modal-text);
+        }
+
+        #paymentModal .text-gray-700 {
+            color: var(--modal-text);
+        }
+
+        #paymentModal input {
+            background: var(--surface) !important;
+            color: var(--text);
+            border: 1px solid var(--muted);
+        }
+
+        #paymentModal input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
+        }
+
+        body.dark #paymentModal input:focus {
+            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
+        }
+
+        /* Dark mode toggle button */
+        #dark-mode-toggle {
+            transition: all 0.3s ease;
+            background: var(--muted);
+            color: var(--text);
+            border: 1px solid var(--muted);
+        }
+
+        #dark-mode-toggle:hover {
+            background: var(--accent);
+            color: #2b1f00;
+            transform: rotate(30deg);
+        }
+
+        body.dark #dark-mode-toggle:hover {
+            color: #1a1400;
+        }
+
+        /* Error/Success messages */
+        .text-green-600 {
+            color: var(--success-text) !important;
+        }
+
+        #paymentErrorDisplay {
+            background: var(--error-bg) !important;
+            color: var(--error-text) !important;
+            border-color: var(--error-text) !important;
+        }
+
+        /* Form elements */
+        select, input {
+            background: var(--surface) !important;
+            color: var(--text);
+            border: 1px solid var(--muted);
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
+        }
+
+        body.dark select:focus, body.dark input:focus {
+            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
+        }
+
+        /* Header adjustments for larger logo */
+        header.topbar {
+            height: 150px;
+        }
+
+        header .max-w-6xl.mx-auto.px-6 {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        header .brand-left {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            height: 100%;
+        }
+
+        header .brand-left a {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            min-height: 120px;
+        }
+
+        header .brand-left img {
+            height: auto;
+            max-height: 120px;
+            width: auto;
+        }
+
+        .main-wrap {
+            min-height: calc(100vh - 150px);
+        }
+
+        .sidebar {
+            height: calc(100vh - 150px);
+            top: 150px;
+        }
+
+        @media (max-width:1024px) {
+            .sidebar {
+                height: calc(100vh - 150px);
+                top: 150px;
+            }
         }
     </style>
 </head>
 
-<body class="antialiased">
+<body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+<!-- Store Thymeleaf variable in JavaScript -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
+    console.log("Server theme from Thymeleaf:", serverTheme);
+    /*]]>*/
+</script>
+
 <header class="topbar">
-    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-        <div class="brand-left">
-            <a  class="flex items-center">
-                <img src="/umuzi/img/mypromann.png" alt="ProMan logo" class="h-20 md:h-24 w-auto object-contain">
-            </a>
-            <div>
-                <a class="text-accent font-extrabold text-xl">ProMan</a>
-                <div class="text-xs" style="color:var(--muted-text); margin-top:-4px;">Property management simplified</div>
+    <div class="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between h-full">
+        <div class="brand-left flex items-center gap-6">
+            <div class="flex items-center justify-center h-32 w-auto">
+                <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
+                     class="h-32 md:h-40 lg:h-48 w-auto object-contain"
+                     style="height: 128px; max-height: 192px;">
+            </div>
+            <div class="flex flex-col">
+                <span class="text-accent font-extrabold text-2xl">ProMan</span>
+                <div class="text-sm" style="color:var(--muted-text); margin-top:-2px;">Property management simplified</div>
             </div>
         </div>
 
         <div class="flex items-center gap-3">
+            <!-- Dark Mode Toggle Button -->
+            <button id="dark-mode-toggle"
+                    class="lg:flex items-center justify-center p-2 rounded-lg hidden"
+                    aria-label="Toggle dark mode">
+                <!-- Sun icon (shown in dark mode) -->
+                <svg id="sun-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+                </svg>
+                <!-- Moon icon (shown in light mode) -->
+                <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+            </button>
+
             <button id="mobileMenuButton" aria-label="Toggle menu" aria-expanded="false"
-                    class="lg:hidden p-2 rounded-lg bg-[var(--accent)] text-white mr-2">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="lg:hidden p-3 rounded-lg bg-[var(--accent)] text-[#2b1f00] mr-2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
             </button>
 
             <nav class="hidden lg:flex items-center gap-3 text-sm font-medium">
-                <a href="http://localhost:7070/log_out" class="inline-flex items-center px-5 py-2.5 rounded-lg font-semibold shadow-lg bg-[var(--accent)] text-[#2b1f00] hover:bg-[var(--accent-dark)] transition">LOG OUT</a>
+                <a href="http://localhost:7070/log_out" class="inline-flex items-center px-6 py-3 rounded-lg font-semibold shadow-lg bg-[var(--accent)] text-[#2b1f00] hover:bg-[var(--accent-dark)] transition">LOG OUT</a>
             </nav>
         </div>
     </div>
-</header><div id="sidebar-backdrop"></div>
+</header>
+
+<div id="sidebar-backdrop"></div>
 <div class="main-wrap">
     <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main sidebar">
         <div class="sidebar-content">
@@ -570,8 +803,8 @@
                 <div class="card rounded-lg p-3">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:rgba(47,51,55,0.7)">Total Properties</p>
-                            <p class="text-lg font-bold" style="color:var(--text) " th:text="${total_properties}">8</p>
+                            <p class="text-sm" style="color:var(--muted-text)">Total Properties</p>
+                            <p class="text-lg font-bold" style="color:var(--text)" th:text="${total_properties}">8</p>
                         </div>
                         <div class="feature-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10"/></svg>
@@ -582,7 +815,7 @@
                 <div class="card rounded-lg p-3" style="border-left-color: rgba(34,197,94,0.18);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:rgba(47,51,55,0.7)">Occupied Units</p>
+                            <p class="text-sm" style="color:var(--muted-text)">Occupied Units</p>
                             <p class="text-lg font-bold" style="color:var(--text)" th:text="${occupied_units}">0</p>
                         </div>
                         <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
@@ -590,7 +823,7 @@
                         </div>
                     </div>
                     <p class="text-sm"
-                       style="color:rgba(47,51,55,0.6); margin-top:6px"
+                       style="color:var(--muted-text); margin-top:6px"
                        th:text="${occupancyRate + '% occupancy rate'}">
                         0% occupancy rate
                     </p>
@@ -599,30 +832,41 @@
                 <div class="card rounded-lg p-3" style="border-left-color: rgba(59,130,246,0.18);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:rgba(47,51,55,0.7)  ">Vacant Units</p>
+                            <p class="text-sm" style="color:var(--muted-text)">Vacant Units</p>
                             <p class="text-lg font-bold" style="color:var(--text)"  th:text="${vacant}">2</p>
                         </div>
                         <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"/></svg>
                         </div>
                     </div>
-                    <p class="text-sm" style="color:rgba(47,51,55,0.6); margin-top:6px">Available for rent</p>
+                    <p class="text-sm" style="color:var(--muted-text); margin-top:6px">Available for rent</p>
                 </div>
 
                 <div class="card rounded-lg p-3" style="border-left-color: rgba(139,92,60,0.18);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:rgba(47,51,55,0.7)">Monthly Revenue</p>
+                            <p class="text-sm" style="color:var(--muted-text)">Monthly Revenue</p>
                             <p class="text-lg font-bold" style="color:var(--text)" th:text="'R' + ${expected_profit}">R0</p>
                         </div>
                         <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2"/></svg>
                         </div>
                     </div>
-                    <p class="text-sm" style="color:rgba(47,51,55,0.6); margin-top:6px">+R2,500 from last month</p>
+                    <p class="text-sm" style="color:var(--muted-text); margin-top:6px">+R2,500 from last month</p>
                 </div>
             </div>
+
+            <div class="mt-auto pt-6">
+                <a href="http://localhost:7070/logout"
+                   class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign Out
+                </a>
+            </div>
         </div>
+
     </aside>
     <main class="content">
         <div class="p-6">
@@ -683,7 +927,7 @@
                         </button>
 
                         <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
-                            <div class="text-sm text-black">
+                            <div class="text-sm" style="color:var(--text)">
                                 Click the payment column to mark a tenant as paid.
                             </div>
                         </div>
@@ -772,8 +1016,6 @@
                                         </div>
                                     </td>
                                 </tr>
-                                    </td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -783,8 +1025,9 @@
         </div>
     </main>
 </div>
-<!-- Rest of your existing code remains the same -->
+
 <p th:text="${default_name}"></p>
+
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-[1000]">
     <div class="modal-card w-96 text-center z-[1001]">
         <div class="bg-white p-6 rounded-lg shadow-lg">
@@ -811,8 +1054,99 @@
 </div>
 
 <script>
-    // Add view table functionality
+    // =========================================================================
+    // GLOBAL FUNCTIONS (Accessible to onclick handlers)
+    // =========================================================================
+
+    function closePaymentModal() {
+        const paymentModal = document.getElementById('paymentModal');
+        if (!paymentModal) return;
+        paymentModal.classList.add('hidden');
+        paymentModal.classList.remove('flex');
+        document.body.classList.remove('modal-open');
+    }
+
+    function displayErrorBanner(message, isClear = false) {
+        const errorDisplay = document.getElementById('paymentErrorDisplay');
+        if (!errorDisplay) return;
+
+        if (isClear || !message) {
+            errorDisplay.classList.add('hidden');
+            errorDisplay.textContent = '';
+        } else {
+            errorDisplay.textContent = message;
+            errorDisplay.classList.remove('hidden');
+        }
+    }
+
+    // Dark Mode Functions (keep these global too)
+    function sendThemePreference(theme) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'http://localhost:7070/page_theme';
+
+        const themeInput = document.createElement('input');
+        themeInput.type = 'hidden';
+        themeInput.name = 'user_theme';
+        themeInput.value = theme;
+
+        form.appendChild(themeInput);
+        document.body.appendChild(form);
+        form.submit();
+
+        setTimeout(() => {
+            document.body.removeChild(form);
+        }, 100);
+    }
+
+    function initializeIcons() {
+        const isDark = document.body.classList.contains('dark');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+    }
+
+    function toggleDarkMode() {
+        const isCurrentlyDark = document.body.classList.contains('dark');
+
+        if (isCurrentlyDark) {
+            document.body.classList.remove('dark');
+            localStorage.setItem('user_chosen_theme', 'light');
+            sendThemePreference('light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem('user_chosen_theme', 'dark');
+            sendThemePreference('dark');
+        }
+        initializeIcons();
+    }
+
+    // =========================================================================
+    // DOMContentLoaded Event Listener
+    // =========================================================================
+
     document.addEventListener('DOMContentLoaded', function() {
+        // Use server theme as primary source
+        const serverTheme = window.serverTheme || 'light';
+        localStorage.setItem('user_chosen_theme', serverTheme);
+        initializeIcons();
+
+        // Add event listener to dark mode toggle button
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', toggleDarkMode);
+        }
+
+        // Rest of your existing initialization code...
         const viewTableBtn = document.getElementById('viewTableBtn');
         const changePropertyBtn = document.getElementById('changePropertyBtn');
         const propertyFormContainer = document.getElementById('propertyFormContainer');
@@ -820,28 +1154,19 @@
         const mainContent = document.getElementById('mainContent');
 
         if (viewTableBtn && changePropertyBtn && propertyFormContainer && tableContainer && mainContent) {
-            // View Table functionality
             viewTableBtn.addEventListener('click', function() {
-                // Hide property form
                 propertyFormContainer.classList.add('hidden');
-                // Make table take full width
                 mainContent.classList.add('full-table-view');
-                // Show change property button
                 changePropertyBtn.style.display = 'block';
             });
 
-            // Change Property functionality
             changePropertyBtn.addEventListener('click', function() {
-                // Show property form
                 propertyFormContainer.classList.remove('hidden');
-                // Restore original layout
                 mainContent.classList.remove('full-table-view');
-                // Hide change property button
                 changePropertyBtn.style.display = 'none';
             });
         }
 
-        // Your existing initialization code continues here...
         // Format and display the current date
         function formatDate() {
             const date = new Date();
@@ -857,417 +1182,321 @@
         let autoSubmitted = false;
 
         if (propertySelect && propertyForm) {
-            // Auto-submit on page load if a specific property is already selected
             const selectedValue = propertySelect.value;
             if (selectedValue && selectedValue !== '' && selectedValue !== 'all' && !autoSubmitted) {
                 autoSubmitted = true;
                 propertyForm.submit();
             }
 
-            // Auto-submit on change for specific properties only
             propertySelect.addEventListener('change', function() {
                 const newValue = this.value;
-
-                // Auto-submit only if:
-                // 1. Value is not empty
-                // 2. Value is not "all" (All properties)
-                // 3. Value is a specific property name
                 if (newValue && newValue !== '' && newValue !== 'all') {
                     propertyForm.submit();
                 }
             });
         }
 
-        // Rest of your existing JavaScript code...
+        // =========================================================================
+        // II. GLOBAL VARIABLE SETUP
+        // =========================================================================
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
 
-    });
-    // =========================================================================
-    // I. GLOBAL VARIABLE SETUP
-    // =========================================================================
-    const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
+        const tbody = document.getElementById('unitsTbody');
+        const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
 
-    const propertySelect = document.getElementById('propertySelect');
-    const tbody = document.getElementById('unitsTbody');
-    const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+        const paymentModal = document.getElementById('paymentModal');
+        const modalUnitDisplay = document.getElementById('modalUnitDisplay');
+        const modalOriginalRent = document.getElementById('modalOriginalRent');
+        const modalUnit = document.getElementById('modalUnit');
+        const modalId = document.getElementById('modalId');
+        const modalPropertyName = document.getElementById('modalPropertyName');
+        const modalRentInput = document.getElementById('modalRentInput');
+        const paymentForm = document.getElementById('paymentForm');
 
-    const btnPaid = document.getElementById('btnPaid');
-    const btnUnpaid = document.getElementById('btnUnpaid');
+        const errorDisplay = document.getElementById('paymentErrorDisplay');
+        const confirmButton = document.querySelector('#paymentForm button[type="submit"]');
 
-    // Payment modal variables
-    const paymentModal = document.getElementById('paymentModal');
-    const modalUnitDisplay = document.getElementById('modalUnitDisplay');
-    const modalOriginalRent = document.getElementById('modalOriginalRent');
-    const modalUnit = document.getElementById('modalUnit');
-    const modalId = document.getElementById('modalId');
-    const modalPropertyName = document.getElementById('modalPropertyName');
-    const modalRentInput = document.getElementById('modalRentInput');
-    const paymentForm = document.getElementById('paymentForm');
+        const modalTitle = document.querySelector('#paymentModal h2');
+        const modalSubmitButton = document.querySelector('#paymentForm button[type="submit"]');
+        const paidInput = document.querySelector('#paymentForm input[name="paid"]');
+        const modalAction = document.getElementById('modalAction');
 
-    // New: Error display banner and submit button references
-    const errorDisplay = document.getElementById('paymentErrorDisplay');
+        // =========================================================================
+        // III. LOCAL UTILITY FUNCTIONS (Keep these inside)
+        // =========================================================================
 
-    // NOTE: Querying button AFTER form is defined in HTML
-    const confirmButton = document.querySelector('#paymentForm button[type="submit"]');
-
-    // NEW: References for dynamic modal elements
-    const modalTitle = document.querySelector('#paymentModal h2');
-    const modalSubmitButton = document.querySelector('#paymentForm button[type="submit"]');
-    const paidInput = document.querySelector('#paymentForm input[name="paid"]');
-
-    // NEW: Action input field
-    const modalAction = document.getElementById('modalAction');
-
-
-    // =========================================================================
-    // II. UTILITY FUNCTIONS (Sidebar, Flash Messages, Error Banner, Table Updates)
-    // =========================================================================
-
-    function displayErrorBanner(message, isClear = false) {
-        if (isClear || !message) {
-            errorDisplay.classList.add('hidden');
-            errorDisplay.textContent = '';
-        } else {
-            errorDisplay.textContent = message;
-            errorDisplay.classList.remove('hidden');
-        }
-        if (!isClear && message) {
-            flashMessage(message, 'red');
-        }
-    }
-
-    function flashMessage(msg, color = 'yellow') {
-        const el = document.createElement('div');
-        el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
-            color === 'green' ? 'bg-green-100 text-green-800' :
-            color === 'red' ? 'bg-red-100 text-red-800' :
-            'bg-yellow-100 text-yellow-800'
-        }`;
-        el.textContent = msg;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 1600);
-    }
-
-    // Sidebar Functions (kept minimal for space, functionality unchanged)
-    function openSidebarOverlay() {
-      if (!sidebar) return;
-      sidebar.classList.add('overlay-visible');
-      if (backdrop) backdrop.classList.add('visible');
-      if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','true');
-    }
-    function closeSidebarOverlay() {
-      if (!sidebar) return;
-      sidebar.classList.remove('overlay-visible');
-      if (backdrop) backdrop.classList.remove('visible');
-      if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','false');
-    }
-    function ensureSidebarDesktop() {
-      if (!sidebar) return;
-      if (window.innerWidth > 1024) {
-        sidebar.classList.remove('overlay-visible');
-        if (backdrop) backdrop.classList.remove('visible');
-        sidebar.style.transform = 'translateX(0)';
-      } else {
-        sidebar.style.transform = '';
-        sidebar.classList.remove('overlay-visible');
-        if (backdrop) backdrop.classList.remove('visible');
-      }
-    }
-
-    // Table Update/Filter Functions (kept minimal for space, functionality unchanged)
-    function applyFilters() {
-      const prop = propertySelect ? propertySelect.value : '';
-      rows.forEach(row => {
-        const rowProp = row.dataset.property || '';
-        const matchesProp = (prop === 'all') || (rowProp === prop) || !prop;
-        row.style.display = matchesProp ? '' : 'none';
-      });
-    }
-    // ... (rest of table utility functions omitted for brevity, assumed correct)
-
-    function updatePaymentForRow(row, paid) {
-      const paymentIndicator = row.querySelector('.payment-cell .indicator');
-      if (!paymentIndicator) return;
-      if (paid) {
-        paymentIndicator.textContent = '+';
-        paymentIndicator.classList.remove('bg-red-100', 'text-red-800');
-        paymentIndicator.classList.add('bg-green-100', 'text-green-800');
-        paymentIndicator.setAttribute('aria-label', 'Payment: yes');
-      } else {
-        paymentIndicator.textContent = '-';
-        paymentIndicator.classList.remove('bg-green-100', 'text-green-800');
-        paymentIndicator.classList.add('bg-red-100', 'text-red-800');
-        paymentIndicator.setAttribute('aria-label', 'Payment: no');
-      }
-    }
-
-    // Format and display the current date
-    function formatDate() {
-        const date = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const formattedDate = date.toLocaleDateString('en-US', options);
-        document.getElementById('currentDate').textContent = formattedDate;
-    }
-
-    // Modal Open/Close Functions
-    function closePaymentModal() {
-      if (!paymentModal) return;
-      paymentModal.classList.add('hidden');
-      paymentModal.classList.remove('flex');
-      document.body.classList.remove('modal-open');
-    }
-
-    // ⭐ UPDATED FUNCTION: Configured for MARKING Payment (Default) ⭐
-    function openPaymentModal(unit, rent, id, propertyName) {
-        displayErrorBanner(null, true);
-
-        if (modalTitle) modalTitle.textContent = "Record New Payment";
-        if (modalSubmitButton) {
-            modalSubmitButton.textContent = "Confirm Payment";
-            modalSubmitButton.classList.remove('bg-red-600', 'hover:bg-red-700');
-            modalSubmitButton.classList.add('bg-green-600', 'hover:bg-green-700');
+        function flashMessage(msg, color = 'yellow') {
+            const el = document.createElement('div');
+            el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
+                color === 'green' ? 'bg-green-100 text-green-800' :
+                color === 'red' ? 'bg-red-100 text-red-800' :
+                'bg-yellow-100 text-yellow-800'
+            }`;
+            el.textContent = msg;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1600);
         }
 
-        if (modalUnit) modalUnit.value = unit;
-        if (modalId) modalId.value = id;
-        if (modalPropertyName) modalPropertyName.value = propertyName;
-
-        if (modalRentInput) {
-            modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
-            modalRentInput.disabled = false;
-        }
-        if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
-        if (modalOriginalRent) modalOriginalRent.textContent = rent;
-
-        // Set form action type: MARK
-        if (modalAction) modalAction.value = 'mark';
-        if (paidInput) paidInput.value = 'yes';
-
-        if (paymentModal) {
-            paymentModal.classList.remove('hidden');
-            paymentModal.classList.add('flex');
-            document.body.classList.add('modal-open');
-        }
-    }
-
-    // ⭐ NEW FUNCTION: Configured for UNMARKING Payment ⭐
-    function openUnmarkModal(unit, id, propertyName, rent) {
-        displayErrorBanner(null, true);
-
-        if (modalTitle) modalTitle.textContent = "Confirm Payment Removal";
-        if (modalSubmitButton) {
-            modalSubmitButton.textContent = "Unmark Payment";
-            modalSubmitButton.classList.remove('bg-green-600', 'hover:bg-green-700');
-            modalSubmitButton.classList.add('bg-red-600', 'hover:bg-red-700');
+        function openSidebarOverlay() {
+          if (!sidebar) return;
+          sidebar.classList.add('overlay-visible');
+          if (backdrop) backdrop.classList.add('visible');
+          if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','true');
         }
 
-        if (modalUnit) modalUnit.value = unit;
-        if (modalId) modalId.value = id;
-        if (modalPropertyName) modalPropertyName.value = propertyName;
-
-        if (modalRentInput) {
-            // Set rent to the original amount but disable the input
-            modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
-            modalRentInput.disabled = true;
-        }
-        if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
-        if (modalOriginalRent) modalOriginalRent.textContent = rent;
-
-        // Set form action type: UNMARK
-        if (modalAction) modalAction.value = 'unmark';
-        if (paidInput) paidInput.value = 'no';
-
-        if (paymentModal) {
-            paymentModal.classList.remove('hidden');
-            paymentModal.classList.add('flex');
-            document.body.classList.add('modal-open');
-        }
-    }
-
-
-    // =========================================================================
-    // III. ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
-    // =========================================================================
-
-    if (paymentForm && confirmButton) {
-      paymentForm.addEventListener('submit', async (event) => {
-        // 1. Stop the default page reload
-        event.preventDefault();
-        displayErrorBanner(null, true);
-
-        // Disable button and update text for UX
-        confirmButton.disabled = true;
-        confirmButton.textContent = 'Processing...';
-
-        // 2. Get form data and construct the URL
-        const formData = new FormData(paymentForm);
-        const tenantName = formData.get('id');
-        const unit = formData.get('unit');
-        const actionType = formData.get('action_type');
-
-        // ⭐ Construct the URL based on the action type
-        let url;
-        if (actionType === 'unmark') {
-            url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}`; // NEW UNMARK URL
-        } else {
-            url = `http://localhost:7070/payment_status/${tenantName}/${unit}`; // MARK URL
+        function closeSidebarOverlay() {
+          if (!sidebar) return;
+          sidebar.classList.remove('overlay-visible');
+          if (backdrop) backdrop.classList.remove('visible');
+          if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','false');
         }
 
-        try {
-          // 3. Send the POST request
-          const response = await fetch(url, {
-            method: 'POST',
-            body: new URLSearchParams(formData),
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+        function ensureSidebarDesktop() {
+          if (!sidebar) return;
+          if (window.innerWidth > 1024) {
+            sidebar.classList.remove('overlay-visible');
+            if (backdrop) backdrop.classList.remove('visible');
+            sidebar.style.transform = 'translateX(0)';
+          } else {
+            sidebar.style.transform = '';
+            sidebar.classList.remove('overlay-visible');
+            if (backdrop) backdrop.classList.remove('visible');
+          }
+        }
+
+        function applyFilters() {
+          const prop = propertySelect ? propertySelect.value : '';
+          rows.forEach(row => {
+            const rowProp = row.dataset.property || '';
+            const matchesProp = (prop === 'all') || (rowProp === prop) || !prop;
+            row.style.display = matchesProp ? '' : 'none';
+          });
+        }
+
+        function updatePaymentForRow(row, paid) {
+          const paymentIndicator = row.querySelector('.payment-cell .indicator');
+          if (!paymentIndicator) return;
+          if (paid) {
+            paymentIndicator.textContent = '+';
+            paymentIndicator.classList.remove('bg-red-100', 'text-red-800');
+            paymentIndicator.classList.add('bg-green-100', 'text-green-800');
+            paymentIndicator.setAttribute('aria-label', 'Payment: yes');
+          } else {
+            paymentIndicator.textContent = '-';
+            paymentIndicator.classList.remove('bg-green-100', 'text-green-800');
+            paymentIndicator.classList.add('bg-red-100', 'text-red-800');
+            paymentIndicator.setAttribute('aria-label', 'Payment: no');
+          }
+        }
+
+        function openPaymentModal(unit, rent, id, propertyName) {
+            displayErrorBanner(null, true);
+
+            if (modalTitle) modalTitle.textContent = "Record New Payment";
+            if (modalSubmitButton) {
+                modalSubmitButton.textContent = "Confirm Payment";
+                modalSubmitButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+                modalSubmitButton.classList.add('bg-green-600', 'hover:bg-green-700');
+            }
+
+            if (modalUnit) modalUnit.value = unit;
+            if (modalId) modalId.value = id;
+            if (modalPropertyName) modalPropertyName.value = propertyName;
+
+            if (modalRentInput) {
+                modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
+                modalRentInput.disabled = false;
+            }
+            if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
+            if (modalOriginalRent) modalOriginalRent.textContent = rent;
+
+            if (modalAction) modalAction.value = 'mark';
+            if (paidInput) paidInput.value = 'yes';
+
+            if (paymentModal) {
+                paymentModal.classList.remove('hidden');
+                paymentModal.classList.add('flex');
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        function openUnmarkModal(unit, id, propertyName, rent) {
+            displayErrorBanner(null, true);
+
+            if (modalTitle) modalTitle.textContent = "Confirm Payment Removal";
+            if (modalSubmitButton) {
+                modalSubmitButton.textContent = "Unmark Payment";
+                modalSubmitButton.classList.remove('bg-green-600', 'hover:bg-green-700');
+                modalSubmitButton.classList.add('bg-red-600', 'hover:bg-red-700');
+            }
+
+            if (modalUnit) modalUnit.value = unit;
+            if (modalId) modalId.value = id;
+            if (modalPropertyName) modalPropertyName.value = propertyName;
+
+            if (modalRentInput) {
+                modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
+                modalRentInput.disabled = true;
+            }
+            if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
+            if (modalOriginalRent) modalOriginalRent.textContent = rent;
+
+            if (modalAction) modalAction.value = 'unmark';
+            if (paidInput) paidInput.value = 'no';
+
+            if (paymentModal) {
+                paymentModal.classList.remove('hidden');
+                paymentModal.classList.add('flex');
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        // =========================================================================
+        // IV. ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
+        // =========================================================================
+
+        if (paymentForm && confirmButton) {
+          paymentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            displayErrorBanner(null, true);
+
+            confirmButton.disabled = true;
+            confirmButton.textContent = 'Processing...';
+
+            const formData = new FormData(paymentForm);
+            const tenantName = formData.get('id');
+            const unit = formData.get('unit');
+            const actionType = formData.get('action_type');
+
+            let url;
+            if (actionType === 'unmark') {
+                url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}`;
+            } else {
+                url = `http://localhost:7070/payment_status/${tenantName}/${unit}`;
+            }
+
+            try {
+              const response = await fetch(url, {
+                method: 'POST',
+                body: new URLSearchParams(formData),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+              });
+
+              if (response.ok) {
+                const successMsg = (actionType === 'unmark')
+                                    ? `Unit ${unit} successfully unmarked.`
+                                    : `Unit ${unit} marked as paid successfully!`;
+                flashMessage(successMsg, 'green');
+
+                const isPaid = (actionType !== 'unmark');
+                const indicator = document.querySelector(`.open-pay[data-unit="${unit}"][data-id="${tenantName}"]`);
+                if (indicator) {
+                  updatePaymentForRow(indicator.closest('tr'), isPaid);
+                }
+
+                closePaymentModal();
+
+              } else {
+                const errorText = await response.text();
+                let userMessage = `Request failed (Status: ${response.status}). Check server logs.`;
+
+                if (errorText.includes("Error: The 'required_data' field must not be empty.")) {
+                    userMessage = "Payment rejected: Please wait a moment before trying again (Rate Limit).";
+                    displayErrorBanner(userMessage);
+                }
+                else if (errorText.includes('Payment already recorded for this month.')) {
+                    userMessage = `Payment already recorded for Unit ${unit} this month.`;
+                    displayErrorBanner(userMessage);
+                }
+                else if (response.status >= 400) {
+                    userMessage = `Request failed (Status: ${response.status}). Details: ${errorText.substring(0, 50)}...`;
+                    displayErrorBanner(userMessage);
+                }
+
+                flashMessage(userMessage, 'red');
+              }
+
+            } catch (error) {
+              const networkError = `A network error occurred. Server unreachable or CORS block.`;
+              displayErrorBanner(networkError);
+              flashMessage(networkError, 'red');
+
+            } finally {
+                if (confirmButton) {
+                    confirmButton.disabled = false;
+                    confirmButton.textContent = 'Confirm Payment';
+                }
             }
           });
-
-          // 4. Handle server response
-          if (response.ok) {
-            const successMsg = (actionType === 'unmark')
-                                ? `Unit ${unit} successfully unmarked.`
-                                : `Unit ${unit} marked as paid successfully!`;
-            flashMessage(successMsg, 'green');
-
-            // Visually update the table cell immediately
-            const isPaid = (actionType !== 'unmark'); // True if marking, False if unmarking
-            const indicator = document.querySelector(`.open-pay[data-unit="${unit}"][data-id="${tenantName}"]`);
-            if (indicator) {
-              updatePaymentForRow(indicator.closest('tr'), isPaid);
-            }
-
-            closePaymentModal();
-
-          } else {
-            // FAILURE: Show error message, keep modal open
-            const errorText = await response.text();
-            let userMessage = `Request failed (Status: ${response.status}). Check server logs.`;
-
-            if (errorText.includes("Error: The 'required_data' field must not be empty.")) {
-                userMessage = "Payment rejected: Please wait a moment before trying again (Rate Limit).";
-                displayErrorBanner(userMessage);
-            }
-            else if (errorText.includes('Payment already recorded for this month.')) {
-                userMessage = `Payment already recorded for Unit ${unit} this month.`;
-                displayErrorBanner(userMessage);
-            }
-            else if (response.status >= 400) {
-                userMessage = `Request failed (Status: ${response.status}). Details: ${errorText.substring(0, 50)}...`;
-                displayErrorBanner(userMessage);
-            }
-
-            flashMessage(userMessage, 'red');
-          }
-
-        } catch (error) {
-          // Handle network errors
-          const networkError = `A network error occurred. Server unreachable or CORS block.`;
-          displayErrorBanner(networkError);
-          flashMessage(networkError, 'red');
-
-        } finally {
-            // Re-enable the button and reset text in ALL scenarios
-            if (confirmButton) {
-                confirmButton.disabled = false;
-                confirmButton.textContent = 'Confirm Payment';
-            }
         }
-      });
-    }
 
-    // =========================================================================
-    // IV. INITIALIZATION AND EVENT LISTENERS (DOM Ready)
-    // =========================================================================
+        // =========================================================================
+        // V. EVENT LISTENERS SETUP
+        // =========================================================================
 
-    document.addEventListener('DOMContentLoaded', () => {
+        if (mobileMenuButton && sidebar) {
+          ensureSidebarDesktop();
+          mobileMenuButton.addEventListener('click', (e) => {
+            const isOpen = sidebar.classList.contains('overlay-visible');
+            if (isOpen) closeSidebarOverlay(); else openSidebarOverlay();
+            e.stopPropagation();
+          });
+          if (backdrop) backdrop.addEventListener('click', closeSidebarOverlay);
+          sidebar.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => {
+              if (window.innerWidth <= 1024) closeSidebarOverlay();
+            });
+          });
+          window.addEventListener('resize', ensureSidebarDesktop);
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarOverlay(); });
+        }
 
-      // Sidebar Event Listeners
-      if (mobileMenuButton && sidebar) {
-        ensureSidebarDesktop();
-        mobileMenuButton.addEventListener('click', (e) => {
-          const isOpen = sidebar.classList.contains('overlay-visible');
-          if (isOpen) closeSidebarOverlay(); else openSidebarOverlay();
-          e.stopPropagation();
-        });
-        if (backdrop) backdrop.addEventListener('click', closeSidebarOverlay);
-        sidebar.querySelectorAll('a').forEach(a => {
-          a.addEventListener('click', () => {
-            if (window.innerWidth <= 1024) closeSidebarOverlay();
+        let selectedRow = null;
+        rows.forEach(row => {
+          row.addEventListener('click', (e) => {
+            if (e.target.closest('.indicator')) return;
+            if (selectedRow) selectedRow.classList.remove('row-selected');
+            selectedRow = row;
+            selectedRow.classList.add('row-selected');
           });
         });
-        window.addEventListener('resize', ensureSidebarDesktop);
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarOverlay(); });
-      }
 
-      // Property Filter and Other Button Listeners
-      if (propertySelect) {
-        propertySelect.addEventListener('change', function () {
-          const selectedValue = this.value;
-          if (selectedValue && selectedValue !== 'all') {
-            document.getElementById('propertyForm').submit();
-          }
+        document.querySelectorAll('.payment-cell').forEach(cell => {
+          cell.addEventListener('click', function(e) {
+            if (e.target.closest('.indicator')) {
+              e.stopPropagation();
+            }
+          });
         });
-      }
 
-      rows.forEach(row => {
-        row.addEventListener('click', (e) => {
-          if (e.target.closest('.indicator')) return;
-          if (selectedRow) selectedRow.classList.remove('row-selected');
-          selectedRow = row;
-          selectedRow.classList.add('row-selected');
+        const openPayButtons = document.querySelectorAll('.open-pay');
+        openPayButtons.forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+
+            const indicator = this;
+            const currentStatus = indicator.textContent.trim();
+
+            const unit = this.dataset.unit;
+            const rent = this.dataset.rent;
+            const id = this.dataset.id;
+            const propertyName = this.dataset.propertyName;
+
+            if (currentStatus === '+') {
+                openUnmarkModal(unit, id, propertyName, rent);
+            } else {
+                openPaymentModal(unit, rent, id, propertyName);
+            }
+          });
         });
-      });
-      document.querySelectorAll('.payment-cell').forEach(cell => {
-        cell.addEventListener('click', function(e) {
-          if (e.target.closest('.indicator')) {
-            togglePaymentStatus(this);
-          }
-        });
-      });
-      if (btnPaid) btnPaid.addEventListener('click', () => {
-        if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
-        updatePaymentForRow(selectedRow, true);
-        flashMessage('Payment set to + (paid).', 'green');
-      });
-      if (btnUnpaid) btnUnpaid.addEventListener('click', () => {
-        if (!selectedRow) return flashMessage('No row selected — click a row first.', 'yellow');
-        updatePaymentForRow(selectedRow, false);
-        flashMessage('Payment set to - (unpaid).', 'red');
-      });
 
-      // ⭐ Payment Modal Trigger (FIXED LOGIC) ⭐
-      const openPayButtons = document.querySelectorAll('.open-pay');
-      openPayButtons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.stopPropagation();
-
-          // FIX: The status check was failing due to whitespace/missing variable
-          // We check the indicator's text content directly.
-          const indicator = this;
-          const currentStatus = indicator.textContent.trim();
-
-          const unit = this.dataset.unit;
-          const rent = this.dataset.rent;
-          const id = this.dataset.id;
-          const propertyName = this.dataset.propertyName;
-
-          // Primary logic: use data attributes
-          if (currentStatus === '+') {
-              // Payment is marked: Open the UNMARK modal
-              openUnmarkModal(unit, id, propertyName, rent);
-          } else {
-              // Payment is unmarked/unpaid: Open the MARK payment modal
-              openPaymentModal(unit, rent, id, propertyName);
-          }
-        });
-      });
-
-      // Initial Load Actions
-      displayErrorBanner(null, true);
-      applyFilters();
-      formatDate(); // Call the date formatting function
+        // Initial Load Actions
+        displayErrorBanner(null, true);
+        applyFilters();
     });
 </script>
 </body>
