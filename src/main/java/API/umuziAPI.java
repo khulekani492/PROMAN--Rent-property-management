@@ -13,6 +13,8 @@ import api_login.Record_rent;
 import api_login.Validate_login;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
+import jakarta.servlet.http.HttpSession;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 
 public class umuziAPI {
@@ -27,29 +29,53 @@ public class umuziAPI {
            ctx.render("templates/home.html");
         });
 
+        app.post("/page_theme",ctx -> {
+            String theme_color = ctx.formParam("user_theme");
+            System.out.println(theme_color);
+            ctx.sessionAttribute("theme_color",theme_color);
+            ctx.render("templates/home.html");
+
+
+        });
         app.get("/login",
                 ctx -> {
-                  ctx.render("/templates/login.html");
+                  HashMap<String,String> model = new HashMap<>();
+                  String themeColor = ctx.sessionAttribute("theme_color");
+                  model.put("user_chosen_theme",themeColor);
+                  ctx.render("/templates/login.html",model);
                 });
+
 
         app.post("/verify_user",new Validate_login().authenticate());
 
         app.get("/tenant_form",ctx ->{
            ctx.render("/templates/property.html");
+
         });
 
+        app.get("/logout",ctx -> {
+             HttpSession session = ctx.req().getSession(false);
+               if (session != null)   {   session.invalidate();    }
+             ctx.redirect("/");
+        })  ;
         app.get("/dashboard",new Dashboard().user_profile());
         app.get("/landlord_sign_up",ctx ->{
-            ctx.render("templates/landlord.html");
+            HashMap<String,String> model = new HashMap<>();
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
+            ctx.render("templates/landlord.html",model);
         });
         app.get("/add_property_unit",new Save_unit().save_property_unit());
 
         app.get("/log_out",new LogOut().sign_out());
         // Redirects to the unit page
         app.get("/add_property",ctx ->{
-            //TODO Empty the session variables to be blank for generating a new page
-            // include -- <Add New Property>
-            ctx.render("templates/property.html");
+
+            HashMap<String,String> model = new HashMap<>();
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
+
+            ctx.render("templates/property.html",model);
         });
 
         Get_properties  properties = new Get_properties();
@@ -82,11 +108,14 @@ public class umuziAPI {
             Map<String, Object> model = new HashMap<>();
             String  propertyUnit = ctx.sessionAttribute("property_unit");
             String user_name = ctx.sessionAttribute("user_name");
+
             String  propertyName = ctx.sessionAttribute("current_property" );
+            String  themecolor = ctx.sessionAttribute("theme_color" );
             System.out.println("property_name "+ propertyName);
             ctx.sessionAttribute("property_unit", propertyUnit);
             model.put("user_name",user_name);
             model.put("unit_add", propertyUnit);
+            model.put("user_chosen_theme",themecolor);
             model.put("name", propertyName);
 
             System.out.println(propertyUnit + "  property unit ");
@@ -129,6 +158,10 @@ public class umuziAPI {
     app.post("/updateTenants",ctx -> {
             ///Updating Previously occupied room with new tenant or individual update like rent price for that rent
         });
+    app.post("/supabase_login",ctx -> {
+        System.out.println("Supabase function ");
+        System.out.println(ctx.body());
+    });
         // Exception handler for NullPointerException
         app.exception(NullPointerException.class, (e, ctx) -> {
             ctx.status(400);
