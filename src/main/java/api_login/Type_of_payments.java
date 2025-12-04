@@ -18,7 +18,7 @@ public class Type_of_payments {
             Transaction approve_to_rentBook) throws SQLException {
         //if amount paid is the same as the original rent.
         if (recieved_amount.equals(original_rent)) {
-            System.out.println("siyafika");
+            System.out.println("Payment Processing");
             System.out.println(recieved_amount + " " + original_rent + " " + debt);
             System.out.println(debt);
             //Step 1 assess the tenant existing debt
@@ -134,6 +134,10 @@ public class Type_of_payments {
         // if money received is lesser than original_rent , record the outstanding fee
         else {
             System.out.println("money received is lesser than original_rent");
+            approve_to_rentBook.setAmount_paid(recieved_amount);
+            approve_to_rentBook.setStatus(true);
+            approve_to_rentBook.setTenant_Id(tenantId);
+            approve_to_rentBook.update_tenant_status();
             Integer outstanding_fee = original_rent - recieved_amount;
             Integer  add_debt = debt + outstanding_fee;
             new Tenant().update_debt(add_debt,tenantId);
