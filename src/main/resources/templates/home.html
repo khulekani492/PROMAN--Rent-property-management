@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,19 +6,35 @@
     <title>ProMan — Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root{
-            /* Smoke white theme variables */
-            --bg: #f5f6f7;         /* overall smoke-white page background */
-            --surface: #ffffff;    /* card / surface white */
-            --muted: #eef0f2;      /* slightly darker smoke for surfaces */
-            --text: #2f3337;       /* primary text (soft charcoal) */
-            --muted-text: #6b7378; /* secondary text */
-            --accent: #D4AF37;     /* warm gold accent (complements logo) */
-            --accent-dark: #b8892a;/* darker accent for hover */
+        :root {
+            /* Light theme variables - DEFAULT */
+            --bg: #f5f6f7;
+            --surface: #ffffff;
+            --muted: #eef0f2;
+            --text: #2f3337;
+            --muted-text: #6b7378;
+            --accent: #D4AF37;
+            --accent-dark: #b8892a;
             --glass: rgba(255,255,255,0.6);
         }
 
-        body { background: var(--bg); color: var(--text); }
+        /* Dark theme variables - ONLY when .dark class is added */
+        .dark {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --muted: #334155;
+            --text: #f1f5f9;
+            --muted-text: #94a3b8;
+            --accent: #F4B342;
+            --accent-dark: #E0A028;
+            --glass: rgba(30, 41, 59, 0.6);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
         .text-accent { color: var(--accent) !important; }
         .bg-accent { background-color: var(--accent) !important; }
@@ -31,6 +46,10 @@
         .hero-surface {
             background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.9));
             box-shadow: 0 6px 20px rgba(31,41,55,0.06);
+        }
+        .dark .hero-surface {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .feature-icon {
@@ -45,7 +64,7 @@
 
         /* The bell only rings on hover of the parent feature card */
         .card-highlight:hover .ringing-bell {
-             animation: ring 0.75s ease-in-out 3; /* Ring a few times, then stop */
+             animation: ring 0.75s ease-in-out 3;
         }
         @keyframes ring {
             0%, 100% { transform: rotate(0deg); }
@@ -69,22 +88,40 @@
         }
         .signup-btn{
             background: var(--accent);
-            color: #2b1f00; /* readable on gold */
+            color: #2b1f00;
+        }
+        .dark .signup-btn {
+            color: #1a1400;
         }
         .signup-btn:hover{
             background: var(--accent-dark);
             color: white;
         }
 
-        .card-highlight { border-top-width: 4px; border-top-style: solid; border-color: rgba(212,175,55,0.26); }
+        .card-highlight {
+            border-top-width: 4px;
+            border-top-style: solid;
+            border-color: rgba(212,175,55,0.26);
+        }
+        .dark .card-highlight {
+            border-color: rgba(244, 179, 66, 0.26);
+        }
+
+        /* Dark mode toggle button */
+        #dark-mode-toggle {
+            transition: all 0.3s ease;
+        }
+        #dark-mode-toggle:hover {
+            transform: rotate(30deg);
+        }
     </style>
 </head>
 <body class="antialiased">
 
-<header class="bg-surface shadow sticky top-0 z-30">
+<header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a  href="http://localhost:7070/" class="flex items-center">
+            <a href="http://localhost:7070/" class="flex items-center">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
@@ -94,28 +131,54 @@
             </div>
         </div>
 
-        <!-- Hamburger for mobile -->
-        <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
-            <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
+        <div class="flex items-center gap-4">
+            <!-- Dark Mode Toggle Button - Moon visible by default -->
+            <button id="dark-mode-toggle"
+                    class="hidden lg:flex items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300"
+                    aria-label="Toggle dark mode">
+                <svg id="sun-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+                </svg>
+                <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+            </button>
 
-        <!-- Desktop / Mobile Nav -->
-        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-            <a href="http://localhost:7070/login"
-               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
-                Log In
-            </a>
-            <a href="http://localhost:7070/landlord_sign_up"
-               class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-                Sign Up
-            </a>
-        </nav>
+            <!-- Hamburger for mobile -->
+            <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
+                <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <!-- Desktop Nav -->
+            <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
+                <a href="http://localhost:7070/login"
+                   class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                    Log In
+                </a>
+                <a href="http://localhost:7070/landlord_sign_up"
+                   class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                    Sign Up
+                </a>
+            </nav>
+        </div>
     </div>
 
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
+        <div class="flex justify-center mb-2">
+            <button id="dark-mode-toggle-mobile"
+                    class="p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300"
+                    aria-label="Toggle dark mode">
+                <svg id="sun-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+                </svg>
+                <svg id="moon-icon-mobile" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+            </button>
+        </div>
         <a href="http://localhost:7070/login"
            class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
             Log In
@@ -134,6 +197,94 @@
     menuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
     });
+
+    // Function to send theme preference to server - ONLY when user clicks
+    function sendThemePreference(theme) {
+        // Create a form to submit the theme preference
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'http://localhost:7070/page_theme';
+
+        // Create hidden input for theme
+        const themeInput = document.createElement('input');
+        themeInput.type = 'hidden';
+        themeInput.name = 'user_theme';
+        themeInput.value = theme;
+
+        // Add input to form and submit
+        form.appendChild(themeInput);
+        document.body.appendChild(form);
+
+        // Submit the form
+        form.submit();
+
+        // Remove the form from DOM after submission
+        setTimeout(() => {
+            document.body.removeChild(form);
+        }, 100);
+    }
+
+    // Dark Mode Toggle Functionality
+    function toggleDarkMode() {
+        const html = document.documentElement;
+        const isCurrentlyDark = html.classList.contains('dark');
+
+        if (isCurrentlyDark) {
+            // Switching to LIGHT mode
+            html.classList.remove('dark');
+            localStorage.setItem('dark-mode', 'false');
+
+            // Show moon, hide sun
+            document.getElementById('sun-icon').classList.add('hidden');
+            document.getElementById('moon-icon').classList.remove('hidden');
+            document.getElementById('sun-icon-mobile').classList.add('hidden');
+            document.getElementById('moon-icon-mobile').classList.remove('hidden');
+
+            // Send theme preference to server - ONLY when user clicks
+            sendThemePreference('light');
+
+        } else {
+            // Switching to DARK mode
+            html.classList.add('dark');
+            localStorage.setItem('dark-mode', 'true');
+
+            // Show sun, hide moon
+            document.getElementById('sun-icon').classList.remove('hidden');
+            document.getElementById('moon-icon').classList.add('hidden');
+            document.getElementById('sun-icon-mobile').classList.remove('hidden');
+            document.getElementById('moon-icon-mobile').classList.add('hidden');
+
+            // Send theme preference to server - ONLY when user clicks
+            sendThemePreference('dark');
+        }
+    }
+
+    // Initialize theme based on localStorage
+    const savedDarkMode = localStorage.getItem('dark-mode');
+
+    // Check if user previously chose dark mode
+    if (savedDarkMode === 'true') {
+        // User chose dark mode before
+        document.documentElement.classList.add('dark');
+        document.getElementById('sun-icon').classList.remove('hidden');
+        document.getElementById('moon-icon').classList.add('hidden');
+        document.getElementById('sun-icon-mobile').classList.remove('hidden');
+        document.getElementById('moon-icon-mobile').classList.add('hidden');
+    } else {
+        // Default: LIGHT MODE (no .dark class)
+        document.documentElement.classList.remove('dark');
+        document.getElementById('sun-icon').classList.add('hidden');
+        document.getElementById('moon-icon').classList.remove('hidden');
+        document.getElementById('sun-icon-mobile').classList.add('hidden');
+        document.getElementById('moon-icon-mobile').classList.remove('hidden');
+
+        // Ensure light mode is saved as preference
+        localStorage.setItem('dark-mode', 'false');
+    }
+
+    // Add event listeners to dark mode toggle buttons
+    document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+    document.getElementById('dark-mode-toggle-mobile').addEventListener('click', toggleDarkMode);
 </script>
 
 <!-- spacing kept between header and hero -->
@@ -145,43 +296,30 @@
             </span>
             <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-[var(--text)]">Manage properties, collect rent, and keep tenants happy — all in one place.</h1>
 
-            <!-- Updated website description text -->
-            <p class="text-lg md:text-xl text-muted mb-4">
-                <!-- You can add description text here if needed -->
-            </p>
-
             <ul class="mt-6 text-sm text-muted space-y-2">
                 <li><strong class="font-bold text-accent">✓</strong> Automated rent reminders and quick payment status</li>
             </ul>
 
-            <!-- Added space before button -->
             <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <a href="http://localhost:7070/landlord_sign_up"
                    class="inline-flex items-center justify-center px-8 py-3 bg-surface text-accent font-bold text-lg rounded-lg shadow transition transform hover:scale-[1.02]">
                     Get started — it's free
                 </a>
             </div>
-
-
         </div>
 
         <div class="pt-8 md:pt-0 md:-mt-6 space-y-6">
             <!-- Automated Payments -->
-            <div class="bg-surface rounded-xl p-6 shadow card-highlight hover:shadow-lg transition transform hover:-translate-y-0.5 border-t-4 border-[#FFD700]">
+            <div class="bg-surface rounded-xl p-6 shadow-lg card-highlight hover:shadow-xl transition transform hover:-translate-y-0.5 border-t-4 border-[#FFD700]">
                 <div class="flex items-start gap-4">
                     <div class="feature-icon bg-muted text-[var(--text)] relative">
-                        <!-- Gold-accent bell SVG - now using var(--accent) for gold color -->
-                        <svg xmlns="www.w3.org" viewBox="0 0 24 24" class="w-6 h-6 ringing-bell" fill="none" stroke="none" role="img" aria-label="gold bell icon">
-                            <!-- Bottom clapper (Gold) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6 ringing-bell" fill="none" stroke="none" role="img" aria-label="gold bell icon">
                             <path fill="var(--accent)" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/>
-                            <!-- Main bell body (Gold) -->
                             <path fill="var(--accent)" d="M18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-                            <!-- Internal details remain neutral for contrast -->
-                            <circle fill="#333" cx="9" cy="11" r="1"/>
-                            <path class="winking-eye" fill="#333" d="M15 11.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5.22-.5.5-.5.5.22.5.5z"/>
-                            <path fill="#333" d="M12 17c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/>
-                            <!-- Highlight reflection (light gold) -->
-                            <path fill="#ffefc2" d="M12 2c-.83 0-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2v-5c0-3.07-1.64-5.64-4.5-6.32V3.5c0-.83-.67-1.5-1.5-1.5z" opacity="0.35"/>
+                            <circle fill="currentColor" cx="9" cy="11" r="1"/>
+                            <path class="winking-eye" fill="currentColor" d="M15 11.5c0 .28-.22.5-.5.5s-.5-.22-.5-.5.22-.5.5-.5.5.22.5.5z"/>
+                            <path fill="currentColor" d="M12 17c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/>
+                            <path fill="var(--accent)" opacity="0.35" d="M12 2c-.83 0-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2v-5c0-3.07-1.64-5.64-4.5-6.32V3.5c0-.83-.67-1.5-1.5-1.5z"/>
                         </svg>
                     </div>
                     <div>
@@ -192,11 +330,10 @@
             </div>
 
             <!-- Tenant Management -->
-            <div class="bg-surface rounded-xl p-6 shadow card-highlight hover:shadow-lg transition transform hover:-translate-y-0.5 border-t-4 border-[#FFD700]">>
+            <div class="bg-surface rounded-xl p-6 shadow-lg card-highlight hover:shadow-xl transition transform hover:-translate-y-0.5 border-t-4 border-[#FFD700]">
                 <div class="flex items-start gap-4">
                     <div class="feature-icon bg-muted text-[var(--text)]">
-                        <!-- Users Icon -->
-                        <svg xmlns="www.w3.org" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20v-2a3 3 0 00-5.356-1.857M2 12v6a2 2 0 002 2h10a2 2 0 002-2v-6m-4-6h-4a2 2 0 00-2 2v4h8v-4a2 2 0 00-2-2z" />
                         </svg>
                     </div>
@@ -206,34 +343,26 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Maintenance Requests -->
         </div>
     </div>
 </section>
 
-<!-- NEW: About Section Added Below Hero -->
+<!-- About Section -->
 <section id="about-proman" class="py-20 bg-muted">
     <div class="max-w-6xl mx-auto px-6">
-
         <div class="text-center mb-12">
             <h2 class="text-3xl font-extrabold text-[var(--text)] sm:text-4xl">
                 About <span class="text-accent">ProMan</span>
             </h2>
-
-            <p class="mt-4 text-lg text-muted-text max-w-2xl mx-auto">
+            <p class="mt-4 text-lg text-muted max-w-2xl mx-auto">
                 A property website for property owners to stay track with tenants payment,
                 track overdue date and record tenant debt to the property. All this information
                 available on your own personalized profile.
             </p>
         </div>
-
     </div>
 </section>
 
-
-
-<!-- Placeholder for the rest of your website content -->
 <footer class="mt-12 py-8 bg-surface">
     <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
         &copy; 2025 ProMan Property Management Solutions.
