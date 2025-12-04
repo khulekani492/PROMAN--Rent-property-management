@@ -18,7 +18,7 @@ public class AddTenant {
         return ctx -> {
             //access property name and address
             String property_name = ctx.sessionAttribute("current_property");
-            Integer property_total_unit=  ctx.sessionAttribute("property_unit");
+            String property_total_unit=  ctx.sessionAttribute("property_unit");
             String email = ctx.sessionAttribute("email");
             Integer chosen_unit = Integer.valueOf(ctx.formParam("unit_number"));
             System.out.println("chosen unit " + chosen_unit);
