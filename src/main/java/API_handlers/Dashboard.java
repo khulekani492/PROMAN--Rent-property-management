@@ -27,6 +27,12 @@ public class Dashboard {
             try {
                 ctx.req().changeSessionId();
                  Integer landlord_id =  authenticate.landlordId(email);
+                System.out.println("landlordId " + landlord_id);
+                 String  login_user_name = authenticate.landlord_username(landlord_id);
+                System.out.println("Email : "  + login_user_name);
+
+                 ctx.sessionAttribute("user_name",login_user_name);
+
                 //uses landlord_unique_id to fetch all of their properties , it accessed with the user_email
                 //Access first property name. First convert landlord_properties to ArrayList
                 Set<String> landlord_properties = default_properties.fetchAllproperty(landlord_id);
@@ -72,7 +78,7 @@ public class Dashboard {
                     Map<String, Object> model1 = new HashMap<>();
                     HashMap<String, String> model = new HashMap<>();
                     HashMap<String, String> model2 = new HashMap<>();
-
+                    String themeColor = ctx.sessionAttribute("theme_color");
                     //Keeps track of the updated name
                     ctx.sessionAttribute("current_property",first_property_name);
                     allPropertyUnits.put("units", fetch_all);
@@ -86,6 +92,7 @@ public class Dashboard {
                     //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                     model1.put("names", landlord_properties);
                     model1.put("name",property_name);
+                    model1.put("user_chosen_theme",themeColor);
                     System.out.println("model_1 " + model1);
                     data.putAll(allPropertyUnits);
                     data.putAll(model1);
@@ -99,7 +106,7 @@ public class Dashboard {
                     HashMap<String, String> model = new HashMap<>();
                     HashMap<String, String> model2 = new HashMap<>();
                     ctx.sessionAttribute("current_property",first_property_name);
-
+                    String themeColor = ctx.sessionAttribute("theme_color");
                     allPropertyUnits.put("units", fetch_all);
                     System.out.println(fetch_all + "Occupied units");
                     model.put("total_properties", String.valueOf(total_properties));
@@ -110,7 +117,8 @@ public class Dashboard {
                     //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                     model1.put("names", landlord_properties);
                     model1.put("name",property_name);
-
+                    model1.put("user_chosen_theme",themeColor);
+                    model1.put("user_name",login_user_name);
                     data.putAll(allPropertyUnits);
                     data.putAll(model1);
                     data.putAll(model);
