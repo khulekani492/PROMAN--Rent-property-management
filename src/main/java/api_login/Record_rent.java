@@ -86,7 +86,7 @@ public class Record_rent {
                 System.out.println("LATEST UPDATE: Payment processed for ID: " + tenantId + ", Unit: " + unit);
 
 
-                // --- 3. Database Write & Response ---
+                // --- 3. Database Write & Respon se ---
                 try {
                     _payment.setTenant_Id(tenantId);
                     _payment.record_payment();
