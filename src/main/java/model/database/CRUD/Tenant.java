@@ -68,25 +68,43 @@ public class Tenant extends ConnectionAccess {
         }
         return username;
     }
-    public Integer tenant_ID(String property_name) {
+//    public Integer tenant_ID(String property_name) {
+//
+//        String sql = """
+//               SELECT general_users.id FROM general_users\s
+//               inner join\s
+//               properties\s
+//               ON properties.tenant_user_id = general_users.id WHERE general_users.name=? ;""";
+//
+//            Integer id = null;
+//        try {
+//            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+//                pstm.setString(1,property_name);
+//                ResultSet result = pstm.executeQuery();
+//                if(result.next()){
+//                    id = result.getInt("id");
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return id;
+//    }
 
-        String sql = """
-               SELECT general_users.id FROM general_users\s
-               inner join\s
-               properties\s
-               ON properties.tenant_user_id = general_users.id WHERE general_users.name=? ;""";
+    public Integer tenant_ID(String tenant_name) {
+        String sql = "SELECT id FROM general_users WHERE name = ? AND user_type = 'tenant'";
 
-            Integer id = null;
+        Integer id = null;
         try {
-            PreparedStatement pstm = this.connection.prepareStatement(sql);{
-                pstm.setString(1,property_name);
-                ResultSet result = pstm.executeQuery();
-                if(result.next()){
-                    id = result.getInt("id");
-                }
+            PreparedStatement pstm = this.connection.prepareStatement(sql);
+            pstm.setString(1, tenant_name);
+            ResultSet result = pstm.executeQuery();
+
+            if(result.next()){
+                id = result.getInt("id");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return id;
     }
