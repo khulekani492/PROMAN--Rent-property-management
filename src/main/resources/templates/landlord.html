@@ -6,9 +6,16 @@
     <title>ProMan — Landlord Sign-Up</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Store Thymeleaf variable in JavaScript -->
+    <script>
+        // This gets rendered server-side by Thymeleaf
+        const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
+    </script>
+
     <style>
         :root{
-            /* Smoke white theme variables */
+            /* Default light theme variables */
             --bg: #f5f6f7;         /* overall smoke-white page background */
             --surface: #ffffff;    /* card / surface white */
             --muted: #eef0f2;      /* slightly darker smoke for surfaces */
@@ -19,7 +26,23 @@
             --glass: rgba(255,255,255,0.6);
         }
 
-        body { background: var(--bg); color: var(--text); }
+        /* Dark theme variables */
+        body.dark {
+            --bg: #0f172a;          /* dark blue-gray background */
+            --surface: #1e293b;     /* dark surface */
+            --muted: #334155;       /* muted dark */
+            --text: #f1f5f9;        /* light text */
+            --muted-text: #94a3b8;  /* muted light text */
+            --accent: #F4B342;      /* brighter gold for dark mode */
+            --accent-dark: #E0A028; /* darker gold for hover */
+            --glass: rgba(30, 41, 59, 0.6);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
         .text-accent { color: var(--accent) !important; }
         .bg-accent { background-color: var(--accent) !important; }
@@ -33,7 +56,20 @@
             box-shadow: 0 6px 20px rgba(31,41,55,0.06);
         }
 
-        .card-highlight { border-top-width: 4px; border-top-style: solid; border-color: rgba(212,175,55,0.26); }
+        body.dark .hero-surface {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-highlight {
+            border-top-width: 4px;
+            border-top-style: solid;
+            border-color: rgba(212,175,55,0.26);
+        }
+
+        body.dark .card-highlight {
+            border-color: rgba(244, 179, 66, 0.26);
+        }
 
         .progress-dot { width: 12px; height: 12px; border-radius: 9999px; display: inline-block; }
         .img-card {
@@ -59,9 +95,22 @@
             background: var(--accent);
             color: #2b1f00; /* readable on gold */
         }
+
+        body.dark .signup-btn {
+            color: #1a1400;
+        }
+
         .signup-btn:hover{
             background: var(--accent-dark);
             color: white;
+        }
+
+        /* Dark mode toggle button */
+        #dark-mode-toggle {
+            transition: all 0.3s ease;
+        }
+        #dark-mode-toggle:hover {
+            transform: rotate(30deg);
         }
 
         /* Mobile-specific fixes */
@@ -78,72 +127,13 @@
     </style>
 </head>
 
-<body class="antialiased">
+<!-- Apply dark class based on user_chosen_theme from server -->
+<body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
 
-<script>
-    const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: 'http://localhost:7070/add_property_unit'
-        }
-    });
-
-    if (error) {
-        console.error('Google Sign-In Error:', error.message);
-    }
-}
-
-supabase.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-        console.log('User signed in:', session.user);
-        await insertUserEmail(session.user);
-    }
-});
-
-async function insertUserEmail(user) {
-    try {
-        const { data, error } = await supabase
-            .from('general_users')
-            .insert([
-                {
-                    email: user.email
-                }
-            ])
-            .select();
-
-        if (error) {
-            if (error.code === '23505') {
-                console.log('Email already exists in general_users table');
-            } else {
-                console.error('Error inserting email:', error);
-            }
-        } else {
-            console.log('Email inserted successfully:', data);
-        }
-    } catch (err) {
-        console.error('Error in insertUserEmail:', err);
-    }
-}
-
-async function checkCurrentUser() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-        await insertUserEmail(session.user);
-    }
-}
-
-checkCurrentUser();
-</script>
-
-<header class="bg-surface shadow sticky top-0 z-30">
+<header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a href="home.html" class="flex items-center">
+            <a  class="flex items-center">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
@@ -153,24 +143,27 @@ checkCurrentUser();
             </div>
         </div>
 
-        <!-- Hamburger for mobile -->
-        <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
-            <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
+        <div class="flex items-center gap-4">
 
-        <!-- Desktop / Mobile Nav -->
-        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-            <a href="http://localhost:7070/login"
-               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
-                Log In
-            </a>
-            <a href="http://localhost:7070/landlord_sign_up"
-               class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-                Sign Up
-            </a>
-        </nav>
+            <!-- Hamburger for mobile -->
+            <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
+                <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <!-- Desktop / Mobile Nav -->
+            <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
+                <a href="http://localhost:7070/login"
+                   class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                    Log In
+                </a>
+                <a href="http://localhost:7070/landlord_sign_up"
+                   class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                    Sign Up
+                </a>
+            </nav>
+        </div>
     </div>
 
     <!-- Mobile menu (hidden by default) -->
@@ -187,11 +180,121 @@ checkCurrentUser();
 </header>
 
 <script>
+    // MOBILE MENU
     const menuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
+    if(menuButton && mobileMenu) menuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
 
-    menuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+    // DARK MODE
+    function sendThemePreference(theme){
+        const form=document.createElement('form'); form.method='POST'; form.action='http://localhost:7070/page_theme';
+        const themeInput=document.createElement('input'); themeInput.type='hidden'; themeInput.name='user_theme'; themeInput.value=theme;
+        form.appendChild(themeInput); document.body.appendChild(form); form.submit();
+        setTimeout(()=>document.body.removeChild(form),100);
+    }
+    function initializeIcons(){
+        const isDark=document.body.classList.contains('dark');
+        const sunIcon=document.getElementById('sun-icon'); const moonIcon=document.getElementById('moon-icon');
+        const sunIconMobile=document.getElementById('sun-icon-mobile'); const moonIconMobile=document.getElementById('moon-icon-mobile');
+        if(isDark){if(sunIcon)sunIcon.classList.remove('hidden'); if(moonIcon)moonIcon.classList.add('hidden'); if(sunIconMobile)sunIconMobile.classList.remove('hidden'); if(moonIconMobile)moonIconMobile.classList.add('hidden');}
+        else{if(sunIcon)sunIcon.classList.add('hidden'); if(moonIcon)moonIcon.classList.remove('hidden'); if(sunIconMobile)sunIconMobile.classList.add('hidden'); if(moonIconMobile)moonIconMobile.classList.remove('hidden');}
+    }
+    function toggleDarkMode(){
+        const isCurrentlyDark=document.body.classList.contains('dark');
+        if(isCurrentlyDark){document.body.classList.remove('dark'); localStorage.setItem('user_chosen_theme','light'); sendThemePreference('light');}
+        else{document.body.classList.add('dark'); localStorage.setItem('user_chosen_theme','dark'); sendThemePreference('dark');}
+        initializeIcons();
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    // SUPABASE CONFIG
+    const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
+    // IMPORTANT: Use the public anon key here.
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Google OAuth
+    async function signInWithGoogle() {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                // This is the URL that Supabase redirects to AFTER the Google sign-in is complete.
+                redirectTo: 'http://localhost:7070/add_property_unit'
+            }
+        });
+        if (error) console.error("OAuth Error:", error);
+    }
+
+    // Handle auth state change
+    // This listener fires when the user is sent back to your site from Google OAuth
+    supabase.auth.onAuthStateChange(async (event, session) => {
+        // The user is ALREADY in the auth.users table if event is 'SIGNED_IN'.
+        if (event === 'SIGNED_IN' && session) {
+            console.log('User signed in. Session data:', session);
+
+            // --- OPTIONAL: Handle public profile creation if needed ---
+            // If you have a separate table (e.g., 'public.profiles') to store public user data,
+            // you might want to check if the user exists there and insert a row if they don't.
+            try {
+                // Check if a profile already exists for this user ID
+                const { data: profile, error: fetchError } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (fetchError && fetchError.code === 'PGRST116') { // PGRST116 means "no row found"
+                    // If no profile exists, create one using the user's Supabase ID
+                    const { error: insertError } = await supabase
+                        .from('profiles')
+                        .insert({
+                            id: session.user.id,
+                            email: session.user.email, // Use session data to populate profile
+                            // Add other fields like 'username' here
+                        });
+
+                    if (insertError) {
+                        console.error('Error creating public profile:', insertError);
+                    } else {
+                        console.log('Public profile created for user:', session.user.id);
+                    }
+                } else if (fetchError) {
+                    console.error('Error checking for existing profile:', fetchError);
+                }
+            } catch (e) {
+                console.error('Profile handling error:', e);
+            }
+            // -------------------------------------------------------------------
+
+            // Send access token to your backend (for server-side security validation)
+            try {
+                const response = await fetch('/supabase_login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ access_token: session.access_token })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Backend login failed with status: ${response.status}`);
+                }
+                console.log('Access token sent to backend successfully.');
+            } catch (error) {
+                console.error('Backend communication error:', error);
+                // You might want to handle this failure (e.g., alert the user)
+            }
+
+
+            // Redirect user to the property unit page
+            // This is a redundant redirect since the OAuth redirectTo option already handles it,
+            // but keeps the logic intact if the redirectTo option were removed.
+            // Be cautious of double-redirects which can cause issues.
+            // window.location.href = '/add_property_unit';
+        }
     });
 </script>
 
@@ -253,18 +356,18 @@ checkCurrentUser();
                     <input id="user_name" name="user_name" required type="text" autocomplete="username" class="mt-1 block w-full rounded-lg border border-muted bg-surface p-3 shadow-sm input-focus" th:value="${username}"/>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="contact" class="block text-sm font-semibold text-[var(--text)]">Contact Number</label>
-                        <input id="contact" name="contact" required type="tel" autocomplete="tel" class="mt-1 block w-full rounded-lg border border-muted bg-surface p-3 shadow-sm input-focus" th:value="${contact}" />
-                    </div>
-                    <div>
-                        <label for="user_email" class="block text-sm font-semibold text-[var(--text)]">Email Address</label>
-                        <input id="user_email" name="user_email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required type="email" autocomplete="email" class="mt-1 block w-full rounded-lg border border-muted bg-surface p-3 shadow-sm input-focus" th:value="${email}"/>
-                        <p th:text="${error}" class="text-xs text-red-500 mt-1"></p>
-                    </div>
+                <div>
+                    <label for="contact" class="block text-sm font-semibold text-[var(--text)]">Contact Number</label>
+                    <input id="contact" name="contact" required type="tel"
+                           pattern="^(\+27|0)[0-9]{9}$"
+                           title="Please enter a valid South African phone number (e.g., 0831234567 or +27831234567)"
+                           placeholder="e.g., 0831234567 or +27831234567"
+                           autocomplete="tel"
+                           class="mt-1 block w-full rounded-lg border border-muted bg-surface p-3 shadow-sm input-focus"
+                           th:value="${contact}"
+                           oninput="validateSANumber(this)"/>
+                    <p id="contact-error" class="text-xs text-red-500 mt-1 hidden"></p>
                 </div>
-
                 <p class="text-xs text-muted pt-1">
                     Your email and number will be used for account verification and critical property notifications only.
                 </p>
@@ -316,12 +419,6 @@ checkCurrentUser();
         </div>
 
         <p class="text-xs text-muted text-center mb-4">© <span id="pro-man-year"></span> ProMan — Property Management</p>
-
-        <script>
-            try {
-              document.getElementById('pro-man-year').textContent = new Date().getFullYear();
-            } catch (e) { /* ignore if no DOM */ }
-        </script>
     </div>
 </footer>
 
