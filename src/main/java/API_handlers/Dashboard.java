@@ -47,8 +47,7 @@ public class Dashboard {
                     if(!first_property_name.equals(property_name)){
                         System.out.println(property_name + "In memory" +" default name " + first_property_name);
                         ctx.sessionAttribute("current_property",property_name);
-
-
+                        first_property_name = property_name;
                     }
 
 
@@ -66,6 +65,7 @@ public class Dashboard {
 
                 //Calculate the occupancy percentage of the property
                 Integer total_units = authenticate.total_property_units(first_property_name, landlord_id);
+                System.out.println( first_property_name + " total units" + total_units);
                 ctx.sessionAttribute("property_unit",total_units);
 
                 double occupancyRate = ((double) occupied_units / total_units ) * 100;
@@ -109,6 +109,7 @@ public class Dashboard {
                     HashMap<String, String> model = new HashMap<>();
                     HashMap<String, String> model2 = new HashMap<>();
                     ctx.sessionAttribute("current_property",first_property_name);
+
                     ctx.sessionAttribute("property_unit",total_units);
                     String themeColor = ctx.sessionAttribute("theme_color");
                     allPropertyUnits.put("units", fetch_all);
