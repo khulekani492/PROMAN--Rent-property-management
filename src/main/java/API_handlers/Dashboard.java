@@ -46,6 +46,9 @@ public class Dashboard {
                     System.out.println("landlord First property : " + first_property_name );
                     if(!first_property_name.equals(property_name)){
                         System.out.println(property_name + "In memory" +" default name " + first_property_name);
+                        ctx.sessionAttribute("current_property",property_name);
+
+
                     }
 
 
@@ -62,13 +65,13 @@ public class Dashboard {
                 Integer occupied_units = fetch_all.size();
 
                 //Calculate the occupancy percentage of the property
-                String total_units = authenticate.total_property_units(first_property_name, landlord_id);
+                Integer total_units = authenticate.total_property_units(first_property_name, landlord_id);
                 ctx.sessionAttribute("property_unit",total_units);
 
-                double occupancyRate = ((double) occupied_units / Integer.parseInt(total_units) ) * 100;
+                double occupancyRate = ((double) occupied_units / total_units ) * 100;
 
                 //Vacant_rooms
-                Integer vacant = Integer.parseInt( total_units ) - occupied_units;
+                Integer vacant = total_units  - occupied_units;
 
                 //Expected profit based off the number of units occupied
                 String expected_profit = authenticate.property_estimated_profit(landlord_id,first_property_name );
@@ -106,6 +109,7 @@ public class Dashboard {
                     HashMap<String, String> model = new HashMap<>();
                     HashMap<String, String> model2 = new HashMap<>();
                     ctx.sessionAttribute("current_property",first_property_name);
+                    ctx.sessionAttribute("property_unit",total_units);
                     String themeColor = ctx.sessionAttribute("theme_color");
                     allPropertyUnits.put("units", fetch_all);
                     System.out.println(fetch_all + "Occupied units");
