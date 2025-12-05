@@ -35,9 +35,7 @@ public class AddTenant {
                 ctx.sessionAttribute("tenant_number",number);
                 String rent_pay = ctx.formParam("rent_amount");
                 ctx.sessionAttribute("tenant_pay",rent_pay);
-
                 String user_type = "tenant";
-
                 general add_newTenant = new general(name, number, user_type);
                 try {
                     add_newTenant.landlord_insert_tenant();
@@ -58,7 +56,8 @@ public class AddTenant {
                     System.out.println(occupied_unit );
                     if(occupied_unit == chosen_unit){
                         ctx.sessionAttribute("same_unit",chosen_unit);
-                        ctx.redirect("error/same_unit");
+                        ctx.redirect(
+                                "error/same_unit");
                         return;
                     }
                 }
