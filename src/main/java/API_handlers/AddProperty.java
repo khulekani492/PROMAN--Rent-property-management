@@ -13,15 +13,15 @@ public class AddProperty {
     public Handler addproperty() {
         return ctx -> {
             try {
-                Integer propertyUnit = Integer.valueOf(Objects.requireNonNull(ctx.formParam("property_unit")));
+                String totalUnits = ctx.formParam("property_unit");
+                Integer propertyUnit = Integer.valueOf(totalUnits);
                 String property_Name = ctx.formParam("property_Name");
                 String property_address = ctx.formParam("property_Address");
                 System.out.println(property_address);
                 ctx.sessionAttribute("current_property", property_Name);
                 ctx.sessionAttribute("property_address", property_address);
-                ctx.sessionAttribute("property_unit",propertyUnit);
+                ctx.sessionAttribute("property_unit", Integer.parseInt(totalUnits));
 
-                Integer total_n_units = ctx.sessionAttribute("property_unit");
                 String property_name = ctx.sessionAttribute("property_name");
                 String user_email = ctx.sessionAttribute("email");
 
@@ -34,7 +34,7 @@ public class AddProperty {
                 create_rooms.setlandlord(landlordId);
                 create_rooms.setProperty_Name(property_Name);
                 create_rooms.setProperty_address(property_address);
-                for (int i = 1 ;i <= total_n_units;i++){
+                for (int i = 1 ;i <= propertyUnit;i++){
                     try {
                         create_rooms.setProperty_unit(i);
                         create_rooms.setTotal_units();
@@ -46,7 +46,7 @@ public class AddProperty {
 
                 }
                 Map<String, Object> model = new HashMap<>();
-                System.out.println("SET total units to updated " + total_n_units);
+               // System.out.println("SET total units to updated " + total_n_units);
                 System.out.println("SET property_name to  updated " + property_name);
                 String user_name = ctx.sessionAttribute("user_name");
                 String  propertyName = ctx.sessionAttribute("property_name");
