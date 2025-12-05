@@ -726,6 +726,91 @@
                 top: 150px;
             }
         }
+
+        /* Mobile-specific improvements for sidebar */
+        @media (max-width: 768px) {
+            .sidebar-content {
+                padding: 0.75rem;
+            }
+
+            .nav-item {
+                padding: 0.5rem;
+                font-size: 14px;
+            }
+
+            .property-name-display {
+                padding: 10px 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .property-name-text {
+                font-size: 16px;
+            }
+
+            .sidebar-stats {
+                gap: 0.5rem;
+            }
+
+            .card {
+                padding: 12px;
+            }
+
+            .feature-icon {
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        /* Highlighted payment column - ADDED THIS */
+        .units-table th:nth-child(6),
+        .units-table td:nth-child(6) {
+            background: rgba(212,175,55,0.15) !important;
+            position: relative;
+        }
+
+        body.dark .units-table th:nth-child(6),
+        body.dark .units-table td:nth-child(6) {
+            background: rgba(244,179,66,0.2) !important;
+        }
+
+        .units-table th:nth-child(6)::after,
+        .units-table td:nth-child(6)::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent);
+            opacity: 0.6;
+        }
+
+        .units-table td:nth-child(6):hover {
+            background: rgba(212,175,55,0.25) !important;
+        }
+
+        body.dark .units-table td:nth-child(6):hover {
+            background: rgba(244,179,66,0.3) !important;
+        }
+
+        .payment-cell {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-cell:hover .indicator {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 640px) {
+            .payment-cell .indicator {
+                width: 2.2rem;
+                height: 2.2rem;
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 
@@ -906,24 +991,19 @@
                                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
                             </div>
                         </div>
-                        <button id="viewTableBtn" class="view-table-btn w-full mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                            </svg>
-                            View Full Table
-                        </button>
+                        <!-- REMOVED: View Full Table button from here -->
                     </div>
                 </div>
 
                 <!-- Table Section -->
                 <div class="lg:w-2/3" id="tableContainer">
                     <div class="card-surface h-full">
-                        <!-- Change Property Button (hidden by default) -->
-                        <button id="changePropertyBtn" class="change-property-btn inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium mb-4">
+                        <!-- ADDED: View Units Table button (replaces Change Property button) -->
+                        <button id="viewTableBtn" class="change-property-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium mb-4">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                             </svg>
-                            Change Property
+                            View Units Table
                         </button>
 
                         <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
@@ -1052,7 +1132,6 @@
         </div>
     </div>
 </div>
-
 <script>
     // =========================================================================
     // GLOBAL FUNCTIONS (Accessible to onclick handlers)
@@ -1146,24 +1225,36 @@
             darkModeToggle.addEventListener('click', toggleDarkMode);
         }
 
-        // Rest of your existing initialization code...
+        // View Units Table button functionality (toggles property selection panel)
         const viewTableBtn = document.getElementById('viewTableBtn');
         const changePropertyBtn = document.getElementById('changePropertyBtn');
         const propertyFormContainer = document.getElementById('propertyFormContainer');
         const tableContainer = document.getElementById('tableContainer');
         const mainContent = document.getElementById('mainContent');
 
-        if (viewTableBtn && changePropertyBtn && propertyFormContainer && tableContainer && mainContent) {
+        if (viewTableBtn && propertyFormContainer && tableContainer && mainContent) {
             viewTableBtn.addEventListener('click', function() {
-                propertyFormContainer.classList.add('hidden');
-                mainContent.classList.add('full-table-view');
-                changePropertyBtn.style.display = 'block';
-            });
+                // Toggle property form visibility
+                propertyFormContainer.classList.toggle('hidden');
 
-            changePropertyBtn.addEventListener('click', function() {
-                propertyFormContainer.classList.remove('hidden');
-                mainContent.classList.remove('full-table-view');
-                changePropertyBtn.style.display = 'none';
+                // Toggle button text based on state
+                if (propertyFormContainer.classList.contains('hidden')) {
+                    viewTableBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Show Property Selection
+                    `;
+                    mainContent.classList.add('full-table-view');
+                } else {
+                    viewTableBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        View Units Table
+                    `;
+                    mainContent.classList.remove('full-table-view');
+                }
             });
         }
 
