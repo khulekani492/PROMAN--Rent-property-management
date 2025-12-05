@@ -11,9 +11,11 @@ public class Save_unit {
 
             String getUsername = ctx.sessionAttribute("user_name");
             String themeColor = ctx.sessionAttribute("theme_color");
+            String  property_name = ctx.sessionAttribute("current_property" );
             HashMap<String,String> model = new HashMap<>();
             model.put("user_name",getUsername);
             model.put("user_chosen_theme",themeColor);
+            model.put("property_name",property_name);
             ctx.render("templates/property.html",model);
         };
     }
