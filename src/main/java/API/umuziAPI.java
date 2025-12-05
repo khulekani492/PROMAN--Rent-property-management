@@ -116,7 +116,7 @@ public class umuziAPI {
             ctx.sessionAttribute("property_unit", total_n_units);
 
             model.put("user_name",user_name);
-            model.put("unit_add", total_n_units);
+            model.put("unit_add", String.valueOf(total_n_units));
             model.put("user_chosen_theme",theme_color);
             model.put("name", property_name);
 

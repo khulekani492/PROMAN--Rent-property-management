@@ -501,12 +501,43 @@
             <h2 id="form-title" class="form-title">ADD TENANT TO UNIT</h2>
 
             <!-- Information Box -->
-            <div class="info-box">
-                <p class="property-name">Property: <span th:text="${name}">Property Name</span></p>
-                <p>Total Available Units: <strong th:text="${unit_add}">0</strong></p>
-                <p class="instruction-text">Select a unit number between 1 and <span th:text="${unit_add}">0</span></p>
-            </div>
+            <div class="info-box bg-surface rounded-xl p-6 shadow-lg border border-muted mb-6">
+                <div class="space-y-4">
+                    <div class="property-info">
+                        <p class="text-lg font-semibold text-accent mb-2">
+                            Property: <span class="text-[var(--text)]" th:text="${name}">Property Name</span>
+                        </p>
+                        <p class="text-sm text-muted">
+                            Total Available Units:
+                            <strong class="text-[var(--text)] text-base" th:text="${unit_add}">0</strong>
+                        </p>
+                    </div>
 
+                    <div class="instruction-section bg-muted rounded-lg p-4">
+                        <p class="instruction-text text-sm font-medium text-[var(--text)] mb-2">
+                            Select a unit number between 1 and
+                            <span class="font-bold text-accent" th:text="${unit_add}">0</span>
+                        </p>
+                        <div class="mt-2">
+                            <p class="text-xs text-muted italic"
+                               th:text="${add_property_profile} + ' Go back to the dashboard menu and click Add property'">
+                                No property on your ProMan profile. Go back to the dashboard menu and click Add property.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Optional: Add a call-to-action button -->
+                    <div class="mt-4">
+                        <a href="/dashboard"
+                           class="inline-flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-dark transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
             <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST">
                 <!-- Unit Selection Section -->
                 <div class="form-section">
@@ -659,16 +690,9 @@
     </div>
 </main>
 
-<footer class="py-4 bg-surface border-t">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted">
-        <div>
-            <a href="home.html" class="text-lg font-extrabold text-accent">ProMan</a>
-            <p class="mt-1">Make property management simple and reliable.</p>
-        </div>
-        <div class="text-center md:text-right">
-            <div>© ProMan — Property Management</div>
-            <a href="mailto:ProMan@gmail.com" class="text-accent hover:underline">ProMan@gmail.com</a>
-        </div>
+<footer class="mt-12 py-8 bg-surface">
+    <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
+        &copy; 2025 ProMan Property Management Solutions.
     </div>
 </footer>
 

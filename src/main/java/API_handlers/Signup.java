@@ -25,7 +25,7 @@ public class Signup {
                 ctx.sessionAttribute("contact",contact);
                 ctx.sessionAttribute("email",email);
                 ctx.sessionAttribute("password",password);
-                ctx.sessionAttribute("current_property", "No properties Added");
+//                ctx.sessionAttribute("current_property", "No properties Added");
 
 
                 // hash password
