@@ -57,24 +57,33 @@ public class Dashboard {
                     Map<String, Object> model1 = new HashMap<>();
                     HashMap<String, String> model = new HashMap<>();
                     HashMap<String, String> model2 = new HashMap<>();
+
                     String themeColor = ctx.sessionAttribute("theme_color");
-                    //Keeps track of the updated name
-                    ctx.sessionAttribute("current_property","No properties Added");
+
+                    // Keeps track of the updated name
+                    ctx.sessionAttribute("current_property", "No properties Added");
+
                     model.put("total_properties", String.valueOf(total_properties));
                     model.put("occupied_units", "0");
-                    model2.put("occupancyRate","0");
-                    model2.put("vacant","0");
-                    model2.put("expected_profit","0");
-                    model1.put("no_units","No Units. press  +Add New Unit to add tenants ");
-                    //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
-                    model1.put("names", landlord_properties);
-                    model1.put("name",property_name);
-                    model1.put("user_chosen_theme",themeColor);
+
+                    model2.put("occupancyRate", "0");
+                    model2.put("vacant", "0");
+                    model2.put("expected_profit", "0");
+
+                    model1.put("add_property_profile", "No");
+                    model1.put("no_units", "No Units. Press +Add New Unit to add tenants ");
+                    model1.put("names", landlord_properties); // Using landlord_unique_id to fetch all properties, accessed with user_emails
+                    model1.put("name", property_name);
+                    model1.put("user_chosen_theme", themeColor);
+
                     System.out.println("model_1 " + model1);
+
+                    // Combine all model data
                     data.putAll(allPropertyUnits);
                     data.putAll(model1);
                     data.putAll(model);
                     data.putAll(model2);
+
                     ctx.render("templates/dashboard.html", data);
                     return;
 
