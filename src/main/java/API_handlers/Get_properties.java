@@ -46,11 +46,11 @@ public class Get_properties {
             HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name, authenticate.landlordId(property_email));
             Integer occupied_units = fetch_all.size();
             //Calculate the occupancy percentage of the property
-            String total_units = user_id.total_property_units(property_name, user_id.landlordId(property_email));
-            double occupancyRate = ((double) occupied_units / Integer.parseInt(total_units) ) * 100;
+            Integer total_units = user_id.total_property_units(property_name, user_id.landlordId(property_email));
+            double occupancyRate = ((double) occupied_units / total_units)  * 100;
 
             //Vacant_rooms
-            Integer vacant = Integer.valueOf( total_units ) - occupied_units;
+            Integer vacant =  total_units  - occupied_units;
             //Expected profit based off the number of units occupied
             String expected_profit = user_id.property_estimated_profit(user_id.landlordId(property_email),property_name );
 
