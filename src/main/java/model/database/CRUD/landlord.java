@@ -49,7 +49,7 @@ public class landlord extends ConnectionAccess {
         return username;
     }
 
-    public String total_property_units( String property_name,Integer landlordId) {
+    public Integer total_property_units( String property_name,Integer landlordId) {
 
         String sql = """
                 SELECT COUNT(*) AS total_rows
@@ -70,7 +70,7 @@ public class landlord extends ConnectionAccess {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return String.valueOf(total_property_units) ;
+        return total_property_units;
     }
 
     public String landlord_property_name(Integer landlordId) {
