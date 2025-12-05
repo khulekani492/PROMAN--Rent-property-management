@@ -107,11 +107,8 @@ public class umuziAPI {
 
         app.get("/add_tenant",ctx -> {
             Map<String, Object> model = new HashMap<>();
-
             String user_name = ctx.sessionAttribute("user_name");
-
-           // Integer total_n_units = ctx.sessionAttribute("property_unit");
-            Integer total_n_units = Integer.parseInt(Objects.requireNonNull(ctx.sessionAttribute("property_unit"))) ;
+            Integer total_n_units = ctx.sessionAttribute("property_unit") ;
             String  property_name = ctx.sessionAttribute("current_property" );
             String  theme_color = ctx.sessionAttribute("theme_color" );
 
