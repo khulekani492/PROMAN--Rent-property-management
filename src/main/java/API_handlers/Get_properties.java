@@ -47,6 +47,9 @@ public class Get_properties {
             Integer occupied_units = fetch_all.size();
             //Calculate the occupancy percentage of the property
             Integer total_units = user_id.total_property_units(property_name, user_id.landlordId(property_email));
+            System.out.println( property_name + " total units" + total_units);
+            ctx.sessionAttribute("property_unit",total_units);
+            System.out.println();
             double occupancyRate = ((double) occupied_units / total_units)  * 100;
 
             //Vacant_rooms
