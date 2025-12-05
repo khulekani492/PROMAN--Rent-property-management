@@ -31,6 +31,8 @@ public class Invalid_date implements  ErrorHandler{
             model.put("tenant_rent_name",tenant_kin_name);
             model.put("tenant_debt",String.valueOf( tenant_debt) );
             model.put("name",property_name );
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
 
             ctx.render("templates/tenant_form.html",model);
         };

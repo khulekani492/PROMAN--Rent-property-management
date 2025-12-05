@@ -11,6 +11,8 @@ public class SameUnit implements  ErrorHandler{
         return ctx -> {
             Map<String, Object> model = new HashMap<>();
             Integer property_total_unit = ctx.sessionAttribute("property_unit");
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
             String tenant_name = ctx.sessionAttribute("tenant_name");
             String tenant_number = ctx.sessionAttribute("tenant_number");
             String tenant_pay = ctx.sessionAttribute("tenant_pay");

@@ -20,7 +20,8 @@ public class Tenant_name implements  ErrorHandler{
             String tenant_kin_name = ctx.sessionAttribute("tenant_kin_number");
             String rent_payment_day = ctx.sessionAttribute("tenant_rent_payment");
             Integer tenant_debt = ctx.sessionAttribute("debt");
-
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
             String  propertyName = ctx.sessionAttribute("property_name");
             Integer  chosen_unit = ctx.sessionAttribute("chosen_unit");
 

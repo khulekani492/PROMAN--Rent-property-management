@@ -12,6 +12,8 @@ public class NoEmail implements ErrorHandler {
             System.out.println(attempted_email);
             HashMap<String,String> model = new HashMap<>();
             model.put("error", attempted_email + " EMAIL NOT FOUND"   );
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
             model.put("Create","Sign up");
             ctx.render("templates/login.html",model);
         };

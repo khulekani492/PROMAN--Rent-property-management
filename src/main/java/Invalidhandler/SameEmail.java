@@ -14,6 +14,8 @@ public class SameEmail implements ErrorHandler{
             String email = ctx.sessionAttribute("email");
             String password = ctx.sessionAttribute("password");
             HashMap<String,String> model = new HashMap<>();
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
             model.put("error", " Email already " + update_user +" Log in" );
             model.put("username",username);
             model.put("contact",contact);
