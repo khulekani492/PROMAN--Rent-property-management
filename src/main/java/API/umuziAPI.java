@@ -4,6 +4,7 @@ package API;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static API.SessionUtil.fileSessionHandler;
 
@@ -106,19 +107,23 @@ public class umuziAPI {
 
         app.get("/add_tenant",ctx -> {
             Map<String, Object> model = new HashMap<>();
-            String  propertyUnit = ctx.sessionAttribute("property_unit");
+
             String user_name = ctx.sessionAttribute("user_name");
 
-            String  propertyName = ctx.sessionAttribute("current_property" );
-            String  themecolor = ctx.sessionAttribute("theme_color" );
-            System.out.println("property_name "+ propertyName);
-            ctx.sessionAttribute("property_unit", propertyUnit);
-            model.put("user_name",user_name);
-            model.put("unit_add", propertyUnit);
-            model.put("user_chosen_theme",themecolor);
-            model.put("name", propertyName);
+           // Integer total_n_units = ctx.sessionAttribute("property_unit");
+            Integer total_n_units = Integer.parseInt(Objects.requireNonNull(ctx.sessionAttribute("property_unit"))) ;
+            String  property_name = ctx.sessionAttribute("current_property" );
+            String  theme_color = ctx.sessionAttribute("theme_color" );
 
-            System.out.println(propertyUnit + "  property unit ");
+            System.out.println("property_name "+ property_name);
+            ctx.sessionAttribute("property_unit", total_n_units);
+
+            model.put("user_name",user_name);
+            model.put("unit_add", total_n_units);
+            model.put("user_chosen_theme",theme_color);
+            model.put("name", property_name);
+
+            System.out.println(total_n_units + "  property unit ");
             System.out.println(model + "  property model ");
 
             ctx.render("templates/tenant_form.html",model);
