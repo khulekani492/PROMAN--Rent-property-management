@@ -370,13 +370,11 @@
                 <div>
                     <label for="contact" class="block text-sm font-semibold text-[var(--text)]">Contact Number</label>
                     <input id="contact" name="contact" required type="tel"
-                           pattern="^(\+27|0)[0-9]{9}$"
-                           title="Please enter a valid South African phone number (e.g., 0831234567 or +27831234567)"
-                           placeholder="e.g., 0831234567 or +27831234567"
+                           title="Please enter your phone number"
+                           placeholder="e.g., 0831234567, +27831234567, or any valid phone number"
                            autocomplete="tel"
                            class="mt-1 block w-full rounded-lg border border-muted bg-surface p-3 shadow-sm input-focus"
-                           th:value="${contact}"
-                           oninput="validateSANumber(this)"/>
+                           th:value="${contact}"/>
                     <p id="contact-error" class="text-xs text-red-500 mt-1 hidden"></p>
                 </div>
                 <p class="text-xs text-muted pt-1">
@@ -434,68 +432,60 @@
 </footer>
 
 <script>
-    // Function to validate South African phone number
-    function validateSANumber(input) {
+    // Removed strict South African phone number validation
+    // Now accepts any phone number format
+
+    // Function to clean phone number input (optional)
+    function cleanPhoneNumber(input) {
         const errorElement = document.getElementById('contact-error');
         const value = input.value.trim();
 
-        // Remove all spaces and special characters except + at the start
-        const cleaned = value.replace(/[^\d+]/g, '');
-
-        // Update the input value (optional - removes spaces)
-        if (value !== cleaned) {
-            input.value = cleaned;
-        }
-
-        // SA phone number regex pattern
-        const saPattern = /^(\+27|0)[0-9]{9}$/;
-
         if (value === '') {
-            errorElement.textContent = '';
             errorElement.classList.add('hidden');
             input.classList.remove('border-red-500', 'border-green-500');
-            return false;
+            return value;
         }
 
-        if (!saPattern.test(cleaned)) {
-            errorElement.textContent = 'Please enter a valid South African number (10 digits starting with 0 or 11 digits starting with +27)';
+        // Basic validation - just check if it looks like a phone number
+        // Remove all non-digit characters except + at the start
+        const cleaned = value.replace(/[^\d+]/g, '');
+
+        // Very basic check: at least 5 digits
+        const digitCount = cleaned.replace('+', '').length;
+
+        if (digitCount < 5) {
+            errorElement.textContent = 'Please enter a valid phone number (at least 5 digits)';
             errorElement.classList.remove('hidden');
             input.classList.add('border-red-500');
             input.classList.remove('border-green-500');
-            return false;
+        } else {
+            errorElement.textContent = '';
+            errorElement.classList.add('hidden');
+            input.classList.remove('border-red-500');
+            input.classList.add('border-green-500');
         }
 
-        // Format for display (optional)
-        let formatted = cleaned;
-        if (cleaned.startsWith('0') && cleaned.length === 10) {
-            formatted = cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
-        } else if (cleaned.startsWith('+27') && cleaned.length === 12) {
-            const digits = cleaned.substring(3);
-            formatted = '+27 ' + digits.replace(/(\d{2})(\d{3})(\d{4})/, '$1 $2 $3');
-        }
-
-        // Update with formatted version (optional)
-        input.value = formatted;
-
-        errorElement.textContent = '';
-        errorElement.classList.add('hidden');
-        input.classList.remove('border-red-500');
-        input.classList.add('border-green-500');
-        return true;
+        return value;
     }
 
-    // Form submission validation
+    // Optional: Add input event listener for real-time validation
+    document.getElementById('contact').addEventListener('input', function(e) {
+        cleanPhoneNumber(e.target);
+    });
+
+    // Form submission validation - only basic check
     document.getElementById('landlordForm').addEventListener('submit', function(event) {
         const contactInput = document.getElementById('contact');
         const errorElement = document.getElementById('contact-error');
+        const value = contactInput.value.trim();
 
-        // Remove formatting for validation
-        const rawValue = contactInput.value.replace(/\s/g, '');
-        const saPattern = /^(\+27|0)[0-9]{9}$/;
+        // Remove all non-digit characters except + at the start for validation
+        const cleaned = value.replace(/[^\d+]/g, '');
+        const digitCount = cleaned.replace('+', '').length;
 
-        if (!saPattern.test(rawValue)) {
+        if (digitCount < 5 && value !== '') {
             event.preventDefault();
-            errorElement.textContent = 'Please enter a valid South African phone number before submitting';
+            errorElement.textContent = 'Please enter a valid phone number (at least 5 digits)';
             errorElement.classList.remove('hidden');
             contactInput.classList.add('border-red-500');
             contactInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -503,8 +493,6 @@
             return false;
         }
 
-        // Ensure the raw value is sent to server
-        contactInput.value = rawValue;
         return true;
     });
 
