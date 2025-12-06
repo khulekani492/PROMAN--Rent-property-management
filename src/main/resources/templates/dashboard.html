@@ -172,11 +172,47 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             border-left: 3px solid rgba(212,175,55,0.18);
             transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
         }
 
         body.dark .sidebar .card {
             border-left: 3px solid rgba(244, 179, 66, 0.18);
         }
+
+        /* WIGGLE EFFECT for sidebar stats cards */
+        .sidebar-stats .card {
+            animation: none;
+        }
+
+        .sidebar-stats .card:hover {
+            animation: wiggle 0.5s ease-in-out;
+            transform-origin: center center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        body.dark .sidebar-stats .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-1.5deg); }
+            50% { transform: rotate(1.5deg); }
+            75% { transform: rotate(-1deg); }
+        }
+
+        /* Bounce effect alternative (comment out wiggle and uncomment this for bounce) */
+        /*
+        .sidebar-stats .card:hover {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        */
 
         .feature-icon {
             width:44px;
@@ -187,6 +223,11 @@
             border-radius:8px;
             background: rgba(212,175,55,0.08);
             color: var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-stats .card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
         body.dark .feature-icon {
@@ -213,6 +254,9 @@
             background: rgba(255,255,255,0.1);
             color: var(--text);
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            /* No wiggle for nav items */
+            transform: none !important;
+            animation: none !important;
         }
 
         body.dark .nav-item:hover {
@@ -916,6 +960,29 @@
                 width: 44px;
                 height: 44px;
             }
+        }
+
+        /* PULSE effect for sidebar stats - alternative to wiggle */
+        .sidebar-stats .card.pulse-effect:hover {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* SHAKE effect for sidebar stats - another alternative */
+        .sidebar-stats .card.shake-effect:hover {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            50% { transform: translateX(2px); }
+            75% { transform: translateX(-1px); }
         }
     </style>
 </head>
