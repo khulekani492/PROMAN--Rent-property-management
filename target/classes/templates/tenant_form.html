@@ -398,6 +398,82 @@
             background: var(--surface);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+
+        /* Mobile Menu Button Styles - ADDED FROM SECOND FILE */
+        #mobile-menu-button {
+            display: none; /* Hidden by default on desktop */
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #mobile-menu-button:hover {
+            background: var(--muted);
+        }
+
+        .mobile-menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 20px;
+        }
+
+        .mobile-menu-icon span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--text);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Hamburger to X animation */
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        /* Mobile menu styling */
+        #mobile-menu {
+            background: var(--surface);
+            border-top: 1px solid var(--muted);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dark #mobile-menu {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Show mobile menu button on mobile/tablet, hide desktop nav */
+        @media (max-width: 1024px) {
+            #mobile-menu-button {
+                display: flex;
+            }
+
+            #nav-links {
+                display: none;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            #mobile-menu-button {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -417,14 +493,7 @@
             </div>
         </div>
 
-        <!-- Hamburger for mobile -->
-        <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
-            <svg class="block h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-        </button>
-
-        <!-- Desktop / Mobile Nav -->
+        <!-- Desktop Nav - will be hidden on mobile -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
             <a href="http://localhost:7070/"
                class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
@@ -439,6 +508,15 @@
                 Log out
             </a>
         </nav>
+
+        <!-- Mobile Menu Button - ADDED FROM SECOND FILE -->
+        <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
+            <div class="mobile-menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
     </div>
 
     <!-- Mobile menu (hidden by default) -->
@@ -459,15 +537,51 @@
 </header>
 
 <script>
-    console.log("Server theme from Thymeleaf:", serverTheme); // Will show 'light' or 'dark'
-
-    // Mobile menu functionality
+    // MOBILE MENU FUNCTIONALITY - REPLACED WITH CODE FROM SECOND FILE
     const menuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
     if (menuButton && mobileMenu) {
         menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
             mobileMenu.classList.toggle('hidden');
+
+            // Toggle body overflow to prevent scrolling when menu is open
+            if (!isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!mobileMenu.classList.contains('hidden') &&
+                !menuButton.contains(event.target) &&
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
         });
     }
 </script>
@@ -513,17 +627,21 @@
                         </p>
                     </div>
 
-                    <div class="instruction-section bg-muted rounded-lg p-4">
+
+                    <div class="instruction-section bg-muted rounded-lg p-4"
+                         th:if="${'No'.equals(add_property_profile)}">
                         <p class="instruction-text text-sm font-medium text-[var(--text)] mb-2">
                             Select a unit number between 1 and
                             <span class="font-bold text-accent" th:text="${unit_add}">0</span>
                         </p>
-                        <div class="mt-2">
-                            <p class="text-xs text-muted italic"
-                               th:text="${add_property_profile} + ' Go back to the dashboard menu and click Add property'">
-                                No property on your ProMan profile. Go back to the dashboard menu and click Add property.
-                            </p>
-                        </div>
+                    </div>
+
+                    <!-- Optional: Show when condition is false -->
+                    <div class="instruction-section bg-muted rounded-lg p-4"
+                         th:if="${!'Yes'.equals(add_property_profile)}">
+                        <p class="text-xs text-muted italic">
+                            No property on your ProMan profile. Go back to the dashboard menu and click Add property.
+                        </p>
                     </div>
 
                     <!-- Optional: Add a call-to-action button -->

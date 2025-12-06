@@ -26,7 +26,7 @@ public class SecurityUtil {
         boolean isMatch = checkPassword(password, hashedPassword);
         System.out.println("Password matches: " + isMatch);
 
-        boolean isWrongPasswordMatch = checkPassword("mySecretPassword123", hashedPassword);
+        boolean isWrongPasswordMatch = checkPassword("Khule@20ct15", "$2a$12$EQxzCb1N2te2TvRBiU4J6OuguslKbSSRDclFxETfjm524jlEg9Bim");
         System.out.println("Wrong password matches: " + isWrongPasswordMatch);
     }
 

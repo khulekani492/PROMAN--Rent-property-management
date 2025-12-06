@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -229,7 +229,15 @@
         }
     </style>
 </head>
-<body class="antialiased">
+
+<body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+<!-- Store Thymeleaf variable in JavaScript -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
+    console.log("Server theme from Thymeleaf:", serverTheme);
+    /*]]>*/
+</script>
 
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
@@ -294,130 +302,156 @@
 </header>
 
 <script>
+    // =========================================================================
+    // DARK MODE FUNCTIONS WITH AJAX (Option 2)
+    // =========================================================================
+
+    // AJAX function to send theme preference without page reload
+    async function sendThemePreference(theme) {
+        try {
+            const response = await fetch('http://localhost:7070/page_theme', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `user_theme=${theme}`
+            });
+
+            // Don't reload the page, just update local storage
+            localStorage.setItem('user_chosen_theme', theme);
+
+            console.log('Theme preference saved:', theme);
+
+        } catch (error) {
+            console.error('Error sending theme preference:', error);
+            // Fallback: still update local storage even if server request fails
+            localStorage.setItem('user_chosen_theme', theme);
+        }
+    }
+
+    function initializeIcons() {
+        const isDark = document.body.classList.contains('dark');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+    }
+
+    async function toggleDarkMode() {
+        const isCurrentlyDark = document.body.classList.contains('dark');
+        const newTheme = isCurrentlyDark ? 'light' : 'dark';
+
+        if (isCurrentlyDark) {
+            document.body.classList.remove('dark');
+        } else {
+            document.body.classList.add('dark');
+        }
+
+        initializeIcons();
+
+        // Send preference without page reload using AJAX
+        await sendThemePreference(newTheme);
+    }
+
+    // =========================================================================
+    // MOBILE MENU FUNCTIONALITY
+    // =========================================================================
+
     // Mobile Menu Toggle Functionality
     const menuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
-    menuButton.addEventListener('click', () => {
-        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
-        menuButton.setAttribute('aria-expanded', !isExpanded);
-        mobileMenu.classList.toggle('hidden');
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
 
-        // Toggle body overflow to prevent scrolling when menu is open
-        if (!isExpanded) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    });
-
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', (event) => {
-        if (!mobileMenu.classList.contains('hidden') &&
-            !menuButton.contains(event.target) &&
-            !mobileMenu.contains(event.target)) {
-            mobileMenu.classList.add('hidden');
-            menuButton.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-    });
-
-    // Close mobile menu when clicking on a link
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            menuButton.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
+            // Toggle body overflow to prevent scrolling when menu is open
+            if (!isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
         });
-    });
 
-    // Close mobile menu on escape key
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
-            mobileMenu.classList.add('hidden');
-            menuButton.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-    });
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!mobileMenu.classList.contains('hidden') &&
+                !menuButton.contains(event.target) &&
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
 
-    // Function to send theme preference to server - ONLY when user clicks
-    function sendThemePreference(theme) {
-        // Create a form to submit the theme preference
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'http://localhost:7070/page_theme';
+        // Close mobile menu when clicking on a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
 
-        // Create hidden input for theme
-        const themeInput = document.createElement('input');
-        themeInput.type = 'hidden';
-        themeInput.name = 'user_theme';
-        themeInput.value = theme;
-
-        // Add input to form and submit
-        form.appendChild(themeInput);
-        document.body.appendChild(form);
-
-        // Submit the form
-        form.submit();
-
-        // Remove the form from DOM after submission
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
     }
 
-    // Dark Mode Toggle Functionality
-    function toggleDarkMode() {
-        const html = document.documentElement;
-        const isCurrentlyDark = html.classList.contains('dark');
+    // =========================================================================
+    // PAGE INITIALIZATION
+    // =========================================================================
 
-        if (isCurrentlyDark) {
-            // Switching to LIGHT mode
-            html.classList.remove('dark');
-            localStorage.setItem('dark-mode', 'false');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Use server theme as primary source
+        const serverTheme = window.serverTheme || 'light';
+        localStorage.setItem('user_chosen_theme', serverTheme);
+        initializeIcons();
 
-            // Show moon, hide sun
+        // Add event listener to dark mode toggle button
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', async function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                await toggleDarkMode();
+            });
+        }
+
+        // Initialize theme based on localStorage
+        const savedDarkMode = localStorage.getItem('user_chosen_theme');
+
+        // Check if user previously chose dark mode
+        if (savedDarkMode === 'dark') {
+            // User chose dark mode before
+            document.body.classList.add('dark');
+            document.getElementById('sun-icon').classList.remove('hidden');
+            document.getElementById('moon-icon').classList.add('hidden');
+        } else {
+            // Default: LIGHT MODE (no .dark class)
+            document.body.classList.remove('dark');
             document.getElementById('sun-icon').classList.add('hidden');
             document.getElementById('moon-icon').classList.remove('hidden');
 
-            // Send theme preference to server - ONLY when user clicks
-            sendThemePreference('light');
-
-        } else {
-            // Switching to DARK mode
-            html.classList.add('dark');
-            localStorage.setItem('dark-mode', 'true');
-
-            // Show sun, hide moon
-            document.getElementById('sun-icon').classList.remove('hidden');
-            document.getElementById('moon-icon').classList.add('hidden');
-
-            // Send theme preference to server - ONLY when user clicks
-            sendThemePreference('dark');
+            // Ensure light mode is saved as preference
+            localStorage.setItem('user_chosen_theme', 'light');
         }
-    }
-
-    // Initialize theme based on localStorage
-    const savedDarkMode = localStorage.getItem('dark-mode');
-
-    // Check if user previously chose dark mode
-    if (savedDarkMode === 'true') {
-        // User chose dark mode before
-        document.documentElement.classList.add('dark');
-        document.getElementById('sun-icon').classList.remove('hidden');
-        document.getElementById('moon-icon').classList.add('hidden');
-    } else {
-        // Default: LIGHT MODE (no .dark class)
-        document.documentElement.classList.remove('dark');
-        document.getElementById('sun-icon').classList.add('hidden');
-        document.getElementById('moon-icon').classList.remove('hidden');
-
-        // Ensure light mode is saved as preference
-        localStorage.setItem('dark-mode', 'false');
-    }
-
-    // Add event listener to dark mode toggle button in header
-    document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
+    });
 </script>
 
 <!-- spacing kept between header and hero -->

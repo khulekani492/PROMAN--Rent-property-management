@@ -12,8 +12,9 @@ public class LogOut  {
              if (session != null){
                  session.invalidate();
                  ctx.sessionAttributeMap().clear();
-                 ctx.render("templates/home.html");
                  System.out.println("Session destroyed ");
+                 ctx.render("templates/home.html");
+
              }
         };
 

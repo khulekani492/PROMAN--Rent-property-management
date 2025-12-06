@@ -1302,6 +1302,65 @@
 </div>
 <script>
     // =========================================================================
+    // DARK MODE FUNCTIONS WITH AJAX (Option 2)
+    // =========================================================================
+
+    // AJAX function to send theme preference without page reload
+    async function sendThemePreference(theme) {
+        try {
+            const response = await fetch('http://localhost:7070/page_theme', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `user_theme=${theme}`
+            });
+
+            // Don't reload the page, just update local storage
+            localStorage.setItem('user_chosen_theme', theme);
+
+            console.log('Theme preference saved:', theme);
+
+        } catch (error) {
+            console.error('Error sending theme preference:', error);
+            // Fallback: still update local storage even if server request fails
+            localStorage.setItem('user_chosen_theme', theme);
+        }
+    }
+
+    function initializeIcons() {
+        const isDark = document.body.classList.contains('dark');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+    }
+
+    async function toggleDarkMode() {
+        const isCurrentlyDark = document.body.classList.contains('dark');
+        const newTheme = isCurrentlyDark ? 'light' : 'dark';
+
+        if (isCurrentlyDark) {
+            document.body.classList.remove('dark');
+        } else {
+            document.body.classList.add('dark');
+        }
+
+        initializeIcons();
+
+        // Send preference without page reload using AJAX
+        await sendThemePreference(newTheme);
+    }
+
+    // =========================================================================
     // GLOBAL FUNCTIONS (Accessible to onclick handlers)
     // =========================================================================
 
@@ -1324,57 +1383,6 @@
             errorDisplay.textContent = message;
             errorDisplay.classList.remove('hidden');
         }
-    }
-
-    // Dark Mode Functions (keep these global too)
-    function sendThemePreference(theme) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'http://localhost:7070/page_theme';
-
-        const themeInput = document.createElement('input');
-        themeInput.type = 'hidden';
-        themeInput.name = 'user_theme';
-        themeInput.value = theme;
-
-        form.appendChild(themeInput);
-        document.body.appendChild(form);
-        form.submit();
-
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
-    }
-
-    function initializeIcons() {
-        const isDark = document.body.classList.contains('dark');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-
-        if (sunIcon && moonIcon) {
-            if (isDark) {
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            } else {
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            }
-        }
-    }
-
-    function toggleDarkMode() {
-        const isCurrentlyDark = document.body.classList.contains('dark');
-
-        if (isCurrentlyDark) {
-            document.body.classList.remove('dark');
-            localStorage.setItem('user_chosen_theme', 'light');
-            sendThemePreference('light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem('user_chosen_theme', 'dark');
-            sendThemePreference('dark');
-        }
-        initializeIcons();
     }
 
     // Mobile menu functions
@@ -1424,7 +1432,11 @@
         // Add event listener to dark mode toggle button
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         if (darkModeToggle) {
-            darkModeToggle.addEventListener('click', toggleDarkMode);
+            darkModeToggle.addEventListener('click', async function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                await toggleDarkMode();
+            });
         }
 
         // Mobile menu button functionality
@@ -1664,82 +1676,82 @@
         // IV. ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
         // =========================================================================
 
-        if (paymentForm && confirmButton) {
-          paymentForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            displayErrorBanner(null, true);
 
-            confirmButton.disabled = true;
-            confirmButton.textContent = 'Processing...';
+if (paymentForm && confirmButton) {
+    paymentForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        displayErrorBanner(null, true);
 
-            const formData = new FormData(paymentForm);
-            const tenantName = formData.get('id');
-            const unit = formData.get('unit');
-            const actionType = formData.get('action_type');
+        confirmButton.disabled = true;
+        confirmButton.textContent = 'Processing...';
 
-            let url;
-            if (actionType === 'unmark') {
-                url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}`;
-            } else {
-                url = `http://localhost:7070/payment_status/${tenantName}/${unit}`;
-            }
+        const formData = new FormData(paymentForm);
+        const tenantName = formData.get('id');
+        const unit = formData.get('unit');
+        const actionType = formData.get('action_type');
 
-            try {
-              const response = await fetch(url, {
-                method: 'POST',
-                body: new URLSearchParams(formData),
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-              });
+        let url = "";
 
-              if (response.ok) {
-                const successMsg = (actionType === 'unmark')
-                                    ? `Unit ${unit} successfully unmarked.`
-                                    : `Unit ${unit} marked as paid successfully!`;
-                flashMessage(successMsg, 'green');
-
-                const isPaid = (actionType !== 'unmark');
-                const indicator = document.querySelector(`.open-pay[data-unit="${unit}"][data-id="${tenantName}"]`);
-                if (indicator) {
-                  updatePaymentForRow(indicator.closest('tr'), isPaid);
-                }
-
-                closePaymentModal();
-
-              } else {
-                const errorText = await response.text();
-                let userMessage = `Request failed (Status: ${response.status}). Check server logs.`;
-
-                if (errorText.includes("Error: The 'required_data' field must not be empty.")) {
-                    userMessage = "Payment rejected: Please wait a moment before trying again (Rate Limit).";
-                    displayErrorBanner(userMessage);
-                }
-                else if (errorText.includes('Payment already recorded for this month.')) {
-                    userMessage = `Payment already recorded for Unit ${unit} this month.`;
-                    displayErrorBanner(userMessage);
-                }
-                else if (response.status >= 400) {
-                    userMessage = `Request failed (Status: ${response.status}). Details: ${errorText.substring(0, 50)}...`;
-                    displayErrorBanner(userMessage);
-                }
-
-                flashMessage(userMessage, 'red');
-              }
-
-            } catch (error) {
-              const networkError = `A network error occurred. Server unreachable or CORS block.`;
-              displayErrorBanner(networkError);
-              flashMessage(networkError, 'red');
-
-            } finally {
-                if (confirmButton) {
-                    confirmButton.disabled = false;
-                    confirmButton.textContent = 'Confirm Payment';
-                }
-            }
-          });
+        if (actionType === 'unmark') {
+            url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}`;
+        } else {
+            url = `http://localhost:7070/payment_status/${tenantName}/${unit}`;
         }
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(formData)
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                displayErrorBanner(errorMessage || "Something went wrong.");
+                confirmButton.disabled = false;
+                confirmButton.textContent = actionType === 'unmark'
+                    ? "Unmark Payment"
+                    : "Confirm Payment";
+                return;
+            }
+
+            // SUCCESS
+            const rowIndicator = document.querySelector(
+                `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
+            );
+
+            if (rowIndicator) {
+                if (actionType === 'unmark') {
+                    rowIndicator.textContent = "−";
+                    rowIndicator.classList.remove("bg-green-100", "text-green-800");
+                    rowIndicator.classList.add("bg-red-100", "text-red-800");
+                } else {
+                    rowIndicator.textContent = "+";
+                    rowIndicator.classList.remove("bg-red-100", "text-red-800");
+                    rowIndicator.classList.add("bg-green-100", "text-green-800");
+                }
+            }
+
+            flashMessage(
+                actionType === 'unmark'
+                    ? `Payment removed for Unit ${unit}.`
+                    : `Payment recorded for Unit ${unit}.`,
+                "green"
+            );
+
+            closePaymentModal();
+
+        } catch (error) {
+            console.error("AJAX Error:", error);
+            displayErrorBanner("Network error. Check your connection.");
+        }
+
+        confirmButton.disabled = false;
+        confirmButton.textContent = actionType === 'unmark'
+            ? "Unmark Payment"
+            : "Confirm Payment";
+    });
+}
 
         // =========================================================================
         // V. EVENT LISTENERS SETUP

@@ -490,7 +490,7 @@
                 <form action="http://localhost:7070/verify_user" method="POST" style="width:100%; margin-top:6px;">
                     <div style="margin-bottom:12px;">
                         <label for="email" class="small-muted" style="display:block;margin-bottom:6px;">Email</label>
-                        <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="form-input" />
+                        <input th:value="${login_email}" id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="form-input" />
                         <p th:if="${error != null and error != ''}"
                            th:text="${error}"
                            class="text-red-500 font-medium mt-2">
