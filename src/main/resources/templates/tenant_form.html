@@ -399,6 +399,72 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
+        /* Loading spinner styles */
+        .loading-spinner {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-spinner.dark {
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            border-top-color: #000;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-disabled {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay-content {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .overlay-spinner {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+
         /* Mobile Menu Button Styles - ADDED FROM SECOND FILE */
         #mobile-menu-button {
             display: none; /* Hidden by default on desktop */
@@ -479,6 +545,15 @@
 
 <!-- Apply dark class based on user_chosen_theme from server -->
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-overlay-content">
+        <div class="overlay-spinner"></div>
+        <p class="text-md font-semibold text-[var(--text)]">Adding Tenant...</p>
+        <p class="text-xs text-muted mt-1">Please wait while we process your request</p>
+    </div>
+</div>
 
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-3 flex items-center justify-between mx-auto">
@@ -801,7 +876,13 @@
 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" aria-label="Add Tenant">Add Tenant</button>
+                    <button type="submit" id="submitButton" aria-label="Add Tenant" class="inline-flex justify-center items-center gap-2">
+                        <svg id="submitIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span id="submitText">Add Tenant</span>
+                        <div id="submitSpinner" class="loading-spinner hidden"></div>
+                    </button>
                 </div>
             </form>
         </div>
@@ -818,24 +899,50 @@
 <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script>
-    // Function to send theme preference to server
-    function sendThemePreference(theme) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'http://localhost:7070/page_theme';
+    // LOADING STATE MANAGEMENT
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const submitButton = document.getElementById('submitButton');
+    const submitIcon = document.getElementById('submitIcon');
+    const submitText = document.getElementById('submitText');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const tenantForm = document.getElementById('tenantForm');
 
-        const themeInput = document.createElement('input');
-        themeInput.type = 'hidden';
-        themeInput.name = 'user_theme';
-        themeInput.value = theme;
+    let isSubmitting = false;
 
-        form.appendChild(themeInput);
-        document.body.appendChild(form);
-        form.submit();
+    // Function to show loading state
+    function showLoading() {
+        isSubmitting = true;
 
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
+        // Disable form button
+        submitButton.disabled = true;
+        submitButton.classList.add('btn-disabled');
+
+        // Show spinner and hide icon
+        submitIcon.classList.add('hidden');
+        submitSpinner.classList.remove('hidden');
+        submitText.textContent = 'Adding Tenant...';
+
+        // Show loading overlay
+        loadingOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+
+    // Function to hide loading state
+    function hideLoading() {
+        isSubmitting = false;
+
+        // Re-enable form button
+        submitButton.disabled = false;
+        submitButton.classList.remove('btn-disabled');
+
+        // Hide spinner and show icon
+        submitIcon.classList.remove('hidden');
+        submitSpinner.classList.add('hidden');
+        submitText.textContent = 'Add Tenant';
+
+        // Hide loading overlay
+        loadingOverlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
     }
 
     // Initialize everything on page load
@@ -868,7 +975,6 @@
             const form = document.getElementById('tenantForm');
             if (!form) return;
 
-            const submitBtn = form.querySelector('button[type="submit"]');
             const toastContainer = document.getElementById('toastContainer');
             const unitNumberInput = document.getElementById('unit_number');
             const debtInput = document.getElementById('debt_input');
@@ -1067,21 +1173,24 @@
             });
 
             form.addEventListener('submit', function(evt) {
+                // Prevent multiple submissions
+                if (isSubmitting) {
+                    evt.preventDefault();
+                    return false;
+                }
+
                 if (!validate()) {
                     evt.preventDefault();
                     showToast('Please fix the highlighted fields', { bg: '#ffe4e6', color: '#991b1b' });
-                    return;
+                    return false;
                 }
 
-                submitBtn.disabled = true;
-                submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
-                showToast('Adding tenant...', { bg: '#dcfce7', color: '#064e3b', duration: 2000 });
+                // Show loading state
+                showLoading();
 
-                // Re-enable button after 5 seconds if form submission fails
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
-                }, 5000);
+                // The form will continue with its normal submission
+                // The loading state will persist until page reloads or redirects
+                return true;
             });
 
             // Set today as max date for move-in
@@ -1090,6 +1199,15 @@
                 moveInInput.max = today;
             }
         })();
+    });
+
+    // Handle page unload to prevent accidental navigation during form submission
+    window.addEventListener('beforeunload', function(e) {
+        if (isSubmitting) {
+            // Optional: Show confirmation dialog
+            // e.preventDefault();
+            // e.returnValue = 'Your form is still submitting. Are you sure you want to leave?';
+        }
     });
 </script>
 </body>
