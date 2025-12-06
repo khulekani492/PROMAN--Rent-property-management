@@ -111,7 +111,11 @@ public class umuziAPI {
             Integer total_n_units = ctx.sessionAttribute("property_unit") ;
             String  property_name = ctx.sessionAttribute("current_property" );
             String  theme_color = ctx.sessionAttribute("theme_color" );
+            String  check_Memory = ctx.sessionAttribute("add_property_profile");;
 
+            if(check_Memory == null){
+                check_Memory = "Yes";
+            }
             System.out.println("property_name "+ property_name);
             ctx.sessionAttribute("property_unit", total_n_units);
 
@@ -119,9 +123,10 @@ public class umuziAPI {
             model.put("unit_add", String.valueOf(total_n_units));
             model.put("user_chosen_theme",theme_color);
             model.put("name", property_name);
+            model.put("add_property_profile",check_Memory);
 
             System.out.println(total_n_units + "  property unit ");
-            System.out.println(model + "  property model ");
+            System.out.println(model + "  Property state for tenant form ");
 
             ctx.render("templates/tenant_form.html",model);
 
