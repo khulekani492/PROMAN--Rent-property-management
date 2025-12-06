@@ -276,15 +276,7 @@
           color: var(--muted-text);
         }
 
-        /* Dark mode toggle button */
-        #dark-mode-toggle {
-          transition: all 0.3s ease;
-        }
-        #dark-mode-toggle:hover {
-          transform: rotate(30deg);
-        }
-
-        /* Checkbox styling for dark mode */
+        /* Checkbox styling */
         input[type="checkbox"] {
           accent-color: var(--accent);
         }
@@ -295,41 +287,195 @@
           border-top: 1px solid var(--muted);
           transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+
+        /* Mobile Menu Button Styles - MATCHING PREVIOUS SIZE */
+        #mobile-menu-button {
+            display: none; /* Hidden by default on desktop */
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #mobile-menu-button:hover {
+            background: var(--muted);
+        }
+
+        .mobile-menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 20px;
+        }
+
+        .mobile-menu-icon span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--text);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Hamburger to X animation - SAME AS BEFORE */
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        /* Mobile menu styling */
+        #mobile-menu {
+            background: var(--surface);
+            border-top: 1px solid var(--muted);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dark #mobile-menu {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Show mobile menu button on mobile/tablet, hide desktop nav */
+        @media (max-width: 1024px) {
+            #mobile-menu-button {
+                display: flex;
+            }
+
+            #nav-links {
+                display: none;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            #mobile-menu-button {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <!-- Apply dark class based on user_chosen_theme from server -->
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
 
-<script>
-    console.log("Server theme from Thymeleaf:", serverTheme); // Will show 'light' or 'dark'
-</script>
-
-<!-- Header with dark mode toggle -->
+<!-- Header with mobile menu button -->
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
-    <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
+    <div class="max-w-6xl px-6 py-3 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a class="flex items-center">
+            <a href="http://localhost:7070/" class="flex items-center">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
             <div>
-                <a class="text-xl font-extrabold text-accent">ProMan</a>
+                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">ProMan</a>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
 
-        <div class="flex items-center gap-4">
-            <!-- Dark Mode Toggle Button -->
-            <nav class="flex items-center gap-3 text-sm font-medium">
-                <a href="http://localhost:7070/"
-                   class="px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200 home-gold-btn">
-                    Home
-                </a>
-            </nav>
-        </div>
+        <!-- Desktop Nav - will be hidden on mobile -->
+        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
+            <a href="http://localhost:7070/"
+               class="home-gold-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                Home
+            </a>
+        </nav>
+
+        <!-- Mobile Menu Button - SAME SIZE AS BEFORE (48px × 48px) -->
+        <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
+            <div class="mobile-menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+    </div>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div id="mobile-menu" class="lg:hidden hidden px-6 pb-3 space-y-2">
+        <a href="http://localhost:7070/"
+           class="block w-full text-center home-gold-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
+            HOME
+        </a>
     </div>
 </header>
+
+<script>
+    // MOBILE MENU
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
+
+            // Toggle body overflow to prevent scrolling when menu is open
+            if (!isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!mobileMenu.classList.contains('hidden') &&
+                !menuButton.contains(event.target) &&
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // Password toggle icon + behavior
+    const toggle = document.getElementById('togglePassword');
+    const pwd = document.getElementById('password');
+    if (toggle && pwd) {
+        const iconEye = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
+        const iconEyeOff = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"/></svg>';
+
+        toggle.innerHTML = iconEye;
+        toggle.addEventListener('click', function () {
+            const isHidden = pwd.type === 'password';
+            pwd.type = isHidden ? 'text' : 'password';
+            toggle.innerHTML = isHidden ? iconEyeOff : iconEye;
+            toggle.setAttribute('aria-pressed', String(isHidden));
+            toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        });
+    }
+</script>
 
 <!-- Main: centered, form on left, picture on right -->
 <main>
@@ -404,109 +550,5 @@
     </div>
 </footer>
 
-<script>
-    // Function to send theme preference to server
-    function sendThemePreference(theme) {
-        // Create a form to submit the theme preference
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'http://localhost:7070/page_theme';
-
-        // Create hidden input for theme
-        const themeInput = document.createElement('input');
-        themeInput.type = 'hidden';
-        themeInput.name = 'user_theme';
-        themeInput.value = theme;
-
-        // Add input to form and submit
-        form.appendChild(themeInput);
-        document.body.appendChild(form);
-
-        // Submit the form
-        form.submit();
-
-        // Remove the form from DOM after submission
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
-    }
-
-    // Initialize icons based on theme
-    function initializeIcons() {
-        const isDark = document.body.classList.contains('dark');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-
-        if (isDark) {
-            sunIcon.classList.remove('hidden');
-            moonIcon.classList.add('hidden');
-        } else {
-            sunIcon.classList.add('hidden');
-            moonIcon.classList.remove('hidden');
-        }
-    }
-
-    // Dark Mode Toggle Functionality
-    function toggleDarkMode() {
-        const isCurrentlyDark = document.body.classList.contains('dark');
-
-        if (isCurrentlyDark) {
-            // Switching to LIGHT mode
-            document.body.classList.remove('dark');
-            localStorage.setItem('user_chosen_theme', 'light');
-
-            // Send theme preference to server
-            sendThemePreference('light');
-
-        } else {
-            // Switching to DARK mode
-            document.body.classList.add('dark');
-            localStorage.setItem('user_chosen_theme', 'dark');
-
-            // Send theme preference to server
-            sendThemePreference('dark');
-        }
-
-        // Update icons after toggle
-        initializeIcons();
-    }
-
-    // Initialize theme and icons on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        // Use server theme as primary source
-        const serverTheme = window.serverTheme || 'light';
-
-        // Sync localStorage with server theme
-        localStorage.setItem('user_chosen_theme', serverTheme);
-
-        // Initialize dark mode toggle icons
-        initializeIcons();
-
-        // Add event listener to dark mode toggle button
-        document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
-
-        // Set current year in footer
-        try {
-            document.getElementById('pro-man-year').textContent = new Date().getFullYear();
-        } catch (e) { /* ignore if no DOM */ }
-
-        // Password toggle icon + behavior
-        const toggle = document.getElementById('togglePassword');
-        const pwd = document.getElementById('password');
-        if (!toggle || !pwd) return;
-
-        const iconEye = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
-        const iconEyeOff = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"/></svg>';
-
-        toggle.innerHTML = iconEye;
-        toggle.addEventListener('click', function () {
-            const isHidden = pwd.type === 'password';
-            pwd.type = isHidden ? 'text' : 'password';
-            toggle.innerHTML = isHidden ? iconEyeOff : iconEye;
-            toggle.setAttribute('aria-pressed', String(isHidden));
-            toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
-        });
-    });
-</script>
 </body>
 </html>
