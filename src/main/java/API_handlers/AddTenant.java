@@ -21,6 +21,7 @@ public class AddTenant {
 
             String email = ctx.sessionAttribute("email");
             Integer chosen_unit = Integer.valueOf(ctx.formParam("unit_number"));
+
             System.out.println("chosen unit " + chosen_unit);
             ctx.sessionAttribute("chosen_unit",chosen_unit);
             ctx.sessionAttribute("occupied_unit_error",chosen_unit);
