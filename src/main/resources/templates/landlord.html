@@ -172,6 +172,72 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
+        /* Loading spinner styles */
+        .loading-spinner {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-spinner.dark {
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-top-color: #000;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-disabled {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .overlay-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
         /* Show mobile menu button on mobile/tablet, hide desktop nav */
         @media (max-width: 1024px) {
             #mobile-menu-button {
@@ -210,6 +276,15 @@
 
 <!-- Apply dark class based on user_chosen_theme from server -->
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-overlay-content">
+        <div class="overlay-spinner"></div>
+        <p class="text-lg font-semibold text-[var(--text)]">Creating your account...</p>
+        <p class="text-sm text-muted mt-2">Please wait while we process your request</p>
+    </div>
+</div>
 
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
@@ -513,11 +588,12 @@
                 <input id="user_type" name="user_type" type="hidden" value="landlord" />
 
                 <div class="pt-4">
-                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-accent px-4 py-3 text-[var(--text)] text-md font-bold shadow-lg hover:bg-accent-dark transition transform hover:scale-[1.005]">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <button type="submit" id="submitButton" class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-accent px-4 py-3 text-[var(--text)] text-md font-bold shadow-lg hover:bg-accent-dark transition transform hover:scale-[1.005]">
+                        <svg id="submitIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.5H15M8.25 6H12M4.5 12H15M4.5 18H15" />
                         </svg>
-                        Create Landlord Account
+                        <span id="submitText">Create Landlord Account</span>
+                        <div id="submitSpinner" class="loading-spinner hidden"></div>
                     </button>
                 </div>
 
@@ -538,6 +614,87 @@
 </footer>
 
 <script>
+    // LOADING STATE MANAGEMENT
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const submitButton = document.getElementById('submitButton');
+    const submitIcon = document.getElementById('submitIcon');
+    const submitText = document.getElementById('submitText');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const landlordForm = document.getElementById('landlordForm');
+
+    let isSubmitting = false;
+
+    // Function to show loading state
+    function showLoading() {
+        isSubmitting = true;
+
+        // Disable form button
+        submitButton.disabled = true;
+        submitButton.classList.add('btn-disabled');
+
+        // Show spinner and hide icon
+        submitIcon.classList.add('hidden');
+        submitSpinner.classList.remove('hidden');
+        submitText.textContent = 'Creating Account...';
+
+        // Show loading overlay
+        loadingOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+
+    // Function to hide loading state
+    function hideLoading() {
+        isSubmitting = false;
+
+        // Re-enable form button
+        submitButton.disabled = false;
+        submitButton.classList.remove('btn-disabled');
+
+        // Hide spinner and show icon
+        submitIcon.classList.remove('hidden');
+        submitSpinner.classList.add('hidden');
+        submitText.textContent = 'Create Landlord Account';
+
+        // Hide loading overlay
+        loadingOverlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+
+    // Form submission handler
+    landlordForm.addEventListener('submit', function(event) {
+        // Prevent multiple submissions
+        if (isSubmitting) {
+            event.preventDefault();
+            return false;
+        }
+
+        // First, validate phone number
+        const contactInput = document.getElementById('contact');
+        const errorElement = document.getElementById('contact-error');
+        const value = contactInput.value.trim();
+
+        // Remove all non-digit characters except + at the start for validation
+        const cleaned = value.replace(/[^\d+]/g, '');
+        const digitCount = cleaned.replace('+', '').length;
+
+        if (digitCount < 5 && value !== '') {
+            event.preventDefault();
+            errorElement.textContent = 'Please enter a valid phone number (at least 5 digits)';
+            errorElement.classList.remove('hidden');
+            contactInput.classList.add('border-red-500');
+            contactInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            contactInput.focus();
+            return false;
+        }
+
+        // If validation passes, show loading state
+        showLoading();
+
+        // The form will continue with its normal submission
+        // The loading state will persist until page reloads or redirects
+        return true;
+    });
+
     // Removed strict South African phone number validation
     // Now accepts any phone number format
 
@@ -579,31 +736,17 @@
         cleanPhoneNumber(e.target);
     });
 
-    // Form submission validation - only basic check
-    document.getElementById('landlordForm').addEventListener('submit', function(event) {
-        const contactInput = document.getElementById('contact');
-        const errorElement = document.getElementById('contact-error');
-        const value = contactInput.value.trim();
-
-        // Remove all non-digit characters except + at the start for validation
-        const cleaned = value.replace(/[^\d+]/g, '');
-        const digitCount = cleaned.replace('+', '').length;
-
-        if (digitCount < 5 && value !== '') {
-            event.preventDefault();
-            errorElement.textContent = 'Please enter a valid phone number (at least 5 digits)';
-            errorElement.classList.remove('hidden');
-            contactInput.classList.add('border-red-500');
-            contactInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            contactInput.focus();
-            return false;
-        }
-
-        return true;
-    });
-
     // Set current year in footer
     document.getElementById('pro-man-year').textContent = new Date().getFullYear();
+
+    // Handle page unload to prevent accidental navigation during form submission
+    window.addEventListener('beforeunload', function(e) {
+        if (isSubmitting) {
+            // Optional: Show confirmation dialog
+            // e.preventDefault();
+            // e.returnValue = 'Your form is still submitting. Are you sure you want to leave?';
+        }
+    });
 </script>
 
 </body>
