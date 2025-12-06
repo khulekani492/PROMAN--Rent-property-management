@@ -49,9 +49,9 @@ public class Dashboard {
                         ctx.sessionAttribute("current_property",property_name);
                         first_property_name = property_name;
                     }
-
-
+                    //When first_property_name is null /dashboard is called without a property name available
                 } catch (RuntimeException e) {
+                    System.out.println("RUNNNNNNNNNNN");
                     Map<String, Object> data = new HashMap<>();
                     HashMap<String, HashMap<Integer, ArrayList<String>>> allPropertyUnits = new HashMap<>();
                     Map<String, Object> model1 = new HashMap<>();
@@ -62,7 +62,9 @@ public class Dashboard {
 
                     // Keeps track of the updated name
                     ctx.sessionAttribute("current_property", "No properties Added");
+                    ctx.sessionAttribute("property_unit",0) ;
 
+                    ctx.sessionAttribute("property_unit",0);
                     model.put("total_properties", String.valueOf(total_properties));
                     model.put("occupied_units", "0");
 
@@ -70,7 +72,7 @@ public class Dashboard {
                     model2.put("vacant", "0");
                     model2.put("expected_profit", "0");
 
-                    model1.put("add_property_profile", "No");
+                    ctx.sessionAttribute("add_property_profile", "No");
                     model1.put("no_units", "No Units. Press +Add New Unit to add tenants ");
                     model1.put("names", landlord_properties); // Using landlord_unique_id to fetch all properties, accessed with user_emails
                     model1.put("name", property_name);
@@ -83,6 +85,7 @@ public class Dashboard {
                     data.putAll(model1);
                     data.putAll(model);
                     data.putAll(model2);
+                    System.out.println(data);
 
                     ctx.render("templates/dashboard.html", data);
                     return;
@@ -109,6 +112,7 @@ public class Dashboard {
                 //Expected profit based off the number of units occupied
                 String expected_profit = authenticate.property_estimated_profit(landlord_id,first_property_name );
                 if (fetch_all.isEmpty()) {
+
                     Map<String, Object> data = new HashMap<>();
                     HashMap<String, HashMap<Integer, ArrayList<String>>> allPropertyUnits = new HashMap<>();
                     Map<String, Object> model1 = new HashMap<>();
