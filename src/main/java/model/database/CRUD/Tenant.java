@@ -101,12 +101,13 @@ public class Tenant extends ConnectionAccess {
             ResultSet result = pstm.executeQuery();
 
             if(result.next()){
-                id = result.getInt("id");
+                return result.getInt("id");
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return id;
+        return null;
     }
 
         public void update_debt(Integer new_amount,Integer tenant_Id) {
