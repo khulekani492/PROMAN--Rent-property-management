@@ -114,6 +114,119 @@
         #dark-mode-toggle:hover {
             transform: rotate(30deg);
         }
+
+        /* Mobile Menu Button Styles */
+        #mobile-menu-button {
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #mobile-menu-button:hover {
+            background: var(--muted);
+        }
+
+        .mobile-menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 20px;
+        }
+
+        .mobile-menu-icon span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--text);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Hamburger to X animation */
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Header actions container */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Theme toggle button in header */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--muted);
+            transform: rotate(15deg);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Show mobile menu button on mobile/tablet, hide desktop nav */
+        @media (max-width: 1024px) {
+            #mobile-menu-button {
+                display: flex;
+            }
+
+            #nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* Mobile menu styling */
+        #mobile-menu {
+            background: var(--surface);
+            border-top: 1px solid var(--muted);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dark #mobile-menu {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        @media (min-width: 1025px) {
+            #mobile-menu-button {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -131,54 +244,44 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-4">
-            <!-- Dark Mode Toggle Button - Moon visible by default -->
-            <button id="dark-mode-toggle"
-                    class="hidden lg:flex items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300"
-                    aria-label="Toggle dark mode">
-                <svg id="sun-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+        <!-- Desktop Nav - will be hidden on mobile -->
+        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
+            <a href="http://localhost:7070/login"
+               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                Log In
+            </a>
+            <a href="http://localhost:7070/landlord_sign_up"
+               class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                Sign Up
+            </a>
+        </nav>
+
+        <!-- Header Actions (Mobile Menu & Theme Toggle) -->
+        <div class="header-actions">
+            <!-- Dark Mode Toggle - This stays in the header -->
+            <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
             </button>
 
-            <!-- Hamburger for mobile -->
-            <button id="mobile-menu-button" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[var(--text)] hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)]">
-                <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
+                <div class="mobile-menu-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </button>
-
-            <!-- Desktop Nav -->
-            <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-                <a href="http://localhost:7070/login"
-                   class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
-                    Log In
-                </a>
-                <a href="http://localhost:7070/landlord_sign_up"
-                   class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-                    Sign Up
-                </a>
-            </nav>
         </div>
     </div>
 
-    <!-- Mobile menu (hidden by default) -->
+    <!-- Mobile menu (hidden by default) - Dark mode toggle removed -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
-        <div class="flex justify-center mb-2">
-            <button id="dark-mode-toggle-mobile"
-                    class="p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300"
-                    aria-label="Toggle dark mode">
-                <svg id="sun-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
-                </svg>
-                <svg id="moon-icon-mobile" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                </svg>
-            </button>
-        </div>
+        <!-- Only login/signup links, no dark mode toggle -->
         <a href="http://localhost:7070/login"
            class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
             Log In
@@ -191,11 +294,50 @@
 </header>
 
 <script>
+    // Mobile Menu Toggle Functionality
     const menuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
     menuButton.addEventListener('click', () => {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', !isExpanded);
         mobileMenu.classList.toggle('hidden');
+
+        // Toggle body overflow to prevent scrolling when menu is open
+        if (!isExpanded) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!mobileMenu.classList.contains('hidden') &&
+            !menuButton.contains(event.target) &&
+            !mobileMenu.contains(event.target)) {
+            mobileMenu.classList.add('hidden');
+            menuButton.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Close mobile menu when clicking on a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            menuButton.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        });
+    });
+
+    // Close mobile menu on escape key
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+            menuButton.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
     });
 
     // Function to send theme preference to server - ONLY when user clicks
@@ -237,8 +379,6 @@
             // Show moon, hide sun
             document.getElementById('sun-icon').classList.add('hidden');
             document.getElementById('moon-icon').classList.remove('hidden');
-            document.getElementById('sun-icon-mobile').classList.add('hidden');
-            document.getElementById('moon-icon-mobile').classList.remove('hidden');
 
             // Send theme preference to server - ONLY when user clicks
             sendThemePreference('light');
@@ -251,8 +391,6 @@
             // Show sun, hide moon
             document.getElementById('sun-icon').classList.remove('hidden');
             document.getElementById('moon-icon').classList.add('hidden');
-            document.getElementById('sun-icon-mobile').classList.remove('hidden');
-            document.getElementById('moon-icon-mobile').classList.add('hidden');
 
             // Send theme preference to server - ONLY when user clicks
             sendThemePreference('dark');
@@ -268,23 +406,18 @@
         document.documentElement.classList.add('dark');
         document.getElementById('sun-icon').classList.remove('hidden');
         document.getElementById('moon-icon').classList.add('hidden');
-        document.getElementById('sun-icon-mobile').classList.remove('hidden');
-        document.getElementById('moon-icon-mobile').classList.add('hidden');
     } else {
         // Default: LIGHT MODE (no .dark class)
         document.documentElement.classList.remove('dark');
         document.getElementById('sun-icon').classList.add('hidden');
         document.getElementById('moon-icon').classList.remove('hidden');
-        document.getElementById('sun-icon-mobile').classList.add('hidden');
-        document.getElementById('moon-icon-mobile').classList.remove('hidden');
 
         // Ensure light mode is saved as preference
         localStorage.setItem('dark-mode', 'false');
     }
 
-    // Add event listeners to dark mode toggle buttons
+    // Add event listener to dark mode toggle button in header
     document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
-    document.getElementById('dark-mode-toggle-mobile').addEventListener('click', toggleDarkMode);
 </script>
 
 <!-- spacing kept between header and hero -->
