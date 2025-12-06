@@ -12,6 +12,7 @@ public class Validate_login {
         return ctx -> {
             String user_email = ctx.formParam("email");
             String password = ctx.formParam("password");
+            System.out.println("Password : " + password);
 
 
             Get_password hashed = new Get_password(user_email);
@@ -20,7 +21,7 @@ public class Validate_login {
                 ctx.redirect("/error/no_email");
                 return;
             }
-            boolean isMatch = false;
+            boolean isMatch ;
             try{
                  isMatch = checkPassword(password, hashed.compare());
             } catch (RuntimeException e) {
@@ -33,7 +34,6 @@ public class Validate_login {
             try {
                 if (isMatch){
                     ctx.sessionAttribute("email",user_email);
-
                     ctx.redirect("dashboard");
                 } else {
                     ctx.sessionAttribute("login_password",password);
