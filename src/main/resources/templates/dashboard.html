@@ -121,6 +121,7 @@
                 width: calc(100% - 16rem);
             }
             #sidebar-backdrop { display:none; }
+            #mobile-menu-button { display:none; }
         }
 
         /* Mobile overlay behavior */
@@ -159,6 +160,9 @@
             #sidebar-backdrop.visible {
                 opacity:1;
                 pointer-events:auto;
+            }
+            #mobile-menu-button {
+                display: flex;
             }
         }
 
@@ -689,6 +693,7 @@
             height: 100%;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
 
         header .brand-left {
@@ -811,6 +816,107 @@
                 font-size: 1.2rem;
             }
         }
+
+        /* Mobile Menu Button Styles */
+        #mobile-menu-button {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 70;
+        }
+
+        #mobile-menu-button:hover {
+            background: var(--muted);
+            transform: translateY(-1px);
+        }
+
+        #mobile-menu-button:active {
+            transform: translateY(0);
+        }
+
+        .mobile-menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 20px;
+        }
+
+        .mobile-menu-icon span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--text);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        body.dark #mobile-menu-button .mobile-menu-icon span {
+            background: var(--text);
+        }
+
+        /* Header actions container */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Theme toggle button in header */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--muted);
+            transform: rotate(15deg);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            #mobile-menu-button {
+                display: flex;
+            }
+
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+            }
+        }
     </style>
 </head>
 
@@ -835,6 +941,28 @@
                 <span class="text-accent font-extrabold text-2xl">ProMan</span>
                 <div class="text-sm" style="color:var(--muted-text); margin-top:-2px;">Property management simplified</div>
             </div>
+        </div>
+
+        <!-- Header Actions (Mobile Menu & Theme Toggle) -->
+        <div class="header-actions">
+            <!-- Dark Mode Toggle -->
+            <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+                <div class="mobile-menu-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
         </div>
     </div>
 </header>
@@ -1182,6 +1310,40 @@
         initializeIcons();
     }
 
+    // Mobile menu functions
+    function openMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+        if (sidebar) sidebar.classList.add('overlay-visible');
+        if (backdrop) backdrop.classList.add('visible');
+        if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+        if (sidebar) sidebar.classList.remove('overlay-visible');
+        if (backdrop) backdrop.classList.remove('visible');
+        if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+    }
+
+    function toggleMobileMenu() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+        if (isExpanded) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    }
+
     // =========================================================================
     // DOMContentLoaded Event Listener
     // =========================================================================
@@ -1197,6 +1359,38 @@
         if (darkModeToggle) {
             darkModeToggle.addEventListener('click', toggleDarkMode);
         }
+
+        // Mobile menu button functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        }
+
+        // Close mobile menu when clicking backdrop
+        const backdrop = document.getElementById('sidebar-backdrop');
+        if (backdrop) {
+            backdrop.addEventListener('click', closeMobileMenu);
+        }
+
+        // Close mobile menu when clicking on sidebar links
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Close mobile menu on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
+
+        // Close mobile menu on window resize above 1024px
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                closeMobileMenu();
+            }
+        });
 
         // View Units Table button functionality (toggles property selection panel)
         const viewTableBtn = document.getElementById('viewTableBtn');
@@ -1263,10 +1457,6 @@
         // =========================================================================
         // II. GLOBAL VARIABLE SETUP
         // =========================================================================
-        const mobileMenuButton = document.getElementById('mobileMenuButton');
-        const sidebar = document.getElementById('sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-
         const tbody = document.getElementById('unitsTbody');
         const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
 
@@ -1301,20 +1491,6 @@
             el.textContent = msg;
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 1600);
-        }
-
-        function openSidebarOverlay() {
-          if (!sidebar) return;
-          sidebar.classList.add('overlay-visible');
-          if (backdrop) backdrop.classList.add('visible');
-          if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','true');
-        }
-
-        function closeSidebarOverlay() {
-          if (!sidebar) return;
-          sidebar.classList.remove('overlay-visible');
-          if (backdrop) backdrop.classList.remove('visible');
-          if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded','false');
         }
 
         function ensureSidebarDesktop() {
@@ -1501,23 +1677,6 @@
         // =========================================================================
         // V. EVENT LISTENERS SETUP
         // =========================================================================
-
-        if (mobileMenuButton && sidebar) {
-          ensureSidebarDesktop();
-          mobileMenuButton.addEventListener('click', (e) => {
-            const isOpen = sidebar.classList.contains('overlay-visible');
-            if (isOpen) closeSidebarOverlay(); else openSidebarOverlay();
-            e.stopPropagation();
-          });
-          if (backdrop) backdrop.addEventListener('click', closeSidebarOverlay);
-          sidebar.querySelectorAll('a').forEach(a => {
-            a.addEventListener('click', () => {
-              if (window.innerWidth <= 1024) closeSidebarOverlay();
-            });
-          });
-          window.addEventListener('resize', ensureSidebarDesktop);
-          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebarOverlay(); });
-        }
 
         let selectedRow = null;
         rows.forEach(row => {
