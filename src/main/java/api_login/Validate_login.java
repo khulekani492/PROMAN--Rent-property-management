@@ -1,6 +1,7 @@
 package api_login;
 
 import io.javalin.http.Handler;
+import jakarta.servlet.http.HttpSession;
 import model.database.CRUD.Get_password;
 
 import static API.SecurityUtil.checkPassword;
@@ -33,10 +34,14 @@ public class Validate_login {
 
             try {
                 if (isMatch){
+                   // ctx.sessionAttribute()
+                    //Kill any session instance exist if password is a match
+                    HttpSession session = ctx.req().getSession(false);
+                    if (session != null)   {   session.invalidate();    }
                     ctx.sessionAttribute("email",user_email);
                     ctx.redirect("dashboard");
                 } else {
-                    ctx.sessionAttribute("login_password",password);
+                   // ctx.sessionAttribute("login_password",password);
                     ctx.redirect("/error/wrong_password");
 
                 }
