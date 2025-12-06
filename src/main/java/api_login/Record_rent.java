@@ -60,6 +60,7 @@ public class Record_rent {
 
                 // Get tenant ID
                 Integer tenantId = tenant_relatedInfo.tenant_ID(tenant_name);
+                System.out.println("tenantId " + tenantId);
                 if (tenantId == null) {
                     ctx.status(404).result("Tenant not found: " + tenant_name);
                     return;
