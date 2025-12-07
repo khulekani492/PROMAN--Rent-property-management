@@ -1142,12 +1142,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
                     <span class="property-name-text" th:text="${name}">Property Name</span>
-                    <span class="property-badge">ACTIVE</span>
                 </div>
             </div>
             <nav class="mb-4 space-y-2">
-                <a href="http://localhost:7070/add_property_unit " class="nav-item active">ADD PROPERTY</a>
-                <a href="http://localhost:7070/add_tenant" class="nav-item active">ADD UNITS</a>
+                <a href="http://localhost:7070/add_property_unit " class="nav-item active">ADD  NEW PROPERTY</a>
+                <a href="http://localhost:7070/add_tenant" class="nav-item active">ADD NEW TENANT</a>
             </nav>
             <div class="sidebar-stats">
                 <div class="card rounded-lg p-3">
@@ -1298,7 +1297,7 @@
                                 <thead>
                                 <tr>
                                     <th class="px-4 py-3 whitespace-nowrap">Tenant</th>
-                                    <th class="px-4 py-3 whitespace-nowrap">Unit Details</th>
+                                    <th class="px-4 py-3 whitespace-nowrap">Unit  </th>
                                     <th class="px-4 py-3 whitespace-nowrap">Status</th>
                                     <th class="px-4 py-3 whitespace-nowrap">Rent Day</th>
                                     <th class="px-4 py-3 whitespace-nowrap">Overdue</th>
@@ -1312,7 +1311,7 @@
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="tenant-info">
                                             <div class="tenant-details">
-                                                <div class="tenant-name" th:text="${entry.value[3]}">Tenant Name</div>
+                                                <div class="tenant-name" th:text="${entry.value[3]}">Tenant </div>
 
                                                 <div class="tenant-contact status-badge"
                                                      th:with="debtAmount=${entry.value[7]} ?: 0"
@@ -1325,8 +1324,8 @@
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="unit-details">
-                                            <div class="unit-number" th:text="${entry.value[0]}">Unit Number</div>
-                                            <div class="unit-rent" th:text="'R ' + ${entry.value[1]}">Rent Amount</div>
+                                            <div class="unit-number" th:text="${entry.value[0]}">Unit </div>
+                                            <div class="unit-rent" th:text="'R ' + ${entry.value[1]}">Rent </div>
                                         </div>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
