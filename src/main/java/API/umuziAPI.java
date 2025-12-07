@@ -67,7 +67,11 @@ public class umuziAPI {
             ctx.render("templates/landlord.html",model);
         });
         app.get("/add_property_unit",new Save_unit().save_property_unit());
-
+        app.get("/tenant_profile/{id}",ctx ->{
+            String tenant_name = ctx.pathParam("id");
+            System.out.println("Tenant_name " + tenant_name);
+            ctx.render("templates/user_profile.html");
+        });
         app.get("/log_out",new LogOut().sign_out());
         // Redirects to the unit page
         app.get("/add_property",ctx ->{
