@@ -1,6 +1,7 @@
 package API_handlers;
 
 import io.javalin.http.Handler;
+import jakarta.servlet.http.HttpSession;
 import model.database.general;
 
 import java.sql.SQLException;
@@ -13,6 +14,11 @@ public class Signup {
     public Handler sign_up() {
         return ctx -> {
             try {
+                //Delete any existing session memory for new sign up
+                HttpSession session = ctx.req().getSession(false);
+                if (session != null)   {   session.invalidate();    }
+
+
                 String user_name = ctx.formParam("user_name");
 
                 String contact = ctx.formParam("contact");
@@ -47,6 +53,8 @@ public class Signup {
 
                     Map<String, Object> model = new HashMap<>();
                     model.put("user_name", landlord_username);
+
+
                     ctx.redirect("/add_property_unit");
 
                 } catch (SQLException e){
