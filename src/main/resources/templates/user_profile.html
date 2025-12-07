@@ -1,28 +1,794 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <title>User Profile</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ProMan — Edit Tenant</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Store Thymeleaf variable in JavaScript -->
+  <script>
+    // This gets rendered server-side by Thymeleaf
+    const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
+  </script>
+
+  <style>
+    :root{
+        /* Default light theme variables */
+        --bg: #f5f6f7;         /* overall smoke-white page background */
+        --surface: #ffffff;    /* card / surface white */
+        --muted: #eef0f2;      /* slightly darker smoke for surfaces */
+        --text: #2f3337;       /* primary text (soft charcoal) */
+        --muted-text: #6b7378; /* secondary text */
+        --accent: #D4AF37;     /* warm gold accent (complements logo) */
+        --accent-dark: #b8892a;/* darker accent for hover */
+        --glass: rgba(255,255,255,0.6);
+    }
+
+    /* Dark theme variables */
+    body.dark {
+        --bg: #0f172a;          /* dark blue-gray background */
+        --surface: #1e293b;     /* dark surface */
+        --muted: #334155;       /* muted dark */
+        --text: #f1f5f9;        /* light text */
+        --muted-text: #94a3b8;  /* muted light text */
+        --accent: #F4B342;      /* brighter gold for dark mode */
+        --accent-dark: #E0A028; /* darker gold for hover */
+        --glass: rgba(30, 41, 59, 0.6);
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .text-accent { color: var(--accent) !important; }
+    .bg-accent { background-color: var(--accent) !important; }
+    .bg-accent-dark { background-color: var(--accent-dark) !important; }
+    .bg-surface { background-color: var(--surface) !important; }
+    .bg-muted { background-color: var(--muted) !important; }
+    .text-muted { color: var(--muted-text) !important; }
+
+    .hero-surface {
+        background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.9));
+        box-shadow: 0 6px 20px rgba(31,41,55,0.06);
+        border-radius: 1rem;
+    }
+
+    body.dark .hero-surface {
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9));
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-highlight {
+        border-top-width: 4px;
+        border-top-style: solid;
+        border-color: rgba(212,175,55,0.26);
+    }
+
+    body.dark .card-highlight {
+        border-color: rgba(244, 179, 66, 0.26);
+    }
+
+    .progress-dot { width: 12px; height: 12px; border-radius: 9999px; display: inline-block; }
+
+    .input-focus:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+        border-color: var(--accent);
+    }
+
+    .login-btn{
+        color: var(--text);
+        border-color: var(--muted);
+        background: var(--surface);
+    }
+    .login-btn:hover{
+        background: var(--muted);
+    }
+    .signup-btn{
+        background: var(--accent);
+        color: #2b1f00; /* readable on gold */
+    }
+
+    body.dark .signup-btn {
+        color: #1a1400;
+    }
+
+    .signup-btn:hover{
+        background: var(--accent-dark);
+        color: white;
+    }
+
+    /* Dark mode toggle button */
+    #dark-mode-toggle {
+        transition: all 0.3s ease;
+        background: var(--muted);
+        color: var(--text);
+        border: 1px solid var(--muted);
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    #dark-mode-toggle:hover {
+        transform: rotate(30deg);
+        background: var(--accent);
+        color: #2b1f00;
+    }
+
+    body.dark #dark-mode-toggle:hover {
+        color: #1a1400;
+    }
+
+    /* Mobile Menu Button Styles - MATCHING PREVIOUS SIZE */
+    #mobile-menu-button {
+        display: none; /* Hidden by default on desktop */
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        background: var(--surface);
+        border: 1px solid var(--muted);
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    #mobile-menu-button:hover {
+        background: var(--muted);
+    }
+
+    .mobile-menu-icon {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 20px;
+    }
+
+    .mobile-menu-icon span {
+        display: block;
+        height: 2px;
+        width: 100%;
+        background: var(--text);
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    /* Hamburger to X animation - SAME AS BEFORE */
+    #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+    }
+
+    #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
+        opacity: 0;
+    }
+
+    #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -4px);
+    }
+
+    /* Mobile menu styling */
+    #mobile-menu {
+        background: var(--surface);
+        border-top: 1px solid var(--muted);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    body.dark #mobile-menu {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* Loading spinner styles */
+    .loading-spinner {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    .loading-spinner.dark {
+        border: 3px solid rgba(0, 0, 0, 0.3);
+        border-top-color: #000;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .btn-disabled {
+        opacity: 0.7;
+        cursor: not-allowed !important;
+        pointer-events: none;
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .loading-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .loading-overlay-content {
+        background: var(--surface);
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .overlay-spinner {
+        width: 3rem;
+        height: 3rem;
+        border: 4px solid rgba(212, 175, 55, 0.2);
+        border-radius: 50%;
+        border-top-color: var(--accent);
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    /* Form styling */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--muted);
+        border-radius: 0.5rem;
+        background: var(--surface);
+        color: var(--text);
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-primary {
+        background: var(--accent);
+        color: #2b1f00;
+    }
+
+    .btn-primary:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(212,175,55,0.2);
+    }
+
+    body.dark .btn-primary {
+        color: #1a1400;
+    }
+
+    .btn-danger {
+        background: #b45309; /* amber-700 */
+        color: white;
+        border-color: #92400e; /* amber-600 */
+    }
+
+    .btn-danger:hover {
+        background: #92400e; /* amber-800 */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(180, 83, 9, 0.2);
+    }
+
+    body.dark .btn-danger {
+        background: #92400e; /* amber-800 */
+        border-color: #78350f; /* amber-700 */
+    }
+
+    body.dark .btn-danger:hover {
+        background: #78350f; /* amber-900 */
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .status-paid {
+        background-color: rgba(16,185,129,0.1);
+        color: #065f46;
+    }
+
+    body.dark .status-paid {
+        background-color: rgba(34,197,94,0.15);
+        color: #86efac;
+    }
+
+    .status-pending {
+        background-color: rgba(245,158,11,0.1);
+        color: #92400e;
+    }
+
+    body.dark .status-pending {
+        background-color: rgba(245,158,11,0.15);
+        color: #fcd34d;
+    }
+
+    /* Header actions container */
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Show mobile menu button on mobile/tablet, hide desktop nav */
+    @media (max-width: 1024px) {
+        #mobile-menu-button {
+            display: flex;
+        }
+
+        #nav-links {
+            display: none;
+        }
+
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+        }
+    }
+
+    @media (min-width: 1025px) {
+        #mobile-menu-button {
+            display: none;
+        }
+    }
+
+    /* Main content spacing */
+    .main-content {
+        flex: 1;
+        padding: 2rem 0;
+    }
+
+    /* Property header styling */
+    .property-header {
+        background: var(--surface);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--accent);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    body.dark .property-header {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* Tenant info card */
+    .tenant-info-card {
+        background: var(--surface);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }
+
+    body.dark .tenant-info-card {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
-<body>
-<h1 th:text="'Welcome, ' + ${username}"></h1>
-<p>Property name <span th:text="${age}"></span></p>
-<div id="messages">
-  <div th:text="'Welcome, ' + ${username}" class="message">
-    <p th:text="${msg}"></p>
+
+<!-- Apply dark class based on user_chosen_theme from server -->
+<body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-overlay-content">
+    <div class="overlay-spinner"></div>
+    <p class="text-lg font-semibold text-[var(--text)]">Updating tenant information...</p>
+    <p class="text-sm text-muted mt-2">Please wait while we process your request</p>
+  </div>
+</div>
+
+<header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
+  <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
+    <div class="flex items-center gap-3">
+      <a href="http://localhost:7070/" class="flex items-center">
+        <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
+             class="h-28 md:h-32 lg:h-36 w-auto object-contain">
+      </a>
+      <div>
+        <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">ProMan</a>
+        <div class="text-xs text-muted -mt-1">Property management simplified</div>
+      </div>
+    </div>
+
+    <!-- Header Actions (Theme Toggle & Mobile Menu) -->
+    <div class="header-actions">
+      <!-- Dark Mode Toggle -->
+
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
+        <div class="mobile-menu-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+    </div>
   </div>
 
+  <!-- Mobile menu (hidden by default) -->
+  <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
+    <a href="http://localhost:7070/dashboard"
+       class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+      Back To Dashboard
+    </a>
+  </div>
+</header>
 
-</div>
-<button id="loadBtn">Load new message</button>
 <script>
-  document.getElementById("loadBtn").addEventListener("click", () => {
-      fetch("/rentalManagement@user_profile") // call server endpoint
-          .then(res => res.text()) // get Thymeleaf fragment
-          .then(html => {
-              document.getElementById("messages")
-                  .insertAdjacentHTML("beforeend", html); // append new content
+  // Initialize dark mode icons
+  function initializeIcons(){
+      const isDark=document.body.classList.contains('dark');
+      const sunIcon=document.getElementById('sun-icon');
+      const moonIcon=document.getElementById('moon-icon');
+
+      if(isDark){
+          if(sunIcon) sunIcon.classList.remove('hidden');
+          if(moonIcon) moonIcon.classList.add('hidden');
+      } else {
+          if(sunIcon) sunIcon.classList.add('hidden');
+          if(moonIcon) moonIcon.classList.remove('hidden');
+      }
+  }
+
+  // Toggle dark mode
+  function toggleDarkMode(){
+      const isCurrentlyDark=document.body.classList.contains('dark');
+      if(isCurrentlyDark){
+          document.body.classList.remove('dark');
+          localStorage.setItem('user_chosen_theme','light');
+          sendThemePreference('light');
+      } else {
+          document.body.classList.add('dark');
+          localStorage.setItem('user_chosen_theme','dark');
+          sendThemePreference('dark');
+      }
+      initializeIcons();
+  }
+
+  // Send theme preference to server
+  function sendThemePreference(theme){
+      const form=document.createElement('form');
+      form.method='POST';
+      form.action='http://localhost:7070/page_theme';
+      const themeInput=document.createElement('input');
+      themeInput.type='hidden';
+      themeInput.name='user_theme';
+      themeInput.value=theme;
+      form.appendChild(themeInput);
+      document.body.appendChild(form);
+      form.submit();
+      setTimeout(()=>document.body.removeChild(form),100);
+  }
+
+  // MOBILE MENU
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (menuButton && mobileMenu) {
+      menuButton.addEventListener('click', () => {
+          const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+          menuButton.setAttribute('aria-expanded', !isExpanded);
+          mobileMenu.classList.toggle('hidden');
+
+          // Toggle body overflow to prevent scrolling when menu is open
+          if (!isExpanded) {
+              document.body.style.overflow = 'hidden';
+          } else {
+              document.body.style.overflow = '';
+          }
+      });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', (event) => {
+          if (!mobileMenu.classList.contains('hidden') &&
+              !menuButton.contains(event.target) &&
+              !mobileMenu.contains(event.target)) {
+              mobileMenu.classList.add('hidden');
+              menuButton.setAttribute('aria-expanded', 'false');
+              document.body.style.overflow = '';
+          }
+      });
+
+      // Close mobile menu when clicking on a link
+      mobileMenu.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+              mobileMenu.classList.add('hidden');
+              menuButton.setAttribute('aria-expanded', 'false');
+              document.body.style.overflow = '';
           });
+      });
+
+      // Close mobile menu on escape key
+      document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+              mobileMenu.classList.add('hidden');
+              menuButton.setAttribute('aria-expanded', 'false');
+              document.body.style.overflow = '';
+          }
+      });
+  }
+
+  // Initialize icons on page load
+  document.addEventListener('DOMContentLoaded', function() {
+      // Set initial theme from server
+      const serverTheme = window.serverTheme || 'light';
+      localStorage.setItem('user_chosen_theme', serverTheme);
+      initializeIcons();
+
+      // Add event listener to dark mode toggle button
+      const darkModeToggle = document.getElementById('dark-mode-toggle');
+      if (darkModeToggle) {
+          darkModeToggle.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              toggleDarkMode();
+          });
+      }
+
+      // Set current year in footer
+      document.getElementById('pro-man-year').textContent = new Date().getFullYear();
   });
 </script>
+
+<!-- Main Content with spacing -->
+<main class="main-content">
+  <div class="max-w-4xl mx-auto px-6">
+
+    <!-- Property Header - Updated to NOT auto-submit -->
+    <div class="property-header mb-8">
+      <form id="propertyForm" method="POST" th:action="@{/update_property_info}">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <h3 class="text-sm font-medium text-[var(--muted-text)]">Property</h3>
+            <input type="text" name="property_name"
+                   class="w-full text-xl font-bold text-[var(--accent)] bg-transparent border-0 focus:outline-none focus:border-b-2 focus:border-[var(--accent)]"
+                   th:value="${property_name}"/>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-[var(--muted-text)]">Unit Number</h3>
+            <input type="text" name="unit_number"
+                   class="w-full text-xl font-bold bg-transparent border-0 focus:outline-none focus:border-b-2 focus:border-[var(--accent)]"
+                   th:value="${unit_number}"/>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-[var(--muted-text)]">Rent Amount</h3>
+            <div class="flex items-center">
+              <span class="text-xl font-bold text-green-600 mr-1">R</span>
+              <input type="number" name="rent_amount" step="0.01" min="0"
+                     class="w-full text-xl font-bold text-green-600 bg-transparent border-0 focus:outline-none focus:border-b-2 focus:border-[var(--accent)]"
+                     th:value="${rent_amount}"/>
+            </div>
+          </div>
+        </div>
+        <!-- Save button for property form -->
+        <div class="mt-4 text-right">
+          <button type="submit"
+                  class="px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition text-sm font-medium">
+            Update Property Info
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tenant Information Card -->
+    <div class="tenant-info-card">
+      <h2 class="text-2xl font-bold mb-6 pb-3 border-b border-[var(--muted)]">Tenant Information</h2>
+
+      <!-- Current Tenant Info -->
+      <div class="mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          <div>
+            <h3 class="text-sm font-medium text-[var(--muted-text)]">Tenant Name</h3>
+            <input type="text" id="tenant_name_input" name="tenant_name_input" required
+                   class="form-input mt-1"
+                   th:value="${tenant_name}"
+                   placeholder="Enter tenant's full name"/>
+          </div>
+          <div>
+            <h3 class="text-sm font-medium text-[var(--muted-text)]">Payment Status</h3>
+            <span class="status-badge"
+                  th:classappend="${Payment_status == 'Paid'} ? 'status-paid' : 'status-pending'"
+                  th:text="${Payment_status}">Pending</span>
+          </div>
+        </div>
+
+        <!-- Kin Information -->
+        <div class="mb-6">
+          <h3 class="text-sm font-medium text-[var(--muted-text)]">Next of Kin</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div>
+              <p class="text-sm text-[var(--muted-text)]">Name</p>
+              <input type="text" id="kin_name" name="kin_name" required
+                     class="form-input"
+                     th:value="${kin_name}"
+                     placeholder="Enter kin's full name"/>
+            </div>
+            <div>
+              <p class="text-sm text-[var(--muted-text)]">Contact</p>
+              <input type="tel" id="kin_contact" name="kin_contact" required
+                     class="form-input"
+                     th:value="${kin_contact}"
+                     placeholder="Enter kin's phone number"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Tenant Form -->
+      <form id="tenantForm" method="POST" th:action="@{/update_tenant}" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Move In Date -->
+          <div class="form-group">
+            <label for="MoveIn" class="form-label">Move In Date</label>
+            <input type="date" id="MoveIn" name="move_in" required
+                   class="form-input"
+                   th:value="${move_in_date}"/>
+          </div>
+
+          <!-- Rent Day -->
+          <div class="form-group">
+            <label for="rent_day" class="form-label">Rent Day (1-31)</label>
+            <input type="number" id="rent_day" name="rent_day" required
+                   min="1" max="31"
+                   class="form-input"
+                   th:value="${rent_day}"
+                   placeholder="Enter day of month (1-31)"/>
+          </div>
+
+          <!-- Move Out Date -->
+          <div class="form-group">
+            <label for="move_out" class="form-label">Move Out Date (Optional)</label>
+            <input type="date" id="move_out" name="move_out"
+                   class="form-input"
+                   placeholder="Leave empty if tenant is still active"/>
+          </div>
+        </div> <!-- Closes the grid div -->
+
+        <!-- Hidden fields for property info -->
+        <input type="hidden" name="property_name" th:value="${property_name}" />
+        <input type="hidden" name="unit_number" th:value="${unit_number}" />
+        <input type="hidden" name="tenant_name" th:value="${tenant_name}" />
+
+        <!-- Form Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-[var(--muted)]">
+          <button type="submit" name="action" value="save"
+                  class="btn btn-primary flex-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            Update Tenant Information
+          </button>
+
+          <button type="submit" name="action" value="vacant"
+                  class="btn btn-danger flex-1"
+                  onclick="return confirm('Are you sure you want to remove this tenant? This action cannot be undone.')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Remove Tenant (Make Unit Vacant)
+          </button>
+        </div> <!-- Closes the form buttons div -->
+      </form> <!-- Closes the form -->
+    </div> <!-- Closes the tenant-info-card div -->
+
+    <!-- Back to Dashboard Link -->
+    <div class="mt-8 text-center">
+      <a href="http://localhost:7070/Dashboard"
+         class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--surface)] text-[var(--text)] rounded-lg border border-[var(--muted)] hover:bg-[var(--muted)] transition font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </div> <!-- Closes the max-w-4xl mx-auto px-6 div -->
+</main> <!-- Closes the main content div -->
+
+<footer class="mt-12 py-8 bg-surface">
+  <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
+    &copy; <span id="pro-man-year">2025</span> ProMan Property Management Solutions.
+  </div>
+</footer>
+
+<!-- Form submission loading handler -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tenantForm = document.getElementById('tenantForm');
+    const propertyForm = document.getElementById('propertyForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    // Handle tenant form submission
+    if (tenantForm) {
+      tenantForm.addEventListener('submit', function(e) {
+        // Show loading overlay
+        loadingOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // Determine which button was clicked
+        const submitButton = e.submitter || tenantForm.querySelector('button[type="submit"]:focus');
+        if (submitButton && submitButton.name === 'action' && submitButton.value === 'vacant') {
+          loadingOverlay.querySelector('p').textContent = 'Removing tenant...';
+          loadingOverlay.querySelector('p + p').textContent = 'Please wait while we process your request';
+        } else {
+          loadingOverlay.querySelector('p').textContent = 'Updating tenant information...';
+          loadingOverlay.querySelector('p + p').textContent = 'Please wait while we save your changes';
+        }
+      });
+    }
+
+    // Handle property form submission
+    if (propertyForm) {
+      propertyForm.addEventListener('submit', function() {
+        loadingOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        loadingOverlay.querySelector('p').textContent = 'Updating property information...';
+        loadingOverlay.querySelector('p + p').textContent = 'Please wait while we save your changes';
+      });
+    }
+
+    // Handle page unload to hide loading if user navigates away
+    window.addEventListener('beforeunload', function() {
+      loadingOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+
 </body>
 </html>
