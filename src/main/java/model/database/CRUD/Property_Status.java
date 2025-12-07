@@ -64,7 +64,8 @@ public class Property_Status extends ConnectionAccess {
                     general_users.name,
                     tenants_information.overdue_date,
                     tenants_information.rent_payment_day,
-                    tenants_information.status
+                    tenants_information.status,
+                    tenants_information.debt
                 FROM properties
                 INNER JOIN tenants_information ON properties.tenant_user_id = tenants_information.tenant_user_id
                 INNER JOIN general_users ON tenants_information.tenant_user_id = general_users.id
@@ -87,6 +88,7 @@ public class Property_Status extends ConnectionAccess {
                     property_status.add("0") ;
                 };
                 property_status.add(String.valueOf(result.getBoolean("status")));
+                property_status.add(result.getString("debt"));
                 property_tenants.put(unit_number,property_status);
                 property_status = new ArrayList<>();
 
