@@ -984,10 +984,107 @@
             50% { transform: translateX(2px); }
             75% { transform: translateX(-1px); }
         }
+
+        /* Loading spinner styles - Added from landlord signup page */
+        .loading-spinner {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-spinner.dark {
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-top-color: #000;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-disabled {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        /* Loading overlay - Added from landlord signup page */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--accent);
+        }
+
+        .overlay-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        body.dark .overlay-spinner {
+            border: 4px solid rgba(244, 179, 66, 0.2);
+            border-top-color: var(--accent);
+        }
+
+        /* Property form loading button */
+        #propertyFormSubmit.btn-loading {
+            position: relative;
+        }
+
+        #propertyFormSubmit.btn-loading .btn-text {
+            visibility: hidden;
+        }
+
+        #propertyFormSubmit.btn-loading .loading-spinner {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+<!-- Loading Overlay - Added from landlord signup page -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-overlay-content">
+        <div class="overlay-spinner"></div>
+        <p class="text-lg font-semibold text-[var(--text)]">Loading Property...</p>
+        <p class="text-sm text-[var(--muted-text)] mt-2">Please wait while we fetch your property data</p>
+    </div>
+</div>
+
 <!-- Store Thymeleaf variable in JavaScript -->
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -1151,6 +1248,16 @@
                                     </select>
                                 </div>
                             </div>
+                            <!-- Submit button with loading spinner - Added similar to landlord signup -->
+                            <div class="mt-4">
+                                <button type="submit" id="propertyFormSubmit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium shadow-lg">
+                                    <svg id="propertySubmitIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                    </svg>
+                                    <span id="propertySubmitText" class="btn-text">Load Property</span>
+                                    <div id="propertySubmitSpinner" class="loading-spinner hidden"></div>
+                                </button>
+                            </div>
                         </form>
 
                         <div class="mt-6">
@@ -1204,16 +1311,15 @@
                                 <tr th:each="entry : ${units}" class="hover:cursor-pointer">
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         <div class="tenant-info">
-                                            <div class="profile-placeholder">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                                    <circle cx="12" cy="7" r="4"></circle>
-                                                </svg>
-                                            </div>
                                             <div class="tenant-details">
                                                 <div class="tenant-name" th:text="${entry.value[3]}">Tenant Name</div>
-                                                <div class="tenant-contact">Contact info</div>
+
+                                                <div class="tenant-contact status-badge"
+                                                     th:with="debtAmount=${entry.value[7]} ?: 0"
+                                                     th:classappend="${debtAmount &gt; 0} ? 'status-vacant' : 'status-active'"
+                                                     th:text="${debtAmount &gt; 0} ? 'Debt: R' + ${debtAmount} : 'No Debt'">
+                                                    Contact info
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -1293,7 +1399,10 @@
                     <input type="number" id="modalRentInput" name="rent" step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent" placeholder="Enter rent amount">
                 </div>
                 <div class="flex gap-3">
-                    <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition">Confirm Payment</button>
+                    <button type="submit" id="modalSubmitBtn" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition">
+                        <span class="btn-text">Confirm Payment</span>
+                        <div id="modalSubmitSpinner" class="loading-spinner hidden"></div>
+                    </button>
                     <button type="button" onclick="closePaymentModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium transition">Cancel</button>
                 </div>
             </form>
@@ -1301,6 +1410,83 @@
     </div>
 </div>
 <script>
+    // =========================================================================
+    // LOADING STATE MANAGEMENT - Added from landlord signup page
+    // =========================================================================
+
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const propertyForm = document.getElementById('propertyForm');
+    const propertyFormSubmit = document.getElementById('propertyFormSubmit');
+    const propertySubmitIcon = document.getElementById('propertySubmitIcon');
+    const propertySubmitText = document.getElementById('propertySubmitText');
+    const propertySubmitSpinner = document.getElementById('propertySubmitSpinner');
+
+    let isPropertyFormSubmitting = false;
+
+    // Function to show loading state for property form
+    function showPropertyFormLoading() {
+        isPropertyFormSubmitting = true;
+
+        // Disable form button
+        propertyFormSubmit.disabled = true;
+        propertyFormSubmit.classList.add('btn-disabled', 'btn-loading');
+
+        // Show spinner and hide icon
+        propertySubmitIcon.classList.add('hidden');
+        propertySubmitSpinner.classList.remove('hidden');
+        propertySubmitText.textContent = 'Loading...';
+
+        // Show loading overlay
+        loadingOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+
+    // Function to hide loading state for property form
+    function hidePropertyFormLoading() {
+        isPropertyFormSubmitting = false;
+
+        // Re-enable form button
+        propertyFormSubmit.disabled = false;
+        propertyFormSubmit.classList.remove('btn-disabled', 'btn-loading');
+
+        // Hide spinner and show icon
+        propertySubmitIcon.classList.remove('hidden');
+        propertySubmitSpinner.classList.add('hidden');
+        propertySubmitText.textContent = 'Load Property';
+
+        // Hide loading overlay
+        loadingOverlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+
+    // Function to show loading state for modal
+    function showModalLoading() {
+        const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+        const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
+        const btnText = modalSubmitBtn.querySelector('.btn-text');
+
+        if (modalSubmitBtn && modalSubmitSpinner && btnText) {
+            modalSubmitBtn.disabled = true;
+            modalSubmitBtn.classList.add('btn-disabled');
+            modalSubmitSpinner.classList.remove('hidden');
+            btnText.textContent = 'Processing...';
+        }
+    }
+
+    // Function to hide loading state for modal
+    function hideModalLoading() {
+        const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+        const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
+        const btnText = modalSubmitBtn?.querySelector('.btn-text');
+
+        if (modalSubmitBtn && modalSubmitSpinner && btnText) {
+            modalSubmitBtn.disabled = false;
+            modalSubmitBtn.classList.remove('btn-disabled');
+            modalSubmitSpinner.classList.add('hidden');
+            btnText.textContent = modalSubmitBtn.classList.contains('bg-red-600') ? 'Unmark Payment' : 'Confirm Payment';
+        }
+    }
+
     // =========================================================================
     // DARK MODE FUNCTIONS WITH AJAX (Option 2)
     // =========================================================================
@@ -1370,6 +1556,7 @@
         paymentModal.classList.add('hidden');
         paymentModal.classList.remove('flex');
         document.body.classList.remove('modal-open');
+        hideModalLoading(); // Reset modal loading state
     }
 
     function displayErrorBanner(message, isClear = false) {
@@ -1513,21 +1700,45 @@
         }
         formatDate();
 
-        // Auto-submit functionality for property form
+        // =========================================================================
+        // PROPERTY FORM SUBMISSION WITH LOADING - Added similar to landlord form
+        // =========================================================================
         const propertySelect = document.getElementById('propertySelect');
-        const propertyForm = document.getElementById('propertyForm');
         let autoSubmitted = false;
 
-        if (propertySelect && propertyForm) {
+        if (propertyForm && propertyFormSubmit) {
+            // Handle form submission
+            propertyForm.addEventListener('submit', function(event) {
+                // Prevent multiple submissions
+                if (isPropertyFormSubmitting) {
+                    event.preventDefault();
+                    return false;
+                }
+
+                const selectedValue = propertySelect.value;
+                if (selectedValue && selectedValue !== '' && selectedValue !== 'all') {
+                    showPropertyFormLoading();
+                    return true;
+                }
+
+                // If no property selected, don't submit
+                event.preventDefault();
+                return false;
+            });
+
+            // Auto-submit when property is selected (with loading)
             const selectedValue = propertySelect.value;
             if (selectedValue && selectedValue !== '' && selectedValue !== 'all' && !autoSubmitted) {
                 autoSubmitted = true;
-                propertyForm.submit();
+                showPropertyFormLoading();
+                // Allow the form to submit normally
             }
 
+            // Handle select change with loading
             propertySelect.addEventListener('change', function() {
                 const newValue = this.value;
                 if (newValue && newValue !== '' && newValue !== 'all') {
+                    showPropertyFormLoading();
                     propertyForm.submit();
                 }
             });
@@ -1549,10 +1760,8 @@
         const paymentForm = document.getElementById('paymentForm');
 
         const errorDisplay = document.getElementById('paymentErrorDisplay');
-        const confirmButton = document.querySelector('#paymentForm button[type="submit"]');
 
         const modalTitle = document.querySelector('#paymentModal h2');
-        const modalSubmitButton = document.querySelector('#paymentForm button[type="submit"]');
         const paidInput = document.querySelector('#paymentForm input[name="paid"]');
         const modalAction = document.getElementById('modalAction');
 
@@ -1573,6 +1782,8 @@
         }
 
         function ensureSidebarDesktop() {
+          const sidebar = document.getElementById('sidebar');
+          const backdrop = document.getElementById('sidebar-backdrop');
           if (!sidebar) return;
           if (window.innerWidth > 1024) {
             sidebar.classList.remove('overlay-visible');
@@ -1614,10 +1825,12 @@
             displayErrorBanner(null, true);
 
             if (modalTitle) modalTitle.textContent = "Record New Payment";
-            if (modalSubmitButton) {
-                modalSubmitButton.textContent = "Confirm Payment";
-                modalSubmitButton.classList.remove('bg-red-600', 'hover:bg-red-700');
-                modalSubmitButton.classList.add('bg-green-600', 'hover:bg-green-700');
+            const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+            if (modalSubmitBtn) {
+                const btnText = modalSubmitBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = "Confirm Payment";
+                modalSubmitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                modalSubmitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
             }
 
             if (modalUnit) modalUnit.value = unit;
@@ -1645,10 +1858,12 @@
             displayErrorBanner(null, true);
 
             if (modalTitle) modalTitle.textContent = "Confirm Payment Removal";
-            if (modalSubmitButton) {
-                modalSubmitButton.textContent = "Unmark Payment";
-                modalSubmitButton.classList.remove('bg-green-600', 'hover:bg-green-700');
-                modalSubmitButton.classList.add('bg-red-600', 'hover:bg-red-700');
+            const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+            if (modalSubmitBtn) {
+                const btnText = modalSubmitBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = "Unmark Payment";
+                modalSubmitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                modalSubmitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
             }
 
             if (modalUnit) modalUnit.value = unit;
@@ -1673,85 +1888,79 @@
         }
 
         // =========================================================================
-        // IV. ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
+        // IV. ASYNCHRONOUS PAYMENT SUBMISSION HANDLER WITH LOADING
         // =========================================================================
 
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                displayErrorBanner(null, true);
 
-if (paymentForm && confirmButton) {
-    paymentForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        displayErrorBanner(null, true);
+                // Show loading on modal submit button
+                showModalLoading();
 
-        confirmButton.disabled = true;
-        confirmButton.textContent = 'Processing...';
+                const formData = new FormData(paymentForm);
+                const tenantName = formData.get('id');
+                const unit = formData.get('unit');
+                const actionType = formData.get('action_type');
 
-        const formData = new FormData(paymentForm);
-        const tenantName = formData.get('id');
-        const unit = formData.get('unit');
-        const actionType = formData.get('action_type');
+                let url = "";
 
-        let url = "";
-
-        if (actionType === 'unmark') {
-            url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}`;
-        } else {
-            url = `http://localhost:7070/payment_status/${tenantName}/${unit}`;
-        }
-
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams(formData)
-            });
-
-            if (!response.ok) {
-                const errorMessage = await response.text();
-                displayErrorBanner(errorMessage || "Something went wrong.");
-                confirmButton.disabled = false;
-                confirmButton.textContent = actionType === 'unmark'
-                    ? "Unmark Payment"
-                    : "Confirm Payment";
-                return;
-            }
-
-            // SUCCESS
-            const rowIndicator = document.querySelector(
-                `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
-            );
-
-            if (rowIndicator) {
                 if (actionType === 'unmark') {
-                    rowIndicator.textContent = "−";
-                    rowIndicator.classList.remove("bg-green-100", "text-green-800");
-                    rowIndicator.classList.add("bg-red-100", "text-red-800");
+                    url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}`;
                 } else {
-                    rowIndicator.textContent = "+";
-                    rowIndicator.classList.remove("bg-red-100", "text-red-800");
-                    rowIndicator.classList.add("bg-green-100", "text-green-800");
+                    url = `http://localhost:7070/payment_status/${tenantName}/${unit}`;
                 }
-            }
 
-            flashMessage(
-                actionType === 'unmark'
-                    ? `Payment removed for Unit ${unit}.`
-                    : `Payment recorded for Unit ${unit}.`,
-                "green"
-            );
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: new URLSearchParams(formData)
+                    });
 
-            closePaymentModal();
+                    // Hide loading after response
+                    hideModalLoading();
 
-        } catch (error) {
-            console.error("AJAX Error:", error);
-            displayErrorBanner("Network error. Check your connection.");
+                    if (!response.ok) {
+                        const errorMessage = await response.text();
+                        displayErrorBanner(errorMessage || "Something went wrong.");
+                        return;
+                    }
+
+                    // SUCCESS
+                    const rowIndicator = document.querySelector(
+                        `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
+                    );
+
+                    if (rowIndicator) {
+                        if (actionType === 'unmark') {
+                            rowIndicator.textContent = "−";
+                            rowIndicator.classList.remove("bg-green-100", "text-green-800");
+                            rowIndicator.classList.add("bg-red-100", "text-red-800");
+                        } else {
+                            rowIndicator.textContent = "+";
+                            rowIndicator.classList.remove("bg-red-100", "text-red-800");
+                            rowIndicator.classList.add("bg-green-100", "text-green-800");
+                        }
+                    }
+
+                    flashMessage(
+                        actionType === 'unmark'
+                            ? `Payment removed for Unit ${unit}.`
+                            : `Payment recorded for Unit ${unit}.`,
+                        "green"
+                    );
+
+                    closePaymentModal();
+
+                } catch (error) {
+                    console.error("AJAX Error:", error);
+                    displayErrorBanner("Network error. Check your connection.");
+                    hideModalLoading();
+                }
+            });
         }
-
-        confirmButton.disabled = false;
-        confirmButton.textContent = actionType === 'unmark'
-            ? "Unmark Payment"
-            : "Confirm Payment";
-    });
-}
 
         // =========================================================================
         // V. EVENT LISTENERS SETUP
@@ -1794,6 +2003,15 @@ if (paymentForm && confirmButton) {
                 openPaymentModal(unit, rent, id, propertyName);
             }
           });
+        });
+
+        // Handle page unload to prevent accidental navigation during form submission
+        window.addEventListener('beforeunload', function(e) {
+            if (isPropertyFormSubmitting) {
+                // Optional: Show confirmation dialog
+                // e.preventDefault();
+                // e.returnValue = 'Your form is still submitting. Are you sure you want to leave?';
+            }
         });
 
         // Initial Load Actions
