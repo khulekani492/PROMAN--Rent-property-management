@@ -21,7 +21,7 @@ public class AddProperty {
                 ctx.sessionAttribute("current_property", property_Name);
                 ctx.sessionAttribute("property_address", property_address);
                 ctx.sessionAttribute("property_unit", Integer.parseInt(totalUnits));
-                ctx.sessionAttribute("add_property_profile","Yes");
+                ctx.sessionAttribute("add_property_profile","Yes ");
 
                 String property_name = ctx.sessionAttribute("property_name");
                 String user_email = ctx.sessionAttribute("email");
