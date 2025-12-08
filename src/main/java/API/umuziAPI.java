@@ -58,7 +58,8 @@ public class umuziAPI {
              HttpSession session = ctx.req().getSession(false);
                if (session != null)   {   session.invalidate();    }
              ctx.redirect("/");
-        })  ;
+        });
+
         app.get("/dashboard",new Dashboard().user_profile());
         app.get("/landlord_sign_up",ctx ->{
             HashMap<String,String> model = new HashMap<>();
@@ -66,12 +67,29 @@ public class umuziAPI {
             model.put("user_chosen_theme",themeColor);
             ctx.render("templates/landlord.html",model);
         });
+
         app.get("/add_property_unit",new Save_unit().save_property_unit());
-        app.get("/tenant_profile/{id}",ctx ->{
+
+        app.get("/tenant_profile/{id}/{unit}/{propertyName}",ctx ->{
             String tenant_name = ctx.pathParam("id");
+            String tenant_unit = ctx.pathParam("unit");
+            String tenant_property = ctx.pathParam("propertyName");
+
+            System.out.println("Unit  number : " + tenant_unit);
+            System.out.println("tenant property : " + tenant_property);
+
             System.out.println("Tenant_name " + tenant_name);
+            HashMap<String,String> model = new HashMap<>();
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
             ctx.render("templates/user_profile.html");
         });
+
+        app.post("/update_property_info",ctx -> {
+
+        });
+
+
         app.get("/log_out",new LogOut().sign_out());
         // Redirects to the unit page
         app.get("/add_property",ctx ->{
