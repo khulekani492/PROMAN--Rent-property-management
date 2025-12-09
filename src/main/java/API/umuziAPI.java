@@ -70,13 +70,13 @@ public class umuziAPI {
 
         app.get("/add_property_unit",new Save_unit().save_property_unit());
 
-        app.get("/tenant_profile/{id}/{unit}/{propertyName}",ctx ->{
+        app.get("/tenant_profile/{id}/{unit}",ctx ->{
             String tenant_name = ctx.pathParam("id");
             String tenant_unit = ctx.pathParam("unit");
-            String tenant_property = ctx.pathParam("propertyName");
+         //   String tenant_property = ctx.pathParam("propertyName");
 
             System.out.println("Unit  number : " + tenant_unit);
-            System.out.println("tenant property : " + tenant_property);
+       //     System.out.println("tenant property : " + tenant_property);
 
             System.out.println("Tenant_name " + tenant_name);
             HashMap<String,String> model = new HashMap<>();

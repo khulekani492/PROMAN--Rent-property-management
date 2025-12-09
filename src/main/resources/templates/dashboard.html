@@ -1241,6 +1241,8 @@
                                 <div>
                                     <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Property Name</label>
                                     <p  th:text="${name}"></p>
+                                    <p  th:text="${no_properties}"></p>
+
                                     <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[var(--accent)]">
                                         <option value="">Select property</option>
                                         <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
@@ -1345,7 +1347,7 @@
                                         <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
-                                        <a th:href="@{/tenant_profile/{id}(id=${entry.value[3]})}"
+                                        <a th:href="@{/tenant_profile/{id}/{unit}(id=${entry.value[3]},unit=${entry.value[0]})}"
                                            class="edit-btn">
                                             Edit
                                         </a>
