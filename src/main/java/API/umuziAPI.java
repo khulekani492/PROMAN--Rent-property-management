@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static API.SessionUtil.fileSessionHandler;
 
@@ -17,7 +16,6 @@ import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import jakarta.servlet.http.HttpSession;
 import model.database.CRUD.Tenant;
-import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 
 public class umuziAPI {
