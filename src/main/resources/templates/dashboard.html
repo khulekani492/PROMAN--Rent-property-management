@@ -1241,8 +1241,6 @@
                                 <div>
                                     <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Property Name</label>
                                     <p  th:text="${name}"></p>
-                                    <p  th:text="${no_properties}"></p>
-
                                     <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[var(--accent)]">
                                         <option value="">Select property</option>
                                         <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
@@ -1318,6 +1316,7 @@
                                                 <div class="tenant-contact status-badge"
                                                      th:with="debtAmount=${entry.value[7]} ?: 0"
                                                      th:classappend="${debtAmount &gt; 0} ? 'status-vacant' : 'status-active'"
+                                                     th:data-tenant-contact="${entry.value[8]}"
                                                      th:text="${debtAmount &gt; 0} ? 'Debt: R' + ${debtAmount} : 'No Debt'">
                                                     Contact info
                                                 </div>
@@ -1337,17 +1336,19 @@
                                     <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[4]}">Rent Day</td>
                                     <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[5]}">Overdue Days</td>
                                     <td class="px-4 py-3 whitespace-nowrap payment-cell">
-                <span th:if="${entry.value[2]} == 'yes'"
-                      th:with="isPaid=${entry.value[6]}"
-                      th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                      class="indicator open-pay cursor-pointer"
-                      th:data-unit="${entry.value[0]}" th:data-rent="${entry.value[1]}"
-                      th:data-id="${entry.value[3]}" th:data-property-name="${propertyName}"
-                      th:text="${isPaid} ? '+' : '−'">−</span>
+    <span th:if="${entry.value[2]} == 'yes'"
+          th:with="isPaid=${entry.value[6]}"
+          th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+          class="indicator open-pay cursor-pointer"
+          th:data-unit="${entry.value[0]}"
+          th:data-rent="${entry.value[1]}"
+          th:data-id="${entry.value[3]}"
+          th:data-property-name="${propertyName}"
+          th:data-tenant-contact="${entry.value[8]}"  onclick="openPaymentModal([[${entry.value[0]}]], 'R ' + [[${entry.value[1]}]], '[[${entry.value[3]}]]', '[[${propertyName}]]', '[[${entry.value[8]}]]')" th:text="${isPaid} ? '+' : '−'">−</span>
                                         <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
-                                        <a th:href="@{/tenant_profile/{id}/{unit}(id=${entry.value[3]},unit=${entry.value[0]})}"
+                                        <a th:href="@{/tenant_profile/{id}(id=${entry.value[3]})}"
                                            class="edit-btn">
                                             Edit
                                         </a>
@@ -1397,6 +1398,7 @@
                 <input type="hidden" name="unit" id="modalUnit">
                 <input type="hidden" name="id" id="modalId">
                 <input type="hidden" name="property_name" id="modalPropertyName">
+                <input type="hidden" name="tenant_contact" id="modalTenantContact">
                 <input type="hidden" name="paid" value="yes">
                 <div class="mb-4 text-left">
                     <label for="modalRentInput" class="block text-sm font-medium text-[var(--muted-text)] mb-2">Rent Paid Amount:</label>
@@ -1825,39 +1827,58 @@
           }
         }
 
-        function openPaymentModal(unit, rent, id, propertyName) {
-            displayErrorBanner(null, true);
+        // --- Assume these modal elements are accessible in this scope (globally or locally) ---
+// const modalUnit = document.getElementById('modalUnit');
+// const modalId = document.getElementById('modalId');
+// const modalPropertyName = document.getElementById('modalPropertyName');
+// const modalTenantContact = document.getElementById('modalTenantContact'); // <-- Make sure this element is defined/accessible
+// const modalRentInput = document.getElementById('modalRentInput');
+// const modalUnitDisplay = document.getElementById('modalUnitDisplay');
+// const modalOriginalRent = document.getElementById('modalOriginalRent');
+// const modalAction = document.getElementById('modalAction');
+// const paymentModal = document.getElementById('paymentModal');
+// const paidInput = document.querySelector('#paymentForm input[name="paid"]');
+// const modalTitle = document.querySelector('#paymentModal h2');
+// ----------------------------------------------------------------------------------
 
-            if (modalTitle) modalTitle.textContent = "Record New Payment";
-            const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-            if (modalSubmitBtn) {
-                const btnText = modalSubmitBtn.querySelector('.btn-text');
-                if (btnText) btnText.textContent = "Confirm Payment";
-                modalSubmitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-                modalSubmitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-            }
 
-            if (modalUnit) modalUnit.value = unit;
-            if (modalId) modalId.value = id;
-            if (modalPropertyName) modalPropertyName.value = propertyName;
+function openPaymentModal(unit, rent, id, propertyName, tenantContact) { // 1. ADD tenantContact to signature
+    displayErrorBanner(null, true);
 
-            if (modalRentInput) {
-                modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
-                modalRentInput.disabled = false;
-            }
-            if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
-            if (modalOriginalRent) modalOriginalRent.textContent = rent;
+    if (modalTitle) modalTitle.textContent = "Record New Payment";
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+    if (modalSubmitBtn) {
+        const btnText = modalSubmitBtn.querySelector('.btn-text');
+        if (btnText) btnText.textContent = "Confirm Payment";
+        modalSubmitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+        modalSubmitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+    }
 
-            if (modalAction) modalAction.value = 'mark';
-            if (paidInput) paidInput.value = 'yes';
+    if (modalUnit) modalUnit.value = unit;
+    if (modalId) modalId.value = id;
+    if (modalPropertyName) modalPropertyName.value = propertyName;
 
-            if (paymentModal) {
-                paymentModal.classList.remove('hidden');
-                paymentModal.classList.add('flex');
-                document.body.classList.add('modal-open');
-            }
-        }
+    // 3. SET the tenantContact value
+    const modalTenantContact = document.getElementById('modalTenantContact');
+    if (modalTenantContact) modalTenantContact.value = tenantContact;
 
+    if (modalRentInput) {
+        // Clean and set the rent input value
+        modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
+        modalRentInput.disabled = false;
+    }
+    if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
+    if (modalOriginalRent) modalOriginalRent.textContent = rent;
+
+    if (modalAction) modalAction.value = 'mark';
+    if (paidInput) paidInput.value = 'yes';
+
+    if (paymentModal) {
+        paymentModal.classList.remove('hidden');
+        paymentModal.classList.add('flex');
+        document.body.classList.add('modal-open');
+    }
+}
         function openUnmarkModal(unit, id, propertyName, rent) {
             displayErrorBanner(null, true);
 
@@ -2000,11 +2021,12 @@
             const rent = this.dataset.rent;
             const id = this.dataset.id;
             const propertyName = this.dataset.propertyName;
+            const tenantContact = this.dataset.tenantContact;
 
             if (currentStatus === '+') {
                 openUnmarkModal(unit, id, propertyName, rent);
             } else {
-                openPaymentModal(unit, rent, id, propertyName);
+                openPaymentModal(unit, rent, id, propertyName,tenantContact);
             }
           });
         });
