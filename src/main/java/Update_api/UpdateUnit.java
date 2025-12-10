@@ -15,10 +15,10 @@ public class UpdateUnit{
             String tenant_name = ctx.sessionAttribute("tenant_name");
             Integer propertyUnit = ctx.sessionAttribute("tenant_unit");
             String propertyName = ctx.sessionAttribute("current_property");
-
+            String contact =  ctx.sessionAttribute("tenant_contact");
             //Get TenantId
             Tenant current_tenant = new Tenant();
-            Integer  tenantId =  current_tenant.tenant_ID(tenant_name);
+            Integer  tenantId =  current_tenant.tenant_ID(tenant_name,contact);
             Change_Unit update_tenant_unit = new Change_Unit(tenant_name,propertyUnit,propertyName,tenantId);
 
             update_tenant_unit.vacant_unit(propertyUnit);
