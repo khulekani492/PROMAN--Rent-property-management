@@ -20,13 +20,17 @@ public class Record_rent {
             String rent_amount = null;
             String unit = null;
             String tenant_name = null;
+            String contact = null;
 
             try {
                 // Extract all required parameters
                 rent_amount = ctx.formParam("rent");
                 unit = ctx.formParam("unit");
                 tenant_name = ctx.formParam("id");
+                contact = ctx.formParam("tenant_contact") ;
+                ctx.sessionAttribute("tenant_contact",contact);
 
+                System.out.println("Tenant cellphone : " + contact);
                 System.out.println("DEBUG - Payment parameters:");
                 System.out.println("Rent amount: " + rent_amount);
                 System.out.println("Unit: " + unit);
@@ -59,7 +63,7 @@ public class Record_rent {
                 }
 
                 // Get tenant ID
-                Integer tenantId = tenant_relatedInfo.tenant_ID(tenant_name);
+                Integer tenantId = tenant_relatedInfo.tenant_ID(tenant_name,contact);
                 System.out.println("tenantId " + tenantId);
                 if (tenantId == null) {
                     ctx.status(404).result("Tenant not found: " + tenant_name);
@@ -77,7 +81,7 @@ public class Record_rent {
                 ctx.sessionAttribute("check_tenant_id", tenantId);
                 ctx.sessionAttribute("propertyName", property_name);
                 ctx.sessionAttribute("propertyRent", property_rent);
-
+                System.out.println("Original rent : " + property_rent);
                 // --- 2. Payment Processing ---
                 Type_of_payments determine_pay = new Type_of_payments();
                 determine_pay.type_of_payment(money_paid, property_rent,
