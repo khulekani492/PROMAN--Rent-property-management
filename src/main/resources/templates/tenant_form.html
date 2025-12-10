@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Store Thymeleaf variable in JavaScript -->
     <script>
         // This gets rendered server-side by Thymeleaf
         const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
@@ -690,10 +689,8 @@
     </style>
 </head>
 
-<!-- Apply dark class based on user_chosen_theme from server -->
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
 
-<!-- Loading Overlay -->
 <div id="loadingOverlay" class="loading-overlay">
     <div class="loading-overlay-content">
         <div class="overlay-spinner"></div>
@@ -715,7 +712,6 @@
             </div>
         </div>
 
-        <!-- Desktop Nav -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
             <a href="http://localhost:7070/"
                class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
@@ -731,7 +727,6 @@
             </a>
         </nav>
 
-        <!-- Mobile Menu Button -->
         <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
             <div class="mobile-menu-icon">
                 <span></span>
@@ -741,7 +736,6 @@
         </button>
     </div>
 
-    <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-3 space-y-2">
         <a href="http://localhost:7070/"
            class="block w-full text-center login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
@@ -753,7 +747,7 @@
         </a>
         <a href="http://localhost:7070/"
            class="block w-full text-center signup-btn px-5 py-1.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-            LOG OUT
+            LOG out
         </a>
     </div>
 </header>
@@ -806,10 +800,8 @@
 
 
 
-<!-- Main Content -->
 <main class="max-w-6xl mx-auto px-4 py-6">
     <div class="main-content">
-        <!-- Welcome Card with Instructions -->
         <div id="welcomeCard" class="welcome-card collapsible">
             <div class="flex justify-between items-center mb-4 cursor-pointer" onclick="toggleWelcomeCard()">
                 <div class="flex items-center gap-3">
@@ -823,7 +815,6 @@
             </div>
 
             <div class="collapse-content">
-                <!-- Property Information Card -->
                 <div class="property-info-card">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-accent text-lg">🏠</span>
@@ -839,7 +830,6 @@
                     </p>
                 </div>
 
-                <!-- Quick Guide -->
                 <div class="quick-guide mb-4">
                     <h3 class="font-bold text-lg mb-2 text-accent">Important Tips:</h3>
                     <ul class="text-sm space-y-2">
@@ -866,7 +856,6 @@
                     </ul>
                 </div>
 
-                <!-- Date Range Information -->
                 <div class="date-range-info">
                     <div class="flex items-start gap-2 mb-1">
                         <span class="text-accent">📅</span>
@@ -879,7 +868,6 @@
                     </div>
                 </div>
 
-                <!-- Status Indicators -->
                 <div class="text-sm text-muted space-y-3 mt-4">
                     <div class="flex items-start gap-3">
                         <span class="text-accent text-lg">📋</span>
@@ -897,7 +885,6 @@
                     </div>
                 </div>
 
-                <!-- Conditional Message -->
                 <div th:if="${'No'.equals(add_property_profile)}" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p class="text-xs text-blue-800 font-medium">
                         Select a unit number between 1 and <span class="font-bold" th:text="${unit_add}">0</span>
@@ -916,12 +903,10 @@
             </div>
         </div>
 
-        <!-- Form Card -->
         <div class="form-card" role="main" aria-labelledby="form-title">
             <h2 id="form-title" class="form-title">ADD TENANT TO UNIT</h2>
 
             <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST">
-                <!-- Unit Selection Section -->
                 <div class="form-section">
                     <div class="mb-4">
                         <h3 class="text-accent">Unit Selection</h3>
@@ -950,7 +935,6 @@
                     </div>
                 </div>
 
-                <!-- Personal Details Section -->
                 <div class="form-section">
                     <div class="mb-4">
                         <h3 class="text-accent">Personal Details</h3>
@@ -1038,7 +1022,6 @@
                     </div>
                 </div>
 
-                <!-- Next of Kin Section -->
                 <div class="form-section">
                     <div class="mb-4">
                         <h3 class="text-accent">Emergency Contact</h3>
@@ -1077,7 +1060,6 @@
                     </div>
                 </div>
 
-                <!-- Financial Details Section -->
                 <div class="form-section">
                     <div class="mb-4">
                         <h3 class="text-accent">Financial Details</h3>
@@ -1129,7 +1111,6 @@
                     </div>
                 </div>
 
-                <!-- Hidden field for unit -->
                 <input type="hidden" name="unit" th:value="${unit_add}" />
 
                 <div class="form-actions">
@@ -1193,6 +1174,16 @@
         loadingOverlay.classList.remove('active');
         document.body.style.overflow = '';
     }
+
+    // FIX FOR SPINNER ON BROWSER BACK BUTTON
+    window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the BFcache (browser back button scenario)
+        if (event.persisted) {
+            console.log("Page loaded from BFcache (browser back button). Hiding spinner.");
+            // Reset the loading state
+            hideLoading();
+        }
+    });
 
     // Date validation and formatting functions
     function getDateLimits() {
