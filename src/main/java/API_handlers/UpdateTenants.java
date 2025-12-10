@@ -18,8 +18,9 @@ public class UpdateTenants {
             // Getting IDs and Property Info (Necessary for payment logic and subsequent page reload if needed)
             String tenant_name = ctx.formParam("id");
             ctx.sessionAttribute("ID",tenant_name);
+            String contact = ctx.sessionAttribute("tenant_contact");
             //Integer
-            Integer tenantId = undo_tenant_payment.tenant_ID(tenant_name);
+            Integer tenantId = undo_tenant_payment.tenant_ID(tenant_name,contact);
             
             //removes payment from rent_book 
             undo_tenant_payment.unmark_tenant_rent(tenantId);
