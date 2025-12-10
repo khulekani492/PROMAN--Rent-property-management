@@ -73,16 +73,21 @@ public class umuziAPI {
         app.get("/tenant_profile/{id}/{unit}",ctx ->{
             String tenant_name = ctx.pathParam("id");
             String tenant_unit = ctx.pathParam("unit");
-         //   String tenant_property = ctx.pathParam("propertyName");
+            String tenant_property = ctx.sessionAttribute("current_property");
+            System.out.println("tenant property : " + tenant_property);
 
-            System.out.println("Unit  number : " + tenant_unit);
+           System.out.println("Unit  number : " + tenant_unit);
        //     System.out.println("tenant property : " + tenant_property);
 
             System.out.println("Tenant_name " + tenant_name);
             HashMap<String,String> model = new HashMap<>();
             String themeColor = ctx.sessionAttribute("theme_color");
             model.put("user_chosen_theme",themeColor);
-            ctx.render("templates/user_profile.html");
+           // model.put("unit_number",tenant_unit);
+            //model.put("tenant_name",tenant_name);
+            model.put("property_name",tenant_property);
+
+            ctx.render("templates/user_profile.html",model);
         });
 
         app.post("/update_property_info",ctx -> {
