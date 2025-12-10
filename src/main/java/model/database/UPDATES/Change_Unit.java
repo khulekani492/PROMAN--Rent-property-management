@@ -83,17 +83,16 @@ public class Change_Unit extends ConnectionAccess {
 
     public  static void main(String args[]){
         Tenant tenant = new Tenant();
-
-
         String tenant_name = "Sis Room 4";
-        Integer tenantId = tenant.tenant_ID(tenant_name);
-        System.out.println("Funk " +  tenantId);
-        String propertyName = "Thornville_rooms";
-        Integer unitID = 6;
+        //Integer tenantId = tenant.tenant_ID(tenant_name);
+        //System.out.println("Funk " +  tenantId);
+        //String propertyName = "Thornville_rooms";
+        //Integer unitID = 6;
+        //Change_Unit UPDATES = new Change_Unit(tenant_name,unitID,propertyName,tenantId);
+        //UPDATES.vacant_unit(4);
+        //UPDATES.Change_unit();
 
-        Change_Unit UPDATES = new Change_Unit(tenant_name,unitID,propertyName,tenantId);
-      //  UPDATES.vacant_unit(4);
-        UPDATES.Change_unit();
+
 
     }
 }
