@@ -1348,7 +1348,7 @@
                                         <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap">
-                                        <a th:href="@{/tenant_profile/{id}(id=${entry.value[3]})}"
+                                        <a th:href="@{/tenant_profile/{id}/{unit}(id=${entry.value[3]}) unit=${entry.value[0]}}"
                                            class="edit-btn">
                                             Edit
                                         </a>
@@ -1366,11 +1366,11 @@
                                             <p class="text-gray-500 mb-4 max-w-md text-center">
                                                 You don't have any units added yet. Get started by adding your first unit and tenant.
                                             </p>
-                                            <a href="http://localhost:7070/add_tenant" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium">
+                                            <a href="http://localhost:7070/add_property_unit" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                                 </svg>
-                                                Add New Unit
+                                                Add New Property
                                             </a>
                                         </div>
                                     </td>
