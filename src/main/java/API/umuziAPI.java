@@ -2,6 +2,7 @@ package API;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,6 +16,7 @@ import api_login.Validate_login;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import jakarta.servlet.http.HttpSession;
+import model.database.CRUD.Tenant;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 
@@ -70,22 +72,44 @@ public class umuziAPI {
 
         app.get("/add_property_unit",new Save_unit().save_property_unit());
 
-        app.get("/tenant_profile/{id}/{unit}",ctx ->{
+        app.get("/tenant_profile/{id}/{unit}/{propertyRent}/{contact}",ctx ->{
             String tenant_name = ctx.pathParam("id");
             String tenant_unit = ctx.pathParam("unit");
+            String property_rent = ctx.pathParam("propertyRent");
             String tenant_property = ctx.sessionAttribute("current_property");
+
+            String tenant_contact = ctx.pathParam("contact");
             System.out.println("tenant property : " + tenant_property);
+            System.out.println("tenant contact : " + tenant_contact);
 
            System.out.println("Unit  number : " + tenant_unit);
        //     System.out.println("tenant property : " + tenant_property);
-
             System.out.println("Tenant_name " + tenant_name);
+
+            Tenant tenant = new Tenant();
+
+
+            Integer tenant_id = tenant.tenant_ID(tenant_name,tenant_contact);
+
+            ArrayList<String> next_of_Kin_Information = tenant.tenant_next_of_kin(tenant_id) ;
+
+            String next_kin = next_of_Kin_Information.getFirst();
+            String next_kin_number = next_of_Kin_Information.getLast();
+            String tenantMoveIN = next_of_Kin_Information.get(1);
+            String tenant_rent = next_of_Kin_Information.get(2);
+            System.out.println("Additional information " + next_of_Kin_Information);
+            //
             HashMap<String,String> model = new HashMap<>();
             String themeColor = ctx.sessionAttribute("theme_color");
             model.put("user_chosen_theme",themeColor);
-           // model.put("unit_number",tenant_unit);
-            //model.put("tenant_name",tenant_name);
+            model.put("unit_number",tenant_unit);
+            model.put("tenant_name",tenant_name);
+            model.put("rent_amount",property_rent);
+            model.put("kin_name",next_kin);
+            model.put("kin_contact",next_kin_number);
             model.put("property_name",tenant_property);
+            model.put("move_in_date",tenantMoveIN);
+            model.put("rent_day",tenant_rent);
 
             ctx.render("templates/user_profile.html",model);
         });
