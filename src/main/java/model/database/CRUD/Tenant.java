@@ -5,6 +5,7 @@ import model.database.ConnectionAccess;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Tenant extends ConnectionAccess {
 
@@ -221,5 +222,37 @@ public class Tenant extends ConnectionAccess {
         System.out.println("DOING GOOD");
        // System.out.println(baby_wait.landlord_username(772));
         //System.out.println(baby_wait.landlordEmail(772));
+    }
+
+    public ArrayList<String> tenant_next_of_kin(Integer tenantId) {
+        String sql = """
+               SELECT\s
+               tenants_information.kin_name,
+               tenants_information.move_in,
+               tenants_information.rent_payment_day,
+               tenants_information.Kin_number\s
+               FROM tenants_information\s
+               inner join\s
+               general_users\s
+               ON tenants_information.tenant_user_id =general_users.id WHERE tenants_information.tenant_user_id=? ;""";
+
+        ArrayList<String> relativeInfo = new ArrayList<>();
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,tenantId);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    relativeInfo.add(result.getString("kin_name")) ;
+                    relativeInfo.add(result.getString("move_in")) ;
+                    relativeInfo.add(result.getString("rent_payment_day")) ;
+                    relativeInfo.add(result.getString("kin_number")) ;
+                    return relativeInfo;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 }
