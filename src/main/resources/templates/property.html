@@ -111,7 +111,7 @@
             color: white;
         }
 
-        /* Form Card - Updated to match previous form */
+        /* Form Card */
         .form-card {
             background: var(--surface);
             padding: 1.5rem;
@@ -119,8 +119,6 @@
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
             border: 1px solid var(--muted);
             width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
             transition: all 0.3s ease;
         }
 
@@ -149,7 +147,7 @@
             box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
         }
 
-        /* Form details - Updated to match */
+        /* Form details */
         label {
             font-weight: 600;
             color: var(--text);
@@ -170,14 +168,6 @@
             flex-direction: column;
         }
 
-        /* Two-column layout for wider form */
-        @media (min-width: 768px) {
-            .form-row.two-column {
-                grid-template-columns: 1fr 1fr;
-                gap: 24px;
-            }
-        }
-
         /* Form section styling */
         .form-section {
             margin-bottom: 1.5rem;
@@ -190,7 +180,7 @@
             margin-bottom: 1rem;
         }
 
-        /* Section headers - Updated to black with underline */
+        /* Section headers */
         .form-section h3 {
             font-size: 18px;
             margin-bottom: 16px;
@@ -260,15 +250,6 @@
         /* Required star */
         .required-star { color: var(--error); margin-left: 0.15rem; }
 
-        /* Compact layout */
-        .compact-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem 0;
-            min-height: 70vh;
-        }
-
         /* Helper text styling */
         .helper-text {
             font-size: 0.875rem;
@@ -277,7 +258,7 @@
             min-height: 18px;
         }
 
-        /* Form title - Updated to match */
+        /* Form title */
         .form-title {
             font-size: 24px;
             margin-bottom: 1.5rem;
@@ -301,7 +282,7 @@
             grid-column: 1 / -1;
         }
 
-        /* Stepper styling - updated */
+        /* Stepper styling */
         .stepper {
             padding: 0.75rem 0;
             font-size: 14px;
@@ -331,7 +312,7 @@
             transition: all 0.3s ease;
         }
 
-        /* Welcome card styling - Updated */
+        /* Welcome card styling */
         .welcome-card {
             background: var(--surface);
             padding: 1.5rem;
@@ -346,12 +327,35 @@
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.2);
         }
 
-        /* Mobile-first layout */
+        /* Two-column layout */
         @media (max-width: 1023px) {
             .main-content {
                 display: flex;
                 flex-direction: column;
                 gap: 1.5rem;
+            }
+
+            /* Collapsible welcome card on mobile */
+            .welcome-card.collapsible {
+                cursor: pointer;
+            }
+
+            .welcome-card .collapse-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+
+            .welcome-card.expanded .collapse-content {
+                max-height: 500px;
+            }
+
+            .mobile-toggle-icon {
+                transition: transform 0.3s ease;
+            }
+
+            .welcome-card.expanded .mobile-toggle-icon {
+                transform: rotate(180deg);
             }
         }
 
@@ -381,7 +385,7 @@
             }
         }
 
-        /* Info highlight with light blue background */
+        /* Info highlight */
         .info-highlight {
             background-color: rgba(59, 130, 246, 0.1);
             padding: 0.75rem;
@@ -394,7 +398,7 @@
             background-color: rgba(59, 130, 246, 0.15);
         }
 
-        /* Graph icon specific styling - Emoji size */
+        /* Graph icon specific styling */
         .graph-icon {
             display: inline-flex;
             align-items: center;
@@ -474,9 +478,9 @@
             margin: 0 auto 1rem;
         }
 
-        /* Mobile Menu Button Styles - MATCHING PREVIOUS SIZE */
+        /* Mobile Menu Button Styles */
         #mobile-menu-button {
-            display: none; /* Hidden by default on desktop */
+            display: none;
             align-items: center;
             justify-content: center;
             width: 48px;
@@ -509,7 +513,7 @@
             border-radius: 2px;
         }
 
-        /* Hamburger to X animation - SAME AS BEFORE */
+        /* Hamburger to X animation */
         #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
             transform: rotate(45deg) translate(4px, 4px);
         }
@@ -549,6 +553,59 @@
                 display: none;
             }
         }
+
+        /* Quick Guide styling */
+        .quick-guide {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        body.dark .quick-guide {
+            background: linear-gradient(135deg, rgba(244, 179, 66, 0.08) 0%, rgba(244, 179, 66, 0.03) 100%);
+            border: 1px solid rgba(244, 179, 66, 0.15);
+        }
+
+        .guide-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .guide-check {
+            color: var(--accent);
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        /* Field tooltip */
+        .field-tooltip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #2b1f00;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 0.25rem;
+            vertical-align: middle;
+        }
+
+        body.dark .field-tooltip {
+            color: #1a1400;
+        }
     </style>
 </head>
 
@@ -567,7 +624,7 @@
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-3 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a  class="flex items-center">
+            <a class="flex items-center">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
@@ -577,7 +634,7 @@
             </div>
         </div>
 
-        <!-- Desktop Nav - will be hidden on mobile -->
+        <!-- Desktop Nav -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
             <a href="http://localhost:7070/"
                class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
@@ -593,7 +650,7 @@
             </a>
         </nav>
 
-        <!-- Mobile Menu Button - SAME SIZE AS BEFORE (48px × 48px) -->
+        <!-- Mobile Menu Button -->
         <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
             <div class="mobile-menu-icon">
                 <span></span>
@@ -631,7 +688,6 @@
             menuButton.setAttribute('aria-expanded', !isExpanded);
             mobileMenu.classList.toggle('hidden');
 
-            // Toggle body overflow to prevent scrolling when menu is open
             if (!isExpanded) {
                 document.body.style.overflow = 'hidden';
             } else {
@@ -639,7 +695,6 @@
             }
         });
 
-        // Close mobile menu when clicking outside
         document.addEventListener('click', (event) => {
             if (!mobileMenu.classList.contains('hidden') &&
                 !menuButton.contains(event.target) &&
@@ -650,7 +705,6 @@
             }
         });
 
-        // Close mobile menu when clicking on a link
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.add('hidden');
@@ -659,7 +713,6 @@
             });
         });
 
-        // Close mobile menu on escape key
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
                 mobileMenu.classList.add('hidden');
@@ -670,87 +723,99 @@
     }
 </script>
 
-<!-- Progress / Stepper - Updated -->
-<div class="stepper">
-    <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-2">
-        <div class="flex items-center gap-2">
-            <div class="flex flex-col items-center text-xs font-semibold">
-                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
-                <span class="mt-1 text-accent">1. Account</span>
-            </div>
-            <div class="w-10 h-[1px] bg-muted"></div>
-            <div class="flex flex-col items-center text-xs font-semibold">
-                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
-                <span class="mt-1 text-accent">2. Property</span>
-            </div>
-            <div class="w-10 h-[1px] bg-muted"></div>
-            <div class="flex flex-col items-center text-xs text-muted">
-                <span class="progress-dot bg-muted"></span>
-                <span class="mt-1">3. Tenants</span>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Progress / Stepper -->
+
 
 <!-- Main Content -->
 <main class="max-w-6xl mx-auto px-4 py-6">
     <div class="main-content">
-        <!-- Welcome Card -->
-        <div class="welcome-card">
-            <div class="flex items-center gap-3 mb-6">
-                <h2 class="text-2xl font-bold text-accent">Welcome to ProMan</h2>
-            </div>
-            <p class="text-[var(--text)] text-sm font-medium mb-4">
-                <span class="font-semibold text-accent" th:text="'Hello, ' + ${user_name} + '! '">Hello, User! </span>
-                Start managing your properties in minutes.
-            </p>
-            <div class="text-sm text-muted space-y-3">
-                <div class="flex items-start gap-3">
-                    <span class="text-accent text-lg">🏠</span>
-                    <div>
-                        <h4 class="font-semibold text-[var(--text)]">Add Property Details</h4>
-                        <p class="text-xs info-highlight">
-                            Available property
-                            <span class="font-bold text-blue-500" th:text="${property_name}"></span>
-                        </p>
-                    </div>
+        <!-- Welcome Card with Instructions -->
+        <div id="welcomeCard" class="welcome-card collapsible">
+            <div class="flex justify-between items-center mb-4 cursor-pointer" onclick="toggleWelcomeCard()">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold text-accent">Welcome to ProMan</h2>
                 </div>
-                <div class="flex items-start gap-3">
-                    <span class="text-accent text-lg">👤</span>
-                    <div>
-                        <h4 class="font-semibold text-[var(--text)]">Add Tenant Information</h4>
-                        <p class="text-xs">Provide tenant details for occupied units</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-3">
-                    <span class="text-accent text-lg graph-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Simple gold line graph - emoji sized -->
-                            <path d="M3 15L7 10L11 13L15 7L19 11L21 9"
-                                  stroke="var(--accent)"
-                                  stroke-width="1.5"
-                                  fill="none"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"/>
-
-                            <!-- Gold data points -->
-                            <circle cx="3" cy="15" r="1" fill="var(--accent)"/>
-                            <circle cx="7" cy="10" r="1" fill="var(--accent)"/>
-                            <circle cx="11" cy="13" r="1" fill="var(--accent)"/>
-                            <circle cx="15" cy="7" r="1" fill="var(--accent)"/>
-                            <circle cx="19" cy="11" r="1" fill="var(--accent)"/>
-                            <circle cx="21" cy="9" r="1" fill="var(--accent)"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <h4 class="font-semibold text-[var(--text)]">Access Dashboard</h4>
-                        <p class="text-xs">Manage all your properties from one central location</p>
-                    </div>
+                <div class="lg:hidden mobile-toggle-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
                 </div>
             </div>
-            <div class="mt-6 pt-4 border-t border-muted">
-                <div class="text-xs text-accent font-bold">— ProMan</div>
+
+            <div class="collapse-content">
+                <p class="text-[var(--text)] text-sm font-medium mb-4">
+                    <span class="font-semibold text-accent" th:text="'Hello, ' + ${user_name} + '! '">Hello, User! </span>
+                    Start managing your properties in minutes.
+                </p>
+
+                <!-- Quick Guide Section -->
+                <div class="quick-guide mb-4">
+                    <h3 class="font-bold text-lg mb-2 text-accent">Quick Guide:</h3>
+                    <ul class="text-sm space-y-2">
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>Property name should be unique and descriptive</span>
+                        </li>
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>Include full address for tenant reference</span>
+                        </li>
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>You can add tenants after creating the property</span>
+                        </li>
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>Units can be modified later if needed</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="text-sm text-muted space-y-3">
+                    <div class="flex items-start gap-3">
+                        <span class="text-accent text-lg">🏠</span>
+                        <div>
+                            <h4 class="font-semibold text-[var(--text)]">Add Property Details</h4>
+                            <p class="text-xs info-highlight">
+                                Available property
+                                <span class="font-bold text-blue-500" th:text="${property_name}"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-accent text-lg">👤</span>
+                        <div>
+                            <h4 class="font-semibold text-[var(--text)]">Add Tenant Information</h4>
+                            <p class="text-xs">Provide tenant details for occupied units</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <span class="text-accent text-lg graph-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 15L7 10L11 13L15 7L19 11L21 9"
+                                      stroke="var(--accent)"
+                                      stroke-width="1.5"
+                                      fill="none"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <circle cx="3" cy="15" r="1" fill="var(--accent)"/>
+                                <circle cx="7" cy="10" r="1" fill="var(--accent)"/>
+                                <circle cx="11" cy="13" r="1" fill="var(--accent)"/>
+                                <circle cx="15" cy="7" r="1" fill="var(--accent)"/>
+                                <circle cx="19" cy="11" r="1" fill="var(--accent)"/>
+                                <circle cx="21" cy="9" r="1" fill="var(--accent)"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h4 class="font-semibold text-[var(--text)]">Access Dashboard</h4>
+                            <p class="text-xs">Manage all your properties from one central location</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-muted">
+                    <div class="text-xs text-accent font-bold">— ProMan</div>
+                </div>
             </div>
         </div>
 
@@ -761,25 +826,41 @@
             </h2>
             <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
                 <div class="form-section">
-                    <h3 class="text-xl font-bold mb-4 text-accent">Property Details</h3>
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold mb-2 text-accent">Property Details</h3>
+                        <p class="text-sm text-muted">Enter basic information about your property. This will help tenants identify and locate it.</p>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="property_Name">Property Name:</label>
-                            <input id="property_Name" name="property_Name" type="text" required class="themed-input input-focus">
-                            <p class="helper-text">Enter the name of the property</p>
+                            <label for="property_Name">
+                                Property Name:
+                                <span class="field-tooltip" title="Use a descriptive name like 'Sunset Apartments' or 'Downtown Plaza'">i</span>
+                            </label>
+                            <input id="property_Name" name="property_Name" type="text" required class="themed-input input-focus"
+                                   placeholder="e.g., Sunset Apartments">
+                            <p class="helper-text">Enter a unique, descriptive name for the property</p>
                         </div>
                         <div class="form-field">
-                            <label for="property_Address">Property Address:</label>
-                            <input id="property_Address" name="property_Address" type="text" required class="themed-input input-focus">
-                            <p class="helper-text">Enter the address of the property</p>
+                            <label for="property_Address">
+                                Property Address:
+                                <span class="field-tooltip" title="Full physical address including street, city, and postal code">i</span>
+                            </label>
+                            <input id="property_Address" name="property_Address" type="text" required class="themed-input input-focus"
+                                   placeholder="e.g., 123 Main Street, City, ZIP">
+                            <p class="helper-text">Enter the complete address of the property</p>
                         </div>
                     </div>
 
                     <div class="form-row full-width">
                         <div class="form-field">
-                            <label for="property_unit">Total Number of Units:</label>
-                            <input id="property_unit" name="property_unit" type="number" min="1" value="1" required class="themed-input input-focus">
-                            <p class="helper-text">The total number of units for the Property.</p>
+                            <label for="property_unit">
+                                Total Number of Units:
+                                <span class="field-tooltip" title="Include all residential units in the property">i</span>
+                            </label>
+                            <input id="property_unit" name="property_unit" type="number" min="1" value="1" required
+                                   class="themed-input input-focus">
+                            <p class="helper-text">The total number of residential units in the property (minimum: 1)</p>
                         </div>
                     </div>
                 </div>
@@ -803,11 +884,19 @@
 
 <footer class="mt-12 py-8 bg-surface">
     <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
-        &copy; 2025 ProMan Property Management Solutions.
+        &copy; <span id="pro-man-year">2025</span> ProMan Property Management Solutions.
     </div>
 </footer>
 
 <script>
+    // MOBILE WELCOME CARD TOGGLE
+    function toggleWelcomeCard() {
+        if (window.innerWidth < 1024) {
+            const welcomeCard = document.getElementById('welcomeCard');
+            welcomeCard.classList.toggle('expanded');
+        }
+    }
+
     // LOADING STATE MANAGEMENT
     const loadingOverlay = document.getElementById('loadingOverlay');
     const submitButton = document.getElementById('submitButton');
@@ -818,51 +907,34 @@
 
     let isSubmitting = false;
 
-    // Function to show loading state
     function showLoading() {
         isSubmitting = true;
-
-        // Disable form button
         submitButton.disabled = true;
         submitButton.classList.add('btn-disabled');
-
-        // Show spinner and hide icon
         submitIcon.classList.add('hidden');
         submitSpinner.classList.remove('hidden');
         submitText.textContent = 'Adding Property...';
-
-        // Show loading overlay
         loadingOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
+        document.body.style.overflow = 'hidden';
     }
 
-    // Function to hide loading state
     function hideLoading() {
         isSubmitting = false;
-
-        // Re-enable form button
         submitButton.disabled = false;
         submitButton.classList.remove('btn-disabled');
-
-        // Hide spinner and show icon
         submitIcon.classList.remove('hidden');
         submitSpinner.classList.add('hidden');
         submitText.textContent = 'Add Property';
-
-        // Hide loading overlay
         loadingOverlay.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = '';
     }
 
-    // Form submission handler
     unitForm.addEventListener('submit', function(event) {
-        // Prevent multiple submissions
         if (isSubmitting) {
             event.preventDefault();
             return false;
         }
 
-        // Validate required fields
         const propertyName = document.getElementById('property_Name').value.trim();
         const propertyAddress = document.getElementById('property_Address').value.trim();
         const propertyUnit = document.getElementById('property_unit').value;
@@ -879,15 +951,10 @@
             return false;
         }
 
-        // If validation passes, show loading state
         showLoading();
-
-        // The form will continue with its normal submission
-        // The loading state will persist until page reloads or redirects
         return true;
     });
 
-    // Handle page unload to prevent accidental navigation during form submission
     window.addEventListener('beforeunload', function(e) {
         if (isSubmitting) {
             // Optional: Show confirmation dialog
@@ -898,6 +965,24 @@
 
     // Set current year in footer
     document.getElementById('pro-man-year').textContent = new Date().getFullYear();
+
+    // Initialize welcome card as expanded on desktop, collapsed on mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const welcomeCard = document.getElementById('welcomeCard');
+        if (window.innerWidth >= 1024) {
+            welcomeCard.classList.add('expanded');
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        const welcomeCard = document.getElementById('welcomeCard');
+        if (window.innerWidth >= 1024) {
+            welcomeCard.classList.add('expanded');
+        } else if (!welcomeCard.classList.contains('expanded')) {
+            welcomeCard.classList.remove('expanded');
+        }
+    });
 </script>
 
 </body>
