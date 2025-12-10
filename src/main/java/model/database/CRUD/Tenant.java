@@ -91,13 +91,13 @@ public class Tenant extends ConnectionAccess {
 //        return id;
 //    }
 
-    public Integer tenant_ID(String tenant_name) {
-        String sql = "SELECT id FROM general_users WHERE name = ? AND user_type = 'tenant'";
+    public Integer tenant_ID(String tenant_name,String contact) {
+        String sql = "SELECT id FROM general_users WHERE name = ? AND contact = ? AND user_type = 'tenant'";
 
-        Integer id = null;
         try {
             PreparedStatement pstm = this.connection.prepareStatement(sql);
             pstm.setString(1, tenant_name);
+            pstm.setString(2, contact);
             ResultSet result = pstm.executeQuery();
 
             if(result.next()){
@@ -219,8 +219,6 @@ public class Tenant extends ConnectionAccess {
     public void main(String[] args){
         Tenant baby_wait = new Tenant();
         System.out.println("DOING GOOD");
-
-        System.out.println(baby_wait.tenant_ID("Andiswa Mandoda"));
        // System.out.println(baby_wait.landlord_username(772));
         //System.out.println(baby_wait.landlordEmail(772));
     }
