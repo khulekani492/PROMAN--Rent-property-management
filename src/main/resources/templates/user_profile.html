@@ -23,7 +23,14 @@
         --muted-text: #6b7378; /* secondary text */
         --accent: #D4AF37;     /* warm gold accent (complements logo) */
         --accent-dark: #b8892a;/* darker accent for hover */
+        --accent-light: rgba(212, 175, 55, 0.1); /* light accent for backgrounds */
         --glass: rgba(255,255,255,0.6);
+        --error: #dc2626;      /* error red */
+        --error-light: rgba(220, 38, 38, 0.1); /* light error background */
+        --success: #16a34a;    /* success green */
+        --success-light: rgba(22, 163, 74, 0.1); /* light success background */
+        --warning: #d97706;    /* warning amber */
+        --warning-light: rgba(217, 119, 6, 0.1); /* light warning background */
     }
 
     /* Dark theme variables */
@@ -35,7 +42,14 @@
         --muted-text: #94a3b8;  /* muted light text */
         --accent: #F4B342;      /* brighter gold for dark mode */
         --accent-dark: #E0A028; /* darker gold for hover */
+        --accent-light: rgba(244, 179, 66, 0.15); /* light accent for dark mode */
         --glass: rgba(30, 41, 59, 0.6);
+        --error: #f87171;       /* light error red */
+        --error-light: rgba(248, 113, 113, 0.15);
+        --success: #4ade80;     /* light success green */
+        --success-light: rgba(74, 222, 128, 0.15);
+        --warning: #fbbf24;     /* light warning amber */
+        --warning-light: rgba(251, 191, 36, 0.15);
     }
 
     body {
@@ -45,6 +59,7 @@
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        font-family: system-ui, -apple-system, sans-serif;
     }
 
     .text-accent { color: var(--accent) !important; }
@@ -130,7 +145,7 @@
         color: #1a1400;
     }
 
-    /* Mobile Menu Button Styles - MATCHING PREVIOUS SIZE */
+    /* Mobile Menu Button Styles */
     #mobile-menu-button {
         display: none; /* Hidden by default on desktop */
         align-items: center;
@@ -165,7 +180,7 @@
         border-radius: 2px;
     }
 
-    /* Hamburger to X animation - SAME AS BEFORE */
+    /* Hamburger to X animation */
     #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
         transform: rotate(45deg) translate(4px, 4px);
     }
@@ -183,6 +198,7 @@
         background: var(--surface);
         border-top: 1px solid var(--muted);
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
     }
 
     body.dark #mobile-menu {
@@ -230,6 +246,7 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s ease;
+        backdrop-filter: blur(4px);
     }
 
     .loading-overlay.active {
@@ -242,7 +259,15 @@
         padding: 2rem;
         border-radius: 1rem;
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        max-width: 90%;
+        width: 400px;
+        transform: translateY(10px);
+        animation: slideUp 0.3s ease forwards;
+    }
+
+    @keyframes slideUp {
+        to { transform: translateY(0); }
     }
 
     .overlay-spinner {
@@ -258,6 +283,7 @@
     /* Form styling */
     .form-group {
         margin-bottom: 1.5rem;
+        position: relative;
     }
 
     .form-label {
@@ -265,6 +291,7 @@
         font-weight: 600;
         margin-bottom: 0.5rem;
         color: var(--text);
+        font-size: 0.875rem;
     }
 
     .form-input {
@@ -275,12 +302,46 @@
         background: var(--surface);
         color: var(--text);
         transition: all 0.3s ease;
+        font-size: 1rem;
     }
 
     .form-input:focus {
         outline: none;
         border-color: var(--accent);
-        box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+        box-shadow: 0 0 0 4px var(--accent-light);
+    }
+
+    .form-input.error {
+        border-color: var(--error);
+        background-color: var(--error-light);
+    }
+
+    .form-input.success {
+        border-color: var(--success);
+        background-color: var(--success-light);
+    }
+
+    .form-input.warning {
+        border-color: var(--warning);
+        background-color: var(--warning-light);
+    }
+
+    .form-hint {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        color: var(--muted-text);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .form-error {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        color: var(--error);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
     }
 
     .btn {
@@ -290,17 +351,29 @@
         cursor: pointer;
         transition: all 0.3s ease;
         border: none;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 44px; /* Better touch target */
     }
 
     .btn-primary {
         background: var(--accent);
         color: #2b1f00;
+        position: relative;
+        overflow: hidden;
     }
 
     .btn-primary:hover {
         background: var(--accent-dark);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(212,175,55,0.2);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
     }
 
     body.dark .btn-primary {
@@ -328,12 +401,28 @@
         background: #78350f; /* amber-900 */
     }
 
+    .btn-secondary {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--muted);
+    }
+
+    .btn-secondary:hover {
+        background: var(--muted);
+        transform: translateY(-2px);
+    }
+
+    .btn-full {
+        width: 100%;
+    }
+
     .status-badge {
         display: inline-block;
         padding: 0.25rem 0.75rem;
         border-radius: 9999px;
         font-size: 0.875rem;
         font-weight: 600;
+        transition: all 0.3s ease;
     }
 
     .status-paid {
@@ -399,6 +488,7 @@
         margin-bottom: 2rem;
         border-left: 4px solid var(--accent);
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
     }
 
     body.dark .property-header {
@@ -412,10 +502,118 @@
         padding: 2rem;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         margin-bottom: 2rem;
+        transition: all 0.3s ease;
     }
 
     body.dark .tenant-info-card {
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* Validation styles */
+    .is-invalid {
+        animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+
+    /* Success message */
+    .success-message {
+        background: var(--success-light);
+        border: 1px solid var(--success);
+        color: var(--success);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Tooltip */
+    .tooltip {
+        position: relative;
+    }
+
+    .tooltip:hover::before {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--surface);
+        color: var(--text);
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10;
+        border: 1px solid var(--muted);
+    }
+
+    /* Required field indicator */
+    .required::after {
+        content: " *";
+        color: var(--error);
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 640px) {
+        .main-content {
+            padding: 1rem 0;
+        }
+
+        .tenant-info-card,
+        .property-header {
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+        }
+    }
+
+    /* Focus visible for accessibility */
+    *:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Section transitions */
+    .fade-in {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
     }
   </style>
 </head>
@@ -435,23 +633,21 @@
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
   <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
     <div class="flex items-center gap-3">
-      <a href="http://localhost:7070/" class="flex items-center">
+      <a href="http://localhost:7070/" class="flex items-center hover:opacity-90 transition-opacity">
         <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
              class="h-28 md:h-32 lg:h-36 w-auto object-contain">
       </a>
       <div>
-        <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">ProMan</a>
+        <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent hover:text-[var(--accent-dark)] transition">ProMan</a>
         <div class="text-xs text-muted -mt-1">Property management simplified</div>
       </div>
     </div>
 
     <!-- Header Actions (Theme Toggle & Mobile Menu) -->
     <div class="header-actions">
-      <!-- Dark Mode Toggle -->
-
-
       <!-- Mobile Menu Button -->
-      <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
+      <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false"
+              class="tooltip" data-tooltip="Navigation menu">
         <div class="mobile-menu-icon">
           <span></span>
           <span></span>
@@ -564,6 +760,133 @@
       });
   }
 
+  // Form validation and UX improvements
+  function validateForm(form) {
+      let isValid = true;
+      const requiredFields = form.querySelectorAll('[required]');
+
+      requiredFields.forEach(field => {
+          const value = field.value.trim();
+          const parent = field.closest('.form-group') || field.parentElement;
+
+          // Remove existing error messages
+          const existingError = parent.querySelector('.form-error');
+          if (existingError) existingError.remove();
+
+          // Remove error class
+          field.classList.remove('error', 'is-invalid');
+
+          // Check if field is empty
+          if (!value) {
+              isValid = false;
+              field.classList.add('error', 'is-invalid');
+              const errorMsg = document.createElement('div');
+              errorMsg.className = 'form-error';
+              errorMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> This field is required';
+              parent.appendChild(errorMsg);
+          }
+
+          // Special validation for rent day
+          if (field.id === 'rent_day') {
+              const rentDay = parseInt(value);
+              if (rentDay < 1 || rentDay > 31) {
+                  isValid = false;
+                  field.classList.add('error', 'is-invalid');
+                  const errorMsg = document.createElement('div');
+                  errorMsg.className = 'form-error';
+                  errorMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Please enter a valid day (1-31)';
+                  parent.appendChild(errorMsg);
+              }
+          }
+
+          // Validation for move-in and move-out dates
+          if (field.id === 'MoveIn' || field.id === 'move_out') {
+              if (value) {
+                  const selectedDate = new Date(value);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  if (field.id === 'move_out' && form.querySelector('#MoveIn').value) {
+                      const moveInDate = new Date(form.querySelector('#MoveIn').value);
+                      if (selectedDate <= moveInDate) {
+                          isValid = false;
+                          field.classList.add('error', 'is-invalid');
+                          const errorMsg = document.createElement('div');
+                          errorMsg.className = 'form-error';
+                          errorMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Move out date must be after move in date';
+                          parent.appendChild(errorMsg);
+                      }
+                  }
+              }
+          }
+      });
+
+      return isValid;
+  }
+
+  // Add real-time validation
+  function setupRealTimeValidation() {
+      const forms = document.querySelectorAll('form');
+
+      forms.forEach(form => {
+          const inputs = form.querySelectorAll('input, select, textarea');
+
+          inputs.forEach(input => {
+              // Add focus styling
+              input.addEventListener('focus', function() {
+                  this.parentElement.classList.add('focused');
+              });
+
+              input.addEventListener('blur', function() {
+                  this.parentElement.classList.remove('focused');
+                  if (this.hasAttribute('required')) {
+                      validateField(this);
+                  }
+              });
+
+              // Real-time validation for specific fields
+              if (input.id === 'rent_day') {
+                  input.addEventListener('input', function() {
+                      const value = parseInt(this.value);
+                      if (value < 1 || value > 31) {
+                          this.classList.add('warning');
+                          const parent = this.closest('.form-group') || this.parentElement;
+                          let hint = parent.querySelector('.form-hint');
+                          if (!hint) {
+                              hint = document.createElement('div');
+                              hint.className = 'form-hint';
+                              parent.appendChild(hint);
+                          }
+                          hint.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Enter a day between 1 and 31';
+                      } else {
+                          this.classList.remove('warning');
+                          const hint = parent.querySelector('.form-hint');
+                          if (hint) hint.remove();
+                      }
+                  });
+              }
+          });
+      });
+  }
+
+  function validateField(field) {
+      const parent = field.closest('.form-group') || field.parentElement;
+      const existingError = parent.querySelector('.form-error');
+      if (existingError) existingError.remove();
+
+      field.classList.remove('error', 'is-invalid');
+
+      if (field.hasAttribute('required') && !field.value.trim()) {
+          field.classList.add('error', 'is-invalid');
+          const errorMsg = document.createElement('div');
+          errorMsg.className = 'form-error';
+          errorMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> This field is required';
+          parent.appendChild(errorMsg);
+          return false;
+      }
+      return true;
+  }
+
   // Initialize icons on page load
   document.addEventListener('DOMContentLoaded', function() {
       // Set initial theme from server
@@ -583,43 +906,123 @@
 
       // Set current year in footer
       document.getElementById('pro-man-year').textContent = new Date().getFullYear();
+
+      // Setup real-time validation
+      setupRealTimeValidation();
+
+      // Add input formatting for rent amount
+      const rentAmountInput = document.querySelector('input[name="rent_amount"]');
+      if (rentAmountInput) {
+          rentAmountInput.addEventListener('blur', function() {
+              if (this.value) {
+                  this.value = parseFloat(this.value).toFixed(2);
+              }
+          });
+      }
+
+      // Add auto-save indicator for property form
+      const propertyForm = document.getElementById('propertyForm');
+      if (propertyForm) {
+          let saveTimeout;
+          propertyForm.addEventListener('input', function() {
+              clearTimeout(saveTimeout);
+              const saveBtn = this.querySelector('button[type="submit"]');
+              if (saveBtn) {
+                  saveBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-spin mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Saving...';
+                  saveBtn.disabled = true;
+
+                  saveTimeout = setTimeout(() => {
+                      saveBtn.innerHTML = 'Update Property Info';
+                      saveBtn.disabled = false;
+                  }, 1000);
+              }
+          });
+      }
+
+      // Enhance date inputs with today button
+      const dateInputs = document.querySelectorAll('input[type="date"]');
+      dateInputs.forEach(input => {
+          const parent = input.parentElement;
+          const todayBtn = document.createElement('button');
+          todayBtn.type = 'button';
+          todayBtn.className = 'text-xs px-2 py-1 mt-1 bg-[var(--accent-light)] text-[var(--accent)] rounded hover:bg-[var(--accent)] hover:text-white transition';
+          todayBtn.textContent = 'Today';
+          todayBtn.addEventListener('click', function() {
+              const today = new Date().toISOString().split('T')[0];
+              input.value = today;
+              input.dispatchEvent(new Event('change'));
+          });
+          parent.appendChild(todayBtn);
+      });
+
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+          // Ctrl+S to save
+          if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+              e.preventDefault();
+              const saveBtn = document.querySelector('button[type="submit"][value="save"]');
+              if (saveBtn) saveBtn.click();
+          }
+
+          // Escape to go back
+          if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+              window.history.back();
+          }
+      });
+
+      // Add subtle animation to cards on load
+      setTimeout(() => {
+          document.querySelectorAll('.tenant-info-card, .property-header').forEach((card, index) => {
+              card.style.animationDelay = `${index * 0.1}s`;
+              card.classList.add('fade-in');
+          });
+      }, 100);
   });
 </script>
 
 <!-- Main Content with spacing -->
 <main class="main-content">
-  <div class="max-w-4xl mx-auto px-6">
+  <div class="max-w-4xl mx-auto px-6 fade-in">
 
-    <!-- Property Header - Updated to NOT auto-submit -->
+    <!-- Property Header -->
     <div class="property-header mb-8">
       <form id="propertyForm" method="POST" th:action="@{/update_property_info}">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <h3 class="text-sm font-medium text-[var(--muted-text)]">Property</h3>
-            <input type="text" name="property_name"
-                   class="w-full text-xl font-bold text-[var(--accent)] bg-transparent border-0 focus:outline-none focus:border-b-2 focus:border-[var(--accent)]"
-                   th:value="${property_name}"/>
+          <div class="form-group">
+            <h3 class="text-sm font-medium text-[var(--muted-text)] mb-2">Property</h3>
+            <input type="text" name="property_name" required
+                   class="w-full text-xl font-bold text-[var(--accent)] bg-transparent border-0 border-b-2 border-transparent focus:outline-none focus:border-b-2 focus:border-[var(--accent)] transition-colors"
+                   th:value="${property_name}"
+                   placeholder="Enter property name"/>
+            <div class="form-hint">The name of your property</div>
           </div>
-          <div>
-            <h3 class="text-sm font-medium text-[var(--muted-text)]">Unit Number</h3>
-            <input type="text" name="unit_number"
-                   class="w-full text-xl font-bold bg-transparent border-0 focus:outline-none focus:border-b-2 focus:border-[var(--accent)]"
-                   th:value="${unit_number}"/>
+          <div class="form-group">
+            <h3 class="text-sm font-medium text-[var(--muted-text)] mb-2">Unit Number</h3>
+            <input type="text" name="unit_number" required
+                   class="w-full text-xl font-bold bg-transparent border-0 border-b-2 border-transparent focus:outline-none focus:border-b-2 focus:border-[var(--accent)] transition-colors"
+                   th:value="${unit_number}"
+                   placeholder="e.g., A101"/>
+            <div class="form-hint">Unit identifier or number</div>
           </div>
-          <div>
-            <h3 class="text-sm font-medium text-[var(--muted-text)]">Rent Amount</h3>
+          <div class="form-group">
+            <h3 class="text-sm font-medium text-[var(--muted-text)] mb-2">Rent Amount</h3>
             <div class="flex items-center">
               <span class="text-xl font-bold text-green-600 mr-1">R</span>
-              <input type="number" name="rent_amount" step="0.01" min="0"
-                     class="w-full text-xl font-bold text-green-600 bg-transparent border-0 focus:outline-none focus:border-b-2 focus:border-[var(--accent)]"
-                     th:value="${rent_amount}"/>
+              <input type="number" name="rent_amount" step="0.01" min="0" required
+                     class="w-full text-xl font-bold text-green-600 bg-transparent border-0 border-b-2 border-transparent focus:outline-none focus:border-b-2 focus:border-[var(--accent)] transition-colors"
+                     th:value="${rent_amount}"
+                     placeholder="0.00"/>
             </div>
+            <div class="form-hint">Monthly rental amount</div>
           </div>
         </div>
         <!-- Save button for property form -->
-        <div class="mt-4 text-right">
+        <div class="mt-6 pt-4 border-t border-[var(--muted)] text-right">
           <button type="submit"
-                  class="px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition text-sm font-medium">
+                  class="px-6 py-2.5 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 text-sm font-medium shadow-md hover:shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
             Update Property Info
           </button>
         </div>
@@ -628,43 +1031,53 @@
 
     <!-- Tenant Information Card -->
     <div class="tenant-info-card">
-      <h2 class="text-2xl font-bold mb-6 pb-3 border-b border-[var(--muted)]">Tenant Information</h2>
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-[var(--muted)]">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          Tenant Information
+        </h2>
+        <span class="status-badge text-sm" th:classappend="${Payment_status == 'Paid'} ? 'status-paid' : 'status-pending'" th:text="${Payment_status}">Pending</span>
+      </div>
 
       <!-- Current Tenant Info -->
       <div class="mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-          <div>
-            <h3 class="text-sm font-medium text-[var(--muted-text)]">Tenant Name</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="form-group">
+            <label for="tenant_name_input" class="form-label required">Tenant Name</label>
             <input type="text" id="tenant_name_input" name="tenant_name_input" required
-                   class="form-input mt-1"
+                   class="form-input"
                    th:value="${tenant_name}"
                    placeholder="Enter tenant's full name"/>
-          </div>
-          <div>
-            <h3 class="text-sm font-medium text-[var(--muted-text)]">Payment Status</h3>
-            <span class="status-badge"
-                  th:classappend="${Payment_status == 'Paid'} ? 'status-paid' : 'status-pending'"
-                  th:text="${Payment_status}">Pending</span>
+            <div class="form-hint">Full legal name of the tenant</div>
           </div>
         </div>
 
         <!-- Kin Information -->
-        <div class="mb-6">
-          <h3 class="text-sm font-medium text-[var(--muted-text)]">Next of Kin</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-            <div>
-              <p class="text-sm text-[var(--muted-text)]">Name</p>
+        <div class="mb-6 p-4 bg-[var(--accent-light)] rounded-lg border border-[var(--accent)]/20">
+          <h3 class="text-sm font-medium text-[var(--accent)] mb-3 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Next of Kin Information
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="kin_name" class="form-label required">Kin's Name</label>
               <input type="text" id="kin_name" name="kin_name" required
                      class="form-input"
                      th:value="${kin_name}"
                      placeholder="Enter kin's full name"/>
+              <div class="form-hint">Emergency contact person</div>
             </div>
-            <div>
-              <p class="text-sm text-[var(--muted-text)]">Contact</p>
+            <div class="form-group">
+              <label for="kin_contact" class="form-label required">Kin's Contact</label>
               <input type="tel" id="kin_contact" name="kin_contact" required
                      class="form-input"
                      th:value="${kin_contact}"
                      placeholder="Enter kin's phone number"/>
+              <div class="form-hint">Phone number with country code</div>
             </div>
           </div>
         </div>
@@ -675,30 +1088,33 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Move In Date -->
           <div class="form-group">
-            <label for="MoveIn" class="form-label">Move In Date</label>
+            <label for="MoveIn" class="form-label required">Move In Date</label>
             <input type="date" id="MoveIn" name="move_in" required
                    class="form-input"
                    th:value="${move_in_date}"/>
+            <div class="form-hint">When the tenant moved in</div>
           </div>
 
           <!-- Rent Day -->
           <div class="form-group">
-            <label for="rent_day" class="form-label">Rent Day (1-31)</label>
+            <label for="rent_day" class="form-label required">Rent Day</label>
             <input type="number" id="rent_day" name="rent_day" required
                    min="1" max="31"
                    class="form-input"
                    th:value="${rent_day}"
                    placeholder="Enter day of month (1-31)"/>
+            <div class="form-hint">Day of month when rent is due</div>
           </div>
 
           <!-- Move Out Date -->
           <div class="form-group">
-            <label for="move_out" class="form-label">Move Out Date (Optional)</label>
+            <label for="move_out" class="form-label">Move Out Date</label>
             <input type="date" id="move_out" name="move_out"
                    class="form-input"
                    placeholder="Leave empty if tenant is still active"/>
+            <div class="form-hint">When the tenant moved out (optional)</div>
           </div>
-        </div> <!-- Closes the grid div -->
+        </div>
 
         <!-- Hidden fields for property info -->
         <input type="hidden" name="property_name" th:value="${property_name}" />
@@ -709,7 +1125,7 @@
         <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-[var(--muted)]">
           <button type="submit" name="action" value="save"
                   class="btn btn-primary flex-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
             </svg>
             Update Tenant Information
@@ -717,30 +1133,37 @@
 
           <button type="submit" name="action" value="vacant"
                   class="btn btn-danger flex-1"
-                  onclick="return confirm('Are you sure you want to remove this tenant? This action cannot be undone.')">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  onclick="return confirmVacant()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            Remove Tenant (Make Unit Vacant)
+            Remove Tenant
           </button>
-        </div> <!-- Closes the form buttons div -->
-      </form> <!-- Closes the form -->
-    </div> <!-- Closes the tenant-info-card div -->
+        </div>
+      </form>
+    </div>
 
-    <!-- Back to Dashboard Link -->
-    <div class="mt-8 text-center">
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 mt-8">
       <a href="http://localhost:7070/Dashboard"
-         class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--surface)] text-[var(--text)] rounded-lg border border-[var(--muted)] hover:bg-[var(--muted)] transition font-medium">
+         class="btn btn-secondary flex-1">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
         Back to Dashboard
       </a>
-    </div>
-  </div> <!-- Closes the max-w-4xl mx-auto px-6 div -->
-</main> <!-- Closes the main content div -->
 
-<footer class="mt-12 py-8 bg-surface">
+      <button onclick="window.print()" class="btn btn-secondary flex-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        Print Details
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer class="mt-12 py-8 bg-surface border-t border-[var(--muted)]">
   <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
     &copy; <span id="pro-man-year">2025</span> ProMan Property Management Solutions.
   </div>
@@ -753,15 +1176,33 @@
     const propertyForm = document.getElementById('propertyForm');
     const loadingOverlay = document.getElementById('loadingOverlay');
 
+    // Custom confirmation for vacant action
+    window.confirmVacant = function() {
+      return confirm('Are you sure you want to remove this tenant? This action cannot be undone. The unit will be marked as vacant.');
+    }
+
     // Handle tenant form submission
     if (tenantForm) {
       tenantForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate form
+        if (!validateForm(this)) {
+          // Scroll to first error
+          const firstError = this.querySelector('.error');
+          if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+          }
+          return false;
+        }
+
         // Show loading overlay
         loadingOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
 
         // Determine which button was clicked
-        const submitButton = e.submitter || tenantForm.querySelector('button[type="submit"]:focus');
+        const submitButton = e.submitter || this.querySelector('button[type="submit"]:focus');
         if (submitButton && submitButton.name === 'action' && submitButton.value === 'vacant') {
           loadingOverlay.querySelector('p').textContent = 'Removing tenant...';
           loadingOverlay.querySelector('p + p').textContent = 'Please wait while we process your request';
@@ -769,16 +1210,38 @@
           loadingOverlay.querySelector('p').textContent = 'Updating tenant information...';
           loadingOverlay.querySelector('p + p').textContent = 'Please wait while we save your changes';
         }
+
+        // Submit form after validation
+        setTimeout(() => {
+          this.submit();
+        }, 500);
       });
     }
 
     // Handle property form submission
     if (propertyForm) {
-      propertyForm.addEventListener('submit', function() {
+      propertyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate form
+        if (!validateForm(this)) {
+          const firstError = this.querySelector('.error');
+          if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+          }
+          return false;
+        }
+
         loadingOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         loadingOverlay.querySelector('p').textContent = 'Updating property information...';
         loadingOverlay.querySelector('p + p').textContent = 'Please wait while we save your changes';
+
+        // Submit form
+        setTimeout(() => {
+          this.submit();
+        }, 500);
       });
     }
 
@@ -786,6 +1249,18 @@
     window.addEventListener('beforeunload', function() {
       loadingOverlay.classList.remove('active');
       document.body.style.overflow = '';
+    });
+
+    // Add input validation feedback
+    document.querySelectorAll('.form-input').forEach(input => {
+      input.addEventListener('input', function() {
+        if (this.classList.contains('error')) {
+          this.classList.remove('error', 'is-invalid');
+          const parent = this.closest('.form-group') || this.parentElement;
+          const error = parent.querySelector('.form-error');
+          if (error) error.remove();
+        }
+      });
     });
   });
 </script>
