@@ -95,6 +95,30 @@ public class landlord extends ConnectionAccess {
         return username;
     }
 
+
+    public String landlord_property_address(Integer landlordId) {
+
+        String sql = """
+                SELECT property_address FROM properties WHERE landlord_user_id =?
+                limit 1""";
+
+        String username_address = "";
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,landlordId);
+                ResultSet result = pstm.executeQuery();
+
+                if(result.next()){
+                    username_address = result.getString("property_address");
+
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return username_address;
+    }
+
     public String property_estimated_profit(Integer landlordId, String property_name) {
 
         String sql = """
