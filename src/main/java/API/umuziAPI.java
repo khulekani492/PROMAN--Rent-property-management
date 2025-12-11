@@ -137,12 +137,12 @@ public class umuziAPI {
 
 
         UpdateTenants tenant_unit_update = new UpdateTenants();
-        app.post("unmark_payment/{id}/{unit}", tenant_unit_update.unmark_payment());
+        app.post("unmark_payment/{id}/{unit}/{tenantContact}", tenant_unit_update.unmark_payment());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
 
         Record_rent complete_payment_record = new Record_rent();
-        app.post("/payment_status/{id}/{unit}",complete_payment_record.payment());
+        app.post("/payment_status/{id}/{unit}/{tenantContact}",complete_payment_record.payment());
         /**
          * adds new user information to the database
          */
