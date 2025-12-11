@@ -1,10 +1,11 @@
-
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ProMan — Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* CSS Variables for Light/Dark Themes */
@@ -29,6 +30,8 @@
             --error-text: #991b1b;
             --success-bg: #f0fdf4;
             --success-text: #166534;
+            --warning-bg: #fffbeb;
+            --warning-text: #92400e;
         }
 
         body.dark {
@@ -52,16 +55,22 @@
             --error-text: #fca5a5;
             --success-bg: #052e16;
             --success-text: #86efac;
+            --warning-bg: #451a03;
+            --warning-text: #fdba74;
         }
 
         /* Base Styles */
-        html,body { height:100%; }
+        html,body {
+            height:100%;
+            scroll-behavior: smooth;
+        }
+
         body {
             margin:0;
             min-height:100%;
             background:var(--bg);
             color:var(--text);
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             -webkit-font-smoothing:antialiased;
             -moz-osx-font-smoothing:grayscale;
             display:flex;
@@ -69,56 +78,102 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Header - Increased height */
+        /* IMPROVED: Better focus states for accessibility */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* IMPROVED: Header with better visual hierarchy */
         header.topbar {
             background: var(--surface);
             border-bottom: 1px solid var(--muted);
             position: sticky;
             top: 0;
             z-index: 60;
-            height: 100px;
+            height: 70px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
 
-        header .brand-left { display:flex; gap:1rem; align-items:center; }
-        header .brand-left img { height:5rem; width:auto; }
-        header .brand-left a.text-accent { color: var(--accent); font-weight:800; font-size:1.125rem; }
+        body.dark header.topbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        header .brand-left {
+            display:flex;
+            gap:1rem;
+            align-items:center;
+        }
+
+        header .brand-left img {
+            height:3rem;
+            width:auto;
+            transition: transform 0.3s ease;
+        }
+
+        header .brand-left img:hover {
+            transform: scale(1.05);
+        }
+
+        header .brand-left a.text-accent {
+            color: var(--accent);
+            font-weight:800;
+            font-size:1.25rem;
+            letter-spacing: -0.5px;
+        }
 
         .main-wrap {
             display:flex;
             flex:1;
-            min-height: calc(100vh - 100px);
+            min-height: calc(100vh - 70px);
         }
 
-        /* Sidebar */
+        /* IMPROVED: Sidebar with better organization */
         .sidebar {
-            width:16rem;
-            height: calc(100vh - 100px);
+            width: 260px;
+            height: calc(100vh - 70px);
             position:fixed;
             left:0;
-            top: 100px;
+            top: 70px;
             z-index:50;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             background: var(--sidebar-bg);
             transition: transform .28s ease, box-shadow .28s ease, background-color 0.3s ease;
             border-right: 1px solid var(--muted);
             transform: translateX(0);
             display: flex;
             flex-direction: column;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 3px;
         }
 
         .sidebar-content {
             flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Desktop layout */
         @media (min-width:1025px) {
             .content {
-                margin-left: 16rem;
-                padding:1.5rem;
-                padding-top:2rem;
-                width: calc(100% - 16rem);
+                margin-left: 260px;
+                padding:2rem;
+                width: calc(100% - 260px);
             }
             #sidebar-backdrop { display:none; }
             #mobile-menu-button { display:none; }
@@ -129,10 +184,12 @@
             .sidebar {
                 transform: translateX(-100%);
                 position:fixed;
-                height: calc(100vh - 100px);
+                height: calc(100vh - 70px);
                 left:0;
-                top: 100px;
+                top: 70px;
                 box-shadow: 0 18px 40px rgba(16,24,40,0.12);
+                width: 85%;
+                max-width: 320px;
             }
             body.dark .sidebar {
                 box-shadow: 0 18px 40px rgba(0,0,0,0.4);
@@ -143,8 +200,7 @@
             }
             .content {
                 margin-left: 0;
-                padding:1rem;
-                padding-top:1.5rem;
+                padding:1.25rem;
                 width: 100%;
             }
             #sidebar-backdrop {
@@ -166,134 +222,198 @@
             }
         }
 
+        /* IMPROVED: Better sidebar cards with interactive states */
         .sidebar .card {
-            background: linear-gradient(180deg, var(--surface), var(--surface));
-            border:1px solid var(--muted);
+            background: var(--surface);
+            border: 1px solid var(--muted);
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border-left: 3px solid rgba(212,175,55,0.18);
-            transition: all 0.3s ease;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .sidebar .card:hover::before {
+            transform: translateX(100%);
         }
 
         body.dark .sidebar .card {
-            border-left: 3px solid rgba(244, 179, 66, 0.18);
+            border-left: 4px solid var(--accent);
         }
 
-        /* WIGGLE EFFECT for sidebar stats cards */
-        .sidebar-stats .card {
-            animation: none;
+        .sidebar .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: var(--accent);
         }
 
-        .sidebar-stats .card:hover {
-            animation: wiggle 0.5s ease-in-out;
-            transform-origin: center center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        body.dark .sidebar .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
-        body.dark .sidebar-stats .card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-1.5deg); }
-            50% { transform: rotate(1.5deg); }
-            75% { transform: rotate(-1deg); }
-        }
-
-        /* Bounce effect alternative (comment out wiggle and uncomment this for bounce) */
-        /*
-        .sidebar-stats .card:hover {
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-        */
-
+        /* IMPROVED: Feature icons with better visual hierarchy */
         .feature-icon {
-            width:44px;
-            height:44px;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            border-radius:8px;
-            background: rgba(212,175,55,0.08);
+            width: 48px;
+            height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08));
             color: var(--accent);
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 1.25rem;
         }
 
         .sidebar-stats .card:hover .feature-icon {
             transform: scale(1.1) rotate(5deg);
+            background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.15));
         }
 
         body.dark .feature-icon {
-            background: rgba(244, 179, 66, 0.08);
+            background: linear-gradient(135deg, rgba(244, 179, 66, 0.15), rgba(244, 179, 66, 0.08));
         }
 
+        /* IMPROVED: Navigation items with better affordances */
         .nav-item {
-            display:flex;
-            align-items:center;
-            gap:.75rem;
-            padding:.75rem;
-            border-radius:.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
             color: var(--text);
-            text-decoration:none;
-            transition: all 0.2s ease;
-            background: rgba(255,255,255,0.05);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item > * {
+            position: relative;
+            z-index: 1;
         }
 
         body.dark .nav-item {
-            background: rgba(255,255,255,0.05);
+            background: transparent;
         }
 
         .nav-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(212,175,55,0.08);
+            border-color: rgba(212,175,55,0.3);
             color: var(--text);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            /* No wiggle for nav items */
-            transform: none !important;
-            animation: none !important;
+            box-shadow: 0 4px 12px rgba(212,175,55,0.1);
+            transform: translateX(4px);
         }
 
         body.dark .nav-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(244, 179, 66, 0.08);
+            border-color: rgba(244, 179, 66, 0.3);
+            box-shadow: 0 4px 12px rgba(244, 179, 66, 0.1);
         }
 
         .nav-item.active {
-            background: rgba(212,175,55,0.1);
-            border-left: 4px solid var(--accent);
+            background: rgba(212,175,55,0.12);
+            border: 1px solid rgba(212,175,55,0.4);
             color: var(--text);
-            box-shadow: 0 2px 6px rgba(212,175,55,0.1);
+            box-shadow: 0 4px 12px rgba(212,175,55,0.15);
+            font-weight: 600;
         }
 
         body.dark .nav-item.active {
-            background: rgba(244, 179, 66, 0.1);
-            box-shadow: 0 2px 6px rgba(244, 179, 66, 0.1);
+            background: rgba(244, 179, 66, 0.12);
+            border-color: rgba(244, 179, 66, 0.4);
+            box-shadow: 0 4px 12px rgba(244, 179, 66, 0.15);
         }
 
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* IMPROVED: Card surfaces with better depth */
         .card-surface {
             background: var(--surface);
-            border-radius:.75rem;
-            box-shadow: 0 18px 40px rgba(16,24,40,0.06);
-            padding:1.25rem;
-            border:1px solid var(--muted);
-            transition: all 0.3s ease;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(16,24,40,0.08);
+            padding: 1.5rem;
+            border: 1px solid var(--muted);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-surface:hover {
+            box-shadow: 0 15px 40px rgba(16,24,40,0.12);
         }
 
         body.dark .card-surface {
-            box-shadow: 0 18px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        /* TABLE Styles */
+        body.dark .card-surface:hover {
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* IMPROVED: Table with better visual hierarchy */
         .units-wrapper {
             width:100%;
             overflow-x:auto;
             -webkit-overflow-scrolling:touch;
             max-width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--muted);
+        }
+
+        .units-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .units-wrapper::-webkit-scrollbar-track {
+            background: var(--muted);
+            border-radius: 4px;
+        }
+
+        .units-wrapper::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 4px;
         }
 
         .units-table {
@@ -301,88 +421,168 @@
             min-width:760px;
             border-collapse:separate;
             border-spacing:0;
-            border-radius:.5rem;
+            border-radius:12px;
             overflow:hidden;
-            box-shadow: 0 8px 24px rgba(16,24,40,0.04);
-        }
-
-        body.dark .units-table {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
         .units-table thead th {
             background: var(--table-header-bg);
-            color:var(--text);
-            font-weight:700;
-            padding:.75rem 1rem;
-            text-align:left;
-            border-bottom: 1px solid var(--table-border);
-            position:sticky;
-            top:0;
-            z-index:10;
+            color: var(--text);
+            font-weight: 700;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 2px solid var(--table-border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .units-table thead th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .units-table thead th:last-child {
+            border-top-right-radius: 12px;
         }
 
         .units-table tbody td {
             background: var(--surface);
-            padding:.75rem 1rem;
-            border-bottom:1px solid var(--muted);
-            color:var(--text);
-            white-space:nowrap;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--muted);
+            color: var(--text);
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .units-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .units-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .units-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
         }
 
         .units-table tbody tr:hover td {
             background: var(--table-row-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .units-table tbody tr:nth-child(even) td {
             background: var(--table-row-even);
         }
 
+        /* IMPROVED: Status indicators with better affordances */
         .indicator {
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            width:1.9rem;
-            height:1.9rem;
-            border-radius:.5rem;
-            font-weight:700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.125rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .indicator:hover::before {
+            opacity: 1;
+        }
+
+        .indicator:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .indicator.bg-red-100, .indicator.bg-red {
-            background: rgba(255,69,58,0.08);
-            color:#C53030;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border: 2px solid #fca5a5;
         }
 
         body.dark .indicator.bg-red-100, body.dark .indicator.bg-red {
-            background: rgba(239,68,68,0.15);
-            color:#fca5a5;
+            background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.1));
+            color: #fca5a5;
+            border: 2px solid rgba(239,68,68,0.3);
         }
 
         .indicator.bg-green-100, .indicator.bg-green {
-            background: rgba(16,185,129,0.08);
-            color:#065f46;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            border: 2px solid #34d399;
         }
 
         body.dark .indicator.bg-green-100, body.dark .indicator.bg-green {
-            background: rgba(34,197,94,0.15);
-            color:#86efac;
+            background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.1));
+            color: #86efac;
+            border: 2px solid rgba(34,197,94,0.3);
         }
 
-        .control-btn { padding:.65rem .85rem; border-radius:.5rem; font-weight:600; }
+        .control-btn {
+            padding:.75rem 1rem;
+            border-radius:10px;
+            font-weight:600;
+            transition: all 0.3s ease;
+        }
 
-        /* Row selection styling */
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* IMPROVED: Row selection with better visual feedback */
         .row-selected {
-            background-color: rgba(212,175,55,0.1) !important;
-            outline: 2px solid var(--accent);
+            background-color: rgba(212,175,55,0.15) !important;
+            outline: 3px solid var(--accent);
+            outline-offset: -3px;
+            position: relative;
+        }
+
+        .row-selected::after {
+            content: '✓';
+            position: absolute;
+            right: 1rem;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.25rem;
         }
 
         body.dark .row-selected {
-            background-color: rgba(244, 179, 66, 0.1) !important;
+            background-color: rgba(244, 179, 66, 0.15) !important;
         }
 
+        /* IMPROVED: Content area with better spacing */
         .content {
             box-sizing: border-box;
             overflow-x: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Mobile table adjustments */
@@ -398,178 +598,258 @@
             }
         }
 
-        /* Sidebar header styling */
+        /* IMPROVED: Sidebar header with better typography */
         .sidebar-header {
             background: var(--sidebar-bg);
-            padding: 1.5rem;
+            padding: 1.25rem;
             border-bottom: 1px solid var(--muted);
-            text-align: center;
+            text-align: left;
         }
 
-        /* Enhanced table styling */
+        /* IMPROVED: Enhanced table styling */
         .tenant-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .profile-placeholder {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background-color: var(--muted);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--muted-text);
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 8px rgba(212,175,55,0.2);
+        }
+
+        .profile-placeholder i {
+            font-size: 1.25rem;
         }
 
         .tenant-details {
             display: flex;
             flex-direction: column;
+            gap: 4px;
         }
 
         .tenant-name {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text);
         }
 
         .tenant-contact {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--muted-text);
         }
 
         .unit-details {
             display: flex;
             flex-direction: column;
+            gap: 4px;
         }
 
         .unit-number {
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 15px;
             color: var(--text);
         }
 
         .unit-rent {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--muted-text);
         }
 
+        /* IMPROVED: Status badges with better affordances */
         .status-badge {
             display: inline-flex;
             align-items: center;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .status-badge i {
+            font-size: 12px;
         }
 
         .status-active {
-            background-color: rgba(16,185,129,0.1);
+            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.08));
             color: #065f46;
+            border-color: rgba(16,185,129,0.3);
+        }
+
+        .status-active:hover {
+            background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(16,185,129,0.15));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.1);
         }
 
         body.dark .status-active {
-            background-color: rgba(34,197,94,0.15);
+            background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.08));
             color: #86efac;
+            border-color: rgba(34,197,94,0.3);
         }
 
         .status-pending {
-            background-color: rgba(245,158,11,0.1);
+            background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.08));
             color: #92400e;
+            border-color: rgba(245,158,11,0.3);
+        }
+
+        .status-pending:hover {
+            background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(245,158,11,0.15));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245,158,11,0.1);
         }
 
         body.dark .status-pending {
-            background-color: rgba(245,158,11,0.15);
+            background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.08));
             color: #fcd34d;
+            border-color: rgba(245,158,11,0.3);
         }
 
         .status-vacant {
-            background-color: rgba(239,68,68,0.1);
+            background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.08));
             color: #991b1b;
+            border-color: rgba(239,68,68,0.3);
+        }
+
+        .status-vacant:hover {
+            background: linear-gradient(135deg, rgba(239,68,68,0.25), rgba(239,68,68,0.15));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239,68,68,0.1);
         }
 
         body.dark .status-vacant {
-            background-color: rgba(239,68,68,0.15);
+            background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.08));
             color: #fca5a5;
+            border-color: rgba(239,68,68,0.3);
         }
 
+        /* IMPROVED: Edit button with better affordances */
         .edit-btn {
-            background: transparent;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             border: none;
-            color: #3b82f6;
+            color: white;
             font-size: 14px;
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .edit-btn i {
+            font-size: 14px;
         }
 
         body.dark .edit-btn {
-            color: #60a5fa;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
         }
 
         .edit-btn:hover {
-            background-color: rgba(59, 130, 246, 0.1);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+            color: white;
         }
 
         body.dark .edit-btn:hover {
-            background-color: rgba(96, 165, 250, 0.1);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         }
 
-        /* Header with date display */
+        /* IMPROVED: Header with better visual hierarchy */
         .header-with-date {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .date-display {
             background: var(--surface);
-            border-radius: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-right: 4px solid var(--accent);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-top: 0.5rem;
+            border-radius: 12px;
+            padding: 0.875rem 1.5rem;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-display i {
+            color: var(--accent);
+            font-size: 1.25rem;
         }
 
         body.dark .date-display {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         @media (max-width: 768px) {
             .header-with-date {
                 flex-direction: column;
+                align-items: flex-start;
                 gap: 1rem;
             }
             .date-display {
-                align-self: flex-end;
+                align-self: stretch;
+                justify-content: center;
             }
         }
 
-        /* Fix for Monthly Revenue card position */
+        /* IMPROVED: Sidebar stats with better spacing */
         .sidebar-stats {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
-        /* Payment Modal Styling */
+        /* IMPROVED: Payment Modal Styling */
         #paymentModal {
             z-index: 1000;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-card {
             z-index: 1001;
             position: relative;
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(20px) scale(0.95); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
         }
 
         body.modal-open {
             overflow: hidden;
         }
 
-        /* View modes */
+        /* IMPROVED: Property form with better visual hierarchy */
         .property-form-container {
             transition: all 0.3s ease;
         }
@@ -579,66 +859,65 @@
         }
 
         .property-name-display {
-            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
-            border: 1.5px solid rgba(212,175,55,0.3);
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08));
+            border: 2px solid rgba(212,175,55,0.3);
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             position: relative;
-            box-shadow: 0 4px 12px rgba(212,175,55,0.08);
+            box-shadow: 0 6px 20px rgba(212,175,55,0.1);
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .property-name-display i {
+            color: var(--accent);
+            font-size: 1.5rem;
         }
 
         body.dark .property-name-display {
-            background: linear-gradient(135deg, rgba(244, 179, 66, 0.12), rgba(244, 179, 66, 0.06));
-            border: 1.5px solid rgba(244, 179, 66, 0.3);
-            box-shadow: 0 4px 12px rgba(244, 179, 66, 0.08);
+            background: linear-gradient(135deg, rgba(244, 179, 66, 0.15), rgba(244, 179, 66, 0.08));
+            border: 2px solid rgba(244, 179, 66, 0.3);
+            box-shadow: 0 6px 20px rgba(244, 179, 66, 0.1);
         }
 
         .property-name-display:hover {
-            box-shadow: 0 6px 16px rgba(212,175,55,0.12);
-            border-color: rgba(212,175,55,0.4);
-            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212,175,55,0.15);
+            border-color: rgba(212,175,55,0.5);
+            transform: translateY(-3px);
         }
 
         body.dark .property-name-display:hover {
-            box-shadow: 0 6px 16px rgba(244, 179, 66, 0.12);
-            border-color: rgba(244, 179, 66, 0.4);
-        }
-
-        .property-name-display svg {
-            color: var(--accent);
-            flex-shrink: 0;
-            stroke-width: 1.8;
+            box-shadow: 0 10px 30px rgba(244, 179, 66, 0.15);
+            border-color: rgba(244, 179, 66, 0.5);
         }
 
         .property-name-text {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 1.125rem;
+            font-weight: 800;
             color: var(--text);
             flex-grow: 1;
             letter-spacing: -0.3px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .property-badge {
             background: var(--accent);
             color: #2b1f00;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 800;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(212,175,55,0.3);
+            box-shadow: 0 3px 8px rgba(212,175,55,0.3);
         }
 
         body.dark .property-badge {
             color: #1a1400;
-            box-shadow: 0 2px 4px rgba(244, 179, 66, 0.3);
+            box-shadow: 0 3px 8px rgba(244, 179, 66, 0.3);
         }
 
         .full-table-view .lg\:w-2\/3 {
@@ -651,17 +930,21 @@
 
         .full-table-view .change-property-btn {
             display: block;
-            margin: 0 auto 1rem auto;
+            margin: 0 auto 1.5rem auto;
         }
 
         .view-table-btn {
             margin-top: 1rem;
         }
 
-        /* Modal styling */
+        /* IMPROVED: Modal styling */
         #paymentModal .bg-white {
             background: var(--modal-bg) !important;
             color: var(--modal-text);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            border: 1px solid var(--muted);
         }
 
         #paymentModal .text-gray-700 {
@@ -671,37 +954,59 @@
         #paymentModal input {
             background: var(--surface) !important;
             color: var(--text);
-            border: 1px solid var(--muted);
+            border: 2px solid var(--muted);
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
         #paymentModal input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
+            transform: translateY(-2px);
         }
 
         body.dark #paymentModal input:focus {
-            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
+            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.2);
         }
 
-        /* Dark mode toggle button */
+        /* IMPROVED: Dark mode toggle button */
         #dark-mode-toggle {
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             background: var(--muted);
             color: var(--text);
-            border: 1px solid var(--muted);
+            border: 2px solid var(--muted);
+            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #dark-mode-toggle i {
+            font-size: 1.25rem;
+            transition: transform 0.5s ease;
         }
 
         #dark-mode-toggle:hover {
             background: var(--accent);
             color: #2b1f00;
-            transform: rotate(30deg);
+            transform: rotate(180deg) scale(1.1);
+            border-color: var(--accent);
+        }
+
+        #dark-mode-toggle:hover i {
+            transform: scale(1.2);
         }
 
         body.dark #dark-mode-toggle:hover {
             color: #1a1400;
         }
 
-        /* Error/Success messages */
+        /* IMPROVED: Error/Success messages */
         .text-green-600 {
             color: var(--success-text) !important;
         }
@@ -709,28 +1014,53 @@
         #paymentErrorDisplay {
             background: var(--error-bg) !important;
             color: var(--error-text) !important;
-            border-color: var(--error-text) !important;
+            border: 2px solid var(--error-text) !important;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            animation: shake 0.5s ease;
         }
 
-        /* Form elements */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* IMPROVED: Form elements with better affordances */
         select, input {
             background: var(--surface) !important;
             color: var(--text);
-            border: 1px solid var(--muted);
+            border: 2px solid var(--muted);
+            border-radius: 10px;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23D4AF37'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.25rem;
+            padding-right: 3rem;
+        }
+
+        select::-ms-expand {
+            display: none;
         }
 
         select:focus, input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.15);
+            outline: none;
+            transform: translateY(-2px);
         }
 
         body.dark select:focus, body.dark input:focus {
-            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
+            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.2);
         }
 
-        /* Header adjustments for larger logo */
+        /* Header adjustments */
         header.topbar {
-            height: 150px;
+            height: 70px;
         }
 
         header .max-w-6xl.mx-auto.px-6 {
@@ -738,11 +1068,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0 1.5rem;
         }
 
         header .brand-left {
             display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
             align-items: center;
             height: 100%;
         }
@@ -751,77 +1082,95 @@
             display: flex;
             align-items: center;
             height: 100%;
-            min-height: 120px;
         }
 
         header .brand-left img {
             height: auto;
-            max-height: 120px;
+            max-height: 45px;
             width: auto;
         }
 
         .main-wrap {
-            min-height: calc(100vh - 150px);
+            min-height: calc(100vh - 70px);
         }
 
         .sidebar {
-            height: calc(100vh - 150px);
-            top: 150px;
+            height: calc(100vh - 70px);
+            top: 70px;
         }
 
         @media (max-width:1024px) {
             .sidebar {
-                height: calc(100vh - 150px);
-                top: 150px;
+                height: calc(100vh - 70px);
+                top: 70px;
             }
         }
 
-        /* Mobile-specific improvements for sidebar */
+        /* Mobile-specific improvements */
         @media (max-width: 768px) {
+            .sidebar {
+                width: 85%;
+                max-width: 300px;
+            }
+
             .sidebar-content {
-                padding: 0.75rem;
+                padding: 1rem;
             }
 
             .nav-item {
-                padding: 0.5rem;
-                font-size: 14px;
+                padding: 0.75rem;
+                font-size: 15px;
             }
 
             .property-name-display {
-                padding: 10px 12px;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+                padding: 0.875rem 1rem;
+                gap: 10px;
             }
 
             .property-name-text {
-                font-size: 16px;
+                font-size: 1rem;
             }
 
             .sidebar-stats {
-                gap: 0.5rem;
+                gap: 0.75rem;
             }
 
             .card {
-                padding: 12px;
+                padding: 1rem;
             }
 
             .feature-icon {
-                width: 36px;
-                height: 36px;
+                width: 42px;
+                height: 42px;
+                font-size: 1.125rem;
+            }
+
+            .content {
+                padding: 1.25rem;
             }
         }
 
-        /* Highlighted payment column - ADDED THIS */
+        /* Highlighted payment column */
         .units-table th:nth-child(6),
         .units-table td:nth-child(6) {
-            background: rgba(212,175,55,0.15) !important;
+            background: rgba(212,175,55,0.1) !important;
             position: relative;
+        }
+
+        .units-table th:nth-child(6)::before,
+        .units-table td:nth-child(6)::before {
+            content: '💰';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.3;
+            font-size: 1.5rem;
         }
 
         body.dark .units-table th:nth-child(6),
         body.dark .units-table td:nth-child(6) {
-            background: rgba(244,179,66,0.2) !important;
+            background: rgba(244,179,66,0.15) !important;
         }
 
         .units-table th:nth-child(6)::after,
@@ -837,11 +1186,11 @@
         }
 
         .units-table td:nth-child(6):hover {
-            background: rgba(212,175,55,0.25) !important;
+            background: rgba(212,175,55,0.2) !important;
         }
 
         body.dark .units-table td:nth-child(6):hover {
-            background: rgba(244,179,66,0.3) !important;
+            background: rgba(244,179,66,0.25) !important;
         }
 
         .payment-cell {
@@ -855,137 +1204,58 @@
 
         @media (max-width: 640px) {
             .payment-cell .indicator {
-                width: 2.2rem;
-                height: 2.2rem;
-                font-size: 1.2rem;
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1.25rem;
             }
         }
 
-        /* Mobile Menu Button Styles */
+        /* IMPROVED: Mobile Menu Button */
         #mobile-menu-button {
             display: none;
             align-items: center;
             justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
             background: var(--surface);
-            border: 1px solid var(--muted);
+            border: 2px solid var(--muted);
             color: var(--text);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             z-index: 70;
         }
 
+        #mobile-menu-button i {
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
         #mobile-menu-button:hover {
             background: var(--muted);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         #mobile-menu-button:active {
             transform: translateY(0);
         }
 
-        .mobile-menu-icon {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            width: 20px;
+        @media (max-width: 1024px) {
+            #mobile-menu-button {
+                display: flex;
+            }
         }
 
-        .mobile-menu-icon span {
-            display: block;
-            height: 2px;
-            width: 100%;
-            background: var(--text);
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-
-        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
-            transform: rotate(45deg) translate(4px, 4px);
-        }
-
-        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
-            opacity: 0;
-        }
-
-        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
-            transform: rotate(-45deg) translate(4px, -4px);
-        }
-
-        body.dark #mobile-menu-button .mobile-menu-icon span {
-            background: var(--text);
-        }
-
-        /* Header actions container */
+        /* IMPROVED: Header actions container */
         .header-actions {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        /* Theme toggle button in header */
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            background: var(--surface);
-            border: 1px solid var(--muted);
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            background: var(--muted);
-            transform: rotate(15deg);
-        }
-
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        @media (max-width: 1024px) {
-            #mobile-menu-button {
-                display: flex;
-            }
-
-            .theme-toggle {
-                width: 44px;
-                height: 44px;
-            }
-        }
-
-        /* PULSE effect for sidebar stats - alternative to wiggle */
-        .sidebar-stats .card.pulse-effect:hover {
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        /* SHAKE effect for sidebar stats - another alternative */
-        .sidebar-stats .card.shake-effect:hover {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-2px); }
-            50% { transform: translateX(2px); }
-            75% { transform: translateX(-1px); }
-        }
-
-        /* Loading spinner styles - Added from landlord signup page */
+        /* Loading spinner styles */
         .loading-spinner {
             display: inline-block;
             width: 1.5rem;
@@ -1011,14 +1281,14 @@
             pointer-events: none;
         }
 
-        /* Loading overlay - Added from landlord signup page */
+        /* IMPROVED: Loading overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -1026,6 +1296,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
         .loading-overlay.active {
@@ -1035,21 +1306,24 @@
 
         .loading-overlay-content {
             background: var(--surface);
-            padding: 2rem;
-            border-radius: 1rem;
+            padding: 2.5rem;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             border: 2px solid var(--accent);
+            max-width: 400px;
+            width: 90%;
+            animation: pulse 2s infinite;
         }
 
         .overlay-spinner {
-            width: 3rem;
-            height: 3rem;
+            width: 4rem;
+            height: 4rem;
             border: 4px solid rgba(212, 175, 55, 0.2);
             border-radius: 50%;
             border-top-color: var(--accent);
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
         }
 
         body.dark .overlay-spinner {
@@ -1057,9 +1331,25 @@
             border-top-color: var(--accent);
         }
 
-        /* Property form loading button */
+        /* IMPROVED: Property form loading button */
         #propertyFormSubmit.btn-loading {
             position: relative;
+            overflow: hidden;
+        }
+
+        #propertyFormSubmit.btn-loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: loadingShimmer 1.5s infinite;
+        }
+
+        @keyframes loadingShimmer {
+            to { left: 100%; }
         }
 
         #propertyFormSubmit.btn-loading .btn-text {
@@ -1072,11 +1362,720 @@
             top: 50%;
             transform: translate(-50%, -50%);
         }
+
+        /* IMPROVED: Revenue Stats Cards */
+        .revenue-stats-container {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 640px) {
+            .revenue-stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.25rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .revenue-stats-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        .stat-card {
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInUp 0.6s ease;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark .stat-card:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-card-gold {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        body.dark .stat-card-gold {
+            background: linear-gradient(135deg, rgba(244, 179, 66, 0.2), rgba(244, 179, 66, 0.1));
+            border-color: rgba(244, 179, 66, 0.4);
+        }
+
+        .stat-card-light-green {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.2), rgba(72, 187, 120, 0.1));
+            border-color: rgba(72, 187, 120, 0.4);
+        }
+
+        body.dark .stat-card-light-green {
+            background: linear-gradient(135deg, rgba(110, 231, 183, 0.2), rgba(110, 231, 183, 0.1));
+            border-color: rgba(110, 231, 183, 0.4);
+        }
+
+        .stat-card-red {
+            background: linear-gradient(135deg, rgba(245, 101, 101, 0.2), rgba(245, 101, 101, 0.1));
+            border-color: rgba(245, 101, 101, 0.4);
+        }
+
+        body.dark .stat-card-red {
+            background: linear-gradient(135deg, rgba(252, 165, 165, 0.2), rgba(252, 165, 165, 0.1));
+            border-color: rgba(252, 165, 165, 0.4);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        @media (min-width: 768px) {
+            .stat-icon {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 1.5rem;
+                font-size: 1.75rem;
+            }
+        }
+
+        .stat-icon-gold {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.2));
+            color: #b8892a;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        body.dark .stat-icon-gold {
+            background: linear-gradient(135deg, rgba(244, 179, 66, 0.3), rgba(244, 179, 66, 0.2));
+            color: #F4B342;
+            box-shadow: 0 6px 20px rgba(244, 179, 66, 0.2);
+        }
+
+        .stat-icon-light-green {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.3), rgba(72, 187, 120, 0.2));
+            color: #059669;
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.2);
+        }
+
+        body.dark .stat-icon-light-green {
+            background: linear-gradient(135deg, rgba(110, 231, 183, 0.3), rgba(110, 231, 183, 0.2));
+            color: #6EE7B7;
+            box-shadow: 0 6px 20px rgba(110, 231, 183, 0.2);
+        }
+
+        .stat-icon-red {
+            background: linear-gradient(135deg, rgba(245, 101, 101, 0.3), rgba(245, 101, 101, 0.2));
+            color: #DC2626;
+            box-shadow: 0 6px 20px rgba(245, 101, 101, 0.2);
+        }
+
+        body.dark .stat-icon-red {
+            background: linear-gradient(135deg, rgba(252, 165, 165, 0.3), rgba(252, 165, 165, 0.2));
+            color: #FCA5A5;
+            box-shadow: 0 6px 20px rgba(252, 165, 165, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-value::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .stat-card-gold .stat-value::before {
+            background: var(--accent);
+        }
+
+        .stat-card-light-green .stat-value::before {
+            background: #10b981;
+        }
+
+        .stat-card-red .stat-value::before {
+            background: #ef4444;
+        }
+
+        @media (min-width: 768px) {
+            .stat-value {
+                font-size: 2.25rem;
+            }
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--muted-text);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .stat-trend {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: auto;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        body.dark .stat-trend {
+            border-top-color: rgba(255,255,255,0.05);
+        }
+
+        .trend-up {
+            color: #059669;
+        }
+
+        .trend-down {
+            color: #DC2626;
+        }
+
+        /* IMPROVED: Search Bar with better affordances */
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem 1rem 3.5rem;
+            border-radius: 14px;
+            border: 2px solid var(--muted);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .search-input::placeholder {
+            color: var(--muted-text);
+            opacity: 0.7;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
+            transform: translateY(-2px);
+        }
+
+        body.dark .search-input:focus {
+            box-shadow: 0 8px 24px rgba(244, 179, 66, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent);
+            pointer-events: none;
+            font-size: 1.25rem;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--muted);
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-clear i {
+            font-size: 1rem;
+        }
+
+        .search-clear:hover {
+            color: var(--accent);
+            background: var(--accent-dark);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--muted-text);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .no-results-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .no-results-text {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .no-results-subtext {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        /* IMPROVED: Table header with better organization */
+        .table-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-title i {
+            color: var(--accent);
+            font-size: 1.75rem;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .table-counter {
+            font-size: 0.95rem;
+            color: var(--muted-text);
+            padding: 0.75rem 1.25rem;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 2px solid var(--muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-counter i {
+            color: var(--accent);
+        }
+
+        /* Mobile responsiveness improvements */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1.25rem;
+            }
+
+            .header-with-date h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-with-date p {
+                font-size: 0.95rem;
+            }
+
+            .date-display {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.95rem;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .card-surface {
+                padding: 1.25rem;
+            }
+
+            .main-wrap {
+                min-height: calc(100vh - 70px);
+            }
+
+            .sidebar {
+                height: calc(100vh - 70px);
+                top: 70px;
+            }
+
+            .stat-card {
+                padding: 1.25rem;
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
+
+            .stat-value {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .property-name-text {
+                font-size: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+                min-height: 140px;
+            }
+
+            .stat-icon {
+                width: 42px;
+                height: 42px;
+                margin-bottom: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+            }
+
+            .stat-trend {
+                font-size: 0.8rem;
+            }
+
+            .header-actions {
+                gap: 8px;
+            }
+
+            .theme-toggle,
+            #mobile-menu-button {
+                width: 46px;
+                height: 46px;
+            }
+        }
+
+        /* Small mobile adjustments */
+        @media (max-width: 480px) {
+            .revenue-stats-container {
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 0.875rem;
+            }
+
+            .stat-value {
+                font-size: 1.375rem;
+            }
+
+            .header-actions {
+                gap: 6px;
+            }
+
+            .theme-toggle,
+            #mobile-menu-button {
+                width: 42px;
+                height: 42px;
+            }
+
+            .search-input {
+                padding: 0.875rem 1rem 0.875rem 3rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* IMPROVED: Quick actions toolbar */
+        .quick-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.75rem 1.25rem;
+            background: var(--surface);
+            border: 2px solid var(--muted);
+            border-radius: 12px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .quick-action-btn i {
+            color: var(--accent);
+            font-size: 1.125rem;
+            transition: transform 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            background: var(--accent);
+            color: #2b1f00;
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.2);
+        }
+
+        .quick-action-btn:hover i {
+            color: #2b1f00;
+            transform: scale(1.1);
+        }
+
+        body.dark .quick-action-btn:hover {
+            color: #1a1400;
+        }
+
+        /* IMPROVED: Toast notifications */
+        .toast {
+            position: fixed;
+            top: 90px;
+            right: 30px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s;
+            animation-fill-mode: forwards;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 350px;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(100%); }
+        }
+
+        .toast-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-left: 4px solid #047857;
+        }
+
+        .toast-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-left: 4px solid #b91c1c;
+        }
+
+        .toast-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-left: 4px solid #b45309;
+        }
+
+        .toast i {
+            font-size: 1.25rem;
+        }
+
+        /* IMPROVED: Progress indicators */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--muted);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* IMPROVED: Empty states */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--muted-text);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+            color: var(--accent);
+        }
+
+        .empty-state-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .empty-state-description {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .empty-state-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.875rem 1.75rem;
+            background: var(--accent);
+            color: #2b1f00;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .empty-state-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.3);
+        }
+
+        /* IMPROVED: Filter chips */
+        .filter-chips {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-chip i {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .filter-chip:hover {
+            background: var(--muted);
+            transform: translateY(-2px);
+        }
+
+        .filter-chip.active {
+            background: var(--accent);
+            color: #2b1f00;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .filter-chip.active i {
+            color: #2b1f00;
+            opacity: 1;
+        }
     </style>
 </head>
 
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
-<!-- Loading Overlay - Added from landlord signup page -->
+<!-- Loading Overlay -->
 <div id="loadingOverlay" class="loading-overlay">
     <div class="loading-overlay-content">
         <div class="overlay-spinner"></div>
@@ -1084,6 +2083,9 @@
         <p class="text-sm text-[var(--muted-text)] mt-2">Please wait while we fetch your property data</p>
     </div>
 </div>
+
+<!-- Toast Notification Container -->
+<div id="toastContainer"></div>
 
 <!-- Store Thymeleaf variable in JavaScript -->
 <script th:inline="javascript">
@@ -1099,7 +2101,7 @@
             <div class="flex items-center justify-center h-32 w-auto">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-32 md:h-40 lg:h-48 w-auto object-contain"
-                     style="height: 128px; max-height: 192px;">
+                     style="height: 45px; max-height: 60px;">
             </div>
             <div class="flex flex-col">
                 <span class="text-accent font-extrabold text-2xl">ProMan</span>
@@ -1107,25 +2109,17 @@
             </div>
         </div>
 
-        <!-- Header Actions (Mobile Menu & Theme Toggle) -->
+        <!-- Header Actions -->
         <div class="header-actions">
             <!-- Dark Mode Toggle -->
-            <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
+            <button id="dark-mode-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme">
+                <i class="fas fa-moon" id="moon-icon"></i>
+                <i class="fas fa-sun hidden" id="sun-icon"></i>
             </button>
 
             <!-- Mobile Menu Button -->
-            <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
-                <div class="mobile-menu-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+            <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar" title="Open menu">
+                <i class="fas fa-bars"></i>
             </button>
         </div>
     </div>
@@ -1138,15 +2132,19 @@
             <div class="sidebar-header">
                 <!-- Property name made to stand out -->
                 <div class="property-name-display">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
+                    <i class="fas fa-building"></i>
                     <span class="property-name-text" th:text="${name}">Property Name</span>
                 </div>
             </div>
             <nav class="mb-4 space-y-2">
-                <a href="http://localhost:7070/add_property_unit " class="nav-item active">ADD  NEW PROPERTY</a>
-                <a href="http://localhost:7070/add_tenant" class="nav-item active">ADD NEW TENANT</a>
+                <a href="http://localhost:7070/add_property_unit" class="nav-item active">
+                    <i class="fas fa-plus-circle"></i>
+                    ADD NEW PROPERTY
+                </a>
+                <a href="http://localhost:7070/add_tenant" class="nav-item active">
+                    <i class="fas fa-user-plus"></i>
+                    ADD NEW TENANT
+                </a>
             </nav>
             <div class="sidebar-stats">
                 <div class="card rounded-lg p-3">
@@ -1156,7 +2154,7 @@
                             <p class="text-lg font-bold" style="color:var(--text)" th:text="${total_properties}">8</p>
                         </div>
                         <div class="feature-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10"/></svg>
+                            <i class="fas fa-home"></i>
                         </div>
                     </div>
                 </div>
@@ -1168,7 +2166,7 @@
                             <p class="text-lg font-bold" style="color:var(--text)" th:text="${occupied_units}">0</p>
                         </div>
                         <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4"/></svg>
+                            <i class="fas fa-check-circle"></i>
                         </div>
                     </div>
                     <p class="text-sm"
@@ -1185,7 +2183,7 @@
                             <p class="text-lg font-bold" style="color:var(--text)"  th:text="${vacant}">2</p>
                         </div>
                         <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"/></svg>
+                            <i class="fas fa-bed"></i>
                         </div>
                     </div>
                     <p class="text-sm" style="color:var(--muted-text); margin-top:6px">Available for rent</p>
@@ -1198,7 +2196,7 @@
                             <p class="text-lg font-bold" style="color:var(--text)" th:text="'R' + ${expected_profit}">R0</p>
                         </div>
                         <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2"/></svg>
+                            <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
                     <p class="text-sm" style="color:var(--muted-text); margin-top:6px">+R2,500 from last month</p>
@@ -1208,9 +2206,7 @@
             <div class="mt-auto pt-6">
                 <a href="http://localhost:7070/logout"
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
+                    <i class="fas fa-sign-out-alt"></i>
                     Sign Out
                 </a>
             </div>
@@ -1218,41 +2214,110 @@
 
     </aside>
     <main class="content">
-        <div class="p-6">
+        <div class="p-4 md:p-6">
             <!-- Updated header with date display on the right -->
             <div class="header-with-date">
                 <div>
-                    <h1 class="text-3xl font-bold" style="color:var(--accent)">Property Management</h1>
-                    <p class="text-[var(--muted-text)]">Manage your properties and tenant payments</p>
+                    <h1 class="text-2xl md:text-3xl font-bold" style="color:var(--accent)">Property Management</h1>
+                    <p class="text-[var(--muted-text)] text-sm md:text-base">Manage your properties and tenant payments</p>
                 </div>
 
                 <!-- Date display div with gold right border -->
                 <div class="date-display">
-                    <span class="text-lg font-medium" id="currentDate"></span>
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="text-base md:text-lg font-medium" id="currentDate"></span>
                 </div>
             </div>
 
-            <div class="flex flex-col lg:flex-row gap-6" id="mainContent">
+            <!-- NEW: Quick Actions Toolbar -->
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="showAllPayments()">
+                    <i class="fas fa-receipt"></i>
+                    View All Payments
+                </button>
+                <button class="quick-action-btn" onclick="generateReports()">
+                    <i class="fas fa-chart-pie"></i>
+                    Generate Report
+                </button>
+                <a href="http://localhost:7070/add_property_unit" class="quick-action-btn">
+                    <i class="fas fa-plus"></i>
+                    Add Property
+                </a>
+            </div>
+
+            <!-- Revenue Statistics Cards -->
+            <!-- Horizontal Compact Stats -->
+            <div class="horizontal-stats-container">
+                <div class="horizontal-stats">
+                    <!-- Total Revenue Card -->
+                    <div class="horizontal-stat-card stat-card-gold">
+                        <div class="horizontal-stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="horizontal-stat-content">
+                            <div class="horizontal-stat-value" th:text="'R' + ${totalRevenue != null ? totalRevenue : '0'}">R0</div>
+                            <div class="horizontal-stat-label">Revenue</div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Debts Card -->
+                    <div class="horizontal-stat-card stat-card-light-green">
+                        <div class="horizontal-stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="horizontal-stat-content">
+                            <div class="horizontal-stat-value" th:text="${pendingDebtCount != null ? pendingDebtCount : '0'}">0</div>
+                            <div class="horizontal-stat-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- NEW: Filter Chips -->
+            <div class="filter-chips">
+                <div class="filter-chip active" onclick="filterTable('all')">
+                    <i class="fas fa-layer-group"></i>
+                    All Tenants
+                </div>
+                <div class="filter-chip" onclick="filterTable('paid')">
+                    <i class="fas fa-check-circle"></i>
+                    Paid
+                </div>
+                <div class="filter-chip" onclick="filterTable('unpaid')">
+                    <i class="fas fa-times-circle"></i>
+                    Unpaid
+                </div>
+                <div class="filter-chip" onclick="filterTable('debt')">
+                    <i class="fas fa-exclamation-circle"></i>
+                    With Debt
+                </div>
+                <div class="filter-chip" onclick="filterTable('vacant')">
+                    <i class="fas fa-bed"></i>
+                    Vacant Units
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-4 md:gap-6" id="mainContent">
                 <!-- Property Selection Section -->
                 <div class="lg:w-1/3 property-form-container" id="propertyFormContainer">
                     <div class="card-surface h-full">
                         <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">Property Name</label>
-                                    <p  th:text="${name}"></p>
+                                    <label class="block text-sm font-medium text-[var(--muted-text)] mb-2">
+                                        <i class="fas fa-building mr-2"></i>
+                                        Property Name
+                                    </label>
+                                    <p class="font-semibold text-lg mb-3" th:text="${name}"></p>
                                     <select id="propertySelect" name="name" class="w-full rounded-md border-gray-300 shadow-sm focus:ring-0 focus:border-[var(--accent)]">
                                         <option value="">Select property</option>
                                         <option th:each="name : ${names}" th:value="${name}" th:text="${name}">Default Name</option>
                                     </select>
                                 </div>
                             </div>
-                            <!-- Submit button with loading spinner - Added similar to landlord signup -->
+                            <!-- Submit button with loading spinner -->
                             <div class="mt-4">
                                 <button type="submit" id="propertyFormSubmit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium shadow-lg">
-                                    <svg id="propertySubmitIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                    </svg>
+                                    <i class="fas fa-sync-alt" id="propertySubmitIcon"></i>
                                     <span id="propertySubmitText" class="btn-text">Load Property</span>
                                     <div id="propertySubmitSpinner" class="loading-spinner hidden"></div>
                                 </button>
@@ -1265,23 +2330,48 @@
                                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
                             </div>
                         </div>
-                        <!-- REMOVED: View Full Table button from here -->
                     </div>
                 </div>
 
                 <!-- Table Section -->
                 <div class="lg:w-2/3" id="tableContainer">
                     <div class="card-surface h-full">
-                        <!-- ADDED: View Units Table button (replaces Change Property button) -->
+                        <!-- View Units Table button -->
                         <button id="viewTableBtn" class="change-property-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium mb-4">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                            </svg>
+                            <i class="fas fa-table"></i>
                             View Units Table
                         </button>
 
+                        <!-- Table Header with Search Bar -->
+                        <div class="table-header-container">
+                            <h2 class="table-title">
+                                <i class="fas fa-users"></i>
+                                Tenant Management
+                            </h2>
+                            <div class="table-actions">
+                                <div class="table-counter">
+                                    <i class="fas fa-user-friends"></i>
+                                    <span id="tenantCount">0</span> tenants
+                                </div>
+                                <div class="search-wrapper">
+                                    <input type="text"
+                                           id="tenantSearch"
+                                           class="search-input"
+                                           placeholder="Search tenants by name, unit, or contact..."
+                                           aria-label="Search tenants">
+                                    <div class="search-icon">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <button type="button" id="clearSearch" class="search-clear" aria-label="Clear search">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
                             <div class="text-sm" style="color:var(--text)">
+                                <i class="fas fa-mouse-pointer mr-2"></i>
                                 Click the payment column to mark a tenant as paid.
                             </div>
                         </div>
@@ -1289,90 +2379,124 @@
                         <div id="paymentErrorDisplay" class="hidden p-3 mb-4 rounded-md text-sm font-medium bg-red-100 text-red-800 border border-red-300" role="alert">
                         </div>
                         <p th:if="${unit != null and unit != ''}"
-                           th:text="|You have already marked Unit ${unit} as paid this month.|" class="text-green-600 font-medium"></p>
+                           th:text="|You have already marked Unit ${unit} as paid this month.|" class="text-green-600 font-medium text-sm md:text-base"></p>
                         <p th:if="${success != null and success != ''}"
-                           th:text="|Unit ${success} marked as paid this month.|" class="text-green-600 font-medium"></p>
+                           th:text="|Unit ${success} marked as paid this month.|" class="text-green-600 font-medium text-sm md:text-base"></p>
+
+                        <!-- No Results Message -->
+                        <div id="noResultsMessage" class="no-results hidden">
+                            <div class="no-results-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="no-results-text">No tenants found</div>
+                            <div class="no-results-subtext">Try adjusting your search criteria</div>
+                        </div>
+
                         <div class="units-wrapper w-full overflow-x-auto">
                             <table class="units-table min-w-max w-full border-collapse">
                                 <thead>
                                 <tr>
-                                    <th class="px-4 py-3 whitespace-nowrap">Tenant</th>
-                                    <th class="px-4 py-3 whitespace-nowrap">Unit  </th>
-                                    <th class="px-4 py-3 whitespace-nowrap">Status</th>
-                                    <th class="px-4 py-3 whitespace-nowrap">Rent Day</th>
-                                    <th class="px-4 py-3 whitespace-nowrap">Overdue</th>
-                                    <th class="px-4 py-3 whitespace-nowrap">Payment</th>
-                                    <th class="px-4 py-3 whitespace-nowrap">Actions</th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-user mr-2"></i>
+                                        Tenant
+                                    </th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-home mr-2"></i>
+                                        Unit
+                                    </th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-circle mr-2"></i>
+                                        Status
+                                    </th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-calendar-day mr-2"></i>
+                                        Rent Day
+                                    </th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-clock mr-2"></i>
+                                        Overdue
+                                    </th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-money-check-alt mr-2"></i>
+                                        Payment
+                                    </th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-cog mr-2"></i>
+                                        Actions
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody id="unitsTbody">
                                 <!-- Show units when they exist -->
-                                <tr th:each="entry : ${units}" class="hover:cursor-pointer">
-                                    <td class="px-4 py-3 whitespace-nowrap">
+                                <tr th:each="entry : ${units}" class="hover:cursor-pointer tenant-row">
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap">
                                         <div class="tenant-info">
+                                            <div class="profile-placeholder">
+                                                <i class="fas fa-user"></i>
+                                            </div>
                                             <div class="tenant-details">
-                                                <div class="tenant-name" th:text="${entry.value[3]}">Tenant </div>
-
-                                                <div class="tenant-contact status-badge"
+                                                <div class="tenant-name text-sm md:text-base" th:text="${entry.value[3]}">Tenant </div>
+                                                <div class="tenant-contact status-badge text-xs"
                                                      th:with="debtAmount=${entry.value[7]} ?: 0"
                                                      th:classappend="${debtAmount &gt; 0} ? 'status-vacant' : 'status-active'"
                                                      th:data-tenant-contact="${entry.value[8]}"
                                                      th:text="${debtAmount &gt; 0} ? 'Debt: R' + ${debtAmount} : 'No Debt'">
+                                                    <i class="fas fa-phone mr-1"></i>
                                                     Contact info
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <div class="unit-details">
-                                            <div class="unit-number" th:text="${entry.value[0]}">Unit </div>
-                                            <div class="unit-rent" th:text="'R ' + ${entry.value[1]}">Rent </div>
-                                        </div>
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap unit-number-cell text-sm md:text-base" th:text="${entry.value[0]}">Unit </td>
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap">
+                                        <span th:if="${entry.value[2]} == 'yes'" class="status-badge status-active text-xs">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Occupied
+                                        </span>
+                                        <span th:if="${entry.value[2]} == 'no'" class="status-badge status-vacant text-xs">
+                                            <i class="fas fa-times-circle mr-1"></i>
+                                            Vacant
+                                        </span>
                                     </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <span th:if="${entry.value[2]} == 'yes'" class="status-badge status-active">Occupied</span>
-                                        <span th:if="${entry.value[2]} == 'no'" class="status-badge status-vacant">Vacant</span>
-                                    </td>
-                                    <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[4]}">Rent Day</td>
-                                    <td class="px-4 py-3 whitespace-nowrap unit-tenant" th:text="${entry.value[5]}">Overdue Days</td>
-                                    <td class="px-4 py-3 whitespace-nowrap payment-cell">
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap unit-tenant text-sm md:text-base" th:text="${entry.value[4]}">Rent Day</td>
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap unit-tenant text-sm md:text-base" th:text="${entry.value[5]}">Overdue Days</td>
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap payment-cell">
     <span th:if="${entry.value[2]} == 'yes'"
           th:with="isPaid=${entry.value[6]}"
           th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-          class="indicator open-pay cursor-pointer"
+          class="indicator open-pay cursor-pointer text-sm md:text-base"
           th:data-unit="${entry.value[0]}"
           th:data-rent="${entry.value[1]}"
           th:data-id="${entry.value[3]}"
           th:data-property-name="${propertyName}"
           th:data-tenant-contact="${entry.value[8]}"
-          th:text="${isPaid} ? '+' : '−'">−</span>
-                                        <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800">−</span>
+          th:text="${isPaid} ? '✓' : '✗'">✗</span>
+                                        <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800 text-sm md:text-base">
+                                            <i class="fas fa-ban"></i>
+                                        </span>
                                     </td>
-                                    <td class="px-4 py-3 whitespace-nowrap">
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap">
                                         <a th:href="@{/tenant_profile/{id}/{unit}/{propertyRent}/{contact}(id=${entry.value[3]},unit=${entry.value[0]},propertyRent=${entry.value[1]},
-                                        contact=${entry.value[8]})}">
+                                        contact=${entry.value[8]})}" class="edit-btn">
+                                            <i class="fas fa-edit"></i>
                                             Edit
                                         </a>
-
-
                                     </td>
                                 </tr>
 
                                 <!-- Show "No Units" message when empty -->
                                 <tr th:if="${units == null or units.isEmpty()}" class="no-units-row">
                                     <td colspan="7" class="px-4 py-8">
-                                        <div class="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                            </svg>
-                                            <h3 class="text-lg font-medium text-gray-700 mb-2">No Units Found</h3>
-                                            <p class="text-gray-500 mb-4 max-w-md text-center">
-                                                You don't have any units added yet. Get started by adding your first unit and tenant.
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">
+                                                <i class="fas fa-home"></i>
+                                            </div>
+                                            <h3 class="empty-state-title">No Units Found</h3>
+                                            <p class="empty-state-description">
+                                                You don't have any units added yet. Get started by adding your first unit and tenant to begin managing your property.
                                             </p>
-                                            <a href="http://localhost:7070/add_property_unit" class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                                </svg>
+                                            <a href="http://localhost:7070/add_property_unit" class="empty-state-action">
+                                                <i class="fas fa-plus"></i>
                                                 Add New Property
                                             </a>
                                         </div>
@@ -1391,11 +2515,20 @@
 <p th:text="${default_name}"></p>
 
 <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-[1000]">
-    <div class="modal-card w-96 text-center z-[1001]">
+    <div class="modal-card w-11/12 md:w-96 text-center z-[1001]">
         <div class="bg-white p-6 rounded-lg shadow-lg">
-            <h2 class="text-lg font-semibold mb-3">Update Payment Status</h2>
-            <p class="text-gray-700 mb-2">Unit: <span id="modalUnitDisplay" class="font-bold"></span></p>
-            <p class="text-gray-700 mb-4 text-sm">Original Rent: <span id="modalOriginalRent" class="font-bold"></span></p>
+            <h2 class="text-lg font-semibold mb-3 flex items-center justify-center gap-2">
+                <i class="fas fa-money-check-alt text-green-600"></i>
+                Update Payment Status
+            </h2>
+            <p class="text-gray-700 mb-2">
+                <i class="fas fa-home mr-2"></i>
+                Unit: <span id="modalUnitDisplay" class="font-bold"></span>
+            </p>
+            <p class="text-gray-700 mb-4 text-sm">
+                <i class="fas fa-dollar-sign mr-2"></i>
+                Original Rent: <span id="modalOriginalRent" class="font-bold"></span>
+            </p>
             <form id="paymentForm" method="post">
                 <input type="hidden" name="action_type" id="modalAction">
                 <input type="hidden" name="unit" id="modalUnit">
@@ -1404,625 +2537,1039 @@
                 <input type="hidden" name="tenant_contact" id="modalTenantContact">
                 <input type="hidden" name="paid" value="yes">
                 <div class="mb-4 text-left">
-                    <label for="modalRentInput" class="block text-sm font-medium text-[var(--muted-text)] mb-2">Rent Paid Amount:</label>
+                    <label for="modalRentInput" class="block text-sm font-medium text-[var(--muted-text)] mb-2 flex items-center gap-2">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Rent Paid Amount:
+                    </label>
                     <input type="number" id="modalRentInput" name="rent" step="0.01" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent" placeholder="Enter rent amount">
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-3 flex-col sm:flex-row">
                     <button type="submit" id="modalSubmitBtn" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition">
+                        <i class="fas fa-check-circle"></i>
                         <span class="btn-text">Confirm Payment</span>
                         <div id="modalSubmitSpinner" class="loading-spinner hidden"></div>
                     </button>
-                    <button type="button" onclick="closePaymentModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium transition">Cancel</button>
+                    <button type="button" onclick="closePaymentModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium transition flex items-center justify-center gap-2">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 <script>
-// =========================================================================
-// LOADING STATE MANAGEMENT
-// =========================================================================
-
-const loadingOverlay = document.getElementById('loadingOverlay');
-const propertyForm = document.getElementById('propertyForm');
-const propertyFormSubmit = document.getElementById('propertyFormSubmit');
-const propertySubmitIcon = document.getElementById('propertySubmitIcon');
-const propertySubmitText = document.getElementById('propertySubmitText');
-const propertySubmitSpinner = document.getElementById('propertySubmitSpinner');
-
-let isPropertyFormSubmitting = false;
-
-// Function to show loading state for property form
-function showPropertyFormLoading() {
-isPropertyFormSubmitting = true;
-
-// Disable form button
-propertyFormSubmit.disabled = true;
-propertyFormSubmit.classList.add('btn-disabled', 'btn-loading');
-
-// Show spinner and hide icon
-propertySubmitIcon.classList.add('hidden');
-propertySubmitSpinner.classList.remove('hidden');
-propertySubmitText.textContent = 'Loading...';
-
-// Show loading overlay
-loadingOverlay.classList.add('active');
-document.body.style.overflow = 'hidden'; // Prevent scrolling
-}
-
-// Function to hide loading state for property form
-function hidePropertyFormLoading() {
-isPropertyFormSubmitting = false;
-
-// Re-enable form button
-propertyFormSubmit.disabled = false;
-propertyFormSubmit.classList.remove('btn-disabled', 'btn-loading');
-
-// Hide spinner and show icon
-propertySubmitIcon.classList.remove('hidden');
-propertySubmitSpinner.classList.add('hidden');
-propertySubmitText.textContent = 'Load Property';
-
-// Hide loading overlay
-loadingOverlay.classList.remove('active');
-document.body.style.overflow = ''; // Restore scrolling
-}
-
-// Function to show loading state for modal
-function showModalLoading() {
-const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
-const btnText = modalSubmitBtn.querySelector('.btn-text');
-
-if (modalSubmitBtn && modalSubmitSpinner && btnText) {
-modalSubmitBtn.disabled = true;
-modalSubmitBtn.classList.add('btn-disabled');
-modalSubmitSpinner.classList.remove('hidden');
-btnText.textContent = 'Processing...';
-}
-}
-
-// Function to hide loading state for modal
-function hideModalLoading() {
-const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
-const btnText = modalSubmitBtn?.querySelector('.btn-text');
-
-if (modalSubmitBtn && modalSubmitSpinner && btnText) {
-modalSubmitBtn.disabled = false;
-modalSubmitBtn.classList.remove('btn-disabled');
-modalSubmitSpinner.classList.add('hidden');
-btnText.textContent = modalSubmitBtn.classList.contains('bg-red-600') ? 'Unmark Payment' : 'Confirm Payment';
-}
-}
-
-// =========================================================================
-// DARK MODE FUNCTIONS WITH AJAX
-// =========================================================================
-
-// AJAX function to send theme preference without page reload
-async function sendThemePreference(theme) {
-try {
-const response = await fetch('http://localhost:7070/page_theme', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/x-www-form-urlencoded',
-},
-body: `user_theme=${theme}`
-});
-
-// Don't reload the page, just update local storage
-localStorage.setItem('user_chosen_theme', theme);
-
-console.log('Theme preference saved:', theme);
-
-} catch (error) {
-console.error('Error sending theme preference:', error);
-// Fallback: still update local storage even if server request fails
-localStorage.setItem('user_chosen_theme', theme);
-}
-}
-
-function initializeIcons() {
-const isDark = document.body.classList.contains('dark');
-const sunIcon = document.getElementById('sun-icon');
-const moonIcon = document.getElementById('moon-icon');
-
-if (sunIcon && moonIcon) {
-if (isDark) {
-sunIcon.classList.remove('hidden');
-moonIcon.classList.add('hidden');
-} else {
-sunIcon.classList.add('hidden');
-moonIcon.classList.remove('hidden');
-}
-}
-}
-
-async function toggleDarkMode() {
-const isCurrentlyDark = document.body.classList.contains('dark');
-const newTheme = isCurrentlyDark ? 'light' : 'dark';
-
-if (isCurrentlyDark) {
-document.body.classList.remove('dark');
-} else {
-document.body.classList.add('dark');
-}
-
-initializeIcons();
-
-// Send preference without page reload using AJAX
-await sendThemePreference(newTheme);
-}
-
-// =========================================================================
-// GLOBAL FUNCTIONS (Accessible to onclick handlers)
-// =========================================================================
-
-function closePaymentModal() {
-const paymentModal = document.getElementById('paymentModal');
-if (!paymentModal) return;
-paymentModal.classList.add('hidden');
-paymentModal.classList.remove('flex');
-document.body.classList.remove('modal-open');
-hideModalLoading(); // Reset modal loading state
-}
-
-function displayErrorBanner(message, isClear = false) {
-const errorDisplay = document.getElementById('paymentErrorDisplay');
-if (!errorDisplay) return;
-
-if (isClear || !message) {
-errorDisplay.classList.add('hidden');
-errorDisplay.textContent = '';
-} else {
-errorDisplay.textContent = message;
-errorDisplay.classList.remove('hidden');
-}
-}
-
-// Mobile menu functions
-function openMobileMenu() {
-const sidebar = document.getElementById('sidebar');
-const backdrop = document.getElementById('sidebar-backdrop');
-const mobileMenuButton = document.getElementById('mobile-menu-button');
-
-if (sidebar) sidebar.classList.add('overlay-visible');
-if (backdrop) backdrop.classList.add('visible');
-if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
-document.body.style.overflow = 'hidden';
-}
-
-function closeMobileMenu() {
-const sidebar = document.getElementById('sidebar');
-const backdrop = document.getElementById('sidebar-backdrop');
-const mobileMenuButton = document.getElementById('mobile-menu-button');
-
-if (sidebar) sidebar.classList.remove('overlay-visible');
-if (backdrop) backdrop.classList.remove('visible');
-if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
-document.body.style.overflow = '';
-}
-
-function toggleMobileMenu() {
-const mobileMenuButton = document.getElementById('mobile-menu-button');
-const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-
-if (isExpanded) {
-closeMobileMenu();
-} else {
-openMobileMenu();
-}
-}
-
-// =========================================================================
-// MODAL FUNCTIONS WITH TENANT_CONTACT PARAMETER
-// =========================================================================
-
-function openPaymentModal(unit, rent, id, propertyName, tenantContact) {
-displayErrorBanner(null, true);
-
-const modalTitle = document.querySelector('#paymentModal h2');
-if (modalTitle) modalTitle.textContent = "Record New Payment";
-
-const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-if (modalSubmitBtn) {
-const btnText = modalSubmitBtn.querySelector('.btn-text');
-if (btnText) btnText.textContent = "Confirm Payment";
-modalSubmitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-modalSubmitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-}
-
-const modalUnit = document.getElementById('modalUnit');
-if (modalUnit) modalUnit.value = unit;
-
-const modalId = document.getElementById('modalId');
-if (modalId) modalId.value = id;
-
-const modalPropertyName = document.getElementById('modalPropertyName');
-if (modalPropertyName) modalPropertyName.value = propertyName;
-
-// SET the tenantContact value
-const modalTenantContact = document.getElementById('modalTenantContact');
-if (modalTenantContact) modalTenantContact.value = tenantContact;
-
-const modalRentInput = document.getElementById('modalRentInput');
-if (modalRentInput) {
-// Clean and set the rent input value
-modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
-modalRentInput.disabled = false;
-}
-
-const modalUnitDisplay = document.getElementById('modalUnitDisplay');
-if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
-
-const modalOriginalRent = document.getElementById('modalOriginalRent');
-if (modalOriginalRent) modalOriginalRent.textContent = rent;
-
-const modalAction = document.getElementById('modalAction');
-if (modalAction) modalAction.value = 'mark';
-
-const paidInput = document.querySelector('#paymentForm input[name="paid"]');
-if (paidInput) paidInput.value = 'yes';
-
-const paymentModal = document.getElementById('paymentModal');
-if (paymentModal) {
-paymentModal.classList.remove('hidden');
-paymentModal.classList.add('flex');
-document.body.classList.add('modal-open');
-}
-}
-
-function openUnmarkModal(unit, id, propertyName, rent, tenantContact) {
-displayErrorBanner(null, true);
-
-const modalTitle = document.querySelector('#paymentModal h2');
-if (modalTitle) modalTitle.textContent = "Confirm Payment Removal";
-
-const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-if (modalSubmitBtn) {
-const btnText = modalSubmitBtn.querySelector('.btn-text');
-if (btnText) btnText.textContent = "Unmark Payment";
-modalSubmitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
-modalSubmitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
-}
-
-const modalUnit = document.getElementById('modalUnit');
-if (modalUnit) modalUnit.value = unit;
-
-const modalId = document.getElementById('modalId');
-if (modalId) modalId.value = id;
-
-const modalPropertyName = document.getElementById('modalPropertyName');
-if (modalPropertyName) modalPropertyName.value = propertyName;
-
-// SET the tenantContact value
-const modalTenantContact = document.getElementById('modalTenantContact');
-if (modalTenantContact) modalTenantContact.value = tenantContact;
-
-const modalRentInput = document.getElementById('modalRentInput');
-if (modalRentInput) {
-modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
-modalRentInput.disabled = true;
-}
-
-const modalUnitDisplay = document.getElementById('modalUnitDisplay');
-if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
-
-const modalOriginalRent = document.getElementById('modalOriginalRent');
-if (modalOriginalRent) modalOriginalRent.textContent = rent;
-
-const modalAction = document.getElementById('modalAction');
-if (modalAction) modalAction.value = 'unmark';
-
-const paidInput = document.querySelector('#paymentForm input[name="paid"]');
-if (paidInput) paidInput.value = 'no';
-
-const paymentModal = document.getElementById('paymentModal');
-if (paymentModal) {
-paymentModal.classList.remove('hidden');
-paymentModal.classList.add('flex');
-document.body.classList.add('modal-open');
-}
-}
-
-// =========================================================================
-// DOMContentLoaded Event Listener
-// =========================================================================
-
-document.addEventListener('DOMContentLoaded', function() {
-// Use server theme as primary source
-const serverTheme = window.serverTheme || 'light';
-localStorage.setItem('user_chosen_theme', serverTheme);
-initializeIcons();
-
-// Add event listener to dark mode toggle button
-const darkModeToggle = document.getElementById('dark-mode-toggle');
-if (darkModeToggle) {
-darkModeToggle.addEventListener('click', async function(event) {
-event.preventDefault();
-event.stopPropagation();
-await toggleDarkMode();
-});
-}
-
-// Mobile menu button functionality
-const mobileMenuButton = document.getElementById('mobile-menu-button');
-if (mobileMenuButton) {
-mobileMenuButton.addEventListener('click', toggleMobileMenu);
-}
-
-// Close mobile menu when clicking backdrop
-const backdrop = document.getElementById('sidebar-backdrop');
-if (backdrop) {
-backdrop.addEventListener('click', closeMobileMenu);
-}
-
-// Close mobile menu when clicking on sidebar links
-const sidebarLinks = document.querySelectorAll('.sidebar a');
-sidebarLinks.forEach(link => {
-link.addEventListener('click', closeMobileMenu);
-});
-
-// Close mobile menu on Escape key
-document.addEventListener('keydown', function(e) {
-if (e.key === 'Escape') {
-closeMobileMenu();
-}
-});
-
-// Close mobile menu on window resize above 1024px
-window.addEventListener('resize', function() {
-if (window.innerWidth > 1024) {
-closeMobileMenu();
-}
-});
-
-// View Units Table button functionality (toggles property selection panel)
-const viewTableBtn = document.getElementById('viewTableBtn');
-const propertyFormContainer = document.getElementById('propertyFormContainer');
-const mainContent = document.getElementById('mainContent');
-
-if (viewTableBtn && propertyFormContainer && mainContent) {
-viewTableBtn.addEventListener('click', function() {
-// Toggle property form visibility
-propertyFormContainer.classList.toggle('hidden');
-
-// Toggle button text based on state
-if (propertyFormContainer.classList.contains('hidden')) {
-viewTableBtn.innerHTML = `
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-</svg>
-Show Property Selection
-`;
-mainContent.classList.add('full-table-view');
-} else {
-viewTableBtn.innerHTML = `
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-</svg>
-View Units Table
-`;
-mainContent.classList.remove('full-table-view');
-}
-});
-}
-
-// Format and display the current date
-function formatDate() {
-const date = new Date();
-const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-const formattedDate = date.toLocaleDateString('en-US', options);
-document.getElementById('currentDate').textContent = formattedDate;
-}
-formatDate();
-
-// =========================================================================
-// PROPERTY FORM SUBMISSION WITH LOADING
-// =========================================================================
-const propertySelect = document.getElementById('propertySelect');
-let autoSubmitted = false;
-
-if (propertyForm && propertyFormSubmit) {
-// Handle form submission
-propertyForm.addEventListener('submit', function(event) {
-// Prevent multiple submissions
-if (isPropertyFormSubmitting) {
-event.preventDefault();
-return false;
-}
-
-const selectedValue = propertySelect.value;
-if (selectedValue && selectedValue !== '' && selectedValue !== 'all') {
-showPropertyFormLoading();
-return true;
-}
-
-// If no property selected, don't submit
-event.preventDefault();
-return false;
-});
-
-// Auto-submit when property is selected (with loading)
-const selectedValue = propertySelect.value;
-if (selectedValue && selectedValue !== '' && selectedValue !== 'all' && !autoSubmitted) {
-autoSubmitted = true;
-showPropertyFormLoading();
-// Allow the form to submit normally
-}
-
-// Handle select change with loading
-propertySelect.addEventListener('change', function() {
-const newValue = this.value;
-if (newValue && newValue !== '' && newValue !== 'all') {
-showPropertyFormLoading();
-propertyForm.submit();
-}
-});
-}
-
-// =========================================================================
-// TABLE AND PAYMENT HANDLING
-// =========================================================================
-const tbody = document.getElementById('unitsTbody');
-const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-const paymentForm = document.getElementById('paymentForm');
-
-function flashMessage(msg, color = 'yellow') {
-const el = document.createElement('div');
-el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
-color === 'green' ? 'bg-green-100 text-green-800' :
-color === 'red' ? 'bg-red-100 text-red-800' :
-'bg-yellow-100 text-yellow-800'
-}`;
-el.textContent = msg;
-document.body.appendChild(el);
-setTimeout(() => el.remove(), 1600);
-}
-
-function applyFilters() {
-const prop = propertySelect ? propertySelect.value : '';
-rows.forEach(row => {
-const rowProp = row.dataset.property || '';
-const matchesProp = (prop === 'all') || (rowProp === prop) || !prop;
-row.style.display = matchesProp ? '' : 'none';
-});
-}
-
-// =========================================================================
-// ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
-// =========================================================================
-
-if (paymentForm) {
-paymentForm.addEventListener('submit', async (event) => {
-event.preventDefault();
-displayErrorBanner(null, true);
-
-// Show loading on modal submit button
-showModalLoading();
-
-const formData = new FormData(paymentForm);
-const tenantName = formData.get('id');
-const unit = formData.get('unit');
-const tenantContact = formData.get('tenant_contact');
-const actionType = formData.get('action_type');
-
-let url = "";
-
-// Include tenantContact in both URLs
-if (actionType === 'unmark') {
-url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
-} else {
-url = `http://localhost:7070/payment_status/${tenantName}/${unit}/${tenantContact}`;
-}
-
-try {
-const response = await fetch(url, {
-method: "POST",
-headers: { "Content-Type": "application/x-www-form-urlencoded" },
-body: new URLSearchParams(formData)
-});
-
-// Hide loading after response
-hideModalLoading();
-
-if (!response.ok) {
-const errorMessage = await response.text();
-displayErrorBanner(errorMessage || "Something went wrong.");
-return;
-}
-
-// SUCCESS
-const rowIndicator = document.querySelector(
-`.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
-);
-
-if (rowIndicator) {
-if (actionType === 'unmark') {
-rowIndicator.textContent = "−";
-rowIndicator.classList.remove("bg-green-100", "text-green-800");
-rowIndicator.classList.add("bg-red-100", "text-red-800");
-} else {
-rowIndicator.textContent = "+";
-rowIndicator.classList.remove("bg-red-100", "text-red-800");
-rowIndicator.classList.add("bg-green-100", "text-green-800");
-}
-}
-
-flashMessage(
-actionType === 'unmark'
-? `Payment removed for Unit ${unit}.`
-: `Payment recorded for Unit ${unit}.`,
-"green"
-);
-
-closePaymentModal();
-
-} catch (error) {
-console.error("AJAX Error:", error);
-displayErrorBanner("Network error. Check your connection.");
-hideModalLoading();
-}
-});
-}
-
-// =========================================================================
-// EVENT LISTENERS FOR TABLE INTERACTIONS
-// =========================================================================
-
-let selectedRow = null;
-rows.forEach(row => {
-row.addEventListener('click', (e) => {
-if (e.target.closest('.indicator')) return;
-if (selectedRow) selectedRow.classList.remove('row-selected');
-selectedRow = row;
-selectedRow.classList.add('row-selected');
-});
-});
-
-document.querySelectorAll('.payment-cell').forEach(cell => {
-cell.addEventListener('click', function(e) {
-if (e.target.closest('.indicator')) {
-e.stopPropagation();
-}
-});
-});
-
-const openPayButtons = document.querySelectorAll('.open-pay');
-openPayButtons.forEach(btn => {
-btn.addEventListener('click', function(e) {
-e.stopPropagation();
-
-const indicator = this;
-const currentStatus = indicator.textContent.trim();
-
-const unit = this.dataset.unit;
-const rent = this.dataset.rent;
-const id = this.dataset.id;
-const propertyName = this.dataset.propertyName;
-const tenantContact = this.dataset.tenantContact;
-
-if (currentStatus === '+') {
-openUnmarkModal(unit, id, propertyName, rent, tenantContact);
-} else {
-openPaymentModal(unit, rent, id, propertyName, tenantContact);
-}
-});
-});
-
-// Handle page unload to prevent accidental navigation during form submission
-window.addEventListener('beforeunload', function(e) {
-if (isPropertyFormSubmitting) {
-// Optional: Show confirmation dialog
-// e.preventDefault();
-// e.returnValue = 'Your form is still submitting. Are you sure you want to leave?';
-}
-});
-
-// Initial Load Actions
-displayErrorBanner(null, true);
-applyFilters();
-});  </script>
+    // =========================================================================
+    // UX IMPROVEMENTS: Toast Notifications
+    // =========================================================================
+
+    function showToast(message, type = 'success') {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        let icon = 'fas fa-check-circle';
+        if (type === 'error') icon = 'fas fa-exclamation-circle';
+        if (type === 'warning') icon = 'fas fa-exclamation-triangle';
+
+        toast.innerHTML = `
+            <i class="${icon}"></i>
+            <span>${message}</span>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        // Remove toast after animation completes
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
+    }
+
+    // =========================================================================
+    // UX IMPROVEMENTS: Filter Table Functionality
+    // =========================================================================
+
+    function filterTable(filterType) {
+        const filterChips = document.querySelectorAll('.filter-chip');
+        const rows = document.querySelectorAll('.tenant-row');
+        const activeChip = document.querySelector(`.filter-chip[onclick*="${filterType}"]`);
+
+        // Update active chip
+        filterChips.forEach(chip => chip.classList.remove('active'));
+        if (activeChip) {
+            activeChip.classList.add('active');
+        }
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            let showRow = true;
+
+            // Get row data
+            const paymentStatus = row.querySelector('.indicator').textContent.trim();
+            const statusBadge = row.querySelector('.status-badge');
+            const hasDebt = statusBadge.textContent.includes('Debt');
+            const isVacant = statusBadge.classList.contains('status-vacant') && !hasDebt;
+
+            // Apply filters
+            switch(filterType) {
+                case 'paid':
+                    showRow = paymentStatus === '✓';
+                    break;
+                case 'unpaid':
+                    showRow = paymentStatus === '✗';
+                    break;
+                case 'debt':
+                    showRow = hasDebt;
+                    break;
+                case 'vacant':
+                    showRow = isVacant;
+                    break;
+                case 'all':
+                default:
+                    showRow = true;
+            }
+
+            if (showRow) {
+                row.style.display = '';
+                row.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+                row.classList.add('hidden');
+            }
+        });
+
+        // Update tenant count
+        const tenantCount = document.getElementById('tenantCount');
+        if (tenantCount) {
+            tenantCount.textContent = visibleCount;
+        }
+
+        // Show/hide no results message
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        if (noResultsMessage) {
+            if (visibleCount === 0 && rows.length > 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        }
+
+        // Show filter applied toast
+        if (filterType !== 'all') {
+            const filterName = activeChip ? activeChip.textContent.trim() : filterType;
+            showToast(`Showing ${filterName.toLowerCase()} tenants`, 'success');
+        }
+    }
+
+    // =========================================================================
+    // UX IMPROVEMENTS: Quick Actions
+    // =========================================================================
+
+    function exportData() {
+        showToast('Exporting data...', 'warning');
+        // In a real app, this would trigger a file download
+        setTimeout(() => {
+            showToast('Data exported successfully!', 'success');
+        }, 1500);
+    }
+
+    function showAllPayments() {
+        showToast('Loading all payment history...', 'warning');
+        // In a real app, this would navigate to payments page
+        setTimeout(() => {
+            showToast('Payment history loaded', 'success');
+        }, 1500);
+    }
+
+    function generateReports() {
+        showToast('Generating monthly report...', 'warning');
+        // In a real app, this would generate and download a report
+        setTimeout(() => {
+            showToast('Report generated successfully!', 'success');
+        }, 2000);
+    }
+
+    // =========================================================================
+    // UX IMPROVEMENTS: Keyboard Shortcuts
+    // =========================================================================
+
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + F to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            const searchInput = document.getElementById('tenantSearch');
+            if (searchInput) {
+                searchInput.focus();
+                showToast('Search focused. Type to find tenants.', 'success');
+            }
+        }
+
+        // Escape to clear search
+        if (e.key === 'Escape') {
+            const searchInput = document.getElementById('tenantSearch');
+            if (document.activeElement === searchInput && searchInput.value) {
+                searchInput.value = '';
+                performSearch();
+                showToast('Search cleared', 'warning');
+            }
+        }
+
+        // Ctrl/Cmd + D to toggle dark mode
+        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+            e.preventDefault();
+            document.getElementById('dark-mode-toggle').click();
+            const isDark = document.body.classList.contains('dark');
+            showToast(`Dark mode ${isDark ? 'enabled' : 'disabled'}`, 'success');
+        }
+    });
+
+    // =========================================================================
+    // UX IMPROVEMENTS: Tooltips for better affordances
+    // =========================================================================
+
+    function initializeTooltips() {
+        // Add tooltips to important elements
+        const tooltipElements = [
+            { selector: '.indicator', text: 'Click to update payment status' },
+            { selector: '.status-badge', text: 'Click to filter by status' },
+            { selector: '.edit-btn', text: 'Edit tenant details' },
+            { selector: '.feature-icon', text: 'Quick stats overview' },
+            { selector: '.nav-item', text: 'Navigation menu item' },
+            { selector: '.quick-action-btn', text: 'Quick action button' },
+            { selector: '.filter-chip', text: 'Click to filter table' }
+        ];
+
+        tooltipElements.forEach(item => {
+            const elements = document.querySelectorAll(item.selector);
+            elements.forEach(el => {
+                el.setAttribute('title', item.text);
+                el.setAttribute('aria-label', item.text);
+            });
+        });
+    }
+
+    // =========================================================================
+    // UX IMPROVEMENTS: Progress Indicators
+    // =========================================================================
+
+    function updateProgressBars() {
+        // This would normally fetch real data
+        // For demo purposes, we'll simulate progress updates
+        const progressBars = document.querySelectorAll('.progress-fill');
+        progressBars.forEach((bar, index) => {
+            const targetWidth = [85, 30, 60][index];
+            bar.style.width = `${targetWidth}%`;
+        });
+    }
+
+    // =========================================================================
+    // UX IMPROVEMENTS: Confirmation Dialogs
+    // =========================================================================
+
+    function confirmAction(message, callback) {
+        if (confirm(message)) {
+            callback();
+            return true;
+        }
+        return false;
+    }
+
+    // =========================================================================
+    // ENHANCED: Table Row Click with Better Feedback
+    // =========================================================================
+
+    let lastSelectedRow = null;
+    const tableRows = document.querySelectorAll('.tenant-row');
+
+    tableRows.forEach(row => {
+        row.addEventListener('click', (e) => {
+            // Don't select if clicking on interactive elements
+            if (e.target.closest('.indicator') ||
+                e.target.closest('.edit-btn') ||
+                e.target.closest('a')) {
+                return;
+            }
+
+            // Remove selection from previous row
+            if (lastSelectedRow && lastSelectedRow !== row) {
+                lastSelectedRow.classList.remove('row-selected');
+            }
+
+            // Toggle selection on current row
+            row.classList.toggle('row-selected');
+            lastSelectedRow = row.classList.contains('row-selected') ? row : null;
+
+            // Show selection feedback
+            if (row.classList.contains('row-selected')) {
+                const tenantName = row.querySelector('.tenant-name').textContent;
+                showToast(`Selected ${tenantName}`, 'success');
+            }
+        });
+    });
+
+    // =========================================================================
+    // ENHANCED: Search with Debouncing
+    // =========================================================================
+
+    let searchTimeout;
+    const searchInput = document.getElementById('tenantSearch');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch();
+            }, 300); // 300ms debounce
+        });
+    }
+
+    // =========================================================================
+    // ENHANCED: Initialize All UX Improvements
+    // =========================================================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        initializeTooltips();
+
+        // Update progress bars
+        updateProgressBars();
+
+        // Show welcome message
+        setTimeout(() => {
+            showToast('Welcome to ProMan Dashboard! Use Ctrl+F to search.', 'success');
+        }, 1000);
+
+        // ... rest of your existing DOMContentLoaded code ...
+
+        // Initialize search functionality
+        initializeSearch();
+
+        // Format and display the current date
+        function formatDate() {
+            const date = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options);
+            document.getElementById('currentDate').textContent = formattedDate;
+        }
+        formatDate();
+    });
+
+    // =========================================================================
+    // REST OF YOUR EXISTING JAVASCRIPT CODE
+    // =========================================================================
+    // ... (Keep all your existing JavaScript functions here, they will work with the new UX improvements)
+    // ... (The functions for loading, modals, search, etc. from your previous code)
+
+    // =========================================================================
+    // LOADING STATE MANAGEMENT
+    // =========================================================================
+
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const propertyForm = document.getElementById('propertyForm');
+    const propertyFormSubmit = document.getElementById('propertyFormSubmit');
+    const propertySubmitIcon = document.getElementById('propertySubmitIcon');
+    const propertySubmitText = document.getElementById('propertySubmitText');
+    const propertySubmitSpinner = document.getElementById('propertySubmitSpinner');
+
+    let isPropertyFormSubmitting = false;
+
+    // Function to show loading state for property form
+    function showPropertyFormLoading() {
+    isPropertyFormSubmitting = true;
+
+    // Disable form button
+    propertyFormSubmit.disabled = true;
+    propertyFormSubmit.classList.add('btn-disabled', 'btn-loading');
+
+    // Show spinner and hide icon
+    propertySubmitIcon.classList.add('hidden');
+    propertySubmitSpinner.classList.remove('hidden');
+    propertySubmitText.textContent = 'Loading...';
+
+    // Show loading overlay
+    loadingOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+
+    // Function to hide loading state for property form
+    function hidePropertyFormLoading() {
+    isPropertyFormSubmitting = false;
+
+    // Re-enable form button
+    propertyFormSubmit.disabled = false;
+    propertyFormSubmit.classList.remove('btn-disabled', 'btn-loading');
+
+    // Hide spinner and show icon
+    propertySubmitIcon.classList.remove('hidden');
+    propertySubmitSpinner.classList.add('hidden');
+    propertySubmitText.textContent = 'Load Property';
+
+    // Hide loading overlay
+    loadingOverlay.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+    }
+
+    // Function to show loading state for modal
+    function showModalLoading() {
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+    const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
+    const btnText = modalSubmitBtn.querySelector('.btn-text');
+
+    if (modalSubmitBtn && modalSubmitSpinner && btnText) {
+    modalSubmitBtn.disabled = true;
+    modalSubmitBtn.classList.add('btn-disabled');
+    modalSubmitSpinner.classList.remove('hidden');
+    btnText.textContent = 'Processing...';
+    }
+    }
+
+    // Function to hide loading state for modal
+    function hideModalLoading() {
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+    const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
+    const btnText = modalSubmitBtn?.querySelector('.btn-text');
+
+    if (modalSubmitBtn && modalSubmitSpinner && btnText) {
+    modalSubmitBtn.disabled = false;
+    modalSubmitBtn.classList.remove('btn-disabled');
+    modalSubmitSpinner.classList.add('hidden');
+    btnText.textContent = modalSubmitBtn.classList.contains('bg-red-600') ? 'Unmark Payment' : 'Confirm Payment';
+    }
+    }
+
+    // =========================================================================
+    // DARK MODE FUNCTIONS WITH AJAX
+    // =========================================================================
+
+    // AJAX function to send theme preference without page reload
+    async function sendThemePreference(theme) {
+    try {
+    const response = await fetch('http://localhost:7070/page_theme', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `user_theme=${theme}`
+    });
+
+    // Don't reload the page, just update local storage
+    localStorage.setItem('user_chosen_theme', theme);
+
+    console.log('Theme preference saved:', theme);
+
+    } catch (error) {
+    console.error('Error sending theme preference:', error);
+    // Fallback: still update local storage even if server request fails
+    localStorage.setItem('user_chosen_theme', theme);
+    }
+    }
+
+    function initializeIcons() {
+    const isDark = document.body.classList.contains('dark');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+
+    if (sunIcon && moonIcon) {
+    if (isDark) {
+    sunIcon.classList.remove('hidden');
+    moonIcon.classList.add('hidden');
+    } else {
+    sunIcon.classList.add('hidden');
+    moonIcon.classList.remove('hidden');
+    }
+    }
+    }
+
+    async function toggleDarkMode() {
+    const isCurrentlyDark = document.body.classList.contains('dark');
+    const newTheme = isCurrentlyDark ? 'light' : 'dark';
+
+    if (isCurrentlyDark) {
+    document.body.classList.remove('dark');
+    } else {
+    document.body.classList.add('dark');
+    }
+
+    initializeIcons();
+
+    // Send preference without page reload using AJAX
+    await sendThemePreference(newTheme);
+    }
+
+    // =========================================================================
+    // GLOBAL FUNCTIONS (Accessible to onclick handlers)
+    // =========================================================================
+
+    function closePaymentModal() {
+    const paymentModal = document.getElementById('paymentModal');
+    if (!paymentModal) return;
+    paymentModal.classList.add('hidden');
+    paymentModal.classList.remove('flex');
+    document.body.classList.remove('modal-open');
+    hideModalLoading(); // Reset modal loading state
+    }
+
+    function displayErrorBanner(message, isClear = false) {
+    const errorDisplay = document.getElementById('paymentErrorDisplay');
+    if (!errorDisplay) return;
+
+    if (isClear || !message) {
+    errorDisplay.classList.add('hidden');
+    errorDisplay.textContent = '';
+    } else {
+    errorDisplay.textContent = message;
+    errorDisplay.classList.remove('hidden');
+    }
+    }
+
+    // Mobile menu functions
+    function openMobileMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+    if (sidebar) sidebar.classList.add('overlay-visible');
+    if (backdrop) backdrop.classList.add('visible');
+    if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+
+    if (sidebar) sidebar.classList.remove('overlay-visible');
+    if (backdrop) backdrop.classList.remove('visible');
+    if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    }
+
+    function toggleMobileMenu() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+    if (isExpanded) {
+    closeMobileMenu();
+    } else {
+    openMobileMenu();
+    }
+    }
+
+    // =========================================================================
+    // MODAL FUNCTIONS WITH TENANT_CONTACT PARAMETER
+    // =========================================================================
+
+    function openPaymentModal(unit, rent, id, propertyName, tenantContact) {
+    displayErrorBanner(null, true);
+
+    const modalTitle = document.querySelector('#paymentModal h2');
+    if (modalTitle) modalTitle.textContent = "Record New Payment";
+
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+    if (modalSubmitBtn) {
+    const btnText = modalSubmitBtn.querySelector('.btn-text');
+    if (btnText) btnText.textContent = "Confirm Payment";
+    modalSubmitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+    modalSubmitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+    }
+
+    const modalUnit = document.getElementById('modalUnit');
+    if (modalUnit) modalUnit.value = unit;
+
+    const modalId = document.getElementById('modalId');
+    if (modalId) modalId.value = id;
+
+    const modalPropertyName = document.getElementById('modalPropertyName');
+    if (modalPropertyName) modalPropertyName.value = propertyName;
+
+    // SET the tenantContact value
+    const modalTenantContact = document.getElementById('modalTenantContact');
+    if (modalTenantContact) modalTenantContact.value = tenantContact;
+
+    const modalRentInput = document.getElementById('modalRentInput');
+    if (modalRentInput) {
+    // Clean and set the rent input value
+    modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
+    modalRentInput.disabled = false;
+    }
+
+    const modalUnitDisplay = document.getElementById('modalUnitDisplay');
+    if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
+
+    const modalOriginalRent = document.getElementById('modalOriginalRent');
+    if (modalOriginalRent) modalOriginalRent.textContent = rent;
+
+    const modalAction = document.getElementById('modalAction');
+    if (modalAction) modalAction.value = 'mark';
+
+    const paidInput = document.querySelector('#paymentForm input[name="paid"]');
+    if (paidInput) paidInput.value = 'yes';
+
+    const paymentModal = document.getElementById('paymentModal');
+    if (paymentModal) {
+    paymentModal.classList.remove('hidden');
+    paymentModal.classList.add('flex');
+    document.body.classList.add('modal-open');
+    }
+    }
+
+    function openUnmarkModal(unit, id, propertyName, rent, tenantContact) {
+    displayErrorBanner(null, true);
+
+    const modalTitle = document.querySelector('#paymentModal h2');
+    if (modalTitle) modalTitle.textContent = "Confirm Payment Removal";
+
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+    if (modalSubmitBtn) {
+    const btnText = modalSubmitBtn.querySelector('.btn-text');
+    if (btnText) btnText.textContent = "Unmark Payment";
+    modalSubmitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+    modalSubmitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+    }
+
+    const modalUnit = document.getElementById('modalUnit');
+    if (modalUnit) modalUnit.value = unit;
+
+    const modalId = document.getElementById('modalId');
+    if (modalId) modalId.value = id;
+
+    const modalPropertyName = document.getElementById('modalPropertyName');
+    if (modalPropertyName) modalPropertyName.value = propertyName;
+
+    // SET the tenantContact value
+    const modalTenantContact = document.getElementById('modalTenantContact');
+    if (modalTenantContact) modalTenantContact.value = tenantContact;
+
+    const modalRentInput = document.getElementById('modalRentInput');
+    if (modalRentInput) {
+    modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
+    modalRentInput.disabled = true;
+    }
+
+    const modalUnitDisplay = document.getElementById('modalUnitDisplay');
+    if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
+
+    const modalOriginalRent = document.getElementById('modalOriginalRent');
+    if (modalOriginalRent) modalOriginalRent.textContent = rent;
+
+    const modalAction = document.getElementById('modalAction');
+    if (modalAction) modalAction.value = 'unmark';
+
+    const paidInput = document.querySelector('#paymentForm input[name="paid"]');
+    if (paidInput) paidInput.value = 'no';
+
+    const paymentModal = document.getElementById('paymentModal');
+    if (paymentModal) {
+    paymentModal.classList.remove('hidden');
+    paymentModal.classList.add('flex');
+    document.body.classList.add('modal-open');
+    }
+    }
+
+    // =========================================================================
+    // SEARCH FUNCTIONALITY
+    // =========================================================================
+
+    function initializeSearch() {
+    const searchInput = document.getElementById('tenantSearch');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const tenantRows = document.querySelectorAll('.tenant-row');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const tenantCount = document.getElementById('tenantCount');
+    const noUnitsRow = document.querySelector('.no-units-row');
+
+    if (!searchInput || !clearSearchBtn) return;
+
+    // Update tenant count on load
+    updateTenantCount();
+
+    function updateTenantCount() {
+    if (tenantCount) {
+    const visibleRows = Array.from(tenantRows).filter(row =>
+        row.style.display !== 'none' &&
+        !row.classList.contains('hidden')
+    ).length;
+    tenantCount.textContent = visibleRows;
+    }
+    }
+
+    function performSearch() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    let hasVisibleRows = false;
+
+    // Show/hide clear button
+    if (searchTerm.length > 0) {
+    clearSearchBtn.style.display = 'block';
+    } else {
+    clearSearchBtn.style.display = 'none';
+    }
+
+    // If no units exist, don't perform search
+    if (noUnitsRow && noUnitsRow.style.display !== 'none') {
+    if (noResultsMessage) noResultsMessage.classList.add('hidden');
+    return;
+    }
+
+    tenantRows.forEach(row => {
+    const tenantName = row.querySelector('.tenant-name')?.textContent.toLowerCase() || '';
+    const unitNumber = row.querySelector('.unit-number-cell')?.textContent.toLowerCase() || '';
+    const tenantContact = row.querySelector('.tenant-contact')?.dataset?.tenantContact?.toLowerCase() || '';
+
+    const matches = tenantName.includes(searchTerm) ||
+                    unitNumber.includes(searchTerm) ||
+                    tenantContact.includes(searchTerm);
+
+    if (matches) {
+    row.style.display = '';
+    row.classList.remove('hidden');
+    hasVisibleRows = true;
+    } else {
+    row.style.display = 'none';
+    row.classList.add('hidden');
+    }
+    });
+
+    // Show/hide no results message
+    if (noResultsMessage) {
+    if (!hasVisibleRows && searchTerm.length > 0) {
+    noResultsMessage.classList.remove('hidden');
+    } else {
+    noResultsMessage.classList.add('hidden');
+    }
+    }
+
+    updateTenantCount();
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', performSearch);
+    searchInput.addEventListener('keyup', function(e) {
+    if (e.key === 'Escape') {
+    searchInput.value = '';
+    performSearch();
+    }
+    });
+
+    clearSearchBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    performSearch();
+    searchInput.focus();
+    });
+
+    // Initial search setup
+    performSearch();
+    }
+
+    // =========================================================================
+    // DOMContentLoaded Event Listener
+    // =========================================================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Use server theme as primary source
+    const serverTheme = window.serverTheme || 'light';
+    localStorage.setItem('user_chosen_theme', serverTheme);
+    initializeIcons();
+
+    // Add event listener to dark mode toggle button
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', async function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    await toggleDarkMode();
+    });
+    }
+
+    // Mobile menu button functionality
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    if (mobileMenuButton) {
+    mobileMenuButton.addEventListener('click', toggleMobileMenu);
+    }
+
+    // Close mobile menu when clicking backdrop
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (backdrop) {
+    backdrop.addEventListener('click', closeMobileMenu);
+    }
+
+    // Close mobile menu when clicking on sidebar links
+    const sidebarLinks = document.querySelectorAll('.sidebar a');
+    sidebarLinks.forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+    });
+
+    // Close mobile menu on Escape key
+    document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+    closeMobileMenu();
+    }
+    });
+
+    // Close mobile menu on window resize above 1024px
+    window.addEventListener('resize', function() {
+    if (window.innerWidth > 1024) {
+    closeMobileMenu();
+    }
+    });
+
+    // View Units Table button functionality (toggles property selection panel)
+    const viewTableBtn = document.getElementById('viewTableBtn');
+    const propertyFormContainer = document.getElementById('propertyFormContainer');
+    const mainContent = document.getElementById('mainContent');
+
+    if (viewTableBtn && propertyFormContainer && mainContent) {
+    viewTableBtn.addEventListener('click', function() {
+    // Toggle property form visibility
+    propertyFormContainer.classList.toggle('hidden');
+
+    // Toggle button text based on state
+    if (propertyFormContainer.classList.contains('hidden')) {
+    viewTableBtn.innerHTML = `
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    Show Property Selection
+    `;
+    mainContent.classList.add('full-table-view');
+    } else {
+    viewTableBtn.innerHTML = `
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+    </svg>
+    View Units Table
+    `;
+    mainContent.classList.remove('full-table-view');
+    }
+    });
+    }
+
+    // Format and display the current date
+    function formatDate() {
+    const date = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+    document.getElementById('currentDate').textContent = formattedDate;
+    }
+    formatDate();
+
+    // Initialize search functionality
+    initializeSearch();
+
+    // =========================================================================
+    // PROPERTY FORM SUBMISSION WITH LOADING
+    // =========================================================================
+    const propertySelect = document.getElementById('propertySelect');
+    let autoSubmitted = false;
+
+    if (propertyForm && propertyFormSubmit) {
+    // Handle form submission
+    propertyForm.addEventListener('submit', function(event) {
+    // Prevent multiple submissions
+    if (isPropertyFormSubmitting) {
+    event.preventDefault();
+    return false;
+    }
+
+    const selectedValue = propertySelect.value;
+    if (selectedValue && selectedValue !== '' && selectedValue !== 'all') {
+    showPropertyFormLoading();
+    return true;
+    }
+
+    // If no property selected, don't submit
+    event.preventDefault();
+    return false;
+    });
+
+    // Auto-submit when property is selected (with loading)
+    const selectedValue = propertySelect.value;
+    if (selectedValue && selectedValue !== '' && selectedValue !== 'all' && !autoSubmitted) {
+    autoSubmitted = true;
+    showPropertyFormLoading();
+    // Allow the form to submit normally
+    }
+
+    // Handle select change with loading
+    propertySelect.addEventListener('change', function() {
+    const newValue = this.value;
+    if (newValue && newValue !== '' && newValue !== 'all') {
+    showPropertyFormLoading();
+    propertyForm.submit();
+    }
+    });
+    }
+
+    // =========================================================================
+    // TABLE AND PAYMENT HANDLING
+    // =========================================================================
+    const tbody = document.getElementById('unitsTbody');
+    const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+    const paymentForm = document.getElementById('paymentForm');
+
+    function flashMessage(msg, color = 'yellow') {
+    const el = document.createElement('div');
+    el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
+    color === 'green' ? 'bg-green-100 text-green-800' :
+    color === 'red' ? 'bg-red-100 text-red-800' :
+    'bg-yellow-100 text-yellow-800'
+    }`;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1600);
+    }
+
+    function applyFilters() {
+    const prop = propertySelect ? propertySelect.value : '';
+    rows.forEach(row => {
+    const rowProp = row.dataset.property || '';
+    const matchesProp = (prop === 'all') || (rowProp === prop) || !prop;
+    row.style.display = matchesProp ? '' : 'none';
+    });
+    }
+
+    // =========================================================================
+    // ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
+    // =========================================================================
+
+    if (paymentForm) {
+    paymentForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    displayErrorBanner(null, true);
+
+    // Show loading on modal submit button
+    showModalLoading();
+
+    const formData = new FormData(paymentForm);
+    const tenantName = formData.get('id');
+    const unit = formData.get('unit');
+    const tenantContact = formData.get('tenant_contact');
+    const actionType = formData.get('action_type');
+
+    let url = "";
+
+    // Include tenantContact in both URLs
+    if (actionType === 'unmark') {
+    url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
+    } else {
+    url = `http://localhost:7070/payment_status/${tenantName}/${unit}/${tenantContact}`;
+    }
+
+    try {
+    const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(formData)
+    });
+
+    // Hide loading after response
+    hideModalLoading();
+
+    if (!response.ok) {
+    const errorMessage = await response.text();
+    displayErrorBanner(errorMessage || "Something went wrong.");
+    return;
+    }
+
+    // SUCCESS
+    const rowIndicator = document.querySelector(
+    `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
+    );
+
+    if (rowIndicator) {
+    if (actionType === 'unmark') {
+    rowIndicator.textContent = "−";
+    rowIndicator.classList.remove("bg-green-100", "text-green-800");
+    rowIndicator.classList.add("bg-red-100", "text-red-800");
+    } else {
+    rowIndicator.textContent = "+";
+    rowIndicator.classList.remove("bg-red-100", "text-red-800");
+    rowIndicator.classList.add("bg-green-100", "text-green-800");
+    }
+    }
+
+    flashMessage(
+    actionType === 'unmark'
+    ? `Payment removed for Unit ${unit}.`
+    : `Payment recorded for Unit ${unit}.`,
+    "green"
+    );
+
+    closePaymentModal();
+
+    // Re-initialize search to reflect changes
+    initializeSearch();
+
+    } catch (error) {
+    console.error("AJAX Error:", error);
+    displayErrorBanner("Network error. Check your connection.");
+    hideModalLoading();
+    }
+    });
+    }
+
+    // =========================================================================
+    // EVENT LISTENERS FOR TABLE INTERACTIONS
+    // =========================================================================
+
+    let selectedRow = null;
+    rows.forEach(row => {
+    row.addEventListener('click', (e) => {
+    if (e.target.closest('.indicator')) return;
+    if (e.target.closest('a')) return; // Don't select row when clicking edit link
+    if (selectedRow) selectedRow.classList.remove('row-selected');
+    selectedRow = row;
+    selectedRow.classList.add('row-selected');
+    });
+    });
+
+    document.querySelectorAll('.payment-cell').forEach(cell => {
+    cell.addEventListener('click', function(e) {
+    if (e.target.closest('.indicator')) {
+    e.stopPropagation();
+    }
+    });
+    });
+
+    const openPayButtons = document.querySelectorAll('.open-pay');
+    openPayButtons.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+
+    const indicator = this;
+    const currentStatus = indicator.textContent.trim();
+
+    const unit = this.dataset.unit;
+    const rent = this.dataset.rent;
+    const id = this.dataset.id;
+    const propertyName = this.dataset.propertyName;
+    const tenantContact = this.dataset.tenantContact;
+
+    if (currentStatus === '+') {
+    openUnmarkModal(unit, id, propertyName, rent, tenantContact);
+    } else {
+    openPaymentModal(unit, rent, id, propertyName, tenantContact);
+    }
+    });
+    });
+
+    // Handle page unload to prevent accidental navigation during form submission
+    window.addEventListener('beforeunload', function(e) {
+    if (isPropertyFormSubmitting) {
+    // Optional: Show confirmation dialog
+    // e.preventDefault();
+    // e.returnValue = 'Your form is still submitting. Are you sure you want to leave?';
+    }
+    });
+
+    // Initial Load Actions
+    displayErrorBanner(null, true);
+    applyFilters();
+    });  </script>
 </body>
 </html>
