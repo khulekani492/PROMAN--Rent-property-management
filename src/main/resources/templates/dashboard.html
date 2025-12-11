@@ -2231,6 +2231,10 @@
 
             <!-- NEW: Quick Actions Toolbar -->
             <div class="quick-actions">
+                <button class="quick-action-btn" onclick="exportData()">
+                    <i class="fas fa-file-export"></i>
+                    Export Data
+                </button>
                 <button class="quick-action-btn" onclick="showAllPayments()">
                     <i class="fas fa-receipt"></i>
                     View All Payments
@@ -2246,32 +2250,56 @@
             </div>
 
             <!-- Revenue Statistics Cards -->
-            <!-- Horizontal Compact Stats -->
-            <div class="horizontal-stats-container">
-                <div class="horizontal-stats">
-                    <!-- Total Revenue Card -->
-                    <div class="horizontal-stat-card stat-card-gold">
-                        <div class="horizontal-stat-icon">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                        <div class="horizontal-stat-content">
-                            <div class="horizontal-stat-value" th:text="'R' + ${totalRevenue != null ? totalRevenue : '0'}">R0</div>
-                            <div class="horizontal-stat-label">Revenue</div>
-                        </div>
+            <div class="revenue-stats-container">
+                <!-- Total Revenue Card (Gold) -->
+                <div class="stat-card stat-card-gold">
+                    <div class="stat-icon stat-icon-gold">
+                        <i class="fas fa-money-bill-wave"></i>
                     </div>
+                    <div class="stat-value" th:text="'R' + ${totalRevenue != null ? totalRevenue : '0'}">R0</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%"></div>
+                    </div>
+                    <div class="stat-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12% from last month</span>
+                    </div>
+                </div>
 
-                    <!-- Pending Debts Card -->
-                    <div class="horizontal-stat-card stat-card-light-green">
-                        <div class="horizontal-stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="horizontal-stat-content">
-                            <div class="horizontal-stat-value" th:text="${pendingDebtCount != null ? pendingDebtCount : '0'}">0</div>
-                            <div class="horizontal-stat-label">Pending</div>
-                        </div>
+                <!-- Pending Debt Count Card (Light Green) -->
+                <div class="stat-card stat-card-light-green">
+                    <div class="stat-icon stat-icon-light-green">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" th:text="${pendingDebtCount != null ? pendingDebtCount : '0'}">0</div>
+                    <div class="stat-label">Pending Debts</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 30%"></div>
+                    </div>
+                    <div class="stat-trend trend-down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>-2 from last week</span>
+                    </div>
+                </div>
+
+                <!-- Total Debt Amount Card (Red) -->
+                <div class="stat-card stat-card-red">
+                    <div class="stat-icon stat-icon-red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value" th:text="'R' + ${totalDebtAmount != null ? totalDebtAmount : '0'}">R0</div>
+                    <div class="stat-label">Total Debt Amount</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%"></div>
+                    </div>
+                    <div class="stat-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Action needed</span>
                     </div>
                 </div>
             </div>
+
             <!-- NEW: Filter Chips -->
             <div class="filter-chips">
                 <div class="filter-chip active" onclick="filterTable('all')">
@@ -2609,18 +2637,19 @@
             let showRow = true;
 
             // Get row data
-            const paymentStatus = row.querySelector('.indicator').textContent.trim();
+            const indicator = row.querySelector('.indicator');
+            const paymentStatus = indicator ? indicator.textContent.trim() : '';
             const statusBadge = row.querySelector('.status-badge');
-            const hasDebt = statusBadge.textContent.includes('Debt');
-            const isVacant = statusBadge.classList.contains('status-vacant') && !hasDebt;
+            const hasDebt = statusBadge ? statusBadge.textContent.includes('Debt') : false;
+            const isVacant = statusBadge ? statusBadge.classList.contains('status-vacant') && !hasDebt : false;
 
             // Apply filters
             switch(filterType) {
                 case 'paid':
-                    showRow = paymentStatus === '✓';
+                    showRow = paymentStatus === '✓' || paymentStatus === '+';
                     break;
                 case 'unpaid':
-                    showRow = paymentStatus === '✗';
+                    showRow = paymentStatus === '✗' || paymentStatus === '−';
                     break;
                 case 'debt':
                     showRow = hasDebt;
@@ -2717,6 +2746,11 @@
                 performSearch();
                 showToast('Search cleared', 'warning');
             }
+            // Also close payment modal if open
+            const paymentModal = document.getElementById('paymentModal');
+            if (paymentModal && !paymentModal.classList.contains('hidden')) {
+                closePaymentModal();
+            }
         }
 
         // Ctrl/Cmd + D to toggle dark mode
@@ -2784,33 +2818,37 @@
     // =========================================================================
 
     let lastSelectedRow = null;
-    const tableRows = document.querySelectorAll('.tenant-row');
 
-    tableRows.forEach(row => {
-        row.addEventListener('click', (e) => {
-            // Don't select if clicking on interactive elements
-            if (e.target.closest('.indicator') ||
-                e.target.closest('.edit-btn') ||
-                e.target.closest('a')) {
-                return;
-            }
+    function initializeRowSelection() {
+        const tableRows = document.querySelectorAll('.tenant-row');
 
-            // Remove selection from previous row
-            if (lastSelectedRow && lastSelectedRow !== row) {
-                lastSelectedRow.classList.remove('row-selected');
-            }
+        tableRows.forEach(row => {
+            row.addEventListener('click', (e) => {
+                // Don't select if clicking on interactive elements
+                if (e.target.closest('.indicator') ||
+                    e.target.closest('.edit-btn') ||
+                    e.target.closest('a') ||
+                    e.target.closest('.payment-cell')) {
+                    return;
+                }
 
-            // Toggle selection on current row
-            row.classList.toggle('row-selected');
-            lastSelectedRow = row.classList.contains('row-selected') ? row : null;
+                // Remove selection from previous row
+                if (lastSelectedRow && lastSelectedRow !== row) {
+                    lastSelectedRow.classList.remove('row-selected');
+                }
 
-            // Show selection feedback
-            if (row.classList.contains('row-selected')) {
-                const tenantName = row.querySelector('.tenant-name').textContent;
-                showToast(`Selected ${tenantName}`, 'success');
-            }
+                // Toggle selection on current row
+                row.classList.toggle('row-selected');
+                lastSelectedRow = row.classList.contains('row-selected') ? row : null;
+
+                // Show selection feedback
+                if (row.classList.contains('row-selected')) {
+                    const tenantName = row.querySelector('.tenant-name').textContent;
+                    showToast(`Selected ${tenantName}`, 'success');
+                }
+            });
         });
-    });
+    }
 
     // =========================================================================
     // ENHANCED: Search with Debouncing
@@ -2839,12 +2877,13 @@
         // Update progress bars
         updateProgressBars();
 
+        // Initialize row selection
+        initializeRowSelection();
+
         // Show welcome message
         setTimeout(() => {
             showToast('Welcome to ProMan Dashboard! Use Ctrl+F to search.', 'success');
         }, 1000);
-
-        // ... rest of your existing DOMContentLoaded code ...
 
         // Initialize search functionality
         initializeSearch();
@@ -2858,12 +2897,6 @@
         }
         formatDate();
     });
-
-    // =========================================================================
-    // REST OF YOUR EXISTING JAVASCRIPT CODE
-    // =========================================================================
-    // ... (Keep all your existing JavaScript functions here, they will work with the new UX improvements)
-    // ... (The functions for loading, modals, search, etc. from your previous code)
 
     // =========================================================================
     // LOADING STATE MANAGEMENT
@@ -2880,66 +2913,66 @@
 
     // Function to show loading state for property form
     function showPropertyFormLoading() {
-    isPropertyFormSubmitting = true;
+        isPropertyFormSubmitting = true;
 
-    // Disable form button
-    propertyFormSubmit.disabled = true;
-    propertyFormSubmit.classList.add('btn-disabled', 'btn-loading');
+        // Disable form button
+        propertyFormSubmit.disabled = true;
+        propertyFormSubmit.classList.add('btn-disabled', 'btn-loading');
 
-    // Show spinner and hide icon
-    propertySubmitIcon.classList.add('hidden');
-    propertySubmitSpinner.classList.remove('hidden');
-    propertySubmitText.textContent = 'Loading...';
+        // Show spinner and hide icon
+        propertySubmitIcon.classList.add('hidden');
+        propertySubmitSpinner.classList.remove('hidden');
+        propertySubmitText.textContent = 'Loading...';
 
-    // Show loading overlay
-    loadingOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Prevent scrolling
+        // Show loading overlay
+        loadingOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 
     // Function to hide loading state for property form
     function hidePropertyFormLoading() {
-    isPropertyFormSubmitting = false;
+        isPropertyFormSubmitting = false;
 
-    // Re-enable form button
-    propertyFormSubmit.disabled = false;
-    propertyFormSubmit.classList.remove('btn-disabled', 'btn-loading');
+        // Re-enable form button
+        propertyFormSubmit.disabled = false;
+        propertyFormSubmit.classList.remove('btn-disabled', 'btn-loading');
 
-    // Hide spinner and show icon
-    propertySubmitIcon.classList.remove('hidden');
-    propertySubmitSpinner.classList.add('hidden');
-    propertySubmitText.textContent = 'Load Property';
+        // Hide spinner and show icon
+        propertySubmitIcon.classList.remove('hidden');
+        propertySubmitSpinner.classList.add('hidden');
+        propertySubmitText.textContent = 'Load Property';
 
-    // Hide loading overlay
-    loadingOverlay.classList.remove('active');
-    document.body.style.overflow = ''; // Restore scrolling
+        // Hide loading overlay
+        loadingOverlay.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
     }
 
     // Function to show loading state for modal
     function showModalLoading() {
-    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-    const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
-    const btnText = modalSubmitBtn.querySelector('.btn-text');
+        const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+        const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
+        const btnText = modalSubmitBtn.querySelector('.btn-text');
 
-    if (modalSubmitBtn && modalSubmitSpinner && btnText) {
-    modalSubmitBtn.disabled = true;
-    modalSubmitBtn.classList.add('btn-disabled');
-    modalSubmitSpinner.classList.remove('hidden');
-    btnText.textContent = 'Processing...';
-    }
+        if (modalSubmitBtn && modalSubmitSpinner && btnText) {
+            modalSubmitBtn.disabled = true;
+            modalSubmitBtn.classList.add('btn-disabled');
+            modalSubmitSpinner.classList.remove('hidden');
+            btnText.textContent = 'Processing...';
+        }
     }
 
     // Function to hide loading state for modal
     function hideModalLoading() {
-    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-    const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
-    const btnText = modalSubmitBtn?.querySelector('.btn-text');
+        const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+        const modalSubmitSpinner = document.getElementById('modalSubmitSpinner');
+        const btnText = modalSubmitBtn?.querySelector('.btn-text');
 
-    if (modalSubmitBtn && modalSubmitSpinner && btnText) {
-    modalSubmitBtn.disabled = false;
-    modalSubmitBtn.classList.remove('btn-disabled');
-    modalSubmitSpinner.classList.add('hidden');
-    btnText.textContent = modalSubmitBtn.classList.contains('bg-red-600') ? 'Unmark Payment' : 'Confirm Payment';
-    }
+        if (modalSubmitBtn && modalSubmitSpinner && btnText) {
+            modalSubmitBtn.disabled = false;
+            modalSubmitBtn.classList.remove('btn-disabled');
+            modalSubmitSpinner.classList.add('hidden');
+            btnText.textContent = modalSubmitBtn.classList.contains('bg-red-600') ? 'Unmark Payment' : 'Confirm Payment';
+        }
     }
 
     // =========================================================================
@@ -2948,57 +2981,57 @@
 
     // AJAX function to send theme preference without page reload
     async function sendThemePreference(theme) {
-    try {
-    const response = await fetch('http://localhost:7070/page_theme', {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: `user_theme=${theme}`
-    });
+        try {
+            const response = await fetch('http://localhost:7070/page_theme', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `user_theme=${theme}`
+            });
 
-    // Don't reload the page, just update local storage
-    localStorage.setItem('user_chosen_theme', theme);
+            // Don't reload the page, just update local storage
+            localStorage.setItem('user_chosen_theme', theme);
 
-    console.log('Theme preference saved:', theme);
+            console.log('Theme preference saved:', theme);
 
-    } catch (error) {
-    console.error('Error sending theme preference:', error);
-    // Fallback: still update local storage even if server request fails
-    localStorage.setItem('user_chosen_theme', theme);
-    }
+        } catch (error) {
+            console.error('Error sending theme preference:', error);
+            // Fallback: still update local storage even if server request fails
+            localStorage.setItem('user_chosen_theme', theme);
+        }
     }
 
     function initializeIcons() {
-    const isDark = document.body.classList.contains('dark');
-    const sunIcon = document.getElementById('sun-icon');
-    const moonIcon = document.getElementById('moon-icon');
+        const isDark = document.body.classList.contains('dark');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
 
-    if (sunIcon && moonIcon) {
-    if (isDark) {
-    sunIcon.classList.remove('hidden');
-    moonIcon.classList.add('hidden');
-    } else {
-    sunIcon.classList.add('hidden');
-    moonIcon.classList.remove('hidden');
-    }
-    }
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
     }
 
     async function toggleDarkMode() {
-    const isCurrentlyDark = document.body.classList.contains('dark');
-    const newTheme = isCurrentlyDark ? 'light' : 'dark';
+        const isCurrentlyDark = document.body.classList.contains('dark');
+        const newTheme = isCurrentlyDark ? 'light' : 'dark';
 
-    if (isCurrentlyDark) {
-    document.body.classList.remove('dark');
-    } else {
-    document.body.classList.add('dark');
-    }
+        if (isCurrentlyDark) {
+            document.body.classList.remove('dark');
+        } else {
+            document.body.classList.add('dark');
+        }
 
-    initializeIcons();
+        initializeIcons();
 
-    // Send preference without page reload using AJAX
-    await sendThemePreference(newTheme);
+        // Send preference without page reload using AJAX
+        await sendThemePreference(newTheme);
     }
 
     // =========================================================================
@@ -3006,170 +3039,197 @@
     // =========================================================================
 
     function closePaymentModal() {
-    const paymentModal = document.getElementById('paymentModal');
-    if (!paymentModal) return;
-    paymentModal.classList.add('hidden');
-    paymentModal.classList.remove('flex');
-    document.body.classList.remove('modal-open');
-    hideModalLoading(); // Reset modal loading state
+        const paymentModal = document.getElementById('paymentModal');
+        if (!paymentModal) return;
+        paymentModal.classList.add('hidden');
+        paymentModal.classList.remove('flex');
+        document.body.classList.remove('modal-open');
+        hideModalLoading(); // Reset modal loading state
     }
 
     function displayErrorBanner(message, isClear = false) {
-    const errorDisplay = document.getElementById('paymentErrorDisplay');
-    if (!errorDisplay) return;
+        const errorDisplay = document.getElementById('paymentErrorDisplay');
+        if (!errorDisplay) return;
 
-    if (isClear || !message) {
-    errorDisplay.classList.add('hidden');
-    errorDisplay.textContent = '';
-    } else {
-    errorDisplay.textContent = message;
-    errorDisplay.classList.remove('hidden');
-    }
+        if (isClear || !message) {
+            errorDisplay.classList.add('hidden');
+            errorDisplay.textContent = '';
+        } else {
+            errorDisplay.textContent = message;
+            errorDisplay.classList.remove('hidden');
+        }
     }
 
     // Mobile menu functions
     function openMobileMenu() {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
 
-    if (sidebar) sidebar.classList.add('overlay-visible');
-    if (backdrop) backdrop.classList.add('visible');
-    if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+        if (sidebar) sidebar.classList.add('overlay-visible');
+        if (backdrop) backdrop.classList.add('visible');
+        if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
     }
 
     function closeMobileMenu() {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
 
-    if (sidebar) sidebar.classList.remove('overlay-visible');
-    if (backdrop) backdrop.classList.remove('visible');
-    if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+        if (sidebar) sidebar.classList.remove('overlay-visible');
+        if (backdrop) backdrop.classList.remove('visible');
+        if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
     }
 
     function toggleMobileMenu() {
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
 
-    if (isExpanded) {
-    closeMobileMenu();
-    } else {
-    openMobileMenu();
-    }
+        if (isExpanded) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
     }
 
     // =========================================================================
-    // MODAL FUNCTIONS WITH TENANT_CONTACT PARAMETER
+    // FIXED: MODAL FUNCTIONS WITH TENANT_CONTACT PARAMETER
     // =========================================================================
 
     function openPaymentModal(unit, rent, id, propertyName, tenantContact) {
-    displayErrorBanner(null, true);
+        console.log('Opening payment modal:', { unit, rent, id, propertyName, tenantContact });
 
-    const modalTitle = document.querySelector('#paymentModal h2');
-    if (modalTitle) modalTitle.textContent = "Record New Payment";
+        displayErrorBanner(null, true);
 
-    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-    if (modalSubmitBtn) {
-    const btnText = modalSubmitBtn.querySelector('.btn-text');
-    if (btnText) btnText.textContent = "Confirm Payment";
-    modalSubmitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-    modalSubmitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-    }
+        const modalTitle = document.querySelector('#paymentModal h2');
+        if (modalTitle) {
+            modalTitle.innerHTML = `<i class="fas fa-money-check-alt text-green-600 mr-2"></i>Record New Payment`;
+            modalTitle.classList.remove('text-yellow-600', 'text-red-600');
+            modalTitle.classList.add('text-green-600');
+        }
 
-    const modalUnit = document.getElementById('modalUnit');
-    if (modalUnit) modalUnit.value = unit;
+        const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+        if (modalSubmitBtn) {
+            const btnText = modalSubmitBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = "Confirm Payment";
+            modalSubmitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+            modalSubmitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+        }
 
-    const modalId = document.getElementById('modalId');
-    if (modalId) modalId.value = id;
+        const modalUnit = document.getElementById('modalUnit');
+        if (modalUnit) modalUnit.value = unit;
 
-    const modalPropertyName = document.getElementById('modalPropertyName');
-    if (modalPropertyName) modalPropertyName.value = propertyName;
+        const modalId = document.getElementById('modalId');
+        if (modalId) modalId.value = id;
 
-    // SET the tenantContact value
-    const modalTenantContact = document.getElementById('modalTenantContact');
-    if (modalTenantContact) modalTenantContact.value = tenantContact;
+        const modalPropertyName = document.getElementById('modalPropertyName');
+        if (modalPropertyName) modalPropertyName.value = propertyName;
 
-    const modalRentInput = document.getElementById('modalRentInput');
-    if (modalRentInput) {
-    // Clean and set the rent input value
-    modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
-    modalRentInput.disabled = false;
-    }
+        // SET the tenantContact value - FIXED
+        const modalTenantContact = document.getElementById('modalTenantContact');
+        if (modalTenantContact) {
+            modalTenantContact.value = tenantContact || '';
+            console.log('Setting tenant contact:', tenantContact);
+        }
 
-    const modalUnitDisplay = document.getElementById('modalUnitDisplay');
-    if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
+        const modalRentInput = document.getElementById('modalRentInput');
+        if (modalRentInput) {
+            // Clean and set the rent input value
+            let cleanRent = rent;
+            if (typeof rent === 'string') {
+                cleanRent = rent.replace('R ', '').replace(/,/g, '');
+            }
+            modalRentInput.value = cleanRent;
+            modalRentInput.disabled = false;
+            modalRentInput.focus();
+        }
 
-    const modalOriginalRent = document.getElementById('modalOriginalRent');
-    if (modalOriginalRent) modalOriginalRent.textContent = rent;
+        const modalUnitDisplay = document.getElementById('modalUnitDisplay');
+        if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
 
-    const modalAction = document.getElementById('modalAction');
-    if (modalAction) modalAction.value = 'mark';
+        const modalOriginalRent = document.getElementById('modalOriginalRent');
+        if (modalOriginalRent) modalOriginalRent.textContent = rent;
 
-    const paidInput = document.querySelector('#paymentForm input[name="paid"]');
-    if (paidInput) paidInput.value = 'yes';
+        const modalAction = document.getElementById('modalAction');
+        if (modalAction) modalAction.value = 'mark';
 
-    const paymentModal = document.getElementById('paymentModal');
-    if (paymentModal) {
-    paymentModal.classList.remove('hidden');
-    paymentModal.classList.add('flex');
-    document.body.classList.add('modal-open');
-    }
+        const paidInput = document.querySelector('#paymentForm input[name="paid"]');
+        if (paidInput) paidInput.value = 'yes';
+
+        const paymentModal = document.getElementById('paymentModal');
+        if (paymentModal) {
+            paymentModal.classList.remove('hidden');
+            paymentModal.classList.add('flex');
+            document.body.classList.add('modal-open');
+        }
     }
 
     function openUnmarkModal(unit, id, propertyName, rent, tenantContact) {
-    displayErrorBanner(null, true);
+        console.log('Opening unmark modal:', { unit, id, propertyName, rent, tenantContact });
 
-    const modalTitle = document.querySelector('#paymentModal h2');
-    if (modalTitle) modalTitle.textContent = "Confirm Payment Removal";
+        displayErrorBanner(null, true);
 
-    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
-    if (modalSubmitBtn) {
-    const btnText = modalSubmitBtn.querySelector('.btn-text');
-    if (btnText) btnText.textContent = "Unmark Payment";
-    modalSubmitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
-    modalSubmitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
-    }
+        const modalTitle = document.querySelector('#paymentModal h2');
+        if (modalTitle) {
+            modalTitle.innerHTML = `<i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Confirm Payment Removal`;
+            modalTitle.classList.remove('text-green-600', 'text-red-600');
+            modalTitle.classList.add('text-yellow-600');
+        }
 
-    const modalUnit = document.getElementById('modalUnit');
-    if (modalUnit) modalUnit.value = unit;
+        const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+        if (modalSubmitBtn) {
+            const btnText = modalSubmitBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = "Unmark Payment";
+            modalSubmitBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            modalSubmitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+        }
 
-    const modalId = document.getElementById('modalId');
-    if (modalId) modalId.value = id;
+        const modalUnit = document.getElementById('modalUnit');
+        if (modalUnit) modalUnit.value = unit;
 
-    const modalPropertyName = document.getElementById('modalPropertyName');
-    if (modalPropertyName) modalPropertyName.value = propertyName;
+        const modalId = document.getElementById('modalId');
+        if (modalId) modalId.value = id;
 
-    // SET the tenantContact value
-    const modalTenantContact = document.getElementById('modalTenantContact');
-    if (modalTenantContact) modalTenantContact.value = tenantContact;
+        const modalPropertyName = document.getElementById('modalPropertyName');
+        if (modalPropertyName) modalPropertyName.value = propertyName;
 
-    const modalRentInput = document.getElementById('modalRentInput');
-    if (modalRentInput) {
-    modalRentInput.value = rent.replace('R ', '').replace(/,/g, '');
-    modalRentInput.disabled = true;
-    }
+        // SET the tenantContact value - FIXED
+        const modalTenantContact = document.getElementById('modalTenantContact');
+        if (modalTenantContact) {
+            modalTenantContact.value = tenantContact || '';
+            console.log('Setting tenant contact for unmark:', tenantContact);
+        }
 
-    const modalUnitDisplay = document.getElementById('modalUnitDisplay');
-    if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
+        const modalRentInput = document.getElementById('modalRentInput');
+        if (modalRentInput) {
+            let cleanRent = rent;
+            if (typeof rent === 'string') {
+                cleanRent = rent.replace('R ', '').replace(/,/g, '');
+            }
+            modalRentInput.value = cleanRent;
+            modalRentInput.disabled = true;
+        }
 
-    const modalOriginalRent = document.getElementById('modalOriginalRent');
-    if (modalOriginalRent) modalOriginalRent.textContent = rent;
+        const modalUnitDisplay = document.getElementById('modalUnitDisplay');
+        if (modalUnitDisplay) modalUnitDisplay.textContent = unit;
 
-    const modalAction = document.getElementById('modalAction');
-    if (modalAction) modalAction.value = 'unmark';
+        const modalOriginalRent = document.getElementById('modalOriginalRent');
+        if (modalOriginalRent) modalOriginalRent.textContent = rent;
 
-    const paidInput = document.querySelector('#paymentForm input[name="paid"]');
-    if (paidInput) paidInput.value = 'no';
+        const modalAction = document.getElementById('modalAction');
+        if (modalAction) modalAction.value = 'unmark';
 
-    const paymentModal = document.getElementById('paymentModal');
-    if (paymentModal) {
-    paymentModal.classList.remove('hidden');
-    paymentModal.classList.add('flex');
-    document.body.classList.add('modal-open');
-    }
+        const paidInput = document.querySelector('#paymentForm input[name="paid"]');
+        if (paidInput) paidInput.value = 'no';
+
+        const paymentModal = document.getElementById('paymentModal');
+        if (paymentModal) {
+            paymentModal.classList.remove('hidden');
+            paymentModal.classList.add('flex');
+            document.body.classList.add('modal-open');
+        }
     }
 
     // =========================================================================
@@ -3177,93 +3237,172 @@
     // =========================================================================
 
     function initializeSearch() {
-    const searchInput = document.getElementById('tenantSearch');
-    const clearSearchBtn = document.getElementById('clearSearch');
-    const tenantRows = document.querySelectorAll('.tenant-row');
-    const noResultsMessage = document.getElementById('noResultsMessage');
-    const tenantCount = document.getElementById('tenantCount');
-    const noUnitsRow = document.querySelector('.no-units-row');
+        const searchInput = document.getElementById('tenantSearch');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const tenantRows = document.querySelectorAll('.tenant-row');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        const tenantCount = document.getElementById('tenantCount');
+        const noUnitsRow = document.querySelector('.no-units-row');
 
-    if (!searchInput || !clearSearchBtn) return;
+        if (!searchInput || !clearSearchBtn) return;
 
-    // Update tenant count on load
-    updateTenantCount();
+        // Update tenant count on load
+        updateTenantCount();
 
-    function updateTenantCount() {
-    if (tenantCount) {
-    const visibleRows = Array.from(tenantRows).filter(row =>
-        row.style.display !== 'none' &&
-        !row.classList.contains('hidden')
-    ).length;
-    tenantCount.textContent = visibleRows;
+        function updateTenantCount() {
+            if (tenantCount) {
+                const visibleRows = Array.from(tenantRows).filter(row =>
+                    row.style.display !== 'none' &&
+                    !row.classList.contains('hidden')
+                ).length;
+                tenantCount.textContent = visibleRows;
+            }
+        }
+
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let hasVisibleRows = false;
+
+            // Show/hide clear button
+            if (searchTerm.length > 0) {
+                clearSearchBtn.style.display = 'block';
+            } else {
+                clearSearchBtn.style.display = 'none';
+            }
+
+            // If no units exist, don't perform search
+            if (noUnitsRow && noUnitsRow.style.display !== 'none') {
+                if (noResultsMessage) noResultsMessage.classList.add('hidden');
+                return;
+            }
+
+            tenantRows.forEach(row => {
+                const tenantName = row.querySelector('.tenant-name')?.textContent.toLowerCase() || '';
+                const unitNumber = row.querySelector('.unit-number-cell')?.textContent.toLowerCase() || '';
+                const tenantContact = row.querySelector('.tenant-contact')?.dataset?.tenantContact?.toLowerCase() || '';
+
+                const matches = tenantName.includes(searchTerm) ||
+                                unitNumber.includes(searchTerm) ||
+                                tenantContact.includes(searchTerm);
+
+                if (matches) {
+                    row.style.display = '';
+                    row.classList.remove('hidden');
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                    row.classList.add('hidden');
+                }
+            });
+
+            // Show/hide no results message
+            if (noResultsMessage) {
+                if (!hasVisibleRows && searchTerm.length > 0) {
+                    noResultsMessage.classList.remove('hidden');
+                } else {
+                    noResultsMessage.classList.add('hidden');
+                }
+            }
+
+            updateTenantCount();
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', performSearch);
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                performSearch();
+            }
+        });
+
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            performSearch();
+            searchInput.focus();
+        });
+
+        // Initial search setup
+        performSearch();
     }
+
+    // =========================================================================
+    // FIXED: PAYMENT CELL CLICK HANDLING
+    // =========================================================================
+
+    function initializePaymentHandlers() {
+        // Use event delegation for better performance
+        const unitsTbody = document.getElementById('unitsTbody');
+
+        if (unitsTbody) {
+            // Handle payment cell clicks
+            unitsTbody.addEventListener('click', function(e) {
+                const indicator = e.target.closest('.indicator');
+
+                if (indicator) {
+                    e.stopPropagation();
+
+                    // Get the data from the indicator
+                    const currentStatus = indicator.textContent.trim();
+                    const unit = indicator.dataset.unit;
+                    const rent = indicator.dataset.rent;
+                    const id = indicator.dataset.id;
+                    const propertyName = indicator.dataset.propertyName;
+                    const tenantContact = indicator.dataset.tenantContact;
+
+                    console.log('Payment indicator clicked:', {
+                        currentStatus,
+                        unit,
+                        rent,
+                        id,
+                        propertyName,
+                        tenantContact
+                    });
+
+                    // Check if the unit is vacant (has ban icon)
+                    const isVacant = indicator.querySelector('.fa-ban');
+                    if (isVacant) {
+                        showToast('This unit is vacant. No payment actions available.', 'warning');
+                        return;
+                    }
+
+                    // Determine which modal to open based on current status
+                    if (currentStatus === '✓' || currentStatus === '+') {
+                        // Already paid - open unmark modal
+                        openUnmarkModal(unit, id, propertyName, rent, tenantContact);
+                    } else if (currentStatus === '✗' || currentStatus === '−') {
+                        // Not paid - open mark as paid modal
+                        openPaymentModal(unit, rent, id, propertyName, tenantContact);
+                    } else {
+                        // Default to mark as paid
+                        openPaymentModal(unit, rent, id, propertyName, tenantContact);
+                    }
+                }
+            });
+
+            console.log('Payment handlers initialized');
+        }
     }
 
-    function performSearch() {
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    let hasVisibleRows = false;
+    // =========================================================================
+    // FIXED: FLASH MESSAGE FUNCTION
+    // =========================================================================
 
-    // Show/hide clear button
-    if (searchTerm.length > 0) {
-    clearSearchBtn.style.display = 'block';
-    } else {
-    clearSearchBtn.style.display = 'none';
-    }
+    function flashMessage(msg, color = 'green') {
+        const el = document.createElement('div');
+        el.className = `toast ${color === 'green' ? 'toast-success' : color === 'red' ? 'toast-error' : 'toast-warning'}`;
+        el.innerHTML = `
+            <i class="fas fa-${color === 'green' ? 'check-circle' : color === 'red' ? 'exclamation-circle' : 'exclamation-triangle'}"></i>
+            <span>${msg}</span>
+        `;
 
-    // If no units exist, don't perform search
-    if (noUnitsRow && noUnitsRow.style.display !== 'none') {
-    if (noResultsMessage) noResultsMessage.classList.add('hidden');
-    return;
-    }
+        document.getElementById('toastContainer').appendChild(el);
 
-    tenantRows.forEach(row => {
-    const tenantName = row.querySelector('.tenant-name')?.textContent.toLowerCase() || '';
-    const unitNumber = row.querySelector('.unit-number-cell')?.textContent.toLowerCase() || '';
-    const tenantContact = row.querySelector('.tenant-contact')?.dataset?.tenantContact?.toLowerCase() || '';
-
-    const matches = tenantName.includes(searchTerm) ||
-                    unitNumber.includes(searchTerm) ||
-                    tenantContact.includes(searchTerm);
-
-    if (matches) {
-    row.style.display = '';
-    row.classList.remove('hidden');
-    hasVisibleRows = true;
-    } else {
-    row.style.display = 'none';
-    row.classList.add('hidden');
-    }
-    });
-
-    // Show/hide no results message
-    if (noResultsMessage) {
-    if (!hasVisibleRows && searchTerm.length > 0) {
-    noResultsMessage.classList.remove('hidden');
-    } else {
-    noResultsMessage.classList.add('hidden');
-    }
-    }
-
-    updateTenantCount();
-    }
-
-    // Event listeners
-    searchInput.addEventListener('input', performSearch);
-    searchInput.addEventListener('keyup', function(e) {
-    if (e.key === 'Escape') {
-    searchInput.value = '';
-    performSearch();
-    }
-    });
-
-    clearSearchBtn.addEventListener('click', function() {
-    searchInput.value = '';
-    performSearch();
-    searchInput.focus();
-    });
-
-    // Initial search setup
-    performSearch();
+        setTimeout(() => {
+            if (el.parentNode) {
+                el.parentNode.removeChild(el);
+            }
+        }, 3000);
     }
 
     // =========================================================================
@@ -3271,305 +3410,266 @@
     // =========================================================================
 
     document.addEventListener('DOMContentLoaded', function() {
-    // Use server theme as primary source
-    const serverTheme = window.serverTheme || 'light';
-    localStorage.setItem('user_chosen_theme', serverTheme);
-    initializeIcons();
+        console.log('DOM fully loaded and parsed');
 
-    // Add event listener to dark mode toggle button
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    if (darkModeToggle) {
-    darkModeToggle.addEventListener('click', async function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    await toggleDarkMode();
-    });
-    }
+        // Use server theme as primary source
+        const serverTheme = window.serverTheme || 'light';
+        localStorage.setItem('user_chosen_theme', serverTheme);
+        initializeIcons();
 
-    // Mobile menu button functionality
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    if (mobileMenuButton) {
-    mobileMenuButton.addEventListener('click', toggleMobileMenu);
-    }
+        // Add event listener to dark mode toggle button
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', async function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                await toggleDarkMode();
+            });
+        }
 
-    // Close mobile menu when clicking backdrop
-    const backdrop = document.getElementById('sidebar-backdrop');
-    if (backdrop) {
-    backdrop.addEventListener('click', closeMobileMenu);
-    }
+        // Mobile menu button functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        }
 
-    // Close mobile menu when clicking on sidebar links
-    const sidebarLinks = document.querySelectorAll('.sidebar a');
-    sidebarLinks.forEach(link => {
-    link.addEventListener('click', closeMobileMenu);
-    });
+        // Close mobile menu when clicking backdrop
+        const backdrop = document.getElementById('sidebar-backdrop');
+        if (backdrop) {
+            backdrop.addEventListener('click', closeMobileMenu);
+        }
 
-    // Close mobile menu on Escape key
-    document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-    closeMobileMenu();
-    }
-    });
+        // Close mobile menu when clicking on sidebar links
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
 
-    // Close mobile menu on window resize above 1024px
-    window.addEventListener('resize', function() {
-    if (window.innerWidth > 1024) {
-    closeMobileMenu();
-    }
-    });
+        // Close mobile menu on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
 
-    // View Units Table button functionality (toggles property selection panel)
-    const viewTableBtn = document.getElementById('viewTableBtn');
-    const propertyFormContainer = document.getElementById('propertyFormContainer');
-    const mainContent = document.getElementById('mainContent');
+        // Close mobile menu on window resize above 1024px
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                closeMobileMenu();
+            }
+        });
 
-    if (viewTableBtn && propertyFormContainer && mainContent) {
-    viewTableBtn.addEventListener('click', function() {
-    // Toggle property form visibility
-    propertyFormContainer.classList.toggle('hidden');
+        // View Units Table button functionality (toggles property selection panel)
+        const viewTableBtn = document.getElementById('viewTableBtn');
+        const propertyFormContainer = document.getElementById('propertyFormContainer');
+        const mainContent = document.getElementById('mainContent');
 
-    // Toggle button text based on state
-    if (propertyFormContainer.classList.contains('hidden')) {
-    viewTableBtn.innerHTML = `
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-    </svg>
-    Show Property Selection
-    `;
-    mainContent.classList.add('full-table-view');
-    } else {
-    viewTableBtn.innerHTML = `
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-    </svg>
-    View Units Table
-    `;
-    mainContent.classList.remove('full-table-view');
-    }
-    });
-    }
+        if (viewTableBtn && propertyFormContainer && mainContent) {
+            viewTableBtn.addEventListener('click', function() {
+                // Toggle property form visibility
+                propertyFormContainer.classList.toggle('hidden');
 
-    // Format and display the current date
-    function formatDate() {
-    const date = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = date.toLocaleDateString('en-US', options);
-    document.getElementById('currentDate').textContent = formattedDate;
-    }
-    formatDate();
+                // Toggle button text based on state
+                if (propertyFormContainer.classList.contains('hidden')) {
+                    viewTableBtn.innerHTML = `
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Show Property Selection
+                    `;
+                    mainContent.classList.add('full-table-view');
+                } else {
+                    viewTableBtn.innerHTML = `
+                        <i class="fas fa-table mr-2"></i>
+                        View Units Table
+                    `;
+                    mainContent.classList.remove('full-table-view');
+                }
+            });
+        }
 
-    // Initialize search functionality
-    initializeSearch();
+        // Format and display the current date
+        function formatDate() {
+            const date = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options);
+            document.getElementById('currentDate').textContent = formattedDate;
+        }
+        formatDate();
 
-    // =========================================================================
-    // PROPERTY FORM SUBMISSION WITH LOADING
-    // =========================================================================
-    const propertySelect = document.getElementById('propertySelect');
-    let autoSubmitted = false;
+        // Initialize search functionality
+        initializeSearch();
 
-    if (propertyForm && propertyFormSubmit) {
-    // Handle form submission
-    propertyForm.addEventListener('submit', function(event) {
-    // Prevent multiple submissions
-    if (isPropertyFormSubmitting) {
-    event.preventDefault();
-    return false;
-    }
+        // Initialize payment handlers - FIXED
+        initializePaymentHandlers();
 
-    const selectedValue = propertySelect.value;
-    if (selectedValue && selectedValue !== '' && selectedValue !== 'all') {
-    showPropertyFormLoading();
-    return true;
-    }
+        // =========================================================================
+        // PROPERTY FORM SUBMISSION WITH LOADING
+        // =========================================================================
+        const propertySelect = document.getElementById('propertySelect');
+        let autoSubmitted = false;
 
-    // If no property selected, don't submit
-    event.preventDefault();
-    return false;
-    });
+        if (propertyForm && propertyFormSubmit) {
+            // Handle form submission
+            propertyForm.addEventListener('submit', function(event) {
+                // Prevent multiple submissions
+                if (isPropertyFormSubmitting) {
+                    event.preventDefault();
+                    return false;
+                }
 
-    // Auto-submit when property is selected (with loading)
-    const selectedValue = propertySelect.value;
-    if (selectedValue && selectedValue !== '' && selectedValue !== 'all' && !autoSubmitted) {
-    autoSubmitted = true;
-    showPropertyFormLoading();
-    // Allow the form to submit normally
-    }
+                const selectedValue = propertySelect.value;
+                if (selectedValue && selectedValue !== '' && selectedValue !== 'all') {
+                    showPropertyFormLoading();
+                    return true;
+                }
 
-    // Handle select change with loading
-    propertySelect.addEventListener('change', function() {
-    const newValue = this.value;
-    if (newValue && newValue !== '' && newValue !== 'all') {
-    showPropertyFormLoading();
-    propertyForm.submit();
-    }
-    });
-    }
+                // If no property selected, don't submit
+                event.preventDefault();
+                return false;
+            });
 
-    // =========================================================================
-    // TABLE AND PAYMENT HANDLING
-    // =========================================================================
-    const tbody = document.getElementById('unitsTbody');
-    const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
-    const paymentForm = document.getElementById('paymentForm');
+            // Auto-submit when property is selected (with loading)
+            const selectedValue = propertySelect.value;
+            if (selectedValue && selectedValue !== '' && selectedValue !== 'all' && !autoSubmitted) {
+                autoSubmitted = true;
+                showPropertyFormLoading();
+                // Allow the form to submit normally
+            }
 
-    function flashMessage(msg, color = 'yellow') {
-    const el = document.createElement('div');
-    el.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-md text-sm font-medium ${
-    color === 'green' ? 'bg-green-100 text-green-800' :
-    color === 'red' ? 'bg-red-100 text-red-800' :
-    'bg-yellow-100 text-yellow-800'
-    }`;
-    el.textContent = msg;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1600);
-    }
+            // Handle select change with loading
+            propertySelect.addEventListener('change', function() {
+                const newValue = this.value;
+                if (newValue && newValue !== '' && newValue !== 'all') {
+                    showPropertyFormLoading();
+                    propertyForm.submit();
+                }
+            });
+        }
 
-    function applyFilters() {
-    const prop = propertySelect ? propertySelect.value : '';
-    rows.forEach(row => {
-    const rowProp = row.dataset.property || '';
-    const matchesProp = (prop === 'all') || (rowProp === prop) || !prop;
-    row.style.display = matchesProp ? '' : 'none';
-    });
-    }
+        // =========================================================================
+        // FIXED: ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
+        // =========================================================================
 
-    // =========================================================================
-    // ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
-    // =========================================================================
+        const paymentForm = document.getElementById('paymentForm');
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                displayErrorBanner(null, true);
 
-    if (paymentForm) {
-    paymentForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    displayErrorBanner(null, true);
+                // Show loading on modal submit button
+                showModalLoading();
 
-    // Show loading on modal submit button
-    showModalLoading();
+                const formData = new FormData(paymentForm);
+                const tenantName = formData.get('id');
+                const unit = formData.get('unit');
+                const tenantContact = formData.get('tenant_contact');
+                const actionType = formData.get('action_type');
 
-    const formData = new FormData(paymentForm);
-    const tenantName = formData.get('id');
-    const unit = formData.get('unit');
-    const tenantContact = formData.get('tenant_contact');
-    const actionType = formData.get('action_type');
+                console.log('Payment form submitted:', {
+                    tenantName,
+                    unit,
+                    tenantContact,
+                    actionType
+                });
 
-    let url = "";
+                let url = "";
 
-    // Include tenantContact in both URLs
-    if (actionType === 'unmark') {
-    url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
-    } else {
-    url = `http://localhost:7070/payment_status/${tenantName}/${unit}/${tenantContact}`;
-    }
+                // Include tenantContact in both URLs
+                if (actionType === 'unmark') {
+                    url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
+                } else {
+                    url = `http://localhost:7070/payment_status/${tenantName}/${unit}/${tenantContact}`;
+                }
 
-    try {
-    const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(formData)
-    });
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: new URLSearchParams(formData)
+                    });
 
-    // Hide loading after response
-    hideModalLoading();
+                    // Hide loading after response
+                    hideModalLoading();
 
-    if (!response.ok) {
-    const errorMessage = await response.text();
-    displayErrorBanner(errorMessage || "Something went wrong.");
-    return;
-    }
+                    if (!response.ok) {
+                        const errorMessage = await response.text();
+                        displayErrorBanner(errorMessage || "Something went wrong.");
+                        return;
+                    }
 
-    // SUCCESS
-    const rowIndicator = document.querySelector(
-    `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
-    );
+                    // SUCCESS
+                    const rowIndicator = document.querySelector(
+                        `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
+                    );
 
-    if (rowIndicator) {
-    if (actionType === 'unmark') {
-    rowIndicator.textContent = "−";
-    rowIndicator.classList.remove("bg-green-100", "text-green-800");
-    rowIndicator.classList.add("bg-red-100", "text-red-800");
-    } else {
-    rowIndicator.textContent = "+";
-    rowIndicator.classList.remove("bg-red-100", "text-red-800");
-    rowIndicator.classList.add("bg-green-100", "text-green-800");
-    }
-    }
+                    if (rowIndicator) {
+                        if (actionType === 'unmark') {
+                            rowIndicator.textContent = "✗";
+                            rowIndicator.classList.remove("bg-green-100", "text-green-800");
+                            rowIndicator.classList.add("bg-red-100", "text-red-800");
+                        } else {
+                            rowIndicator.textContent = "✓";
+                            rowIndicator.classList.remove("bg-red-100", "text-red-800");
+                            rowIndicator.classList.add("bg-green-100", "text-green-800");
+                        }
+                    }
 
-    flashMessage(
-    actionType === 'unmark'
-    ? `Payment removed for Unit ${unit}.`
-    : `Payment recorded for Unit ${unit}.`,
-    "green"
-    );
+                    flashMessage(
+                        actionType === 'unmark'
+                        ? `Payment removed for Unit ${unit}.`
+                        : `Payment recorded for Unit ${unit}.`,
+                        "green"
+                    );
 
-    closePaymentModal();
+                    closePaymentModal();
 
-    // Re-initialize search to reflect changes
-    initializeSearch();
+                    // Re-initialize search to reflect changes
+                    initializeSearch();
 
-    } catch (error) {
-    console.error("AJAX Error:", error);
-    displayErrorBanner("Network error. Check your connection.");
-    hideModalLoading();
-    }
-    });
-    }
+                } catch (error) {
+                    console.error("AJAX Error:", error);
+                    displayErrorBanner("Network error. Check your connection.");
+                    hideModalLoading();
+                }
+            });
+        }
 
-    // =========================================================================
-    // EVENT LISTENERS FOR TABLE INTERACTIONS
-    // =========================================================================
+        // =========================================================================
+        // EVENT LISTENERS FOR TABLE INTERACTIONS
+        // =========================================================================
 
-    let selectedRow = null;
-    rows.forEach(row => {
-    row.addEventListener('click', (e) => {
-    if (e.target.closest('.indicator')) return;
-    if (e.target.closest('a')) return; // Don't select row when clicking edit link
-    if (selectedRow) selectedRow.classList.remove('row-selected');
-    selectedRow = row;
-    selectedRow.classList.add('row-selected');
-    });
-    });
+        let selectedRow = null;
+        const rows = document.querySelectorAll('.tenant-row');
 
-    document.querySelectorAll('.payment-cell').forEach(cell => {
-    cell.addEventListener('click', function(e) {
-    if (e.target.closest('.indicator')) {
-    e.stopPropagation();
-    }
-    });
-    });
+        rows.forEach(row => {
+            row.addEventListener('click', (e) => {
+                if (e.target.closest('.indicator')) return;
+                if (e.target.closest('a')) return; // Don't select row when clicking edit link
+                if (e.target.closest('.payment-cell')) return;
 
-    const openPayButtons = document.querySelectorAll('.open-pay');
-    openPayButtons.forEach(btn => {
-    btn.addEventListener('click', function(e) {
-    e.stopPropagation();
+                if (selectedRow) selectedRow.classList.remove('row-selected');
+                selectedRow = row;
+                selectedRow.classList.add('row-selected');
+            });
+        });
 
-    const indicator = this;
-    const currentStatus = indicator.textContent.trim();
+        // Handle page unload to prevent accidental navigation during form submission
+        window.addEventListener('beforeunload', function(e) {
+            if (isPropertyFormSubmitting) {
+                // Optional: Show confirmation dialog
+                // e.preventDefault();
+                // e.returnValue = 'Your form is still submitting. Are you sure you want to leave?';
+            }
+        });
 
-    const unit = this.dataset.unit;
-    const rent = this.dataset.rent;
-    const id = this.dataset.id;
-    const propertyName = this.dataset.propertyName;
-    const tenantContact = this.dataset.tenantContact;
+        // Initial Load Actions
+        displayErrorBanner(null, true);
 
-    if (currentStatus === '+') {
-    openUnmarkModal(unit, id, propertyName, rent, tenantContact);
-    } else {
-    openPaymentModal(unit, rent, id, propertyName, tenantContact);
-    }
-    });
-    });
-
-    // Handle page unload to prevent accidental navigation during form submission
-    window.addEventListener('beforeunload', function(e) {
-    if (isPropertyFormSubmitting) {
-    // Optional: Show confirmation dialog
-    // e.preventDefault();
-    // e.returnValue = 'Your form is still submitting. Are you sure you want to leave?';
-    }
-    });
-
-    // Initial Load Actions
-    displayErrorBanner(null, true);
-    applyFilters();
-    });  </script>
+        // Update tenant count
+        const tenantRows = document.querySelectorAll('.tenant-row:not(.hidden)');
+        const tenantCount = document.getElementById('tenantCount');
+        if (tenantCount && tenantRows.length > 0) {
+            tenantCount.textContent = tenantRows.length;
+        }
+    }); </script>
 </body>
 </html>
