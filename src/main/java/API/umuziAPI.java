@@ -16,6 +16,7 @@ import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import jakarta.servlet.http.HttpSession;
 import model.database.CRUD.Tenant;
+import model.database.UPDATES.Change_Unit;
 
 
 public class umuziAPI {
@@ -70,33 +71,36 @@ public class umuziAPI {
 
         app.get("/add_property_unit",new Save_unit().save_property_unit());
 
-        app.get("/tenant_profile/{id}/{unit}/{propertyRent}/{contact}",ctx ->{
+
+        app.get("/tenant_profile/{id}/{unit}//{propertyRent}/{contact}",ctx ->{
+
             String tenant_name = ctx.pathParam("id");
+            ctx.sessionAttribute("Tenant_name",tenant_name);
             String tenant_unit = ctx.pathParam("unit");
+            ctx.sessionAttribute("Tenant_unit",tenant_unit);
             String property_rent = ctx.pathParam("propertyRent");
             String tenant_property = ctx.sessionAttribute("current_property");
+
+
 
             String tenant_contact = ctx.pathParam("contact");
             System.out.println("tenant property : " + tenant_property);
             System.out.println("tenant contact : " + tenant_contact);
 
-           System.out.println("Unit  number : " + tenant_unit);
-       //     System.out.println("tenant property : " + tenant_property);
-            System.out.println("Tenant_name " + tenant_name);
+           ///System.out.println("Unit  number : " + tenant_unit);
+            ///System.out.println("tenant property : " + tenant_property);
+            /// System.out.println("Tenant_name " + tenant_name);
 
             Tenant tenant = new Tenant();
-
-
             Integer tenant_id = tenant.tenant_ID(tenant_name,tenant_contact);
+            ctx.sessionAttribute("TenantID",tenant_id);
 
             ArrayList<String> next_of_Kin_Information = tenant.tenant_next_of_kin(tenant_id) ;
-
             String next_kin = next_of_Kin_Information.getFirst();
             String next_kin_number = next_of_Kin_Information.getLast();
             String tenantMoveIN = next_of_Kin_Information.get(1);
             String tenant_rent = next_of_Kin_Information.get(2);
-            System.out.println("Additional information " + next_of_Kin_Information);
-            //
+            ///System.out.println("Additional information " + next_of_Kin_Information);
             HashMap<String,String> model = new HashMap<>();
             String themeColor = ctx.sessionAttribute("theme_color");
             model.put("user_chosen_theme",themeColor);
@@ -113,6 +117,39 @@ public class umuziAPI {
         });
 
         app.post("/update_property_info",ctx -> {
+
+            Integer tenant_ID = ctx.sessionAttribute("TenantID");
+            String tenant_unit = ctx.sessionAttribute("Tenant_unit");
+            String amount = ctx.formParam("rent_amount");
+            String unitN = ctx.formParam("unit_number");
+            System.out.println("Unit Number : " + unitN );
+            Integer Unit_updated ;
+
+            if(!unitN.equals(tenant_unit)) {
+                Unit_updated = Integer.parseInt(unitN);
+            }else {
+                Unit_updated = Integer.parseInt(unitN);
+            }
+
+            String tenant_name = ctx.sessionAttribute("Tenant_name");
+
+            String tenant_property = ctx.sessionAttribute("current_property");
+
+            Change_Unit updates_property = new Change_Unit(tenant_name,Unit_updated,tenant_property,tenant_ID);
+
+            //Update amount .
+            try{
+                updates_property.setTenant_property(tenant_property);
+                updates_property.setTenant_unit(Unit_updated);
+                updates_property.update_unit_rent(amount);
+
+
+                ctx.status(200).result("Ok");
+            } catch (RuntimeException e){
+                System.out.println(e.getMessage());
+                ctx.result("Update for rent failed because : " + e.getMessage());
+            }
+
 
         });
 
