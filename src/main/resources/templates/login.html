@@ -25,6 +25,10 @@
           --card-shadow: 0 18px 40px rgba(16,24,40,0.06);
           --input-shadow: 0 6px 18px rgba(16,24,40,0.04);
           --focus-ring: 0 0 0 6px rgba(212,175,55,0.08);
+          --error: #dc2626;      /* error red */
+          --error-light: rgba(220, 38, 38, 0.1);
+          --success: #16a34a;    /* success green */
+          --success-light: rgba(22, 163, 74, 0.1);
         }
 
         /* Dark theme variables */
@@ -39,6 +43,10 @@
           --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
           --input-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
           --focus-ring: 0 0 0 6px rgba(244, 179, 66, 0.15);
+          --error: #f87171;       /* light error red */
+          --error-light: rgba(248, 113, 113, 0.15);
+          --success: #4ade80;     /* light success green */
+          --success-light: rgba(74, 222, 128, 0.15);
         }
 
         html,body {
@@ -199,6 +207,11 @@
           transform: translateY(-2px);
         }
 
+        .form-input.error {
+          border-color: var(--error);
+          background-color: var(--error-light);
+        }
+
         .input-icon {
           position: absolute;
           right: 16px;
@@ -209,7 +222,7 @@
 
         /* Error states */
         .error-message {
-          color: #dc2626;
+          color: var(--error);
           font-size: 13px;
           margin-top: 6px;
           display: none;
@@ -220,7 +233,7 @@
         }
 
         .error-border {
-          border-color: #dc2626 !important;
+          border-color: var(--error) !important;
         }
 
         /* Button styling */
@@ -483,12 +496,13 @@
 
         /* Success message */
         .success-message {
-          background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+          background: var(--success-light);
           border: 1px solid rgba(16, 185, 129, 0.2);
           border-radius: 12px;
           padding: 16px;
           margin-bottom: 24px;
           display: none;
+          color: var(--success);
         }
 
         .success-message.show {
@@ -496,20 +510,74 @@
         }
 
         .success-message p {
-          color: #047857;
           margin: 0;
           font-size: 14px;
           font-weight: 500;
+          color: inherit;
         }
 
-        body.dark .success-message p {
-          color: #34d399;
+        /* AJAX loading overlay */
+        .loading-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
+          backdrop-filter: blur(4px);
+        }
+
+        .loading-overlay.active {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .loading-overlay-content {
+          background: var(--surface);
+          padding: 2rem;
+          border-radius: 1rem;
+          text-align: center;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          max-width: 90%;
+          width: 400px;
+          transform: translateY(10px);
+          animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+          to { transform: translateY(0); }
+        }
+
+        .overlay-spinner {
+          width: 3rem;
+          height: 3rem;
+          border: 4px solid rgba(212, 175, 55, 0.2);
+          border-radius: 50%;
+          border-top-color: var(--accent);
+          animation: spin 1s linear infinite;
+          margin: 0 auto 1rem;
         }
     </style>
 </head>
 
 <!-- Apply dark class based on user_chosen_theme from server -->
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<!-- Loading Overlay for AJAX -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-overlay-content">
+        <div class="overlay-spinner"></div>
+        <p class="text-lg font-semibold text-[var(--text)]">Signing in...</p>
+        <p class="text-sm text-muted mt-2">Please wait while we verify your credentials</p>
+    </div>
+</div>
 
 <!-- Header with mobile menu button -->
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
@@ -520,8 +588,7 @@
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
             <div>
-               <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">  <h1 class="brand-text">PROMAN</h1></a>
-
+                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">  <h1 class="brand-text">PROMAN</h1></a>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
@@ -614,13 +681,23 @@
                     <p class="subtitle">Sign in to access your property management dashboard</p>
                 </div>
 
-                <!-- Success Message (if any) -->
-                <div id="successMessage" class="success-message" th:if="${success != null and success != ''}">
+                <!-- AJAX Success Message -->
+                <div id="ajaxSuccessMessage" class="success-message">
+                    <p id="ajaxSuccessText"></p>
+                </div>
+
+                <!-- AJAX Error Message -->
+                <div id="ajaxErrorMessage" class="error-message">
+                    <p id="ajaxErrorText"></p>
+                </div>
+
+                <!-- Original Server Success Message (if any) -->
+                <div id="serverSuccessMessage" class="success-message" th:if="${success != null and success != ''}">
                     <p th:text="${success}"></p>
                 </div>
 
                 <!-- Login Form -->
-                <form id="loginForm" action="http://localhost:7070/verify_user" method="POST">
+                <form id="loginForm">
                     <!-- Email -->
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
@@ -631,9 +708,10 @@
                                    class="form-input" />
                             <span class="input-icon">📧</span>
                         </div>
-                        <div id="emailError" class="error-message" th:if="${error != null and error != ''}">
+                        <div id="serverEmailError" class="error-message" th:if="${error != null and error != ''}">
                             <span th:text="${error}"></span>
                         </div>
+                        <div id="ajaxEmailError" class="error-message"></div>
                     </div>
 
                     <!-- Password -->
@@ -650,9 +728,10 @@
                                 </svg>
                             </button>
                         </div>
-                        <div id="passwordError" class="error-message" th:if="${wrong != null and wrong != ''}">
+                        <div id="serverPasswordError" class="error-message" th:if="${wrong != null and wrong != ''}">
                             <span th:text="${wrong}"></span>
                         </div>
+                        <div id="ajaxPasswordError" class="error-message"></div>
                     </div>
 
                     <!-- Utility Options -->
@@ -698,14 +777,6 @@
                             <p class="benefit-description">Track rent payments and send automatic reminders</p>
                         </div>
                     </div>
-<!--                    <div class="benefit-item">-->
-<!--                        <div class="benefit-icon">📊</div>-->
-<!--                        <div class="benefit-text">-->
-<!--                            <h4 class="benefit-title">Smart Analytics</h4>-->
-<!--                            <p class="benefit-description">Gain insights into your property performance and financial health</p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
                 </div>
             </div>
         </div>
@@ -720,7 +791,7 @@
 </footer>
 
 <script>
-    // Password toggle functionality ONLY
+    // Password toggle functionality
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
 
@@ -743,28 +814,147 @@
         });
     }
 
-    // Check for server messages and auto-hide them
+    // Form validation
+    function validateForm() {
+        let isValid = true;
+
+        // Clear previous AJAX errors
+        document.getElementById('ajaxEmailError').classList.remove('show');
+        document.getElementById('ajaxPasswordError').classList.remove('show');
+        document.getElementById('ajaxErrorMessage').classList.remove('show');
+        document.getElementById('ajaxSuccessMessage').classList.remove('show');
+
+        // Remove error styling
+        document.getElementById('email').classList.remove('error');
+        document.getElementById('password').classList.remove('error');
+
+        // Get form values
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        // Validate email
+        if (!email) {
+            isValid = false;
+            document.getElementById('email').classList.add('error');
+            document.getElementById('ajaxEmailError').textContent = 'Email is required';
+            document.getElementById('ajaxEmailError').classList.add('show');
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            isValid = false;
+            document.getElementById('email').classList.add('error');
+            document.getElementById('ajaxEmailError').textContent = 'Please enter a valid email address';
+            document.getElementById('ajaxEmailError').classList.add('show');
+        }
+
+        // Validate password
+        if (!password) {
+            isValid = false;
+            document.getElementById('password').classList.add('error');
+            document.getElementById('ajaxPasswordError').textContent = 'Password is required';
+            document.getElementById('ajaxPasswordError').classList.add('show');
+        }
+
+        return isValid;
+    }
+
+    // AJAX form submission
+    async function submitLogin(formData) {
+        try {
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+
+            if (loadingOverlay) loadingOverlay.classList.add('active');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                if (btnSpinner) btnSpinner.style.display = 'inline-block';
+                if (btnText) btnText.textContent = 'Signing in...';
+            }
+
+            // Send AJAX request
+            const response = await fetch('/verify_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(formData)
+            });
+
+            // Hide loading overlay
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                if (btnSpinner) btnSpinner.style.display = 'none';
+                if (btnText) btnText.textContent = 'Sign in';
+            }
+
+            // Handle response
+            if (response.ok) {
+                // Login successful - redirect to dashboard
+                window.location.href = '/dashboard';
+            } else {
+                // Login failed
+                const errorText = await response.text();
+
+                // Show error message
+                document.getElementById('ajaxErrorText').textContent = 'Invalid email or password';
+                document.getElementById('ajaxErrorMessage').classList.add('show');
+
+                // Highlight fields
+                document.getElementById('email').classList.add('error');
+                document.getElementById('password').classList.add('error');
+            }
+
+        } catch (error) {
+            console.error('Error submitting form:', error);
+
+            // Hide loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                if (btnSpinner) btnSpinner.style.display = 'none';
+                if (btnText) btnText.textContent = 'Sign in';
+            }
+
+            // Show network error
+            document.getElementById('ajaxErrorText').textContent = 'Network error. Please check your connection and try again.';
+            document.getElementById('ajaxErrorMessage').classList.add('show');
+        }
+    }
+
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
-        const successMessage = document.getElementById('successMessage');
-        const emailError = document.getElementById('emailError');
-        const passwordError = document.getElementById('passwordError');
+        const loginForm = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
 
-        // Auto-hide success message after 5 seconds
-        if (successMessage && successMessage.classList.contains('show')) {
-            setTimeout(() => {
-                successMessage.classList.remove('show');
-            }, 5000);
-        }
+        // Form submission handling
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-        // Add error borders if there are server errors
-        if (emailError && emailError.textContent.trim()) {
-            emailInput.classList.add('error-border');
-        }
+                // Clear previous messages
+                document.getElementById('ajaxErrorMessage').classList.remove('show');
+                document.getElementById('ajaxSuccessMessage').classList.remove('show');
 
-        if (passwordError && passwordError.textContent.trim()) {
-            passwordInput.classList.add('error-border');
+                // Validate form
+                if (!validateForm()) {
+                    return false;
+                }
+
+                // Collect form data
+                const formData = new FormData(this);
+
+                // Submit form via AJAX
+                submitLogin(formData);
+            });
         }
 
         // Auto-focus email field if empty
@@ -772,6 +962,42 @@
             emailInput.focus();
         } else if (passwordInput && !passwordInput.value.trim()) {
             passwordInput.focus();
+        }
+
+        // Auto-hide server messages after 5 seconds
+        const serverSuccessMessage = document.getElementById('serverSuccessMessage');
+        if (serverSuccessMessage && serverSuccessMessage.classList.contains('show')) {
+            setTimeout(() => {
+                serverSuccessMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Add error borders if there are server errors
+        const serverEmailError = document.getElementById('serverEmailError');
+        const serverPasswordError = document.getElementById('serverPasswordError');
+
+        if (serverEmailError && serverEmailError.textContent.trim()) {
+            emailInput.classList.add('error-border');
+        }
+        if (serverPasswordError && serverPasswordError.textContent.trim()) {
+            passwordInput.classList.add('error-border');
+        }
+
+        // Clear AJAX errors when user starts typing
+        if (emailInput) {
+            emailInput.addEventListener('input', function() {
+                this.classList.remove('error');
+                document.getElementById('ajaxEmailError').classList.remove('show');
+                document.getElementById('ajaxErrorMessage').classList.remove('show');
+            });
+        }
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                this.classList.remove('error');
+                document.getElementById('ajaxPasswordError').classList.remove('show');
+                document.getElementById('ajaxErrorMessage').classList.remove('show');
+            });
         }
     });
 </script>
