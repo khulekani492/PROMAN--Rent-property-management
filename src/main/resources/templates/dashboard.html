@@ -854,13 +854,33 @@
             overflow: hidden;
         }
 
-        /* IMPROVED: Property form with better visual hierarchy */
+        /* NEW: Fixed height for property form container */
         .property-form-container {
             transition: all 0.3s ease;
+            height: 500px; /* Fixed height */
+            display: flex;
+            flex-direction: column;
         }
 
         .property-form-container.hidden {
             display: none;
+        }
+
+        .property-form-container .card-surface {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .property-form-container .card-surface form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .property-form-container .card-surface form .grid {
+            flex: 1;
         }
 
         .property-name-display {
@@ -1811,6 +1831,99 @@ body.dark .nav-btn:hover {
             color: #2b1f00;
             opacity: 1;
         }
+
+        /* NEW: Table pagination styles */
+        .table-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--muted);
+        }
+
+        .page-info {
+            font-size: 0.875rem;
+            color: var(--muted-text);
+        }
+
+        .pagination-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            border-radius: 8px;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--accent);
+            color: #2b1f00;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* NEW: Search filter styles */
+        .table-search-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-filter {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-filter input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+
+        .search-filter i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-text);
+            font-size: 0.875rem;
+        }
+
+        .clear-search-btn {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted-text);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .clear-search-btn:hover {
+            color: var(--accent);
+        }
     </style>
 </head>
 
@@ -2001,7 +2114,7 @@ body.dark .nav-btn:hover {
             </div>
 
             <div class="flex flex-col lg:flex-row gap-4 md:gap-6" id="mainContent">
-                <!-- Property Selection Section -->
+                <!-- Property Selection Section - Now with fixed height -->
                 <div class="lg:w-1/3 property-form-container" id="propertyFormContainer">
                     <div class="card-surface h-full">
                         <form id="propertyForm" action="http://localhost:7070/fetch_property_units" method="post">
@@ -2045,6 +2158,26 @@ body.dark .nav-btn:hover {
                             <i class="fas fa-table"></i>
                             View Units Table
                         </button>
+
+                        <!-- NEW: Search Filters -->
+                        <div class="table-search-filters mb-4">
+                            <div class="search-filter">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="tenantSearch" placeholder="Search by tenant name..."
+                                       class="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                                <button class="clear-search-btn" onclick="clearSearch('tenantSearch')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="search-filter">
+                                <i class="fas fa-home"></i>
+                                <input type="text" id="unitSearch" placeholder="Search by unit number..."
+                                       class="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+                                <button class="clear-search-btn" onclick="clearSearch('unitSearch')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
 
                         <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
                             <div class="text-sm" style="color:var(--text)">
@@ -2179,6 +2312,19 @@ body.dark .nav-btn:hover {
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- NEW: Pagination Controls -->
+                        <div class="table-pagination hidden" id="paginationControls">
+                            <button class="pagination-btn" id="prevPageBtn" disabled onclick="changePage(-1)">
+                                <i class="fas fa-chevron-left"></i>
+                                Previous
+                            </button>
+                            <div class="page-info" id="pageInfo">Page 1 of 1</div>
+                            <button class="pagination-btn" id="nextPageBtn" disabled onclick="changePage(1)">
+                                Next
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2235,6 +2381,119 @@ body.dark .nav-btn:hover {
 
 <script>
     // =========================================================================
+    // NEW: Table Pagination and Search Functionality
+    // =========================================================================
+
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let allRows = [];
+    let filteredRows = [];
+
+    function initializeTablePagination() {
+        allRows = Array.from(document.querySelectorAll('.tenant-row'));
+        filteredRows = [...allRows];
+
+        // Show all rows initially
+        allRows.forEach(row => row.classList.remove('hidden'));
+
+        // Setup search filters
+        const tenantSearch = document.getElementById('tenantSearch');
+        const unitSearch = document.getElementById('unitSearch');
+
+        if (tenantSearch) {
+            tenantSearch.addEventListener('input', () => applyFilters());
+        }
+
+        if (unitSearch) {
+            unitSearch.addEventListener('input', () => applyFilters());
+        }
+
+        // Initialize pagination
+        updatePagination();
+    }
+
+    function applyFilters() {
+        const tenantSearch = document.getElementById('tenantSearch').value.toLowerCase();
+        const unitSearch = document.getElementById('unitSearch').value.toLowerCase();
+
+        filteredRows = allRows.filter(row => {
+            const tenantName = row.querySelector('.tenant-name').textContent.toLowerCase();
+            const unitNumber = row.querySelector('.unit-number-cell').textContent.toLowerCase();
+
+            const matchesTenant = tenantSearch === '' || tenantName.includes(tenantSearch);
+            const matchesUnit = unitSearch === '' || unitNumber.includes(unitSearch);
+
+            return matchesTenant && matchesUnit;
+        });
+
+        currentPage = 1;
+        updatePagination();
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+
+        // Hide all rows first
+        allRows.forEach(row => {
+            row.style.display = 'none';
+            row.classList.add('hidden');
+        });
+
+        // Show only rows for current page
+        filteredRows.slice(startIndex, endIndex).forEach(row => {
+            row.style.display = '';
+            row.classList.remove('hidden');
+        });
+
+        // Update pagination controls
+        const paginationControls = document.getElementById('paginationControls');
+        const prevBtn = document.getElementById('prevPageBtn');
+        const nextBtn = document.getElementById('nextPageBtn');
+        const pageInfo = document.getElementById('pageInfo');
+
+        if (filteredRows.length > itemsPerPage) {
+            paginationControls.classList.remove('hidden');
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${filteredRows.length} total units)`;
+        } else {
+            paginationControls.classList.add('hidden');
+        }
+
+        // Update no results message
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        if (noResultsMessage) {
+            if (filteredRows.length === 0 && allRows.length > 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+            }
+        }
+    }
+
+    function changePage(direction) {
+        const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+        currentPage += direction;
+
+        if (currentPage < 1) currentPage = 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        updatePagination();
+    }
+
+    function clearSearch(searchId) {
+        const searchInput = document.getElementById(searchId);
+        if (searchInput) {
+            searchInput.value = '';
+            applyFilters();
+        }
+    }
+
+    // =========================================================================
     // UX IMPROVEMENTS: Toast Notifications
     // =========================================================================
 
@@ -2268,7 +2527,6 @@ body.dark .nav-btn:hover {
 
     function filterTable(filterType) {
         const filterChips = document.querySelectorAll('.filter-chip');
-        const rows = document.querySelectorAll('.tenant-row');
         const activeChip = document.querySelector(`.filter-chip[onclick*="${filterType}"]`);
 
         // Update active chip
@@ -2277,56 +2535,27 @@ body.dark .nav-btn:hover {
             activeChip.classList.add('active');
         }
 
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            let showRow = true;
-
-            // Get row data
-            const indicator = row.querySelector('.indicator');
-            const paymentStatus = indicator ? indicator.textContent.trim() : '';
-            const statusBadge = row.querySelector('.status-badge');
-            const hasDebt = statusBadge ? statusBadge.textContent.includes('Debt') : false;
-            const isVacant = statusBadge ? statusBadge.classList.contains('status-vacant') && !hasDebt : false;
-
-            // Apply filters
-            switch(filterType) {
-                case 'paid':
-                    showRow = paymentStatus === '✓' || paymentStatus === '+';
-                    break;
-                case 'unpaid':
-                    showRow = paymentStatus === '✗' || paymentStatus === '−';
-                    break;
-                case 'debt':
-                    showRow = hasDebt;
-                    break;
-                case 'vacant':
-                    showRow = isVacant;
-                    break;
-                case 'all':
-                default:
-                    showRow = true;
-            }
-
-            if (showRow) {
-                row.style.display = '';
-                row.classList.remove('hidden');
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-                row.classList.add('hidden');
-            }
-        });
-
-        // Show/hide no results message
-        const noResultsMessage = document.getElementById('noResultsMessage');
-        if (noResultsMessage) {
-            if (visibleCount === 0 && rows.length > 0) {
-                noResultsMessage.classList.remove('hidden');
-            } else {
-                noResultsMessage.classList.add('hidden');
-            }
+        // Update search filters to reflect this filter
+        if (filterType === 'paid') {
+            // For paid, we'll filter the already displayed rows
+            filteredRows = allRows.filter(row => {
+                const indicator = row.querySelector('.indicator');
+                const paymentStatus = indicator ? indicator.textContent.trim() : '';
+                return paymentStatus === '✓' || paymentStatus === '+';
+            });
+        } else if (filterType === 'unpaid') {
+            filteredRows = allRows.filter(row => {
+                const indicator = row.querySelector('.indicator');
+                const paymentStatus = indicator ? indicator.textContent.trim() : '';
+                return paymentStatus === '✗' || paymentStatus === '−';
+            });
+        } else {
+            // 'all' - show all rows
+            filteredRows = [...allRows];
         }
+
+        currentPage = 1;
+        updatePagination();
 
         // Show filter applied toast
         if (filterType !== 'all') {
@@ -2371,12 +2600,19 @@ body.dark .nav-btn:hover {
         // Ctrl/Cmd + F to focus search
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
             e.preventDefault();
-            showToast('Use the filter chips above to filter tenants', 'info');
+            const tenantSearch = document.getElementById('tenantSearch');
+            if (tenantSearch) {
+                tenantSearch.focus();
+                showToast('Search focused. Start typing to filter tenants.', 'info');
+            }
         }
 
         // Escape to clear filters
         if (e.key === 'Escape') {
+            clearSearch('tenantSearch');
+            clearSearch('unitSearch');
             filterTable('all');
+            showToast('Filters cleared', 'info');
         }
 
         // Ctrl/Cmd + D to toggle dark mode
@@ -2755,6 +2991,11 @@ body.dark .nav-btn:hover {
         localStorage.setItem('user_chosen_theme', serverTheme);
         initializeIcons();
 
+        // Initialize table pagination and search
+        setTimeout(() => {
+            initializeTablePagination();
+        }, 100);
+
         // Add event listener to dark mode toggle button
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         if (darkModeToggle) {
@@ -2956,6 +3197,11 @@ body.dark .nav-btn:hover {
                     );
 
                     closePaymentModal();
+
+                    // Re-initialize table to reflect changes
+                    setTimeout(() => {
+                        initializeTablePagination();
+                    }, 500);
 
                 } catch (error) {
                     console.error("AJAX Error:", error);
