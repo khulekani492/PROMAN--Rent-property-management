@@ -998,10 +998,11 @@
           </div>
           <div class="form-group">
             <h3 class="text-sm font-medium text-[var(--muted-text)] mb-2">Unit Number</h3>
-            <input type="text" name="unit_number" required
-                   class="w-full text-xl font-bold bg-transparent border-0 border-b-2 border-transparent focus:outline-none focus:border-b-2 focus:border-[var(--accent)] transition-colors"
-                   th:value="${unit_number}"
-                   placeholder="e.g., A101"/>
+
+              <input type="number" name="unit_number" step="1" min="0" required
+                     class="w-full text-xl font-bold text-green-600 bg-transparent border-0 border-b-2 border-transparent focus:outline-none focus:border-b-2 focus:border-[var(--accent)] transition-colors"
+                     th:value="${unit_number}"
+                     placeholder="3"/>
             <div class="form-hint">Unit identifier or number</div>
           </div>
           <div class="form-group">
