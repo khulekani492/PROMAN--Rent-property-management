@@ -105,7 +105,11 @@ public class Dashboard {
                 System.out.println( first_property_name + " total units" + total_units);
                 ctx.sessionAttribute("property_unit",total_units);
 
-                double occupancyRate = ((double) occupied_units / total_units ) * 100;
+                double roundedOccupancy = ((double) occupied_units / total_units ) * 100;
+
+
+               // Round up to nearest integer
+                int occupancyRate  = (int) Math.ceil(roundedOccupancy);
 
                 //Vacant_rooms
                 Integer vacant = total_units  - occupied_units;
