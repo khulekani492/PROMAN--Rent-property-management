@@ -10,6 +10,7 @@ import static API.SessionUtil.fileSessionHandler;
 
 import API_handlers.*;
 import Invalidhandler.*;
+import Update_api.UpdateUnit;
 import api_login.Record_rent;
 import api_login.Validate_login;
 import io.javalin.Javalin;
@@ -136,23 +137,18 @@ public class umuziAPI {
             String tenant_property = ctx.sessionAttribute("current_property");
 
             Change_Unit updates_property = new Change_Unit(tenant_name,Unit_updated,tenant_property,tenant_ID);
-
             //Update amount .
             try{
                 updates_property.setTenant_property(tenant_property);
                 updates_property.setTenant_unit(Unit_updated);
                 updates_property.update_unit_rent(amount);
-
-
                 ctx.status(200).result("Ok");
             } catch (RuntimeException e){
                 System.out.println(e.getMessage());
-                ctx.result("Update for rent failed because : " + e.getMessage());
+                //ctx.result("Update for rent failed because : " + e.getMessage());
+                ctx.status(403).result("units information not updated");
             }
-
-
         });
-
 
         app.get("/log_out",new LogOut().sign_out());
         // Redirects to the unit page
@@ -177,6 +173,11 @@ public class umuziAPI {
         app.post("unmark_payment/{id}/{unit}/{tenantContact}", tenant_unit_update.unmark_payment());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
+
+
+        //add new unit to an existing one
+        UpdateUnit new_unit_added = new UpdateUnit() ;
+        app.get("/add_new_unit",new_unit_added.create_property_unit());
 
         Record_rent complete_payment_record = new Record_rent();
         app.post("/payment_status/{id}/{unit}/{tenantContact}",complete_payment_record.payment());
