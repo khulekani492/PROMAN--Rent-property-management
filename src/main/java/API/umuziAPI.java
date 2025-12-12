@@ -117,6 +117,16 @@ public class umuziAPI {
             ctx.render("templates/user_profile.html",model);
         });
 
+        app.get("create_new_unit",ctx -> {
+            String current_property = ctx.sessionAttribute("current_property");
+
+            HashMap<String,String> model = new HashMap<>();
+            model.put("property_name",current_property);
+            String themeColor = ctx.sessionAttribute("theme_color");
+            model.put("user_chosen_theme",themeColor);
+
+            ctx.render("templates/new_unit.html",model);
+        });
         app.post("/update_property_info",ctx -> {
 
             Integer tenant_ID = ctx.sessionAttribute("TenantID");
@@ -173,7 +183,6 @@ public class umuziAPI {
         app.post("unmark_payment/{id}/{unit}/{tenantContact}", tenant_unit_update.unmark_payment());
 
         app.get("/property_information", new PropertyUnits().property_related_information());
-
 
         //add new unit to an existing one
         UpdateUnit new_unit_added = new UpdateUnit() ;
