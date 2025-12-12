@@ -1,0 +1,963 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ProMan — Create New Unit</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Store Thymeleaf variable in JavaScript -->
+    <script>
+        // This gets rendered server-side by Thymeleaf
+        const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
+    </script>
+
+    <style>
+        :root{
+            /* Default light theme variables */
+            --bg: #f5f6f7;         /* overall smoke-white page background */
+            --surface: #ffffff;    /* card / surface white */
+            --muted: #eef0f2;      /* slightly darker smoke for surfaces */
+            --text: #2f3337;       /* primary text (soft charcoal) */
+            --muted-text: #6b7378; /* secondary text */
+            --accent: #D4AF37;     /* warm gold accent (complements logo) */
+            --accent-dark: #b8892a;/* darker accent for hover */
+            --accent-light: rgba(212, 175, 55, 0.1); /* light accent for backgrounds */
+            --glass: rgba(255,255,255,0.6);
+            --error: #dc2626;      /* error red */
+            --error-light: rgba(220, 38, 38, 0.1); /* light error background */
+            --success: #16a34a;    /* success green */
+            --success-light: rgba(22, 163, 74, 0.1); /* light success background */
+            --warning: #d97706;    /* warning amber */
+            --warning-light: rgba(217, 119, 6, 0.1); /* light warning background */
+        }
+
+        /* Dark theme variables */
+        body.dark {
+            --bg: #0f172a;          /* dark blue-gray background */
+            --surface: #1e293b;     /* dark surface */
+            --muted: #334155;       /* muted dark */
+            --text: #f1f5f9;        /* light text */
+            --muted-text: #94a3b8;  /* muted light text */
+            --accent: #F4B342;      /* brighter gold for dark mode */
+            --accent-dark: #E0A028; /* darker gold for hover */
+            --accent-light: rgba(244, 179, 66, 0.15); /* light accent for dark mode */
+            --glass: rgba(30, 41, 59, 0.6);
+            --error: #f87171;       /* light error red */
+            --error-light: rgba(248, 113, 113, 0.15);
+            --success: #4ade80;     /* light success green */
+            --success-light: rgba(74, 222, 128, 0.15);
+            --warning: #fbbf24;     /* light warning amber */
+            --warning-light: rgba(251, 191, 36, 0.15);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .text-accent { color: var(--accent) !important; }
+        .bg-accent { background-color: var(--accent) !important; }
+        .bg-accent-dark { background-color: var(--accent-dark) !important; }
+        .bg-surface { background-color: var(--surface) !important; }
+        .bg-muted { background-color: var(--muted) !important; }
+        .text-muted { color: var(--muted-text) !important; }
+
+        .hero-surface {
+            background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.9));
+            box-shadow: 0 6px 20px rgba(31,41,55,0.06);
+            border-radius: 1rem;
+        }
+
+        body.dark .hero-surface {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-highlight {
+            border-top-width: 4px;
+            border-top-style: solid;
+            border-color: rgba(212,175,55,0.26);
+        }
+
+        body.dark .card-highlight {
+            border-color: rgba(244, 179, 66, 0.26);
+        }
+
+        .progress-dot { width: 12px; height: 12px; border-radius: 9999px; display: inline-block; }
+
+        .input-focus:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.08);
+            border-color: var(--accent);
+        }
+
+        .login-btn{
+            color: var(--text);
+            border-color: var(--muted);
+            background: var(--surface);
+        }
+        .login-btn:hover{
+            background: var(--muted);
+        }
+        .signup-btn{
+            background: var(--accent);
+            color: #2b1f00; /* readable on gold */
+        }
+
+        body.dark .signup-btn {
+            color: #1a1400;
+        }
+
+        .signup-btn:hover{
+            background: var(--accent-dark);
+            color: white;
+        }
+
+        /* Dark mode toggle button */
+        #dark-mode-toggle {
+            transition: all 0.3s ease;
+            background: var(--muted);
+            color: var(--text);
+            border: 1px solid var(--muted);
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #dark-mode-toggle:hover {
+            transform: rotate(30deg);
+            background: var(--accent);
+            color: #2b1f00;
+        }
+
+        body.dark #dark-mode-toggle:hover {
+            color: #1a1400;
+        }
+
+        /* Mobile Menu Button Styles */
+        #mobile-menu-button {
+            display: none; /* Hidden by default on desktop */
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #mobile-menu-button:hover {
+            background: var(--muted);
+        }
+
+        .mobile-menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 20px;
+        }
+
+        .mobile-menu-icon span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--text);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Hamburger to X animation */
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        /* Mobile menu styling */
+        #mobile-menu {
+            background: var(--surface);
+            border-top: 1px solid var(--muted);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.dark #mobile-menu {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Loading spinner styles */
+        .loading-spinner {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-spinner.dark {
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-top-color: #000;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-disabled {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+            width: 400px;
+            transform: translateY(10px);
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(0); }
+        }
+
+        .overlay-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--muted);
+            border-radius: 0.5rem;
+            background: var(--surface);
+            color: var(--text);
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-light);
+        }
+
+        .form-input.error {
+            border-color: var(--error);
+            background-color: var(--error-light);
+        }
+
+        .form-input.success {
+            border-color: var(--success);
+            background-color: var(--success-light);
+        }
+
+        .form-input.warning {
+            border-color: var(--warning);
+            background-color: var(--warning-light);
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            color: var(--muted-text);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .form-error {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            color: var(--error);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 44px; /* Better touch target */
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #2b1f00;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212,175,55,0.2);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        body.dark .btn-primary {
+            color: #1a1400;
+        }
+
+        .btn-danger {
+            background: #b45309; /* amber-700 */
+            color: white;
+            border-color: #92400e; /* amber-600 */
+        }
+
+        .btn-danger:hover {
+            background: #92400e; /* amber-800 */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(180, 83, 9, 0.2);
+        }
+
+        body.dark .btn-danger {
+            background: #92400e; /* amber-800 */
+            border-color: #78350f; /* amber-700 */
+        }
+
+        body.dark .btn-danger:hover {
+            background: #78350f; /* amber-900 */
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--muted);
+        }
+
+        .btn-secondary:hover {
+            background: var(--muted);
+            transform: translateY(-2px);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .status-paid {
+            background-color: rgba(16,185,129,0.1);
+            color: #065f46;
+        }
+
+        body.dark .status-paid {
+            background-color: rgba(34,197,94,0.15);
+            color: #86efac;
+        }
+
+        .status-pending {
+            background-color: rgba(245,158,11,0.1);
+            color: #92400e;
+        }
+
+        body.dark .status-pending {
+            background-color: rgba(245,158,11,0.15);
+            color: #fcd34d;
+        }
+
+        /* Header actions container */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Show mobile menu button on mobile/tablet, hide desktop nav */
+        @media (max-width: 1024px) {
+            #mobile-menu-button {
+                display: flex;
+            }
+
+            #nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            #mobile-menu-button {
+                display: none;
+            }
+        }
+
+        /* Main content spacing */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        /* Property header styling */
+        .property-header {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        body.dark .property-header {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Validation styles */
+        .is-invalid {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Success message */
+        .success-message {
+            background: var(--success-light);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip:hover::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            color: var(--text);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+            border: 1px solid var(--muted);
+        }
+
+        /* Required field indicator */
+        .required::after {
+            content: " *";
+            color: var(--error);
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 640px) {
+            .main-content {
+                padding: 1rem 0;
+            }
+
+            .property-header {
+                padding: 1.5rem;
+                border-radius: 0.75rem;
+            }
+
+            .btn {
+                padding: 0.625rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Focus visible for accessibility */
+        *:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Section transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Form enhancements */
+        .form-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--muted);
+        }
+
+        .form-header-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header-subtitle {
+            color: var(--muted-text);
+            font-size: 0.875rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--muted);
+        }
+    </style>
+</head>
+
+<!-- Apply dark class based on user_chosen_theme from server -->
+<body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-overlay-content">
+        <div class="overlay-spinner"></div>
+        <p class="text-lg font-semibold text-[var(--text)]">Creating new unit...</p>
+        <p class="text-sm text-muted mt-2">Please wait while we save your information</p>
+    </div>
+</div>
+
+<header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
+    <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
+        <div class="flex items-center gap-3">
+            <a href="http://localhost:7070/" class="flex items-center hover:opacity-90 transition-opacity">
+                <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
+                     class="h-28 md:h-32 lg:h-36 w-auto object-contain">
+            </a>
+            <div>
+                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent hover:text-[var(--accent-dark)] transition">ProMan</a>
+                <div class="text-xs text-muted -mt-1">Property management simplified</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
+        <a href="http://localhost:7070/dashboard"
+           class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+            Back To Dashboard
+        </a>
+    </div>
+</header>
+
+<!-- Main Content with spacing -->
+<main class="main-content">
+    <div class="max-w-4xl mx-auto px-6 fade-in">
+
+        <!-- Success Message (if any) -->
+        <div th:if="${successMessage}" class="success-message mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span th:text="${successMessage}">Unit created successfully!</span>
+        </div>
+
+        <!-- Property Header with Single Form -->
+        <div class="property-header">
+            <div class="form-header">
+                <h1 class="form-header-title">Create New Unit</h1>
+                <p class="form-header-subtitle">Add a new rental unit to your property</p>
+            </div>
+
+            <form id="createUnitForm" method="POST" th:action="@{/create_unit}">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Property Name -->
+                    <div class="form-group">
+                        <label for="property_name" class="form-label required">Property Name</label>
+                        <input type="text" id="property_name" name="property_name" required
+                               class="form-input"
+                               th:value="${property_name}"
+                               placeholder="Enter property name"/>
+                        <div class="form-hint">The name of your property</div>
+                    </div>
+
+                    <!-- Unit Number -->
+                    <div class="form-group">
+                        <label for="unit_number" class="form-label required">Unit Number</label>
+                        <input type="text" id="unit_number" name="unit_number" required
+                               class="form-input"
+                               th:value="${unit_number}"
+                               placeholder="e.g., A101, B202"/>
+                        <div class="form-hint">Unit identifier or number</div>
+                    </div>
+
+                    <!-- Rent Amount -->
+                    <div class="form-group">
+                        <label for="rent_amount" class="form-label required">Monthly Rent</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 font-semibold">R</span>
+                            <input type="number" id="rent_amount" name="rent_amount" step="0.01" min="0" required
+                                   class="form-input pl-8"
+                                   th:value="${rent_amount}"
+                                   placeholder="0.00"/>
+                        </div>
+                        <div class="form-hint">Monthly rental amount</div>
+                    </div>
+                </div> <!-- This closes the grid div -->
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="http://localhost:7070/dashboard"
+                       class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Cancel
+                    </a>
+                    <button type="submit" id="createUnitBtn"
+                            class="btn btn-primary">
+                        Create New Unit
+                    </button>
+                </div>
+            </form> <!-- This closes the form -->
+        </div> <!-- This closes the property-header div -->
+    </div> <!-- This closes the max-w-4xl mx-auto px-6 div -->
+</main>
+
+<script>
+    // Initialize dark mode icons
+    function initializeIcons(){
+        const isDark=document.body.classList.contains('dark');
+        const sunIcon=document.getElementById('sun-icon');
+        const moonIcon=document.getElementById('moon-icon');
+
+        if(isDark){
+            if(sunIcon) sunIcon.classList.remove('hidden');
+            if(moonIcon) moonIcon.classList.add('hidden');
+        } else {
+            if(sunIcon) sunIcon.classList.add('hidden');
+            if(moonIcon) moonIcon.classList.remove('hidden');
+        }
+    }
+
+    // Toggle dark mode
+    function toggleDarkMode(){
+        const isCurrentlyDark=document.body.classList.contains('dark');
+        if(isCurrentlyDark){
+            document.body.classList.remove('dark');
+            localStorage.setItem('user_chosen_theme','light');
+            sendThemePreference('light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem('user_chosen_theme','dark');
+            sendThemePreference('dark');
+        }
+        initializeIcons();
+    }
+
+    // Send theme preference to server
+    function sendThemePreference(theme){
+        const form=document.createElement('form');
+        form.method='POST';
+        form.action='http://localhost:7070/page_theme';
+        const themeInput=document.createElement('input');
+        themeInput.type='hidden';
+        themeInput.name='user_theme';
+        themeInput.value=theme;
+        form.appendChild(themeInput);
+        document.body.appendChild(form);
+        form.submit();
+        setTimeout(()=>document.body.removeChild(form),100);
+    }
+
+    // MOBILE MENU
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
+
+            // Toggle body overflow to prevent scrolling when menu is open
+            if (!isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!mobileMenu.classList.contains('hidden') &&
+                !menuButton.contains(event.target) &&
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // Form validation
+    function validateForm(form) {
+        let isValid = true;
+        const requiredFields = form.querySelectorAll('[required]');
+
+        requiredFields.forEach(field => {
+            const value = field.value.trim();
+            const parent = field.closest('.form-group');
+
+            // Remove existing error messages
+            const existingError = parent.querySelector('.form-error');
+            if (existingError) existingError.remove();
+
+            // Remove error class
+            field.classList.remove('error', 'is-invalid');
+
+            // Check if field is empty
+            if (!value) {
+                isValid = false;
+                field.classList.add('error', 'is-invalid');
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'form-error';
+                errorMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> This field is required';
+                parent.appendChild(errorMsg);
+            }
+
+            // Validation for rent amount
+            if (field.id === 'rent_amount') {
+                const rentAmount = parseFloat(value);
+                if (rentAmount <= 0) {
+                    isValid = false;
+                    field.classList.add('error', 'is-invalid');
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'form-error';
+                    errorMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Rent amount must be greater than 0';
+                    parent.appendChild(errorMsg);
+                }
+            }
+        });
+
+        return isValid;
+    }
+
+    // Initialize icons on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set initial theme from server
+        const serverTheme = window.serverTheme || 'light';
+        localStorage.setItem('user_chosen_theme', serverTheme);
+        initializeIcons();
+
+        // Add event listener to dark mode toggle button
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                toggleDarkMode();
+            });
+        }
+
+        // Form submission handling
+        const createUnitForm = document.getElementById('createUnitForm');
+        const createUnitBtn = document.getElementById('createUnitBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        if (createUnitForm) {
+            createUnitForm.addEventListener('submit', function(e) {
+                if (!validateForm(this)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Show loading overlay
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('active');
+                }
+
+                // Disable submit button
+                if (createUnitBtn) {
+                    createUnitBtn.disabled = true;
+                    createUnitBtn.innerHTML = '<div class="loading-spinner"></div> Creating...';
+                }
+
+                return true;
+            });
+        }
+
+        // Format rent amount on blur
+        const rentAmountInput = document.getElementById('rent_amount');
+        if (rentAmountInput) {
+            rentAmountInput.addEventListener('blur', function() {
+                if (this.value) {
+                    this.value = parseFloat(this.value).toFixed(2);
+                }
+            });
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Enter to submit form
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (createUnitBtn && !createUnitBtn.disabled) {
+                    createUnitBtn.click();
+                }
+            }
+
+            // Escape to cancel/go back
+            if (e.key === 'Escape' && !document.querySelector('#mobile-menu.hidden')) {
+                window.history.back();
+            }
+        });
+
+        // Add subtle animation to form on load
+        setTimeout(() => {
+            const formHeader = document.querySelector('.form-header');
+            if (formHeader) {
+                formHeader.style.animationDelay = '0.1s';
+                formHeader.classList.add('fade-in');
+            }
+        }, 100);
+    });
+</script>
+
+</body>
+</html>
