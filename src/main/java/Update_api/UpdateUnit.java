@@ -54,7 +54,7 @@ public class UpdateUnit{
             create_rooms.setProperty_address(property_address);
             create_rooms.setProperty_unit(Unit_updated);
             try {
-                create_rooms.setTotal_units();
+                create_rooms.New_unit();
                 ctx.status(200).result("ok");
                 return;
 
