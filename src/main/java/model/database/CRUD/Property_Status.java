@@ -167,7 +167,7 @@ public class Property_Status extends ConnectionAccess {
 //        pocket_it.property_tenants();
       //  tools.set(1,pocket_it.tenant_name(772));
        // System.out.println(tools.set(2, pocket_it.tenant_name(772)));
-        System.out.println(pocket_it.property_tenants("Thornville_rooms",771));
+        System.out.println(pocket_it.property_tenants("The bahamas",771));
 
     }
 }
