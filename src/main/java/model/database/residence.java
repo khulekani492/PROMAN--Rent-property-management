@@ -228,13 +228,14 @@ public class residence extends ConnectionAccess implements  Property {
     public void setTotal_units() throws SQLException {
 
         String sql = """
-                INSERT INTO properties (property_name,property_address,property_unit,landlord_user_id) VALUES (?,?,?,?)
+                INSERT INTO properties (property_name,property_rent,property_address,property_unit,landlord_user_id) VALUES (?,?,?,?)
                 """;
         try (PreparedStatement pstm = newConnection().prepareStatement(sql)){
             pstm.setString(1,this.property_name);
-            pstm.setString(2,this.property_address);
-            pstm.setInt(3,this.property_unit);
-            pstm.setInt(4,this.landlordId);
+            pstm.setString(2,this.property_rent);
+            pstm.setString(3,this.property_address);
+            pstm.setInt(4,this.property_unit);
+            pstm.setInt(5,this.landlordId);
             pstm.executeUpdate();
         } catch (SQLException e) {
 
