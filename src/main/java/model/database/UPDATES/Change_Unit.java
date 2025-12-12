@@ -36,6 +36,35 @@ public class Change_Unit extends ConnectionAccess {
 
     }
 
+    public void update_unit_rent(String new_amount) {
+
+        String SQL = """
+           UPDATE properties SET property_rent = ?
+           WHERE property_unit = ? AND property_name = ?
+           """;
+
+        try (PreparedStatement pstm = this.connection.prepareStatement(SQL)) {
+
+            // 1. Set property_rent
+            pstm.setString(1, new_amount);
+
+            // 2. Set property_unit
+            pstm.setInt(2, this.tenant_unit);
+
+            // 3. Set property_name
+            pstm.setString(3, this.tenant_property);
+
+            int rowsAffected = pstm.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("Warning: No property unit found to update for unit " + this.tenant_unit);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void vacant_unit(Integer new_vacant_unit) {
         // 1. Corrected SQL: Removed the comma before WHERE.
         // The placeholder '?' for property_unit is used to FIND the unit,
