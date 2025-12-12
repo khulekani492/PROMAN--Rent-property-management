@@ -60,7 +60,7 @@ public class UpdateUnit{
             try {
                 create_rooms.New_unit();
                 ctx.sessionAttribute("property_unit",Unit_updated);
-                ctx.redirect("/add_tenant");
+               // ctx.redirect("/add_tenant");
 
                 ctx.status(200).result("ok");
                 return;
