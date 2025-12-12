@@ -38,6 +38,7 @@ public class UpdateUnit{
             String new_unit = ctx.formParam("unit_number");
             String amount = ctx.formParam("rent_amount");
             System.out.println("unit number " + new_unit);
+
             Integer Unit_updated = Integer.parseInt(new_unit);
             String propertyName = ctx.sessionAttribute("current_property");
             System.out.println("PROPERTY NAME");
@@ -60,16 +61,16 @@ public class UpdateUnit{
                 create_rooms.New_unit();
                 ctx.sessionAttribute("property_unit",Unit_updated);
                 ctx.redirect("/add_tenant");
-                //ctx.status(200).result("ok");
+
+                ctx.status(200).result("ok");
                 return;
 
             } catch (SQLException e) {
-                System.out.println("ple");
-                ctx.status(403).result("Failed To Create New Unit " + e.getMessage());
+                System.out.println("same unit Error for new unit");
+                ctx.status(403).result("Unit exist");
+
             }
-            HashMap<String,String> model  = new HashMap<>();
-            model.put("update_message","Tenant changed Unit");
-            ctx.render("templates/user_profile.html",model);
+
         };
     }
 
