@@ -37,9 +37,12 @@ public class UpdateUnit{
         return ctx -> {
             String new_unit = ctx.formParam("unit_number");
             String amount = ctx.formParam("rent_amount");
+            System.out.println("unit number " + new_unit);
             Integer Unit_updated = Integer.parseInt(new_unit);
             String propertyName = ctx.sessionAttribute("current_property");
-            String email = ctx.sessionAttribute("login_email");
+            System.out.println("PROPERTY NAME");
+            String email = ctx.sessionAttribute("email");
+            System.out.println("Email : " + email);
 
             //Get TenantId
             landlord getUserID = new landlord();
@@ -55,7 +58,9 @@ public class UpdateUnit{
             create_rooms.setProperty_unit(Unit_updated);
             try {
                 create_rooms.New_unit();
-                ctx.status(200).result("ok");
+                ctx.sessionAttribute("property_unit",Unit_updated);
+                ctx.redirect("/add_tenant");
+                //ctx.status(200).result("ok");
                 return;
 
             } catch (SQLException e) {
