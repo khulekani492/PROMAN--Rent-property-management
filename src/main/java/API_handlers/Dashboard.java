@@ -101,6 +101,7 @@ public class Dashboard {
 
                 //Calculate the occupancy percentage of the property
                 Integer total_units = authenticate.total_property_units(first_property_name, landlord_id);
+
                 System.out.println( first_property_name + " total units" + total_units);
                 ctx.sessionAttribute("property_unit",total_units);
 
