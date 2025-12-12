@@ -186,7 +186,7 @@ public class umuziAPI {
 
         //add new unit to an existing one
         UpdateUnit new_unit_added = new UpdateUnit() ;
-        app.get("/add_new_unit",new_unit_added.create_property_unit());
+        app.post("/add_new_unit",new_unit_added.create_property_unit());
 
         Record_rent complete_payment_record = new Record_rent();
         app.post("/payment_status/{id}/{unit}/{tenantContact}",complete_payment_record.payment());
