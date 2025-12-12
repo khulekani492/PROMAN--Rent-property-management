@@ -27,6 +27,7 @@ public class Validate_login {
             if("NO USER FOUND".equals(hashed.compare())){
                 ctx.sessionAttribute("login_email",user_email);
                 ctx.redirect("/error/no_email");
+                ctx.status(403).result("email does not exist");
                 return;
             }
             boolean isMatch ;
@@ -109,7 +110,8 @@ public class Validate_login {
                     ctx.redirect("dashboard");
                 } else {
                    // ctx.sessionAttribute("login_password",password);
-                    ctx.redirect("/error/wrong_password");
+                 //   ctx.redirect("/error/wrong_password");
+                    ctx.status(403).result("Wrong password");
 
                 }
 
