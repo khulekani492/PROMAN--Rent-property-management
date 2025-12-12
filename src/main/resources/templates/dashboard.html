@@ -84,15 +84,16 @@
             outline-offset: 2px;
         }
 
-        /* IMPROVED: Header with better visual hierarchy */
+        /* FIXED: Header kept at original size with proper spacing */
         header.topbar {
             background: var(--surface);
             border-bottom: 1px solid var(--muted);
             position: sticky;
             top: 0;
             z-index: 60;
-            height: 70px;
+            height: 100px; /* Keep original height */
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 0 1.5rem;
         }
 
         body.dark header.topbar {
@@ -106,7 +107,7 @@
         }
 
         header .brand-left img {
-            height:3rem;
+            height:5rem; /* Keep original logo size */
             width:auto;
             transition: transform 0.3s ease;
         }
@@ -118,24 +119,23 @@
         header .brand-left a.text-accent {
             color: var(--accent);
             font-weight:800;
-            font-size:1.25rem;
-            letter-spacing: -0.5px;
+            font-size:1.125rem;
         }
 
         .main-wrap {
             display:flex;
             flex:1;
-            min-height: calc(100vh - 70px);
+            min-height: calc(100vh - 100px); /* Updated to match header height */
         }
 
-        /* IMPROVED: Sidebar with better organization */
+        /* FIXED: Sidebar positioned under header with proper spacing */
         .sidebar {
             width: 260px;
-            height: calc(100vh - 70px);
-            position:fixed;
-            left:0;
-            top: 70px;
-            z-index:50;
+            height: calc(100vh - 100px); /* Subtract header height */
+            position: fixed;
+            left: 0;
+            top: 100px; /* Start right below the header */
+            z-index: 50;
             overflow-y: auto;
             overflow-x: hidden;
             background: var(--sidebar-bg);
@@ -166,27 +166,29 @@
             padding: 1.25rem;
             display: flex;
             flex-direction: column;
+            gap: 1.5rem; /* Add spacing between sections */
         }
 
         /* Desktop layout */
         @media (min-width:1025px) {
             .content {
                 margin-left: 260px;
-                padding:2rem;
+                padding: 2rem;
                 width: calc(100% - 260px);
+                min-height: calc(100vh - 100px); /* Ensure content fills space below header */
             }
             #sidebar-backdrop { display:none; }
             #mobile-menu-button { display:none; }
         }
 
-        /* Mobile overlay behavior */
+        /* Mobile overlay behavior - FIXED for new header height */
         @media (max-width:1024px) {
             .sidebar {
                 transform: translateX(-100%);
-                position:fixed;
-                height: calc(100vh - 70px);
-                left:0;
-                top: 70px;
+                position: fixed;
+                height: calc(100vh - 100px); /* Updated to match header height */
+                left: 0;
+                top: 100px; /* Start below header */
                 box-shadow: 0 18px 40px rgba(16,24,40,0.12);
                 width: 85%;
                 max-width: 320px;
@@ -200,22 +202,25 @@
             }
             .content {
                 margin-left: 0;
-                padding:1.25rem;
+                padding: 1.25rem;
                 width: 100%;
+                min-height: calc(100vh - 100px);
             }
             #sidebar-backdrop {
-                display:block;
-                position:fixed;
-                inset:0;
-                background:rgba(0,0,0,0.45);
-                z-index:45;
-                opacity:0;
-                pointer-events:none;
-                transition:opacity .18s ease;
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.45);
+                z-index: 45;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity .18s ease;
+                top: 100px; /* Start below header */
+                height: calc(100vh - 100px);
             }
             #sidebar-backdrop.visible {
-                opacity:1;
-                pointer-events:auto;
+                opacity: 1;
+                pointer-events: auto;
             }
             #mobile-menu-button {
                 display: flex;
@@ -1058,22 +1063,27 @@
             box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.2);
         }
 
-        /* Header adjustments */
+        /* FIXED: Header adjustments to keep original size */
         header.topbar {
-            height: 70px;
+            height: 100px; /* Original height */
+            display: flex;
+            align-items: center;
         }
 
-        header .max-w-6xl.mx-auto.px-6 {
+        header .max-w-6xl.mx-auto {
+            width: 100%;
+            max-width: 1200px;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 1.5rem;
+            margin: 0 auto;
         }
 
         header .brand-left {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             align-items: center;
             height: 100%;
         }
@@ -1086,23 +1096,34 @@
 
         header .brand-left img {
             height: auto;
-            max-height: 45px;
+            max-height: 80px; /* Adjusted for 100px header */
             width: auto;
         }
 
+        /* FIXED: Main wrap and sidebar positioning */
         .main-wrap {
-            min-height: calc(100vh - 70px);
+            min-height: calc(100vh - 100px);
         }
 
         .sidebar {
-            height: calc(100vh - 70px);
-            top: 70px;
+            height: calc(100vh - 100px);
+            top: 100px; /* Position below header */
         }
 
+        /* FIXED: Mobile adjustments for new header height */
         @media (max-width:1024px) {
             .sidebar {
-                height: calc(100vh - 70px);
-                top: 70px;
+                height: calc(100vh - 100px);
+                top: 100px;
+            }
+
+            #sidebar-backdrop {
+                top: 100px;
+                height: calc(100vh - 100px);
+            }
+
+            .content {
+                min-height: calc(100vh - 100px);
             }
         }
 
@@ -1147,6 +1168,16 @@
 
             .content {
                 padding: 1.25rem;
+            }
+
+            /* Adjust header for mobile */
+            header.topbar {
+                height: 100px;
+                padding: 0 1rem;
+            }
+
+            header .brand-left img {
+                max-height: 70px;
             }
         }
 
@@ -1207,6 +1238,19 @@
                 width: 2.5rem;
                 height: 2.5rem;
                 font-size: 1.25rem;
+            }
+
+            /* Further mobile header adjustments */
+            header.topbar {
+                height: 100px;
+            }
+
+            header .brand-left {
+                gap: 1rem;
+            }
+
+            header .brand-left img {
+                max-height: 60px;
             }
         }
 
@@ -1363,494 +1407,6 @@
             transform: translate(-50%, -50%);
         }
 
-        /* IMPROVED: Revenue Stats Cards */
-        .revenue-stats-container {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (min-width: 640px) {
-            .revenue-stats-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.25rem;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .revenue-stats-container {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 1.5rem;
-            }
-        }
-
-        .stat-card {
-            border-radius: 16px;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-            border: 2px solid;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            animation: fadeInUp 0.6s ease;
-            animation-fill-mode: both;
-        }
-
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .stat-card:nth-child(3) { animation-delay: 0.3s; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .stat-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        body.dark .stat-card:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .stat-card-gold {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
-            border-color: rgba(212, 175, 55, 0.4);
-        }
-
-        body.dark .stat-card-gold {
-            background: linear-gradient(135deg, rgba(244, 179, 66, 0.2), rgba(244, 179, 66, 0.1));
-            border-color: rgba(244, 179, 66, 0.4);
-        }
-
-        .stat-card-light-green {
-            background: linear-gradient(135deg, rgba(72, 187, 120, 0.2), rgba(72, 187, 120, 0.1));
-            border-color: rgba(72, 187, 120, 0.4);
-        }
-
-        body.dark .stat-card-light-green {
-            background: linear-gradient(135deg, rgba(110, 231, 183, 0.2), rgba(110, 231, 183, 0.1));
-            border-color: rgba(110, 231, 183, 0.4);
-        }
-
-        .stat-card-red {
-            background: linear-gradient(135deg, rgba(245, 101, 101, 0.2), rgba(245, 101, 101, 0.1));
-            border-color: rgba(245, 101, 101, 0.4);
-        }
-
-        body.dark .stat-card-red {
-            background: linear-gradient(135deg, rgba(252, 165, 165, 0.2), rgba(252, 165, 165, 0.1));
-            border-color: rgba(252, 165, 165, 0.4);
-        }
-
-        .stat-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.25rem;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover .stat-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        @media (min-width: 768px) {
-            .stat-icon {
-                width: 60px;
-                height: 60px;
-                margin-bottom: 1.5rem;
-                font-size: 1.75rem;
-            }
-        }
-
-        .stat-icon-gold {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.2));
-            color: #b8892a;
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
-        }
-
-        body.dark .stat-icon-gold {
-            background: linear-gradient(135deg, rgba(244, 179, 66, 0.3), rgba(244, 179, 66, 0.2));
-            color: #F4B342;
-            box-shadow: 0 6px 20px rgba(244, 179, 66, 0.2);
-        }
-
-        .stat-icon-light-green {
-            background: linear-gradient(135deg, rgba(72, 187, 120, 0.3), rgba(72, 187, 120, 0.2));
-            color: #059669;
-            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.2);
-        }
-
-        body.dark .stat-icon-light-green {
-            background: linear-gradient(135deg, rgba(110, 231, 183, 0.3), rgba(110, 231, 183, 0.2));
-            color: #6EE7B7;
-            box-shadow: 0 6px 20px rgba(110, 231, 183, 0.2);
-        }
-
-        .stat-icon-red {
-            background: linear-gradient(135deg, rgba(245, 101, 101, 0.3), rgba(245, 101, 101, 0.2));
-            color: #DC2626;
-            box-shadow: 0 6px 20px rgba(245, 101, 101, 0.2);
-        }
-
-        body.dark .stat-icon-red {
-            background: linear-gradient(135deg, rgba(252, 165, 165, 0.3), rgba(252, 165, 165, 0.2));
-            color: #FCA5A5;
-            box-shadow: 0 6px 20px rgba(252, 165, 165, 0.2);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 900;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-            line-height: 1.2;
-            letter-spacing: -0.5px;
-        }
-
-        .stat-value::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .stat-card-gold .stat-value::before {
-            background: var(--accent);
-        }
-
-        .stat-card-light-green .stat-value::before {
-            background: #10b981;
-        }
-
-        .stat-card-red .stat-value::before {
-            background: #ef4444;
-        }
-
-        @media (min-width: 768px) {
-            .stat-value {
-                font-size: 2.25rem;
-            }
-        }
-
-        .stat-label {
-            font-size: 0.95rem;
-            color: var(--muted-text);
-            margin-bottom: 0.75rem;
-            line-height: 1.4;
-            font-weight: 600;
-        }
-
-        .stat-trend {
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: auto;
-            padding-top: 0.75rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        body.dark .stat-trend {
-            border-top-color: rgba(255,255,255,0.05);
-        }
-
-        .trend-up {
-            color: #059669;
-        }
-
-        .trend-down {
-            color: #DC2626;
-        }
-
-        /* IMPROVED: Search Bar with better affordances */
-        .search-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .search-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1rem 1.25rem 1rem 3.5rem;
-            border-radius: 14px;
-            border: 2px solid var(--muted);
-            background: var(--surface);
-            color: var(--text);
-            font-size: 1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .search-input::placeholder {
-            color: var(--muted-text);
-            opacity: 0.7;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
-            transform: translateY(-2px);
-        }
-
-        body.dark .search-input:focus {
-            box-shadow: 0 8px 24px rgba(244, 179, 66, 0.15);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent);
-            pointer-events: none;
-            font-size: 1.25rem;
-        }
-
-        .search-clear {
-            position: absolute;
-            right: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--muted);
-            border: none;
-            color: var(--text);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 8px;
-            display: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-clear i {
-            font-size: 1rem;
-        }
-
-        .search-clear:hover {
-            color: var(--accent);
-            background: var(--accent-dark);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: var(--muted-text);
-            animation: fadeIn 0.5s ease;
-        }
-
-        .no-results-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.5;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .no-results-text {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
-
-        .no-results-subtext {
-            font-size: 1rem;
-            opacity: 0.7;
-        }
-
-        /* IMPROVED: Table header with better organization */
-        .table-header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .table-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .table-title i {
-            color: var(--accent);
-            font-size: 1.75rem;
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .table-counter {
-            font-size: 0.95rem;
-            color: var(--muted-text);
-            padding: 0.75rem 1.25rem;
-            background: var(--surface);
-            border-radius: 12px;
-            border: 2px solid var(--muted);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .table-counter i {
-            color: var(--accent);
-        }
-
-        /* Mobile responsiveness improvements */
-        @media (max-width: 768px) {
-            .content {
-                padding: 1.25rem;
-            }
-
-            .header-with-date h1 {
-                font-size: 1.5rem;
-            }
-
-            .header-with-date p {
-                font-size: 0.95rem;
-            }
-
-            .date-display {
-                padding: 0.75rem 1.25rem;
-                font-size: 0.95rem;
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .card-surface {
-                padding: 1.25rem;
-            }
-
-            .main-wrap {
-                min-height: calc(100vh - 70px);
-            }
-
-            .sidebar {
-                height: calc(100vh - 70px);
-                top: 70px;
-            }
-
-            .stat-card {
-                padding: 1.25rem;
-            }
-
-            .stat-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 1.25rem;
-            }
-
-            .stat-value {
-                font-size: 1.75rem;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .property-name-text {
-                font-size: 1rem;
-            }
-
-            .stat-card {
-                padding: 1rem;
-                min-height: 140px;
-            }
-
-            .stat-icon {
-                width: 42px;
-                height: 42px;
-                margin-bottom: 1rem;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
-
-            .stat-label {
-                font-size: 0.875rem;
-            }
-
-            .stat-trend {
-                font-size: 0.8rem;
-            }
-
-            .header-actions {
-                gap: 8px;
-            }
-
-            .theme-toggle,
-            #mobile-menu-button {
-                width: 46px;
-                height: 46px;
-            }
-        }
-
-        /* Small mobile adjustments */
-        @media (max-width: 480px) {
-            .revenue-stats-container {
-                gap: 1rem;
-            }
-
-            .stat-card {
-                padding: 1rem;
-            }
-
-            .stat-icon {
-                width: 40px;
-                height: 40px;
-                margin-bottom: 0.875rem;
-            }
-
-            .stat-value {
-                font-size: 1.375rem;
-            }
-
-            .header-actions {
-                gap: 6px;
-            }
-
-            .theme-toggle,
-            #mobile-menu-button {
-                width: 42px;
-                height: 42px;
-            }
-
-            .search-input {
-                padding: 0.875rem 1rem 0.875rem 3rem;
-                font-size: 0.95rem;
-            }
-        }
-
         /* IMPROVED: Quick actions toolbar */
         .quick-actions {
             display: flex;
@@ -1901,7 +1457,7 @@
         /* IMPROVED: Toast notifications */
         .toast {
             position: fixed;
-            top: 90px;
+            top: 120px; /* Positioned below header */
             right: 30px;
             padding: 1rem 1.5rem;
             border-radius: 12px;
@@ -1945,39 +1501,88 @@
             font-size: 1.25rem;
         }
 
-        /* IMPROVED: Progress indicators */
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--muted);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 0.5rem;
+        /* Mobile responsiveness improvements */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1.25rem;
+            }
+
+            .header-with-date h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-with-date p {
+                font-size: 0.95rem;
+            }
+
+            .date-display {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.95rem;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .card-surface {
+                padding: 1.25rem;
+            }
+
+            .main-wrap {
+                min-height: calc(100vh - 100px);
+            }
+
+            .sidebar {
+                height: calc(100vh - 100px);
+                top: 100px;
+            }
+
+            .toast {
+                top: 110px;
+                right: 15px;
+                left: 15px;
+                max-width: none;
+            }
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
-            border-radius: 4px;
-            transition: width 0.5s ease;
-            position: relative;
-            overflow: hidden;
+        @media (max-width: 640px) {
+            .property-name-text {
+                font-size: 1rem;
+            }
+
+            .header-actions {
+                gap: 8px;
+            }
+
+            .theme-toggle,
+            #mobile-menu-button {
+                width: 46px;
+                height: 46px;
+            }
+
+            header.topbar {
+                height: 100px;
+            }
         }
 
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shimmer 2s infinite;
-        }
+        /* Small mobile adjustments */
+        @media (max-width: 480px) {
+            .revenue-stats-container {
+                gap: 1rem;
+            }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            .header-actions {
+                gap: 6px;
+            }
+
+            .theme-toggle,
+            #mobile-menu-button {
+                width: 42px;
+                height: 42px;
+            }
+
+            .search-input {
+                padding: 0.875rem 1rem 0.875rem 3rem;
+                font-size: 0.95rem;
+            }
         }
 
         /* IMPROVED: Empty states */
@@ -2049,6 +1654,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
+                .brand-text {
+          font-weight: 900;
+          font-size: 28px;
+          letter-spacing: 1px;
+          color: var(--accent);
+          background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
 
         .filter-chip i {
             font-size: 0.75rem;
@@ -2059,6 +1674,131 @@
             background: var(--muted);
             transform: translateY(-2px);
         }
+        /* Add these styles to your existing CSS */
+
+/* Quick navigation buttons for compact sidebar */
+.quick-nav-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.nav-btn i {
+    color: var(--accent);
+    font-size: 1rem;
+}
+
+.nav-btn:hover {
+    background: rgba(212,175,55,0.15);
+    border-color: var(--accent);
+    transform: translateX(4px);
+}
+
+body.dark .nav-btn {
+    background: rgba(244, 179, 66, 0.1);
+    border-color: rgba(244, 179, 66, 0.2);
+}
+
+body.dark .nav-btn:hover {
+    background: rgba(244, 179, 66, 0.15);
+}
+
+/* Reduce spacing in sidebar content */
+.sidebar-content {
+    flex: 1;
+    padding: 1rem; /* Reduced from 1.25rem */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Reduced from 1.5rem */
+}
+
+/* Make property name display more compact */
+.property-name-display {
+    background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08));
+    border: 2px solid rgba(212,175,55,0.3);
+    border-radius: 12px;
+    padding: 0.75rem 1rem; /* Reduced from 1rem 1.25rem */
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(212,175,55,0.1);
+    transition: all 0.3s ease;
+}
+
+.property-name-text {
+    font-size: 1rem; /* Reduced from 1.125rem */
+    font-weight: 700; /* Reduced from 800 */
+    color: var(--text);
+    flex-grow: 1;
+    letter-spacing: -0.2px;
+}
+
+/* Reduce sidebar cards padding */
+.sidebar .card {
+    padding: 0.75rem; /* Reduced from 1rem */
+}
+
+/* Reduce feature icon size slightly */
+.feature-icon {
+    width: 42px; /* Reduced from 48px */
+    height: 42px; /* Reduced from 48px */
+    font-size: 1.125rem; /* Reduced from 1.25rem */
+}
+
+/* Adjust stats text sizes */
+.sidebar .card p.text-sm {
+    font-size: 0.8125rem; /* Slightly smaller */
+}
+
+.sidebar .card p.text-lg {
+    font-size: 1.125rem; /* Reduced from 1.25rem */
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .sidebar-content {
+        padding: 0.75rem; /* Even smaller on mobile */
+        gap: 0.5rem;
+    }
+
+    .property-name-display {
+        padding: 0.625rem 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .property-name-text {
+        font-size: 0.9375rem;
+    }
+
+    .nav-btn {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.8125rem;
+    }
+
+    .feature-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+}
 
         .filter-chip.active {
             background: var(--accent);
@@ -2096,15 +1836,15 @@
 </script>
 
 <header class="topbar">
-    <div class="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between h-full">
+    <div class="max-w-6xl mx-auto py-8 flex items-center justify-between h-full">
         <div class="brand-left flex items-center gap-6">
-            <div class="flex items-center justify-center h-32 w-auto">
+            <div class="flex items-center justify-center">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-32 md:h-40 lg:h-48 w-auto object-contain"
-                     style="height: 45px; max-height: 60px;">
+                     style="height: 5rem;">
             </div>
             <div class="flex flex-col">
-                <span class="text-accent font-extrabold text-2xl">ProMan</span>
+                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">  <h1 class="brand-text">PROMAN</h1></a>
                 <div class="text-sm" style="color:var(--muted-text); margin-top:-2px;">Property management simplified</div>
             </div>
         </div>
@@ -2129,24 +1869,22 @@
 <div class="main-wrap">
     <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main sidebar">
         <div class="sidebar-content">
-            <div class="sidebar-header">
-                <!-- Property name made to stand out -->
-                <div class="property-name-display">
-                    <i class="fas fa-building"></i>
-                    <span class="property-name-text" th:text="${name}">Property Name</span>
-                </div>
+            <!-- Property name with reduced margin -->
+            <div class="property-name-display" style="margin-bottom: 0.5rem;">
+                <i class="fas fa-building"></i>
+                <span class="property-name-text" th:text="${name}">Property Name</span>
             </div>
-            <nav class="mb-4 space-y-2">
-                <a href="http://localhost:7070/add_property_unit" class="nav-item active">
-                    <i class="fas fa-plus-circle"></i>
-                    ADD NEW PROPERTY
-                </a>
-                <a href="http://localhost:7070/add_tenant" class="nav-item active">
+
+            <!-- Quick navigation buttons with reduced spacing -->
+            <div class="quick-nav-buttons mb-2">
+                <a href="http://localhost:7070/add_tenant" class="nav-btn">
                     <i class="fas fa-user-plus"></i>
-                    ADD NEW TENANT
+                    <span>ADD NEW TENANT</span>
                 </a>
-            </nav>
-            <div class="sidebar-stats">
+            </div>
+
+            <!-- Sidebar stats with minimal spacing -->
+            <div class="sidebar-stats" style="margin-top: 0.5rem;">
                 <div class="card rounded-lg p-3">
                     <div class="flex items-center justify-between">
                         <div>
@@ -2211,7 +1949,6 @@
                 </a>
             </div>
         </div>
-
     </aside>
     <main class="content">
         <div class="p-4 md:p-6">
@@ -2229,78 +1966,25 @@
                 </div>
             </div>
 
-            <!-- NEW: Quick Actions Toolbar -->
+            <!-- Quick Actions Toolbar -->
             <div class="quick-actions">
-                <button class="quick-action-btn" onclick="exportData()">
-                    <i class="fas fa-file-export"></i>
-                    Export Data
-                </button>
-                <button class="quick-action-btn" onclick="showAllPayments()">
-                    <i class="fas fa-receipt"></i>
-                    View All Payments
-                </button>
-                <button class="quick-action-btn" onclick="generateReports()">
-                    <i class="fas fa-chart-pie"></i>
-                    Generate Report
-                </button>
                 <a href="http://localhost:7070/add_property_unit" class="quick-action-btn">
                     <i class="fas fa-plus"></i>
                     Add Property
                 </a>
+                <button class="quick-action-btn" onclick="generateReports()">
+                    <i class="fas fa-chart-pie"></i>
+                    Generate Report
+                </button>
+
+                <button class="quick-action-btn" onclick="showAllPayments()">
+                    <i class="fas fa-receipt"></i>
+                    View All Payments
+                </button>
+
             </div>
 
-            <!-- Revenue Statistics Cards -->
-            <div class="revenue-stats-container">
-                <!-- Total Revenue Card (Gold) -->
-                <div class="stat-card stat-card-gold">
-                    <div class="stat-icon stat-icon-gold">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="stat-value" th:text="'R' + ${totalRevenue != null ? totalRevenue : '0'}">R0</div>
-                    <div class="stat-label">Total Revenue</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 85%"></div>
-                    </div>
-                    <div class="stat-trend trend-up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>+12% from last month</span>
-                    </div>
-                </div>
-
-                <!-- Pending Debt Count Card (Light Green) -->
-                <div class="stat-card stat-card-light-green">
-                    <div class="stat-icon stat-icon-light-green">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-value" th:text="${pendingDebtCount != null ? pendingDebtCount : '0'}">0</div>
-                    <div class="stat-label">Pending Debts</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 30%"></div>
-                    </div>
-                    <div class="stat-trend trend-down">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>-2 from last week</span>
-                    </div>
-                </div>
-
-                <!-- Total Debt Amount Card (Red) -->
-                <div class="stat-card stat-card-red">
-                    <div class="stat-icon stat-icon-red">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="stat-value" th:text="'R' + ${totalDebtAmount != null ? totalDebtAmount : '0'}">R0</div>
-                    <div class="stat-label">Total Debt Amount</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 60%"></div>
-                    </div>
-                    <div class="stat-trend trend-up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>Action needed</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- NEW: Filter Chips -->
+            <!-- Filter Chips -->
             <div class="filter-chips">
                 <div class="filter-chip active" onclick="filterTable('all')">
                     <i class="fas fa-layer-group"></i>
@@ -2313,14 +1997,6 @@
                 <div class="filter-chip" onclick="filterTable('unpaid')">
                     <i class="fas fa-times-circle"></i>
                     Unpaid
-                </div>
-                <div class="filter-chip" onclick="filterTable('debt')">
-                    <i class="fas fa-exclamation-circle"></i>
-                    With Debt
-                </div>
-                <div class="filter-chip" onclick="filterTable('vacant')">
-                    <i class="fas fa-bed"></i>
-                    Vacant Units
                 </div>
             </div>
 
@@ -2370,33 +2046,6 @@
                             View Units Table
                         </button>
 
-                        <!-- Table Header with Search Bar -->
-                        <div class="table-header-container">
-                            <h2 class="table-title">
-                                <i class="fas fa-users"></i>
-                                Tenant Management
-                            </h2>
-                            <div class="table-actions">
-                                <div class="table-counter">
-                                    <i class="fas fa-user-friends"></i>
-                                    <span id="tenantCount">0</span> tenants
-                                </div>
-                                <div class="search-wrapper">
-                                    <input type="text"
-                                           id="tenantSearch"
-                                           class="search-input"
-                                           placeholder="Search tenants by name, unit, or contact..."
-                                           aria-label="Search tenants">
-                                    <div class="search-icon">
-                                        <i class="fas fa-search"></i>
-                                    </div>
-                                    <button type="button" id="clearSearch" class="search-clear" aria-label="Clear search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
                         <div id="controlsWrapper" class="mb-4 flex flex-wrap gap-3 items-center">
                             <div class="text-sm" style="color:var(--text)">
                                 <i class="fas fa-mouse-pointer mr-2"></i>
@@ -2412,12 +2061,9 @@
                            th:text="|Unit ${success} marked as paid this month.|" class="text-green-600 font-medium text-sm md:text-base"></p>
 
                         <!-- No Results Message -->
-                        <div id="noResultsMessage" class="no-results hidden">
-                            <div class="no-results-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div class="no-results-text">No tenants found</div>
-                            <div class="no-results-subtext">Try adjusting your search criteria</div>
+                        <div id="noResultsMessage" class="hidden p-4 mb-4 rounded-md text-sm font-medium bg-gray-100 text-gray-800 border border-gray-300 text-center">
+                            <i class="fas fa-search mr-2"></i>
+                            No tenants found matching your criteria
                         </div>
 
                         <div class="units-wrapper w-full overflow-x-auto">
@@ -2525,7 +2171,7 @@
                                             </p>
                                             <a href="http://localhost:7070/add_property_unit" class="empty-state-action">
                                                 <i class="fas fa-plus"></i>
-                                                Add New Property
+                                                Add New Unit
                                             </a>
                                         </div>
                                     </td>
@@ -2672,12 +2318,6 @@
             }
         });
 
-        // Update tenant count
-        const tenantCount = document.getElementById('tenantCount');
-        if (tenantCount) {
-            tenantCount.textContent = visibleCount;
-        }
-
         // Show/hide no results message
         const noResultsMessage = document.getElementById('noResultsMessage');
         if (noResultsMessage) {
@@ -2731,26 +2371,12 @@
         // Ctrl/Cmd + F to focus search
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
             e.preventDefault();
-            const searchInput = document.getElementById('tenantSearch');
-            if (searchInput) {
-                searchInput.focus();
-                showToast('Search focused. Type to find tenants.', 'success');
-            }
+            showToast('Use the filter chips above to filter tenants', 'info');
         }
 
-        // Escape to clear search
+        // Escape to clear filters
         if (e.key === 'Escape') {
-            const searchInput = document.getElementById('tenantSearch');
-            if (document.activeElement === searchInput && searchInput.value) {
-                searchInput.value = '';
-                performSearch();
-                showToast('Search cleared', 'warning');
-            }
-            // Also close payment modal if open
-            const paymentModal = document.getElementById('paymentModal');
-            if (paymentModal && !paymentModal.classList.contains('hidden')) {
-                closePaymentModal();
-            }
+            filterTable('all');
         }
 
         // Ctrl/Cmd + D to toggle dark mode
@@ -2760,142 +2386,6 @@
             const isDark = document.body.classList.contains('dark');
             showToast(`Dark mode ${isDark ? 'enabled' : 'disabled'}`, 'success');
         }
-    });
-
-    // =========================================================================
-    // UX IMPROVEMENTS: Tooltips for better affordances
-    // =========================================================================
-
-    function initializeTooltips() {
-        // Add tooltips to important elements
-        const tooltipElements = [
-            { selector: '.indicator', text: 'Click to update payment status' },
-            { selector: '.status-badge', text: 'Click to filter by status' },
-            { selector: '.edit-btn', text: 'Edit tenant details' },
-            { selector: '.feature-icon', text: 'Quick stats overview' },
-            { selector: '.nav-item', text: 'Navigation menu item' },
-            { selector: '.quick-action-btn', text: 'Quick action button' },
-            { selector: '.filter-chip', text: 'Click to filter table' }
-        ];
-
-        tooltipElements.forEach(item => {
-            const elements = document.querySelectorAll(item.selector);
-            elements.forEach(el => {
-                el.setAttribute('title', item.text);
-                el.setAttribute('aria-label', item.text);
-            });
-        });
-    }
-
-    // =========================================================================
-    // UX IMPROVEMENTS: Progress Indicators
-    // =========================================================================
-
-    function updateProgressBars() {
-        // This would normally fetch real data
-        // For demo purposes, we'll simulate progress updates
-        const progressBars = document.querySelectorAll('.progress-fill');
-        progressBars.forEach((bar, index) => {
-            const targetWidth = [85, 30, 60][index];
-            bar.style.width = `${targetWidth}%`;
-        });
-    }
-
-    // =========================================================================
-    // UX IMPROVEMENTS: Confirmation Dialogs
-    // =========================================================================
-
-    function confirmAction(message, callback) {
-        if (confirm(message)) {
-            callback();
-            return true;
-        }
-        return false;
-    }
-
-    // =========================================================================
-    // ENHANCED: Table Row Click with Better Feedback
-    // =========================================================================
-
-    let lastSelectedRow = null;
-
-    function initializeRowSelection() {
-        const tableRows = document.querySelectorAll('.tenant-row');
-
-        tableRows.forEach(row => {
-            row.addEventListener('click', (e) => {
-                // Don't select if clicking on interactive elements
-                if (e.target.closest('.indicator') ||
-                    e.target.closest('.edit-btn') ||
-                    e.target.closest('a') ||
-                    e.target.closest('.payment-cell')) {
-                    return;
-                }
-
-                // Remove selection from previous row
-                if (lastSelectedRow && lastSelectedRow !== row) {
-                    lastSelectedRow.classList.remove('row-selected');
-                }
-
-                // Toggle selection on current row
-                row.classList.toggle('row-selected');
-                lastSelectedRow = row.classList.contains('row-selected') ? row : null;
-
-                // Show selection feedback
-                if (row.classList.contains('row-selected')) {
-                    const tenantName = row.querySelector('.tenant-name').textContent;
-                    showToast(`Selected ${tenantName}`, 'success');
-                }
-            });
-        });
-    }
-
-    // =========================================================================
-    // ENHANCED: Search with Debouncing
-    // =========================================================================
-
-    let searchTimeout;
-    const searchInput = document.getElementById('tenantSearch');
-
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                performSearch();
-            }, 300); // 300ms debounce
-        });
-    }
-
-    // =========================================================================
-    // ENHANCED: Initialize All UX Improvements
-    // =========================================================================
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize tooltips
-        initializeTooltips();
-
-        // Update progress bars
-        updateProgressBars();
-
-        // Initialize row selection
-        initializeRowSelection();
-
-        // Show welcome message
-        setTimeout(() => {
-            showToast('Welcome to ProMan Dashboard! Use Ctrl+F to search.', 'success');
-        }, 1000);
-
-        // Initialize search functionality
-        initializeSearch();
-
-        // Format and display the current date
-        function formatDate() {
-            const date = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const formattedDate = date.toLocaleDateString('en-US', options);
-            document.getElementById('currentDate').textContent = formattedDate;
-        }
-        formatDate();
     });
 
     // =========================================================================
@@ -3233,158 +2723,6 @@
     }
 
     // =========================================================================
-    // SEARCH FUNCTIONALITY
-    // =========================================================================
-
-    function initializeSearch() {
-        const searchInput = document.getElementById('tenantSearch');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        const tenantRows = document.querySelectorAll('.tenant-row');
-        const noResultsMessage = document.getElementById('noResultsMessage');
-        const tenantCount = document.getElementById('tenantCount');
-        const noUnitsRow = document.querySelector('.no-units-row');
-
-        if (!searchInput || !clearSearchBtn) return;
-
-        // Update tenant count on load
-        updateTenantCount();
-
-        function updateTenantCount() {
-            if (tenantCount) {
-                const visibleRows = Array.from(tenantRows).filter(row =>
-                    row.style.display !== 'none' &&
-                    !row.classList.contains('hidden')
-                ).length;
-                tenantCount.textContent = visibleRows;
-            }
-        }
-
-        function performSearch() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            let hasVisibleRows = false;
-
-            // Show/hide clear button
-            if (searchTerm.length > 0) {
-                clearSearchBtn.style.display = 'block';
-            } else {
-                clearSearchBtn.style.display = 'none';
-            }
-
-            // If no units exist, don't perform search
-            if (noUnitsRow && noUnitsRow.style.display !== 'none') {
-                if (noResultsMessage) noResultsMessage.classList.add('hidden');
-                return;
-            }
-
-            tenantRows.forEach(row => {
-                const tenantName = row.querySelector('.tenant-name')?.textContent.toLowerCase() || '';
-                const unitNumber = row.querySelector('.unit-number-cell')?.textContent.toLowerCase() || '';
-                const tenantContact = row.querySelector('.tenant-contact')?.dataset?.tenantContact?.toLowerCase() || '';
-
-                const matches = tenantName.includes(searchTerm) ||
-                                unitNumber.includes(searchTerm) ||
-                                tenantContact.includes(searchTerm);
-
-                if (matches) {
-                    row.style.display = '';
-                    row.classList.remove('hidden');
-                    hasVisibleRows = true;
-                } else {
-                    row.style.display = 'none';
-                    row.classList.add('hidden');
-                }
-            });
-
-            // Show/hide no results message
-            if (noResultsMessage) {
-                if (!hasVisibleRows && searchTerm.length > 0) {
-                    noResultsMessage.classList.remove('hidden');
-                } else {
-                    noResultsMessage.classList.add('hidden');
-                }
-            }
-
-            updateTenantCount();
-        }
-
-        // Event listeners
-        searchInput.addEventListener('input', performSearch);
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Escape') {
-                searchInput.value = '';
-                performSearch();
-            }
-        });
-
-        clearSearchBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            performSearch();
-            searchInput.focus();
-        });
-
-        // Initial search setup
-        performSearch();
-    }
-
-    // =========================================================================
-    // FIXED: PAYMENT CELL CLICK HANDLING
-    // =========================================================================
-
-    function initializePaymentHandlers() {
-        // Use event delegation for better performance
-        const unitsTbody = document.getElementById('unitsTbody');
-
-        if (unitsTbody) {
-            // Handle payment cell clicks
-            unitsTbody.addEventListener('click', function(e) {
-                const indicator = e.target.closest('.indicator');
-
-                if (indicator) {
-                    e.stopPropagation();
-
-                    // Get the data from the indicator
-                    const currentStatus = indicator.textContent.trim();
-                    const unit = indicator.dataset.unit;
-                    const rent = indicator.dataset.rent;
-                    const id = indicator.dataset.id;
-                    const propertyName = indicator.dataset.propertyName;
-                    const tenantContact = indicator.dataset.tenantContact;
-
-                    console.log('Payment indicator clicked:', {
-                        currentStatus,
-                        unit,
-                        rent,
-                        id,
-                        propertyName,
-                        tenantContact
-                    });
-
-                    // Check if the unit is vacant (has ban icon)
-                    const isVacant = indicator.querySelector('.fa-ban');
-                    if (isVacant) {
-                        showToast('This unit is vacant. No payment actions available.', 'warning');
-                        return;
-                    }
-
-                    // Determine which modal to open based on current status
-                    if (currentStatus === '✓' || currentStatus === '+') {
-                        // Already paid - open unmark modal
-                        openUnmarkModal(unit, id, propertyName, rent, tenantContact);
-                    } else if (currentStatus === '✗' || currentStatus === '−') {
-                        // Not paid - open mark as paid modal
-                        openPaymentModal(unit, rent, id, propertyName, tenantContact);
-                    } else {
-                        // Default to mark as paid
-                        openPaymentModal(unit, rent, id, propertyName, tenantContact);
-                    }
-                }
-            });
-
-            console.log('Payment handlers initialized');
-        }
-    }
-
-    // =========================================================================
     // FIXED: FLASH MESSAGE FUNCTION
     // =========================================================================
 
@@ -3495,10 +2833,7 @@
         }
         formatDate();
 
-        // Initialize search functionality
-        initializeSearch();
-
-        // Initialize payment handlers - FIXED
+        // Initialize payment handlers
         initializePaymentHandlers();
 
         // =========================================================================
@@ -3622,9 +2957,6 @@
 
                     closePaymentModal();
 
-                    // Re-initialize search to reflect changes
-                    initializeSearch();
-
                 } catch (error) {
                     console.error("AJAX Error:", error);
                     displayErrorBanner("Network error. Check your connection.");
@@ -3663,13 +2995,65 @@
 
         // Initial Load Actions
         displayErrorBanner(null, true);
+    });
 
-        // Update tenant count
-        const tenantRows = document.querySelectorAll('.tenant-row:not(.hidden)');
-        const tenantCount = document.getElementById('tenantCount');
-        if (tenantCount && tenantRows.length > 0) {
-            tenantCount.textContent = tenantRows.length;
+    // =========================================================================
+    // FIXED: PAYMENT CELL CLICK HANDLING
+    // =========================================================================
+
+    function initializePaymentHandlers() {
+        // Use event delegation for better performance
+        const unitsTbody = document.getElementById('unitsTbody');
+
+        if (unitsTbody) {
+            // Handle payment cell clicks
+            unitsTbody.addEventListener('click', function(e) {
+                const indicator = e.target.closest('.indicator');
+
+                if (indicator) {
+                    e.stopPropagation();
+
+                    // Get the data from the indicator
+                    const currentStatus = indicator.textContent.trim();
+                    const unit = indicator.dataset.unit;
+                    const rent = indicator.dataset.rent;
+                    const id = indicator.dataset.id;
+                    const propertyName = indicator.dataset.propertyName;
+                    const tenantContact = indicator.dataset.tenantContact;
+
+                    console.log('Payment indicator clicked:', {
+                        currentStatus,
+                        unit,
+                        rent,
+                        id,
+                        propertyName,
+                        tenantContact
+                    });
+
+                    // Check if the unit is vacant (has ban icon)
+                    const isVacant = indicator.querySelector('.fa-ban');
+                    if (isVacant) {
+                        showToast('This unit is vacant. No payment actions available.', 'warning');
+                        return;
+                    }
+
+                    // Determine which modal to open based on current status
+                    if (currentStatus === '✓' || currentStatus === '+') {
+                        // Already paid - open unmark modal
+                        openUnmarkModal(unit, id, propertyName, rent, tenantContact);
+                    } else if (currentStatus === '✗' || currentStatus === '−') {
+                        // Not paid - open mark as paid modal
+                        openPaymentModal(unit, rent, id, propertyName, tenantContact);
+                    } else {
+                        // Default to mark as paid
+                        openPaymentModal(unit, rent, id, propertyName, tenantContact);
+                    }
+                }
+            });
+
+            console.log('Payment handlers initialized');
         }
-    }); </script>
+    }
+</script>
 </body>
 </html>
