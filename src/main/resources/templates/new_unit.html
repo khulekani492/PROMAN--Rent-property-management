@@ -671,7 +671,25 @@
 <main class="main-content">
     <div class="max-w-4xl mx-auto px-6 fade-in">
 
-        <!-- Success Message (if any) -->
+        <!-- Success Message (for AJAX) -->
+        <div id="ajaxSuccessMessage" class="success-message mb-6 hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="ajaxSuccessText"></span>
+        </div>
+
+        <!-- Error Message (for AJAX) -->
+        <div id="ajaxErrorMessage" class="hidden">
+            <div class="error-message mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span id="ajaxErrorText"></span>
+            </div>
+        </div>
+
+        <!-- Original Success Message (if any) -->
         <div th:if="${successMessage}" class="success-message mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -686,7 +704,8 @@
                 <p class="form-header-subtitle">Add a new rental unit to your property</p>
             </div>
 
-            <form id="createUnitForm" method="POST" th:action="@{/add_new_unit}">
+            <!-- Changed to regular form for AJAX -->
+            <form id="createUnitForm">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Property Name -->
                     <div class="form-group">
@@ -731,7 +750,7 @@
                         </svg>
                         Cancel
                     </a>
-                    <button   type="submit" id="createUnitBtn"
+                    <button type="submit" id="createUnitBtn"
                             class="btn btn-primary">
                         Create New Unit
                     </button>
@@ -878,7 +897,92 @@
         return isValid;
     }
 
-    // Initialize icons on page load
+    // AJAX form submission
+    async function submitForm(formData) {
+        try {
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const createUnitBtn = document.getElementById('createUnitBtn');
+
+            if (loadingOverlay) loadingOverlay.classList.add('active');
+            if (createUnitBtn) {
+                createUnitBtn.disabled = true;
+                createUnitBtn.innerHTML = '<div class="loading-spinner"></div> Creating...';
+            }
+
+            // Send AJAX request
+            const response = await fetch('/add_new_unit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(formData)
+            });
+
+            // Hide loading overlay
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+            if (createUnitBtn) {
+                createUnitBtn.disabled = false;
+                createUnitBtn.innerHTML = 'Create New Unit';
+            }
+
+            // Handle response based on status code
+            if (response.status === 200) {
+                // Success - redirect to add_tenant page
+                window.location.href = '/add_tenant';
+            } else if (response.status === 403) {
+                // Unit already exists error
+                const errorText = await response.text();
+
+                // Show error message
+                document.getElementById('ajaxErrorText').textContent = 'This unit number already exists for this property. Please choose a different unit number.';
+                document.getElementById('ajaxErrorMessage').classList.remove('hidden');
+                document.getElementById('ajaxSuccessMessage').classList.add('hidden');
+
+                // Highlight the unit number field
+                const unitNumberInput = document.getElementById('unit_number');
+                unitNumberInput.classList.add('error', 'is-invalid');
+
+                // Add error message below unit number
+                const unitNumberParent = unitNumberInput.closest('.form-group');
+                const existingError = unitNumberParent.querySelector('.form-error');
+                if (!existingError) {
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'form-error';
+                    errorMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Unit number already exists';
+                    unitNumberParent.appendChild(errorMsg);
+                }
+
+                // Focus on unit number field
+                unitNumberInput.focus();
+                unitNumberInput.select();
+            } else {
+                // Other errors
+                document.getElementById('ajaxErrorText').textContent = 'An error occurred. Please try again.';
+                document.getElementById('ajaxErrorMessage').classList.remove('hidden');
+                document.getElementById('ajaxSuccessMessage').classList.add('hidden');
+            }
+
+        } catch (error) {
+            console.error('Error submitting form:', error);
+
+            // Hide loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const createUnitBtn = document.getElementById('createUnitBtn');
+
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+            if (createUnitBtn) {
+                createUnitBtn.disabled = false;
+                createUnitBtn.innerHTML = 'Create New Unit';
+            }
+
+            document.getElementById('ajaxErrorText').textContent = 'Network error. Please check your connection and try again.';
+            document.getElementById('ajaxErrorMessage').classList.remove('hidden');
+            document.getElementById('ajaxSuccessMessage').classList.add('hidden');
+        }
+    }
+
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         // Set initial theme from server
         const serverTheme = window.serverTheme || 'light';
@@ -902,8 +1006,20 @@
 
         if (createUnitForm) {
             createUnitForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Clear AJAX messages
+                document.getElementById('ajaxErrorMessage').classList.add('hidden');
+                document.getElementById('ajaxSuccessMessage').classList.add('hidden');
+
+                // Remove existing error messages
+                document.querySelectorAll('.form-error').forEach(error => error.remove());
+                document.querySelectorAll('.form-input').forEach(input => {
+                    input.classList.remove('error', 'is-invalid');
+                });
+
+                // Validate form
                 if (!validateForm(this)) {
-                    e.preventDefault();
                     return false;
                 }
 
@@ -918,7 +1034,17 @@
                     createUnitBtn.innerHTML = '<div class="loading-spinner"></div> Creating...';
                 }
 
-                return true;
+                // Format rent amount
+                const rentInput = document.getElementById('rent_amount');
+                if (rentInput.value) {
+                    rentInput.value = parseFloat(rentInput.value).toFixed(2);
+                }
+
+                // Collect form data
+                const formData = new FormData(this);
+
+                // Submit form via AJAX
+                submitForm(formData);
             });
         }
 
