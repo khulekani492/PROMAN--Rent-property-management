@@ -14,30 +14,33 @@ public class Dashboard {
     public Handler user_profile() {
         return ctx ->
         {
-            ctx.req().getSession(false);
+
             System.out.println("STory time");
             System.out.println(ctx.cookieMap());
             //FETCH landlord properties
+
             landlord authenticate = new landlord();
-            propertyNames default_properties = new propertyNames();
-            Property_Status property_units = new Property_Status();
 
-            String email = ctx.sessionAttribute("email");
-            System.out.println("email " + email);
-            try {
-                ctx.req().changeSessionId();
-                 Integer landlord_id =  authenticate.landlordId(email);
+             //propertyNames default_properties = new propertyNames();
+              Property_Status property_units = new Property_Status();
+
+               String email = ctx.sessionAttribute("email");
+
+               ctx.req().changeSessionId();
+
+
+                Integer landlord_id =  ctx.sessionAttribute("landlordID");
                 System.out.println("landlordId " + landlord_id);
-                 String  login_user_name = authenticate.landlord_username(landlord_id);
-                System.out.println("Email : "  + login_user_name);
-
+                String  login_user_name = ctx.sessionAttribute("loginUsername");
                  ctx.sessionAttribute("user_name",login_user_name);
 
                 //uses landlord_unique_id to fetch all of their properties , it accessed with the user_email
+
                 //Access first property name. First convert landlord_properties to ArrayList
-                Set<String> landlord_properties = default_properties.fetchAllproperty(landlord_id);
+                Set<String> landlord_properties = ctx.sessionAttribute("allProperties");
                 ArrayList<String> default_property = new ArrayList<>(landlord_properties);
                 Integer  total_properties = default_property.size();
+
                 String property_name = ctx.sessionAttribute("current_property");
                 System.out.println("Current property in memory : " + property_name);
                 String first_property_name;
@@ -46,8 +49,12 @@ public class Dashboard {
                     System.out.println("landlord First property : " + first_property_name );
                     if(!first_property_name.equals(property_name)){
                         System.out.println(property_name + "In memory" +" default name " + first_property_name);
-                        ctx.sessionAttribute("current_property",property_name);
+                     //   ctx.sessionAttribute("current_property",property_name);
                         first_property_name = property_name;
+
+
+
+
                     }
                     //When first_property_name is null /dashboard is called without a property name available
                 } catch (RuntimeException e) {
@@ -95,8 +102,27 @@ public class Dashboard {
                 System.out.println("first_property_name " + first_property_name);
                 System.out.println("landlord_owner " + first_property_name);
 
-                HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(first_property_name,landlord_id);
-                System.out.println("fetch all " + fetch_all);
+                // if currentSessionID in memory is not current_dashboardID current;
+                HashMap<Integer, ArrayList<String>>  fetch_all = property_units.property_tenants(first_property_name,landlord_id);
+
+                    //Use the list in memory if the property name is the same as the one in memory
+//                    first_property_name = default_property.getFirst();
+//                    System.out.println("The name has changed making a request to the db for new property list");
+//                        System.out.println(property_name + "In memory" +" default name " + first_property_name);
+//
+//                        System.out.println("Current units For a new dashboard " + fetch_all);
+//
+//                        ctx.sessionAttribute("current_property_units_tenants",fetch_all);
+//
+//                        System.out.println("Property already requested access from memory map ");
+//                        System.out.println("Property Name has not changed ");
+//                        fetch_all = ctx.sessionAttribute("current_property_units_tenants");
+//                        System.out.println("PROPERTY NAME HAS NOT CHANGED");
+//                        System.out.println(fetch_all);
+//
+
+
+
                 Integer occupied_units = fetch_all.size();
 
                 //Calculate the occupancy percentage of the property
@@ -173,16 +199,6 @@ public class Dashboard {
                     System.out.println(data);
                     ctx.render("templates/dashboard.html", data);
                 }
-
-            } catch (Exception e) {
-                System.out.println("something wrong");
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e);
-
-
-
-          }
-
         };
     }
 }
