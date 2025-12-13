@@ -727,17 +727,25 @@
                         <div class="form-hint">Unit identifier or number</div>
                     </div>
 
-                    <!-- Rent Amount -->
+                    <!-- Rent Amount - UPDATED TO ONLY ACCEPT WHOLE NUMBERS -->
                     <div class="form-group">
                         <label for="rent_amount" class="form-label required">Monthly Rent</label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 font-semibold">R</span>
-                            <input type="number" id="rent_amount" name="rent_amount" step="0.01" min="0" required
+                            <input type="number"
+                                   id="rent_amount"
+                                   name="rent_amount"
+                                   step="1"
+                                   min="0"
+                                   required
+                                   pattern="\d*"
+                                   inputmode="numeric"
+                                   onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                    class="form-input pl-8"
                                    th:value="${rent_amount}"
-                                   placeholder="0.00"/>
+                                   placeholder="0"/>
                         </div>
-                        <div class="form-hint">Monthly rental amount</div>
+                        <div class="form-hint">Monthly rental amount (whole numbers only)</div>
                     </div>
                 </div> <!-- This closes the grid div -->
 
@@ -1034,12 +1042,6 @@
                     createUnitBtn.innerHTML = '<div class="loading-spinner"></div> Creating...';
                 }
 
-                // Format rent amount
-                const rentInput = document.getElementById('rent_amount');
-                if (rentInput.value) {
-                    rentInput.value = parseFloat(rentInput.value).toFixed(2);
-                }
-
                 // Collect form data
                 const formData = new FormData(this);
 
@@ -1048,12 +1050,26 @@
             });
         }
 
-        // Format rent amount on blur
+        // Add input validation for rent amount to only accept whole numbers
         const rentAmountInput = document.getElementById('rent_amount');
         if (rentAmountInput) {
+            // Prevent decimal and scientific notation input
+            rentAmountInput.addEventListener('keydown', function(e) {
+                if (e.key === '.' || e.key === ',' || e.key === 'e' || e.key === 'E') {
+                    e.preventDefault();
+                }
+            });
+
+            // Ensure whole number on blur
             rentAmountInput.addEventListener('blur', function() {
                 if (this.value) {
-                    this.value = parseFloat(this.value).toFixed(2);
+                    // Remove any decimals by parsing as integer
+                    const intValue = parseInt(this.value);
+                    if (!isNaN(intValue)) {
+                        this.value = Math.max(0, intValue); // Ensure non-negative
+                    } else {
+                        this.value = '';
+                    }
                 }
             });
         }
