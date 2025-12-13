@@ -44,14 +44,16 @@ public class Dashboard {
                 String property_name = ctx.sessionAttribute("current_property");
                 System.out.println("Current property in memory : " + property_name);
                 String first_property_name;
+                HashMap<Integer, ArrayList<String>>  fetch_all ;
                 try {
                     first_property_name = default_property.getFirst();
                     System.out.println("landlord First property : " + first_property_name );
+                    fetch_all = property_units.property_tenants(first_property_name,landlord_id);
                     if(!first_property_name.equals(property_name)){
                         System.out.println(property_name + "In memory" +" default name " + first_property_name);
                      //   ctx.sessionAttribute("current_property",property_name);
                         first_property_name = property_name;
-
+                        fetch_all = property_units.property_tenants(first_property_name,landlord_id);
 
 
 
@@ -103,7 +105,7 @@ public class Dashboard {
                 System.out.println("landlord_owner " + first_property_name);
 
                 // if currentSessionID in memory is not current_dashboardID current;
-                HashMap<Integer, ArrayList<String>>  fetch_all = property_units.property_tenants(first_property_name,landlord_id);
+
 
                     //Use the list in memory if the property name is the same as the one in memory
 //                    first_property_name = default_property.getFirst();
