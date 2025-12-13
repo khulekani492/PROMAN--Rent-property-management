@@ -52,14 +52,19 @@ public class Validate_login {
                     propertyNames default_properties = new propertyNames();
                     landlord authenticate = new landlord();
                     Integer landlord_id =  authenticate.landlordId(email);
+                    String  login_user_name = authenticate.landlord_username(landlord_id);
+                    ctx.sessionAttribute("landlordID", landlord_id);
+                    ctx.sessionAttribute("loginUsername",login_user_name);
+
                     Set<String> landlord_properties = default_properties.fetchAllproperty(landlord_id);
+                    ctx.sessionAttribute("allProperties", landlord_properties);
                     ArrayList<String> default_property = new ArrayList<>(landlord_properties);
                     Integer  total_properties = default_property.size();
-                    String property_name = ctx.sessionAttribute("current_property");
-                    System.out.println("Current property in memory : " + property_name);
                     String  first_property_name;
                     try {
                         first_property_name = default_property.getFirst();;
+                        //ctx.sessionAttribute("current_property",default_property);
+                        System.out.println("Current property in memory : " + first_property_name);
                     }catch (RuntimeException e) {
                         System.out.println("RUNNNNNNNNNNN");
                         Map<String, Object> data = new HashMap<>();
@@ -87,7 +92,7 @@ public class Validate_login {
                         ctx.sessionAttribute("add_property_profile", "No");
                         model1.put("no_units", "No Units. Press +Add New Unit to add tenants ");
                         model1.put("names", landlord_properties); // Using landlord_unique_id to fetch all properties, accessed with user_emails
-                        model1.put("name", property_name);
+                        model1.put("name", "No Properties");
                         model1.put("user_chosen_theme", themeColor);
                         model1.put("no_properties",pro);
 
@@ -104,8 +109,6 @@ public class Validate_login {
                         return;
 
                     }
-
-                    System.out.println();
                     ctx.sessionAttribute("current_property", first_property_name);
                     ctx.redirect("dashboard");
                 } else {
