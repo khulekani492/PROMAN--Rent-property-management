@@ -2420,17 +2420,7 @@ header {
             </div>
 
             <!-- Quick Actions Toolbar -->
-            <div class="quick-actions">
-                <a href="http://localhost:7070/add_property_unit" class="quick-action-btn">
-                    <i class="fas fa-plus"></i>
-                    Add Property
-                </a>
-                <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="quick-action-btn">
-                    <i class="fas fa-plus"></i>
-                     Create New Unit
-                </a>
 
-            </div>
 
             <!-- Filter Chips -->
             <div class="filter-chips">
@@ -2467,13 +2457,13 @@ header {
                                 </div>
                             </div>
                             <!-- Submit button with loading spinner -->
-                            <div class="mt-4">
-                                <button type="submit" id="propertyFormSubmit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium shadow-lg">
-                                    <i class="fas fa-sync-alt" id="propertySubmitIcon"></i>
-                                    <span id="propertySubmitText" class="btn-text">Load Property</span>
-                                    <div id="propertySubmitSpinner" class="loading-spinner hidden"></div>
-                                </button>
-                            </div>
+<!--                            <div class="mt-4">-->
+<!--                                <button type="submit" id="propertyFormSubmit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(&#45;&#45;accent)] text-[var(&#45;&#45;text)] rounded-lg hover:bg-[var(&#45;&#45;accent-dark)] transition font-medium shadow-lg">-->
+<!--                                    <i class="fas fa-sync-alt" id="propertySubmitIcon"></i>-->
+<!--                                    <span id="propertySubmitText" class="btn-text">Load Property</span>-->
+<!--                                    <div id="propertySubmitSpinner" class="loading-spinner hidden"></div>-->
+<!--                                </button>-->
+<!--                            </div>-->
                         </form>
 
                         <div class="mt-6">
@@ -2487,6 +2477,17 @@ header {
 
                 <!-- Table Section -->
                 <div class="lg:w-2/3" id="tableContainer">
+                    <div class="quick-actions">
+                        <a href="http://localhost:7070/add_property_unit" class="quick-action-btn">
+                            <i class="fas fa-plus"></i>
+                            Add Property
+                        </a>
+                        <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="quick-action-btn">
+                            <i class="fas fa-plus"></i>
+                            Create New Unit
+                        </a>
+
+                    </div>
                     <div class="card-surface h-full">
                         <!-- View Units Table button -->
                         <button id="viewTableBtn" class="change-property-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-[var(--accent)] text-[var(--text)] rounded-lg hover:bg-[var(--accent-dark)] transition font-medium mb-4">
@@ -2501,7 +2502,7 @@ header {
                                 <input type="text" id="tenantSearch" placeholder="Search by tenant name..."
                                        class="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
                                 <button class="clear-search-btn" onclick="clearSearch('tenantSearch')">
-                                    <i class="fas fa-times"></i>
+
                                 </button>
                             </div>
                             <div class="search-filter">
