@@ -45,17 +45,34 @@ public class Dashboard {
                 System.out.println("Current property in memory : " + property_name);
                 String first_property_name;
                 HashMap<Integer, ArrayList<String>>  fetch_all ;
+                HashMap<Integer, ArrayList<String>>  fetch_all_memory = ctx.sessionAttribute("current_units_property") ;
+
                 try {
                     first_property_name = default_property.getFirst();
-                    System.out.println("landlord First property : " + first_property_name );
-                    fetch_all = property_units.property_tenants(first_property_name,landlord_id);
                     if(!first_property_name.equals(property_name)){
                         System.out.println(property_name + "In memory" +" default name " + first_property_name);
                      //   ctx.sessionAttribute("current_property",property_name);
-                        first_property_name = property_name;
-                        fetch_all = property_units.property_tenants(first_property_name,landlord_id);
+                        //first_property_name = property_name;
+                      //  fetch_all = property_units.property_tenants(first_property_name,landlord_id);
+                        if(fetch_all_memory != null){
+                            fetch_all = fetch_all_memory;
+                            System.out.println("In memorry " + fetch_all);
 
+                        }else{
+                            fetch_all = property_units.property_tenants(property_name,landlord_id);
+                            ctx.sessionAttribute("current_units_property",fetch_all);
+                        }
 
+                    } else{
+                        System.out.println("landlord First property : " + first_property_name );
+                        if(fetch_all_memory != null){
+                            fetch_all = fetch_all_memory;
+                            System.out.println("In memorry  session is the same" + fetch_all);
+
+                        }else{
+                            fetch_all = property_units.property_tenants(first_property_name,landlord_id);
+                            ctx.sessionAttribute("current_units_property",fetch_all);
+                        }
 
                     }
                     //When first_property_name is null /dashboard is called without a property name available
