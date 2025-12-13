@@ -132,6 +132,13 @@ public class umuziAPI {
             Integer tenant_ID = ctx.sessionAttribute("TenantID");
             String tenant_unit = ctx.sessionAttribute("Tenant_unit");
             String amount = ctx.formParam("rent_amount");
+
+            //Error handling
+            Integer money = Integer.parseInt(amount);
+
+
+
+
             String unitN = ctx.formParam("unit_number");
             System.out.println("Unit Number : " + unitN );
             Integer Unit_updated ;
@@ -152,11 +159,14 @@ public class umuziAPI {
                 updates_property.setTenant_property(tenant_property);
                 updates_property.setTenant_unit(Unit_updated);
                 updates_property.update_unit_rent(amount);
-                ctx.status(200).result("Ok");
+                ctx.redirect("/dashboard");
             } catch (RuntimeException e){
                 System.out.println(e.getMessage());
                 //ctx.result("Update for rent failed because : " + e.getMessage());
-                ctx.status(403).result("units information not updated");
+                //ctx.status(403).result("units information not updated");
+                HashMap<String,String> model = new HashMap<>();
+                model.put("no_updates",e.getMessage());
+                ctx.render("templates/user_profile", model);
             }
         });
 
