@@ -39,6 +39,7 @@ public class Get_properties {
             Integer landlord_id =  ctx.sessionAttribute("landlordID");
 
             String  login_user_name = ctx.sessionAttribute("loginUsername");
+            System.out.println("lOGIN Username : " + login_user_name);
 
             Property_Status property_units = new Property_Status();
            // landlord authenticate = new landlord();
@@ -123,6 +124,7 @@ public class Get_properties {
                 model2.put("expected_profit",expected_profit);
                 //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                 model1.put("names", landlord_properties);
+                model1.put("user_name",login_user_name);
                 model1.put("user_chosen_theme",themeColor);
                 model5.put("name",property_name);
 
