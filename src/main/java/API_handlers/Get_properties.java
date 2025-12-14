@@ -18,44 +18,64 @@ public class Get_properties {
         return ctx -> {
 
             String property_name;
+            HashMap<Integer, ArrayList<String>>  fetch_all_memory = ctx.sessionAttribute("current_units_property") ;
+            String current_propertyINSession =  ctx.sessionAttribute("current_property");;
             landlord user_id = new landlord();
             propertyNames default_properties = new propertyNames();
 
 
             try{
                  property_name = ctx.formParam("name");
+
                 System.out.println(property_name + ".......Fetching units");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 //Handler auto_submit of empty space
                 throw new RuntimeException(e);
+
             }
-            String property_email = ctx.sessionAttribute("email");
+
+
+            Integer landlord_id =  ctx.sessionAttribute("landlordID");
+
+            String  login_user_name = ctx.sessionAttribute("loginUsername");
+
             Property_Status property_units = new Property_Status();
-            landlord authenticate = new landlord();
-            Set<String> landlord_properties = default_properties.fetchAllproperty(user_id.landlordId(property_email));
+           // landlord authenticate = new landlord();
+            Set<String> landlord_properties = ctx.sessionAttribute("allProperties");
             ArrayList<String> default_property = new ArrayList<>(landlord_properties);
             Integer  total_properties = default_property.size();
 
-            try{
-                authenticate.landlordId(property_email);
-            } catch (Exception e) {
-                System.out.println("something wrong");
-                throw new RuntimeException(e);
+          //  HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name, authenticate.landlordId(property_email));
+            HashMap<Integer, ArrayList<String>>  fetch_all ;
+            if(!current_propertyINSession.equals(property_name)){
+                System.out.println(property_name + "form chose a new  property " +" in memory name " + current_propertyINSession);
+                fetch_all = property_units.property_tenants(property_name,landlord_id);
+                ctx.sessionAttribute("current_units_property",fetch_all);
+                System.out.println("override the units value " + fetch_all);
+
+            } else{
+                System.out.println("landlord First property : " + property_name );
+                fetch_all = fetch_all_memory;
+                System.out.println("In memorry  session is the same" + fetch_all);
             }
-            HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name, authenticate.landlordId(property_email));
+
             Integer occupied_units = fetch_all.size();
             //Calculate the occupancy percentage of the property
-            Integer total_units = user_id.total_property_units(property_name, user_id.landlordId(property_email));
+            Integer total_units = user_id.total_property_units(property_name,landlord_id);
             System.out.println( property_name + " total units" + total_units);
+
             ctx.sessionAttribute("property_unit",total_units);
-            System.out.println();
-            double occupancyRate = ((double) occupied_units / total_units)  * 100;
+
+            double roundedOccupancy = ((double) occupied_units / total_units ) * 100;
+            // Round up to nearest integer
+            int occupancyRate  = (int) Math.ceil(roundedOccupancy);
+
 
             //Vacant_rooms
             Integer vacant =  total_units  - occupied_units;
             //Expected profit based off the number of units occupied
-            String expected_profit = user_id.property_estimated_profit(user_id.landlordId(property_email),property_name );
+            String expected_profit = user_id.property_estimated_profit(landlord_id,property_name );
 
             if (fetch_all.isEmpty()) {
                 Map<String, Object> data = new HashMap<>();
@@ -77,6 +97,7 @@ public class Get_properties {
                 //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
                 model1.put("names", landlord_properties);
                 model1.put("name",property_name);
+                model1.put("user_name",login_user_name);
                 System.out.println("model_1 " + model1);
                 data.putAll(allPropertyUnits);
                 data.putAll(model1);
