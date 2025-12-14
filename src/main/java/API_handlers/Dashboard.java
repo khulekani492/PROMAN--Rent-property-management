@@ -121,25 +121,6 @@ public class Dashboard {
                 System.out.println("first_property_name " + first_property_name);
                 System.out.println("landlord_owner " + first_property_name);
 
-                // if currentSessionID in memory is not current_dashboardID current;
-
-
-                    //Use the list in memory if the property name is the same as the one in memory
-//                    first_property_name = default_property.getFirst();
-//                    System.out.println("The name has changed making a request to the db for new property list");
-//                        System.out.println(property_name + "In memory" +" default name " + first_property_name);
-//
-//                        System.out.println("Current units For a new dashboard " + fetch_all);
-//
-//                        ctx.sessionAttribute("current_property_units_tenants",fetch_all);
-//
-//                        System.out.println("Property already requested access from memory map ");
-//                        System.out.println("Property Name has not changed ");
-//                        fetch_all = ctx.sessionAttribute("current_property_units_tenants");
-//                        System.out.println("PROPERTY NAME HAS NOT CHANGED");
-//                        System.out.println(fetch_all);
-//
-
 
 
                 Integer occupied_units = fetch_all.size();
@@ -151,7 +132,6 @@ public class Dashboard {
                 ctx.sessionAttribute("property_unit",total_units);
 
                 double roundedOccupancy = ((double) occupied_units / total_units ) * 100;
-
 
                // Round up to nearest integer
                 int occupancyRate  = (int) Math.ceil(roundedOccupancy);
@@ -183,6 +163,7 @@ public class Dashboard {
                     model1.put("names", landlord_properties);
                     model1.put("name",property_name);
                     model1.put("user_chosen_theme",themeColor);
+                    model1.put("user_name",login_user_name);
                     System.out.println("model_1 " + model1);
                     data.putAll(allPropertyUnits);
                     data.putAll(model1);
@@ -197,6 +178,7 @@ public class Dashboard {
                     HashMap<String, String> model2 = new HashMap<>();
                     ctx.sessionAttribute("current_property",first_property_name);
 
+                    System.out.println("hi");
                     ctx.sessionAttribute("property_unit",total_units);
                     String themeColor = ctx.sessionAttribute("theme_color");
                     allPropertyUnits.put("units", fetch_all);
