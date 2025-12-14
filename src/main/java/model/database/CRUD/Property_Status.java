@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Property_Status extends ConnectionAccess {
     private String property_name;
-    private Integer tenant;
+    private final Integer tenant;
 
 
     private static final Properties dbProps = new Properties();
@@ -87,7 +87,7 @@ public class Property_Status extends ConnectionAccess {
                 property_status.add(String.valueOf(result.getInt("rent_payment_day")));
                 if (result.getDate("overdue_date") == null){
                     property_status.add("0") ;
-                };
+                }
                 property_status.add(String.valueOf(result.getBoolean("status")));
                 property_status.add(result.getString("debt"));
                 property_status.add(result.getString("contact"));
@@ -123,7 +123,7 @@ public class Property_Status extends ConnectionAccess {
                     rent_and_debt.add(String.valueOf(result.getInt("rent_payment_day")));
                     if (result.getDate("overdue_date") == null){
                         System.out.println("slash out");
-                    };
+                    }
                     rent_and_debt.add(String.valueOf(result.getDate("overdue_date"))) ;
                     return rent_and_debt;
                 }
@@ -160,7 +160,7 @@ public class Property_Status extends ConnectionAccess {
     }
 
 
-    public void main(String[] args) throws SQLException {
+    void main(String[] args) throws SQLException {
         Property_Status pocket_it = new Property_Status();
         ArrayList<String> tools = pocket_it.Finances(772);
         System.out.println(tools);
