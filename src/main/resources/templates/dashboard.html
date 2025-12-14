@@ -1,3 +1,4 @@
+
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
@@ -2231,6 +2232,16 @@ header {
 #sidebar-backdrop {
     z-index: 35;
 }
+
+/* NEW: Added spacing between image and "Add New Property" button */
+.logo-container {
+    margin-bottom: 1.5rem; /* Add space below the logo */
+}
+
+/* NEW: Added spacing between table and "Create New Unit" button */
+.table-section {
+    margin-bottom: 1.5rem; /* Add space below the table */
+}
     </style>
 </head>
 
@@ -2466,14 +2477,15 @@ header {
                             </div>
                         </form>
 
-                        <div class="mt-4">
+                        <div class="mt-4 logo-container">
                             <div class="border border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center h-48">
                                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
                             </div>
                         </div>
-                        <div class="quick-actions">
-                            <a href="http://localhost:7070/add_property_unit" class="quick-action-btn">
+                        <!-- Moved "Add New Property" button below the logo with spacing -->
+                        <div class="mt-6"> <!-- Added margin-top for spacing -->
+                            <a href="http://localhost:7070/add_property_unit" class="quick-action-btn w-full justify-center">
                                 <i class="fas fa-plus"></i>
                                 Add New Property
                             </a>
@@ -2532,7 +2544,7 @@ header {
                             No tenants found matching your criteria
                         </div>
 
-                        <div class="units-wrapper w-full overflow-x-auto">
+                        <div class="units-wrapper table-section"> <!-- Added table-section class -->
                             <table class="units-table min-w-max w-full border-collapse">
                                 <thead>
                                 <tr>
@@ -2644,12 +2656,12 @@ header {
                                 </tbody>
                             </table>
                         </div>
-                        <div class="quick-actions">
-                            <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="quick-action-btn">
+                        <!-- Moved "Create New Unit" button below the table with spacing -->
+                        <div class="mt-6"> <!-- Added margin-top for spacing -->
+                            <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="quick-action-btn w-full justify-center">
                                 <i class="fas fa-plus"></i>
                                 Create New Unit
                             </a>
-
                         </div>
                         <!-- NEW: Pagination Controls -->
                         <div class="table-pagination hidden" id="paginationControls">
