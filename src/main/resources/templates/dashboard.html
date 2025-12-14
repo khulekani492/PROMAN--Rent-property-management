@@ -2341,10 +2341,16 @@ header {
             </div>
 
             <!-- Quick navigation buttons with reduced spacing -->
-            <div class="quick-nav-buttons mb-2">
-                <a href="http://localhost:7070/add_tenant" class="nav-btn">
-                    <i class="fas fa-user-plus"></i>
-                    <span>ADD NEW TENANT</span>
+<!--            <div class="quick-nav-buttons mb-2">-->
+<!--                <a href="http://localhost:7070/add_tenant" class="nav-btn">-->
+<!--                    <i class="fas fa-user-plus"></i>-->
+<!--                    <span>ADD NEW TENANT</span>-->
+<!--                </a>-->
+<!--            </div>-->
+            <div class="quick-nav-buttons mb-2"> <!-- Added margin-top for spacing -->
+                <a data-tooltip="add new unit"  href="http://localhost:7070/create_new_unit" class="nav-btn">
+                    <i class="fas fa-plus"></i>
+                    Create New Unit
                 </a>
             </div>
 
@@ -2402,7 +2408,7 @@ header {
                             <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
-                    <p class="text-sm" style="color:var(--muted-text); margin-top:6px">+R2,500 from last month</p>
+<!--                    <p class="text-sm" style="color:var(&#45;&#45;muted-text); margin-top:6px">+R2,500 from last month</p>-->
                 </div>
             </div>
 
@@ -2484,7 +2490,7 @@ header {
                             </div>
                         </div>
                         <!-- Moved "Add New Property" button below the logo with spacing -->
-                        <div class="mt-6"> <!-- Added margin-top for spacing -->
+                        <div class="quick-nav-buttons mb-2"> <!-- Added margin-top for spacing -->
                             <a href="http://localhost:7070/add_property_unit" class="quick-action-btn w-full justify-center">
                                 <i class="fas fa-plus"></i>
                                 Add New Property
@@ -2657,10 +2663,17 @@ header {
                             </table>
                         </div>
                         <!-- Moved "Create New Unit" button below the table with spacing -->
-                        <div class="mt-6"> <!-- Added margin-top for spacing -->
-                            <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="quick-action-btn w-full justify-center">
-                                <i class="fas fa-plus"></i>
-                                Create New Unit
+<!--                        <div class="mt-6"> &lt;!&ndash; Added margin-top for spacing &ndash;&gt;-->
+<!--                            <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="quick-action-btn w-full justify-center">-->
+<!--                                <i class="fas fa-plus"></i>-->
+<!--                                Create New Unit-->
+<!--                            </a>-->
+<!--                        </div>-->
+
+                        <div class="quick-nav-buttons mb-2">
+                            <a href="http://localhost:7070/add_tenant" class="nav-btn">
+                                <i class="fas fa-user-plus"></i>
+                                <span>ADD NEW TENANT</span>
                             </a>
                         </div>
                         <!-- NEW: Pagination Controls -->
