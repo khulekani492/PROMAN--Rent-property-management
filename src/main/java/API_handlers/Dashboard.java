@@ -142,7 +142,7 @@ public class Dashboard {
                 //Expected profit based off the number of units occupied
                 String expected_profit = authenticate.property_estimated_profit(landlord_id,first_property_name );
                 if (fetch_all.isEmpty()) {
-
+                    System.out.println("EMpty : " );
                     Map<String, Object> data = new HashMap<>();
                     HashMap<String, HashMap<Integer, ArrayList<String>>> allPropertyUnits = new HashMap<>();
                     Map<String, Object> model1 = new HashMap<>();

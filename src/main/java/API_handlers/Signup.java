@@ -2,6 +2,8 @@ package API_handlers;
 
 import io.javalin.http.Handler;
 import jakarta.servlet.http.HttpSession;
+import model.database.CRUD.landlord;
+import model.database.CRUD.propertyNames;
 import model.database.general;
 
 import java.sql.SQLException;
@@ -23,9 +25,17 @@ public class Signup {
 
                 String contact = ctx.formParam("contact");
                 String email = ctx.formParam("user_email");
+                System.out.println(email);
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
 
+
+                propertyNames default_properties = new propertyNames();
+                landlord authenticate = new landlord();
+//                Integer landlord_id =  authenticate.landlordId(email);
+//                System.out.println(landlord_id);
+//                String  login_user_name = authenticate.landlord_username(landlord_id);
+//                ctx.sessionAttribute("landlordID", landlord_id);
 
                 ctx.sessionAttribute("user_name",user_name);
                 ctx.sessionAttribute("contact",contact);
@@ -46,6 +56,10 @@ public class Signup {
                     ctx.sessionAttribute("user_ID", new_userID);
                     ctx.sessionAttribute("password", hashedPassword);
 
+                    Integer landlord_id =  authenticate.landlordId(email);
+                    System.out.println(landlord_id);
+                    //String  login_user_name = authenticate.landlord_username(landlord_id);
+                    ctx.sessionAttribute("landlordID", landlord_id);
                     // set session attributes the username and property_name
                     String landlord_username = ctx.formParam("user_name");
                     Map<String, Object> sessionMap = ctx.sessionAttributeMap();
