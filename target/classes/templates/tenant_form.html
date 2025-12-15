@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Store Thymeleaf variable in JavaScript -->
     <script>
         // This gets rendered server-side by Thymeleaf
         const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
@@ -111,20 +110,19 @@
             color: white;
         }
 
-        /* Form Card - Compact and efficient */
+        /* Form Card */
         .form-card {
             background: var(--surface);
             padding: 1.5rem;
             border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
             border: 1px solid var(--muted);
-            max-width: 900px;
-            margin: 0 auto;
+            width: 100%;
             transition: all 0.3s ease;
         }
 
         body.dark .form-card {
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -4px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.2);
         }
 
         input, select, .themed-input {
@@ -136,29 +134,41 @@
             width: 100%;
             box-sizing: border-box;
             color: var(--text);
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
 
-        /* Form details - More compact */
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(212,175,55,0.1);
+            border-color: var(--accent);
+        }
+
+        body.dark input:focus, body.dark select:focus {
+            box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
+        }
+
+        /* Form details */
         label {
             font-weight: 600;
             color: var(--text);
             display: block;
-            margin-bottom: 4px;
-            font-size: 13px;
+            margin-bottom: 6px;
+            font-size: 14px;
         }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
+
         .form-field {
             display: flex;
             flex-direction: column;
         }
 
-        /* Compact sections */
+        /* Form section styling */
         .form-section {
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
@@ -172,20 +182,20 @@
 
         /* Section headers */
         .form-section h3 {
-            font-size: 16px;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid var(--accent);
+            font-size: 18px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
             color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            font-weight: 700;
         }
 
         /* Error handling */
         .error-message {
             color: var(--error);
             font-size: 0.75rem;
-            margin-top: 0.15rem;
+            margin-top: 4px;
             display: none;
-            min-height: 16px;
         }
         .error-message.show {
             display: block;
@@ -211,10 +221,11 @@
             color: #2b1f00;
             font-weight: 700;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
+            width: 100%;
         }
 
         body.dark button[type="submit"] {
@@ -224,93 +235,30 @@
         button[type="submit"]:hover {
             background: var(--accent-dark);
             color: white;
-            transform: scale(1.02);
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            right: 1rem;
-            top: 1rem;
-            z-index: 60;
-            padding: .6rem 1rem;
-            border-radius: .5rem;
-            box-shadow: 0 8px 24px rgba(16,24,40,0.12);
-            font-weight: 600;
+            transform: translateY(-2px);
         }
 
         /* Required star */
-        .required-star { color: var(--error); margin-left: 0.1rem; font-size: 0.9em; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .form-actions {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .form-card {
-                padding: 1rem;
-            }
-        }
-
-        /* Compact layout */
-        .compact-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 1rem 0;
-        }
-
-        /* Unit info display - More compact */
-        .unit-info {
-            background: rgba(212,175,55,0.05);
-            border: 1px solid rgba(212,175,55,0.2);
-            border-radius: 6px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            font-size: 13px;
-        }
-
-        body.dark .unit-info {
-            background: rgba(244, 179, 66, 0.08);
-            border: 1px solid rgba(244, 179, 66, 0.2);
-        }
-
-        .unit-info p {
-            margin: 6px 0;
-        }
-        .unit-info .property-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-        }
-        .unit-info .instruction-text {
-            color: var(--muted-text);
-            font-style: italic;
-        }
+        .required-star { color: var(--error); margin-left: 0.15rem; }
 
         /* Helper text styling */
         .helper-text {
             font-size: 0.75rem;
             color: var(--muted-text);
-            margin-top: 3px;
+            margin-top: 4px;
             min-height: 14px;
         }
 
         /* Radio button styling */
         .radio-group {
             display: flex;
-            gap: 16px;
-            margin-top: 4px;
+            gap: 20px;
+            margin-top: 8px;
         }
         .radio-label {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
             font-weight: normal;
             font-size: 14px;
@@ -318,16 +266,19 @@
 
         input[type="radio"] {
             accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
         }
 
         /* Form title */
         .form-title {
-            font-size: 20px;
-            margin-bottom: 1rem;
+            font-size: 22px;
+            margin-bottom: 1.5rem;
             text-align: center;
-            padding-bottom: 8px;
+            padding-bottom: 12px;
             border-bottom: 2px solid var(--accent);
             color: var(--text);
+            font-weight: 800;
         }
 
         /* Action buttons */
@@ -343,10 +294,10 @@
             grid-column: 1 / -1;
         }
 
-        /* Stepper styling - more compact */
+        /* Stepper styling */
         .stepper {
-            padding: 0.5rem 0;
-            font-size: 12px;
+            padding: 0.75rem 0;
+            font-size: 14px;
             background: var(--surface);
             border-bottom: 1px solid var(--muted);
             transition: all 0.3s ease;
@@ -356,52 +307,232 @@
             height: 10px;
         }
 
-        /* Main content area - less padding */
+        /* Main content area */
         main {
-            padding: 1rem 0;
+            padding: 1.5rem 0;
             background: var(--bg);
             transition: background-color 0.3s ease;
         }
 
-        /* Footer compact */
+        /* Footer */
         footer {
-            padding: 1.5rem 0;
+            padding: 2rem 0;
             margin-top: 2rem;
-            font-size: 0.85rem;
+            font-size: 0.875rem;
             background: var(--surface);
             border-top: 1px solid var(--muted);
             transition: all 0.3s ease;
         }
 
-        /* Info box styling */
-        .info-box {
-            background: var(--muted);
-            border-left: 4px solid var(--accent);
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            border-radius: 0 8px 8px 0;
-        }
-        .info-box p {
-            margin: 4px 0;
-        }
-
-        /* Validation styling */
-        input:invalid {
-            border-color: var(--error);
-        }
-        input:valid {
-            border-color: #10b981;
-        }
-
-        /* Header transition */
-        header {
+        /* Welcome card styling */
+        .welcome-card {
             background: var(--surface);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            border: 1px solid var(--muted);
+            width: 100%;
+            transition: all 0.3s ease;
         }
 
-        /* Mobile Menu Button Styles - ADDED FROM SECOND FILE */
+        body.dark .welcome-card {
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.2);
+        }
+
+        /* Two-column layout */
+        @media (max-width: 1023px) {
+            .main-content {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            /* Collapsible welcome card on mobile */
+            .welcome-card.collapsible {
+                cursor: pointer;
+            }
+
+            .welcome-card .collapse-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+
+            .welcome-card.expanded .collapse-content {
+                max-height: 500px;
+            }
+
+            .mobile-toggle-icon {
+                transition: transform 0.3s ease;
+            }
+
+            .welcome-card.expanded .mobile-toggle-icon {
+                transform: rotate(180deg);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                align-items: start;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .form-card {
+                padding: 1.25rem;
+            }
+            .welcome-card {
+                padding: 1.25rem;
+            }
+        }
+
+        /* Quick Guide styling */
+        .quick-guide {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        body.dark .quick-guide {
+            background: linear-gradient(135deg, rgba(244, 179, 66, 0.08) 0%, rgba(244, 179, 66, 0.03) 100%);
+            border: 1px solid rgba(244, 179, 66, 0.15);
+        }
+
+        .guide-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .guide-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .guide-check {
+            color: var(--accent);
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        /* Property info styling */
+        .property-info-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        body.dark .property-info-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        /* Field tooltip */
+        .field-tooltip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #2b1f00;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 0.25rem;
+            vertical-align: middle;
+        }
+
+        body.dark .field-tooltip {
+            color: #1a1400;
+        }
+
+        /* Loading spinner styles */
+        .loading-spinner {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loading-spinner.dark {
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            border-top-color: #000;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-disabled {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .overlay-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        /* Mobile Menu Button Styles */
         #mobile-menu-button {
-            display: none; /* Hidden by default on desktop */
+            display: none;
             align-items: center;
             justify-content: center;
             width: 48px;
@@ -474,11 +605,99 @@
                 display: none;
             }
         }
+
+        /* Phone input formatting */
+        .phone-format {
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-prefix {
+            background: var(--muted);
+            padding: 10px 12px;
+            border: 1px solid var(--muted);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .phone-input {
+            border-radius: 0 8px 8px 0 !important;
+        }
+
+        /* Error styling */
+        .error-border {
+            border-color: var(--error) !important;
+        }
+
+        /* Success styling */
+        .success-border {
+            border-color: #10b981 !important;
+        }
+
+        /* Date range info */
+        .date-range-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--muted-text);
+        }
+
+        body.dark .date-range-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Calendar icon styling */
+        .date-input-wrapper {
+            position: relative;
+        }
+
+        .calendar-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-text);
+            pointer-events: none;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            right: 0;
+            cursor: pointer;
+        }
+
+        /* Warning for distant future dates */
+        .date-warning {
+            color: #f59e0b;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .date-warning.show {
+            display: block;
+        }
     </style>
 </head>
 
-<!-- Apply dark class based on user_chosen_theme from server -->
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-overlay-content">
+        <div class="overlay-spinner"></div>
+        <p class="text-lg font-semibold text-[var(--text)]">Adding Tenant...</p>
+        <p class="text-sm text-muted mt-2">Please wait while we process your request</p>
+    </div>
+</div>
 
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-3 flex items-center justify-between mx-auto">
@@ -493,7 +712,6 @@
             </div>
         </div>
 
-        <!-- Desktop Nav - will be hidden on mobile -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
             <a href="http://localhost:7070/"
                class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
@@ -509,7 +727,6 @@
             </a>
         </nav>
 
-        <!-- Mobile Menu Button - ADDED FROM SECOND FILE -->
         <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
             <div class="mobile-menu-icon">
                 <span></span>
@@ -519,7 +736,6 @@
         </button>
     </div>
 
-    <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-3 space-y-2">
         <a href="http://localhost:7070/"
            class="block w-full text-center login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
@@ -531,13 +747,13 @@
         </a>
         <a href="http://localhost:7070/"
            class="block w-full text-center signup-btn px-5 py-1.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-            LOG OUT
+            LOG out
         </a>
     </div>
 </header>
 
 <script>
-    // MOBILE MENU FUNCTIONALITY - REPLACED WITH CODE FROM SECOND FILE
+    // MOBILE MENU FUNCTIONALITY
     const menuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
@@ -547,7 +763,6 @@
             menuButton.setAttribute('aria-expanded', !isExpanded);
             mobileMenu.classList.toggle('hidden');
 
-            // Toggle body overflow to prevent scrolling when menu is open
             if (!isExpanded) {
                 document.body.style.overflow = 'hidden';
             } else {
@@ -555,7 +770,6 @@
             }
         });
 
-        // Close mobile menu when clicking outside
         document.addEventListener('click', (event) => {
             if (!mobileMenu.classList.contains('hidden') &&
                 !menuButton.contains(event.target) &&
@@ -566,7 +780,6 @@
             }
         });
 
-        // Close mobile menu when clicking on a link
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.add('hidden');
@@ -575,7 +788,6 @@
             });
         });
 
-        // Close mobile menu on escape key
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
                 mobileMenu.classList.add('hidden');
@@ -586,90 +798,133 @@
     }
 </script>
 
-<!-- Progress / Stepper - Compact -->
-<div class="stepper">
-    <div class="max-w-6xl mx-auto px-6 flex items-center justify-center gap-2">
-        <div class="flex items-center gap-2">
-            <div class="flex flex-col items-center text-xs font-semibold">
-                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
-                <span class="mt-1 text-accent">1. Account</span>
+
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+    <div class="main-content">
+        <div id="welcomeCard" class="welcome-card collapsible">
+            <div class="flex justify-between items-center mb-4 cursor-pointer" onclick="toggleWelcomeCard()">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold text-accent">Tenant Setup Guide</h2>
+                </div>
+                <div class="lg:hidden mobile-toggle-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
             </div>
-            <div class="w-10 h-[1px] bg-muted"></div>
-            <div class="flex flex-col items-center text-xs font-semibold">
-                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
-                <span class="mt-1 text-accent">2. Property</span>
-            </div>
-            <div class="w-10 h-[1px] bg-muted"></div>
-            <div class="flex flex-col items-center text-xs font-semibold">
-                <span class="progress-dot ring-2 ring-accent" style="background:var(--accent)"></span>
-                <span class="mt-1 text-accent">3. Tenants</span>
+
+            <div class="collapse-content">
+                <div class="property-info-card">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-accent text-lg">🏠</span>
+                        <h3 class="font-semibold text-[var(--text)]">Property Information</h3>
+                    </div>
+                    <p class="text-sm font-medium text-[var(--text)] mb-1">
+                        <span class="text-accent">Property:</span>
+                        <span class="font-bold" th:text="${name}">Property Name</span>
+                    </p>
+                    <p class="text-sm text-muted">
+                        Total Available Units:
+                        <strong class="text-[var(--text)] font-bold" th:text="${unit_add}">0</strong>
+                    </p>
+                </div>
+
+                <div class="quick-guide mb-4">
+                    <h3 class="font-bold text-lg mb-2 text-accent">Important Tips:</h3>
+                    <ul class="text-sm space-y-2">
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>Unit number must be between 1 and <span class="font-bold" th:text="${unit_add}">0</span></span>
+                        </li>
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>Select a Unit and add tenant information.</span>
+                        </li>
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>You can set future move-in dates for pre-leased units</span>
+                        </li>
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>Emergency contact is required for safety reasons</span>
+                        </li>
+                        <li class="guide-item">
+                            <span class="guide-check">✓</span>
+                            <span>If the tenant owes the property any money. Put it the debt field.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="date-range-info">
+                    <div class="flex items-start gap-2 mb-1">
+                        <span class="text-accent">📅</span>
+                        <div>
+                            <h4 class="font-semibold text-[var(--text)] text-xs">Move-in Date Guidelines</h4>
+                            <p class="text-xs">• Set today's date for immediate move-in</p>
+                            <p class="text-xs">• Future dates can be set for pre-leased units</p>
+                            <p class="text-xs">• Maximum allowed: 1 year from today</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-sm text-muted space-y-3 mt-4">
+                    <div class="flex items-start gap-3">
+                        <span class="text-accent text-lg">📋</span>
+                        <div>
+                            <h4 class="font-semibold text-[var(--text)]">Required Information</h4>
+                            <p class="text-xs">Tenant's legal name, contact details, and rental information</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-accent text-lg">🔒</span>
+                        <div>
+                            <h4 class="font-semibold text-[var(--text)]">Data Security</h4>
+                            <p class="text-xs">All tenant information is encrypted and securely stored</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${'No'.equals(add_property_profile)}" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-xs text-blue-800 font-medium">
+                        Select a unit number between 1 and <span class="font-bold" th:text="${unit_add}">0</span>
+                    </p>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-muted">
+                    <a href="/dashboard"
+                       class="inline-flex items-center gap-2 text-accent hover:text-accent-dark text-sm font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Dashboard
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Main Content - Compact -->
-<main class="max-w-6xl mx-auto px-4 py-6">
-    <div class="compact-container">
         <div class="form-card" role="main" aria-labelledby="form-title">
             <h2 id="form-title" class="form-title">ADD TENANT TO UNIT</h2>
 
-            <!-- Information Box -->
-            <div class="info-box bg-surface rounded-xl p-6 shadow-lg border border-muted mb-6">
-                <div class="space-y-4">
-                    <div class="property-info">
-                        <p class="text-lg font-semibold text-accent mb-2">
-                            Property: <span class="text-[var(--text)]" th:text="${name}">Property Name</span>
-                        </p>
-                        <p class="text-sm text-muted">
-                            Total Available Units:
-                            <strong class="text-[var(--text)] text-base" th:text="${unit_add}">0</strong>
-                        </p>
-                    </div>
-
-
-                    <div class="instruction-section bg-muted rounded-lg p-4"
-                         th:if="${'No'.equals(add_property_profile)}">
-                        <p class="instruction-text text-sm font-medium text-[var(--text)] mb-2">
-                            Select a unit number between 1 and
-                            <span class="font-bold text-accent" th:text="${unit_add}">0</span>
-                        </p>
-                    </div>
-
-                    <!-- Optional: Show when condition is false -->
-                    <div class="instruction-section bg-muted rounded-lg p-4"
-                         th:if="${!'Yes'.equals(add_property_profile)}">
-                        <p class="text-xs text-muted italic">
-                            No property on your ProMan profile. Go back to the dashboard menu and click Add property.
-                        </p>
-                    </div>
-
-                    <!-- Optional: Add a call-to-action button -->
-                    <div class="mt-4">
-                        <a href="/dashboard"
-                           class="inline-flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-dark transition-colors duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                            Back to Dashboard
-                        </a>
-                    </div>
-                </div>
-            </div>
             <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST">
-                <!-- Unit Selection Section -->
                 <div class="form-section">
-                    <h3 class="text-accent">Unit Selection</h3>
+                    <div class="mb-4">
+                        <h3 class="text-accent">Unit Selection</h3>
+                        <p class="text-sm text-muted">Select which unit this tenant will occupy</p>
+                    </div>
 
                     <div class="form-row full-width">
                         <div class="form-field">
-                            <label for="unit_number">Unit Number <span class="required-star">*</span></label>
+                            <label for="unit_number">
+                                Unit Number <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Select an available unit number">i</span>
+                            </label>
                             <input id="unit_number" name="unit_number" type="number" min="1"
                                    th:attr="max=${unit_add}"
                                    th:value="${unit_add}" required
                                    class="themed-input input-focus"
-                                   placeholder="Enter unit number (1 to max)">
-                            <p class="helper-text">Enter a unit number from 1 to <span th:text="${unit_add}">0</span>. This unit will be assigned to the tenant.</p>
+                                   placeholder="Enter unit number">
+                            <p class="helper-text">Available units: 1 to <span class="font-bold" th:text="${unit_add}">0</span></p>
                             <div id="unit_number_error" class="error-message"></div>
                             <th:block th:if="${error != null and !error.isEmpty()}">
                                 <p class="mt-1 text-sm text-red-600">
@@ -680,26 +935,38 @@
                     </div>
                 </div>
 
-                <!-- Personal Details Section -->
                 <div class="form-section">
-                    <h3 class="text-accent">Personal Details</h3>
+                    <div class="mb-4">
+                        <h3 class="text-accent">Personal Details</h3>
+                        <p class="text-sm text-muted">Basic information about the tenant</p>
+                    </div>
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="tenant_name">Full Name <span class="required-star">*</span></label>
+                            <label for="tenant_name">
+                                Full Name <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Tenant's full legal name as on ID document">i</span>
+                            </label>
                             <input id="tenant_name" name="tenant_name" type="text" required
                                    placeholder="e.g. Thabo Ndlovu"
                                    class="themed-input input-focus" th:value="${tenant_name}">
-                            <p class="helper-text">Enter the tenant's full legal name</p>
+                            <p class="helper-text">Tenant's full legal name</p>
                             <div id="tenant_name_error" class="error-message"></div>
                         </div>
 
                         <div class="form-field">
-                            <label for="cell_number">Phone Number <span class="required-star">*</span></label>
-                            <input id="cell_number" name="cell_number" type="tel" required
-                                   placeholder="e.g. 0712345678"
-                                   class="themed-input input-focus" th:value="${tenant_number}">
-                            <p class="helper-text">South African mobile number (10 digits starting with 0)</p>
+                            <label for="cell_number">
+                                Phone Number <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Valid phone number">i</span>
+                            </label>
+                            <div class="phone-format">
+                                <span class="phone-prefix">+27</span>
+                                <input id="cell_number" name="cell_number" type="tel" required
+                                       placeholder="e.g. 71 234 5678"
+                                       class="themed-input input-focus phone-input"
+                                       th:value="${tenant_number}">
+                            </div>
+                            <p class="helper-text">Enter phone number</p>
                             <div id="cell_number_error" class="error-message"></div>
                             <th:block th:if="${error_tenant != null and !error_tenant.isEmpty()}">
                                 <p class="mt-1 text-sm text-red-600" th:text="${error_tenant}"></p>
@@ -709,18 +976,32 @@
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="move_in">Move-in Date <span class="required-star">*</span></label>
-                            <input id="move_in" name="move_in" type="date" required
-                                   class="themed-input input-focus" th:value="${tenant_moveIn}">
-                            <p class="helper-text">Tenant's move-in date</p>
+                            <label for="move_in">
+                                Move-in Date <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Date tenant will start occupying the unit (can be future date)">i</span>
+                            </label>
+                            <div class="date-input-wrapper">
+                                <input id="move_in" name="move_in" type="date" required
+                                       class="themed-input input-focus" th:value="${tenant_moveIn}">
+                                <svg class="calendar-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <p class="helper-text">Select move-in date (up to 1 year in future)</p>
                             <div id="move_in_error" class="error-message"></div>
+                            <div id="move_in_warning" class="date-warning">
+                                ⚠️ This date is more than 6 months in the future. Please confirm.
+                            </div>
                             <th:block th:if="${Invalid_format != null and !Invalid_format.isEmpty()}">
                                 <p class="mt-1 text-sm text-red-600" th:text="${Invalid_format}"></p>
                             </th:block>
                         </div>
 
                         <div class="form-field">
-                            <label>Employment Status <span class="required-star">*</span></label>
+                            <label>
+                                Employment Status <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Indicates if tenant is currently employed">i</span>
+                            </label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="employment" value="yes" required
@@ -733,75 +1014,110 @@
                                     <span>Not Employed</span>
                                 </label>
                             </div>
+                            <p class="helper-text">For rental assessment purposes</p>
                             <div id="employment_error" class="error-message"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Next of Kin Section -->
                 <div class="form-section">
-                    <h3 class="text-accent">Emergency Contact</h3>
+                    <div class="mb-4">
+                        <h3 class="text-accent">Emergency Contact</h3>
+                        <p class="text-sm text-muted">Contact person in case of emergencies</p>
+                    </div>
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="kin_name">Next of Kin Name <span class="required-star">*</span></label>
+                            <label for="kin_name">
+                                Next of Kin Name <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Emergency contact person's full name">i</span>
+                            </label>
                             <input id="kin_name" name="kin_name" type="text"
                                    placeholder="e.g. Naledi Mokoena" required
                                    class="themed-input input-focus" th:value="${tenant_kin_name}">
-                            <p class="helper-text">Emergency contact person's full name</p>
+                            <p class="helper-text">Emergency contact person's name</p>
                         </div>
 
                         <div class="form-field">
-                            <label for="kin_number">Next of Kin Phone <span class="required-star">*</span></label>
-                            <input id="kin_number" name="kin_number" type="tel"
-                                   placeholder="e.g. 0712345678" required
-                                   class="themed-input input-focus" th:value="${tenant_kin_number}">
-                            <p class="helper-text">South African mobile number (10 digits starting with 0)</p>
+                            <label for="kin_number">
+                                Next of Kin Phone <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Valid phone number">i</span>
+                            </label>
+                            <div class="phone-format">
+                                <span class="phone-prefix">+27</span>
+                                <input id="kin_number" name="kin_number" type="tel"
+                                       placeholder="e.g. 71 234 5678" required
+                                       class="themed-input input-focus phone-input"
+                                       th:value="${tenant_kin_number}">
+                            </div>
+                            <p class="helper-text">Enter phone number</p>
                             <div id="kin_number_error" class="error-message"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Financial Details Section -->
                 <div class="form-section">
-                    <h3 class="text-accent">Financial Details</h3>
+                    <div class="mb-4">
+                        <h3 class="text-accent">Financial Details</h3>
+                        <p class="text-sm text-muted">Rental and payment information</p>
+                    </div>
 
                     <div class="form-row full-width">
                         <div class="form-field">
-                            <label for="rent_amount_input">Rent Amount (Monthly) <span class="required-star">*</span></label>
-                            <input id="rent_amount_input" name="rent_amount" type="number" min="1"
-                                   placeholder="3000" required th:value="${tenant_rent_payment}"
-                                   class="themed-input input-focus">
-                            <p class="helper-text">Monthly rent amount in Rand (enter numbers only)</p>
+                            <label for="rent_amount_input">
+                                Rent Amount (Monthly) <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Monthly rental amount in South African Rand">i</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted">R</span>
+                                <input id="rent_amount_input" name="rent_amount" type="number" min="1"
+                                       placeholder="3000" required th:value="${tenant_rent_payment}"
+                                       class="themed-input input-focus pl-8">
+                            </div>
+                            <p class="helper-text">Monthly rent amount in Rand</p>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-field">
-                            <label for="rent_day_input">Rent Payment Day <span class="required-star">*</span></label>
+                            <label for="rent_day_input">
+                                Rent Payment Day <span class="required-star">*</span>
+                                <span class="field-tooltip" title="Day of month when rent is due (1-31)">i</span>
+                            </label>
                             <input id="rent_day_input" name="rent_day" type="number" min="1" max="31"
                                    placeholder="8" required
                                    class="themed-input input-focus" th:value="${tenant_rent_day}">
-                            <p class="helper-text">Day of month when rent is due (enter 1 to 31)</p>
+                            <p class="helper-text">Day of month when rent is due (1-31)</p>
                         </div>
 
                         <div class="form-field">
-                            <label for="debt_input">Outstanding Debt</label>
-                            <input id="debt_input" name="debt" type="number"
-                                   th:value="${tenant_debt != null ? tenant_debt : '0'}"
-                                   value="0" required
-                                   class="themed-input input-focus">
-                            <p class="helper-text">Any existing debt carried forward (enter 0 if none)</p>
+                            <label for="debt_input">
+                                Outstanding Debt
+                                <span class="field-tooltip" title="Any existing debt carried forward from previous arrangements">i</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted">R</span>
+                                <input id="debt_input" name="debt" type="number"
+                                       th:value="${tenant_debt != null ? tenant_debt : '0'}"
+                                       value="0" required
+                                       class="themed-input input-focus pl-8">
+                            </div>
+                            <p class="helper-text">Existing debt (enter 0 if none)</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Hidden field for unit -->
                 <input type="hidden" name="unit" th:value="${unit_add}" />
 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
-                    <button type="submit" aria-label="Add Tenant">Add Tenant</button>
+                    <button type="submit" id="submitButton" class="inline-flex justify-center items-center gap-2">
+                        <svg id="submitIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span id="submitText">Add Tenant</span>
+                        <div id="submitSpinner" class="loading-spinner hidden"></div>
+                    </button>
                 </div>
             </form>
         </div>
@@ -810,287 +1126,436 @@
 
 <footer class="mt-12 py-8 bg-surface">
     <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
-        &copy; 2025 ProMan Property Management Solutions.
+        &copy; <span id="pro-man-year">2025</span> ProMan Property Management Solutions.
     </div>
 </footer>
 
-<!-- Toast container -->
-<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
-
 <script>
-    // Function to send theme preference to server
-    function sendThemePreference(theme) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'http://localhost:7070/page_theme';
+    // MOBILE WELCOME CARD TOGGLE
+    function toggleWelcomeCard() {
+        if (window.innerWidth < 1024) {
+            const welcomeCard = document.getElementById('welcomeCard');
+            welcomeCard.classList.toggle('expanded');
+        }
+    }
 
-        const themeInput = document.createElement('input');
-        themeInput.type = 'hidden';
-        themeInput.name = 'user_theme';
-        themeInput.value = theme;
+    // LOADING STATE MANAGEMENT
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const submitButton = document.getElementById('submitButton');
+    const submitIcon = document.getElementById('submitIcon');
+    const submitText = document.getElementById('submitText');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const tenantForm = document.getElementById('tenantForm');
 
-        form.appendChild(themeInput);
-        document.body.appendChild(form);
-        form.submit();
+    let isSubmitting = false;
 
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
+    function showLoading() {
+        isSubmitting = true;
+        submitButton.disabled = true;
+        submitButton.classList.add('btn-disabled');
+        submitIcon.classList.add('hidden');
+        submitSpinner.classList.remove('hidden');
+        submitText.textContent = 'Adding Tenant...';
+        loadingOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideLoading() {
+        isSubmitting = false;
+        submitButton.disabled = false;
+        submitButton.classList.remove('btn-disabled');
+        submitIcon.classList.remove('hidden');
+        submitSpinner.classList.add('hidden');
+        submitText.textContent = 'Add Tenant';
+        loadingOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // FIX FOR SPINNER ON BROWSER BACK BUTTON
+    window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the BFcache (browser back button scenario)
+        if (event.persisted) {
+            console.log("Page loaded from BFcache (browser back button). Hiding spinner.");
+            // Reset the loading state
+            hideLoading();
+        }
+    });
+
+    // Date validation and formatting functions
+    function getDateLimits() {
+        const today = new Date();
+        const maxDate = new Date();
+        maxDate.setFullYear(today.getFullYear() + 1); // 1 year from today
+
+        return {
+            min: today.toISOString().split('T')[0],
+            max: maxDate.toISOString().split('T')[0]
+        };
+    }
+
+    function isFutureDate(dateString) {
+        const selectedDate = new Date(dateString);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return selectedDate > today;
+    }
+
+    function isFarFutureDate(dateString) {
+        const selectedDate = new Date(dateString);
+        const sixMonthsFromNow = new Date();
+        sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
+        sixMonthsFromNow.setHours(0, 0, 0, 0);
+        return selectedDate > sixMonthsFromNow;
+    }
+
+    function formatDateDisplay(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-ZA', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     }
 
     // Initialize everything on page load
     document.addEventListener('DOMContentLoaded', function() {
         // Use server theme as primary source
         const serverTheme = window.serverTheme || 'light';
-
-        // Sync localStorage with server theme
         localStorage.setItem('user_chosen_theme', serverTheme);
 
-        // Initialize Supabase
-        const SUPABASE_URL = 'https://tbccpaizbsrikdqvoyrt.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Set up date input with appropriate limits
+        const moveInInput = document.getElementById('move_in');
+        const moveInWarning = document.getElementById('move_in_warning');
+        const dateLimits = getDateLimits();
 
-        async function getUserSession() {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (error) {
-                console.error('Error getting session:', error.message);
-            } else if (session) {
-                console.log('Logged-in user:', session.user);
+        if (moveInInput) {
+            // Set min and max dates (today to 1 year from now)
+            moveInInput.min = dateLimits.min;
+            moveInInput.max = dateLimits.max;
+
+            // If no value is set, default to today
+            if (!moveInInput.value) {
+                moveInInput.value = dateLimits.min;
+            }
+
+            // Check if existing value is a future date
+            if (moveInInput.value) {
+                const existingDate = new Date(moveInInput.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (existingDate < today) {
+                    // If past date, set to today
+                    moveInInput.value = dateLimits.min;
+                } else if (existingDate > new Date(dateLimits.max)) {
+                    // If beyond max date, set to max
+                    moveInInput.value = dateLimits.max;
+                }
+
+                // Show warning for far future dates
+                if (isFarFutureDate(moveInInput.value)) {
+                    moveInWarning.classList.add('show');
+                }
+            }
+
+            // Add event listener for date changes
+            moveInInput.addEventListener('change', function() {
+                // Show/hide warning for far future dates
+                if (isFarFutureDate(this.value)) {
+                    moveInWarning.classList.add('show');
+                } else {
+                    moveInWarning.classList.remove('show');
+                }
+
+                // Validate date is within range
+                const selectedDate = new Date(this.value);
+                const minDate = new Date(dateLimits.min);
+                const maxDate = new Date(dateLimits.max);
+
+                if (selectedDate < minDate || selectedDate > maxDate) {
+                    showError('move_in_error', `Please select a date between ${formatDateDisplay(dateLimits.min)} and ${formatDateDisplay(dateLimits.max)}`);
+                } else {
+                    hideError('move_in_error');
+
+                    // Show friendly date display in helper text
+                    const helperText = this.parentElement.querySelector('.helper-text');
+                    if (helperText) {
+                        const isFuture = isFutureDate(this.value);
+                        helperText.textContent = `Move-in date: ${formatDateDisplay(this.value)} ${isFuture ? '(future date)' : '(today)'}`;
+                    }
+                }
+            });
+        }
+
+        // Form validation
+        const form = document.getElementById('tenantForm');
+        if (!form) return;
+
+        const unitNumberInput = document.getElementById('unit_number');
+        const debtInput = document.getElementById('debt_input');
+
+        // Set default value for debt input
+        if (debtInput && !debtInput.value) {
+            debtInput.value = '0';
+        }
+
+        // Get the max unit value
+        const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
+
+        const showError = (id, msg) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.add('show');
+            // Add error border to input
+            const input = document.getElementById(id.replace('_error', ''));
+            if (input) input.classList.add('error-border');
+        };
+
+        const hideError = (id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = '';
+            el.classList.remove('show');
+            // Remove error border from input
+            const input = document.getElementById(id.replace('_error', ''));
+            if (input) {
+                input.classList.remove('error-border');
+                if (input.value.trim() && input.checkValidity()) {
+                    input.classList.add('success-border');
+                }
+            }
+        };
+
+        // Basic phone number validation
+        function isValidPhoneNumber(phone) {
+            const digits = phone.replace(/\D/g, '');
+            return digits.length >= 10; // Basic validation - at least 10 digits
+        }
+
+        // Format phone number display
+        function formatPhoneNumber(value) {
+            const digits = value.replace(/\D/g, '');
+            if (digits.length <= 3) return digits;
+            if (digits.length <= 6) return digits.slice(0,3) + ' ' + digits.slice(3);
+            return digits.slice(0,3) + ' ' + digits.slice(3,6) + ' ' + digits.slice(6,10);
+        }
+
+        function validateUnitNumber() {
+            const unitValue = parseInt(unitNumberInput.value);
+            if (isNaN(unitValue) || unitValue < 1 || unitValue > maxUnits) {
+                showError('unit_number_error', `Unit number must be between 1 and ${maxUnits}`);
+                return false;
             } else {
-                console.log('No user is logged in.');
+                hideError('unit_number_error');
+                return true;
             }
         }
-        getUserSession();
 
-        // Form validation code
-        (function() {
-            const form = document.getElementById('tenantForm');
-            if (!form) return;
+        function employmentSelected() {
+            const radios = form.querySelectorAll('input[name="employment"]');
+            return Array.from(radios).some(r => r.checked);
+        }
 
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const toastContainer = document.getElementById('toastContainer');
-            const unitNumberInput = document.getElementById('unit_number');
-            const debtInput = document.getElementById('debt_input');
+        function validateForm() {
+            let isValid = true;
 
-            // Set default value for debt input
-            if (debtInput && !debtInput.value) {
-                debtInput.value = '0';
-            }
+            // Validate unit number
+            if (!validateUnitNumber()) isValid = false;
 
-            // Get the max unit value from Thymeleaf attribute
-            const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
-
-            const showError = (id, msg) => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                el.textContent = msg;
-                el.classList.add('show');
-            };
-            const hideError = (id) => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                el.textContent = '';
-                el.classList.remove('show');
-            };
-
+            // Validate name
             const nameInput = document.getElementById('tenant_name');
+            if (!nameInput.value.trim()) {
+                showError('tenant_name_error', "Please enter the tenant's full name.");
+                isValid = false;
+            } else {
+                hideError('tenant_name_error');
+            }
+
+            // Validate phone
             const phoneInput = document.getElementById('cell_number');
-            const moveInInput = document.getElementById('move_in');
-            const kinPhoneInput = document.getElementById('kin_number');
-
-            // South African phone number validation function
-            function isValidSouthAfricanPhoneNumber(phone) {
-                // Remove all non-digit characters
-                const digits = phone.replace(/\D/g, '');
-
-                // South African mobile numbers are 10 digits starting with 0
-                if (!/^0\d{9}$/.test(digits)) {
-                    return false;
-                }
-
-                // Check if it's a valid South African mobile prefix
-                const prefix = digits.substring(0, 3);
-                const validPrefixes = ['071', '072', '073', '074', '076', '079', '060', '061', '062', '063', '064', '065', '066', '067', '068', '081', '082', '083', '084'];
-
-                return validPrefixes.includes(prefix);
+            const phoneVal = phoneInput.value.replace(/\D/g, '');
+            if (!phoneVal) {
+                showError('cell_number_error', 'Please enter a phone number.');
+                isValid = false;
+            } else if (!isValidPhoneNumber(phoneVal)) {
+                showError('cell_number_error', 'Enter a valid phone number (at least 10 digits).');
+                isValid = false;
+            } else {
+                hideError('cell_number_error');
             }
 
-            function validateUnitNumber() {
-                const unitValue = parseInt(unitNumberInput.value);
-                if (isNaN(unitValue) || unitValue < 1 || unitValue > maxUnits) {
-                    showError('unit_number_error', `Unit number must be between 1 and ${maxUnits}`);
-                    return false;
-                } else {
-                    hideError('unit_number_error');
-                    return true;
-                }
-            }
+            // Validate move-in date (now allows future dates)
+            if (moveInInput && !moveInInput.value) {
+                showError('move_in_error', 'Please select a move-in date.');
+                isValid = false;
+            } else if (moveInInput) {
+                const selectedDate = new Date(moveInInput.value);
+                const minDate = new Date(dateLimits.min);
+                const maxDate = new Date(dateLimits.max);
 
-            function employmentSelected() {
-                const radios = form.querySelectorAll('input[name="employment"]');
-                return Array.from(radios).some(r => r.checked);
-            }
-
-            function validate() {
-                let ok = true;
-
-                // Validate unit number
-                if (!validateUnitNumber()) {
-                    ok = false;
-                }
-
-                if (!nameInput.value.trim()) {
-                    showError('tenant_name_error', "Please enter the tenant's full name.");
-                    ok = false;
-                } else {
-                    hideError('tenant_name_error');
-                }
-
-                // Validate South African phone number for tenant
-                const phoneVal = phoneInput.value.trim();
-                if (!phoneVal) {
-                    showError('cell_number_error', 'Please enter a phone number.');
-                    ok = false;
-                } else if (!isValidSouthAfricanPhoneNumber(phoneVal)) {
-                    showError('cell_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
-                    ok = false;
-                } else {
-                    hideError('cell_number_error');
-                }
-
-                if (!moveInInput.value) {
-                    showError('move_in_error', 'Please select a move-in date.');
-                    ok = false;
+                if (selectedDate < minDate || selectedDate > maxDate) {
+                    showError('move_in_error', `Please select a date between ${formatDateDisplay(dateLimits.min)} and ${formatDateDisplay(dateLimits.max)}`);
+                    isValid = false;
                 } else {
                     hideError('move_in_error');
                 }
-
-                // Validate South African phone number for next of kin
-                const kinVal = kinPhoneInput.value.trim();
-                if (!kinVal) {
-                    showError('kin_number_error', 'Please enter next of kin phone number.');
-                    ok = false;
-                } else if (!isValidSouthAfricanPhoneNumber(kinVal)) {
-                    showError('kin_number_error', 'Enter a valid South African mobile number (10 digits, e.g., 0712345678).');
-                    ok = false;
-                } else {
-                    hideError('kin_number_error');
-                }
-
-                // Validate next of kin name
-                const kinNameInput = document.getElementById('kin_name');
-                if (!kinNameInput.value.trim()) {
-                    const kinNameError = document.getElementById('kin_number_error') || document.createElement('div');
-                    kinNameError.textContent = 'Please enter next of kin name.';
-                    ok = false;
-                }
-
-                if (!employmentSelected()) {
-                    showError('employment_error', 'Please indicate employment status.');
-                    ok = false;
-                } else {
-                    hideError('employment_error');
-                }
-
-                return ok;
             }
 
-            function showToast(msg, opts = {}) {
-                const el = document.createElement('div');
-                el.className = 'toast';
-                el.style.background = opts.bg || '#fff3cd';
-                el.style.color = opts.color || '#92400e';
-                el.textContent = msg;
-                toastContainer.appendChild(el);
-                setTimeout(() => { el.remove(); }, opts.duration || 1800);
+            // Validate employment status
+            if (!employmentSelected()) {
+                showError('employment_error', 'Please indicate employment status.');
+                isValid = false;
+            } else {
+                hideError('employment_error');
             }
 
-            function normalizeDigits(e) {
-                const start = e.target.selectionStart;
-                const raw = e.target.value;
-                // Allow only digits and auto-format for South African numbers
-                const digits = raw.replace(/[^\d]/g, '');
-
-                // If starts with 0, limit to 10 digits max
-                if (digits.startsWith('0') && digits.length > 10) {
-                    e.target.value = digits.substring(0, 10);
-                } else {
-                    e.target.value = digits;
-                }
-
-                try { e.target.setSelectionRange(start, start); } catch (err) {}
+            // Validate next of kin phone
+            const kinPhoneInput = document.getElementById('kin_number');
+            const kinVal = kinPhoneInput.value.replace(/\D/g, '');
+            if (!kinVal) {
+                showError('kin_number_error', 'Please enter next of kin phone number.');
+                isValid = false;
+            } else if (!isValidPhoneNumber(kinVal)) {
+                showError('kin_number_error', 'Enter a valid phone number (at least 10 digits).');
+                isValid = false;
+            } else {
+                hideError('kin_number_error');
             }
 
-            // Prevent user from typing values beyond max
-            unitNumberInput.addEventListener('input', function(e) {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value) && value > maxUnits) {
-                    e.target.value = maxUnits;
+            // Validate next of kin name
+            const kinNameInput = document.getElementById('kin_name');
+            if (!kinNameInput.value.trim()) {
+                const kinNameError = document.getElementById('kin_number_error') || document.createElement('div');
+                kinNameError.textContent = 'Please enter next of kin name.';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Phone input formatting
+        function formatPhoneInput(input) {
+            input.addEventListener('input', function(e) {
+                const start = this.selectionStart;
+                const raw = this.value.replace(/\D/g, '');
+
+                // Keep first digit as 0
+                let digits = raw;
+                if (!raw.startsWith('0') && raw.length > 0) {
+                    digits = '0' + raw;
                 }
-                validateUnitNumber();
-            });
 
-            phoneInput.addEventListener('input', normalizeDigits);
-            kinPhoneInput.addEventListener('input', normalizeDigits);
+                // Limit to 10 digits
+                if (digits.length > 10) {
+                    digits = digits.substring(0, 10);
+                }
 
-            // Add placeholder formatting for better UX
-            phoneInput.addEventListener('focus', function() {
-                if (!this.value) {
-                    this.value = '0';
+                // Format with spaces
+                let formatted = '';
+                if (digits.length > 0) formatted = digits.substring(0, 3);
+                if (digits.length > 3) formatted += ' ' + digits.substring(3, 6);
+                if (digits.length > 6) formatted += ' ' + digits.substring(6, 10);
+
+                this.value = formatted;
+
+                // Maintain cursor position
+                try { this.setSelectionRange(start, start); } catch (err) {}
+
+                // Validate and show/hide error
+                const errorId = this.id + '_error';
+                const digitsOnly = formatted.replace(/\D/g, '');
+                if (digitsOnly.length >= 10 && isValidPhoneNumber(digitsOnly)) {
+                    hideError(errorId);
+                    this.classList.add('success-border');
+                } else if (formatted.length > 0) {
+                    this.classList.remove('success-border');
                 }
             });
+        }
 
-            kinPhoneInput.addEventListener('focus', function() {
-                if (!this.value) {
-                    this.value = '0';
-                }
-            });
+        // Apply phone formatting
+        formatPhoneInput(document.getElementById('cell_number'));
+        formatPhoneInput(document.getElementById('kin_number'));
 
-            // Real-time validation
-            const inputsToValidate = [nameInput, phoneInput, moveInInput, kinPhoneInput, unitNumberInput];
-            inputsToValidate.forEach(inp => {
-                if (inp) {
-                    inp.addEventListener('input', function() {
-                        const errorId = this.id + '_error';
-                        hideError(errorId);
-                    });
-
-                    inp.addEventListener('blur', validate);
-                }
-            });
-
-            form.querySelectorAll('input[name="employment"]').forEach(r => {
-                r.addEventListener('change', function() {
-                    hideError('employment_error');
+        // Real-time validation
+        const inputsToValidate = ['tenant_name', 'cell_number', 'move_in', 'kin_number', 'unit_number', 'kin_name'];
+        inputsToValidate.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.addEventListener('input', function() {
+                    const errorId = this.id + '_error';
+                    hideError(errorId);
                 });
-            });
-
-            form.addEventListener('submit', function(evt) {
-                if (!validate()) {
-                    evt.preventDefault();
-                    showToast('Please fix the highlighted fields', { bg: '#ffe4e6', color: '#991b1b' });
-                    return;
-                }
-
-                submitBtn.disabled = true;
-                submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
-                showToast('Adding tenant...', { bg: '#dcfce7', color: '#064e3b', duration: 2000 });
-
-                // Re-enable button after 5 seconds if form submission fails
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
-                }, 5000);
-            });
-
-            // Set today as max date for move-in
-            const today = new Date().toISOString().split('T')[0];
-            if (moveInInput) {
-                moveInInput.max = today;
+                input.addEventListener('blur', validateForm);
             }
-        })();
+        });
+
+        // Employment radio validation
+        form.querySelectorAll('input[name="employment"]').forEach(r => {
+            r.addEventListener('change', function() {
+                hideError('employment_error');
+            });
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(evt) {
+            if (isSubmitting) {
+                evt.preventDefault();
+                return false;
+            }
+
+            if (!validateForm()) {
+                evt.preventDefault();
+                // Scroll to first error
+                const firstError = form.querySelector('.error-message.show');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return false;
+            }
+
+            // Confirm if date is far in the future
+            if (moveInInput && isFarFutureDate(moveInInput.value)) {
+                const confirmed = confirm('This move-in date is more than 6 months in the future. Are you sure this is correct?');
+                if (!confirmed) {
+                    evt.preventDefault();
+                    moveInInput.focus();
+                    return false;
+                }
+            }
+
+            showLoading();
+            return true;
+        });
+
+        // Initialize welcome card
+        const welcomeCard = document.getElementById('welcomeCard');
+        if (window.innerWidth >= 1024) {
+            welcomeCard.classList.add('expanded');
+        }
     });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        const welcomeCard = document.getElementById('welcomeCard');
+        if (window.innerWidth >= 1024) {
+            welcomeCard.classList.add('expanded');
+        } else if (!welcomeCard.classList.contains('expanded')) {
+            welcomeCard.classList.remove('expanded');
+        }
+    });
+
+    // Handle page unload
+    window.addEventListener('beforeunload', function(e) {
+        if (isSubmitting) {
+            // Optional confirmation dialog
+        }
+    });
+
+    // Set current year in footer
+    document.getElementById('pro-man-year').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>

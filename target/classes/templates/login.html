@@ -25,6 +25,10 @@
           --card-shadow: 0 18px 40px rgba(16,24,40,0.06);
           --input-shadow: 0 6px 18px rgba(16,24,40,0.04);
           --focus-ring: 0 0 0 6px rgba(212,175,55,0.08);
+          --error: #dc2626;      /* error red */
+          --error-light: rgba(220, 38, 38, 0.1);
+          --success: #16a34a;    /* success green */
+          --success-light: rgba(22, 163, 74, 0.1);
         }
 
         /* Dark theme variables */
@@ -39,6 +43,10 @@
           --card-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
           --input-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
           --focus-ring: 0 0 0 6px rgba(244, 179, 66, 0.15);
+          --error: #f87171;       /* light error red */
+          --error-light: rgba(248, 113, 113, 0.15);
+          --success: #4ade80;     /* light success green */
+          --success-light: rgba(74, 222, 128, 0.15);
         }
 
         html,body {
@@ -68,10 +76,6 @@
           transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        header .logo-box {
-          width:64px; height:64px; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden;
-        }
-
         /* Centering main card */
         main {
           flex:1;
@@ -87,10 +91,10 @@
           width:96%;
           max-width:1100px;
           background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,1));
-          border-radius:14px;
+          border-radius:20px;
           border:1px solid var(--muted);
           box-shadow: var(--card-shadow);
-          padding:40px;
+          padding:60px;
           transition: all 0.3s ease;
         }
 
@@ -98,77 +102,98 @@
           background: linear-gradient(180deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 1));
         }
 
-        /* Two-column layout: form left (60%), image right (40%) */
+        /* Two-column layout: form left (55%), benefits right (45%) */
         .form-grid {
           display:grid;
-          grid-template-columns: 60% 40%;
-          gap:28px;
+          grid-template-columns: 55% 45%;
+          gap:48px;
           align-items:center;
         }
 
         @media (max-width:920px) {
-          .form-grid { grid-template-columns: 1fr; }
-          .image-col img { max-width:260px; margin: 0 auto; display:block; }
+          .form-grid {
+            grid-template-columns: 1fr;
+            gap: 32px;
+          }
+          .wide-card {
+            padding: 32px;
+          }
         }
 
         /* form column */
         .form-col {
           display:flex;
           flex-direction:column;
-          gap:16px;
-          align-items:flex-start;
-          text-align:left;
+          gap:24px;
         }
 
-        .center-brand {
+        .brand-section {
           display:flex;
-          align-items:center;
-          gap:12px;
-          justify-content:flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .brand-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 8px;
         }
 
         .brand-text {
-          font-weight:900;
-          font-size:22px;
-          letter-spacing:1px;
-          color:var(--accent);
+          font-weight: 900;
+          font-size: 28px;
+          letter-spacing: 1px;
+          color: var(--accent);
+          background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
-        .brand-logo-small {
-          height:36px;
-          width:auto;
-          display:block;
-          filter: brightness(0.95);
+        .welcome-text {
+          font-size: 32px;
+          font-weight: 700;
+          color: var(--text);
+          margin: 0;
+          line-height: 1.2;
         }
 
-        body.dark .brand-logo-small {
-          filter: brightness(1.1) contrast(1.1);
+        .subtitle {
+          color: var(--muted-text);
+          font-size: 16px;
+          line-height: 1.5;
+          margin-bottom: 8px;
         }
 
-        .form-title {
-          font-size:20px;
-          font-weight:700;
-          color:var(--text);
-          margin:0;
+        /* Form styling */
+        .form-group {
+          margin-bottom: 20px;
         }
 
-        .form-sub {
-          color:var(--muted-text);
-          font-size:13px;
-          margin-bottom:2px;
+        .form-label {
+          display: block;
+          font-weight: 600;
+          color: var(--text);
+          margin-bottom: 8px;
+          font-size: 14px;
+        }
+
+        .form-input-wrapper {
+          position: relative;
         }
 
         .form-input {
           width:100%;
-          padding:14px 16px;
-          border-radius:10px;
-          border:1px solid var(--muted);
+          padding: 16px;
+          border-radius:12px;
+          border:2px solid var(--muted);
           background: var(--surface);
           box-shadow: var(--input-shadow);
           outline:none;
-          font-size:15px;
+          font-size:16px;
           color:var(--text);
-          transition: box-shadow .14s ease, transform .14s ease, border-color .14s ease;
+          transition: all 0.2s ease;
         }
 
         .form-input::placeholder {
@@ -179,106 +204,211 @@
         .form-input:focus {
           border-color: var(--accent);
           box-shadow: var(--focus-ring);
-          transform: translateY(-1px);
+          transform: translateY(-2px);
         }
 
-        .primary-btn, .home-gold-btn {
+        .form-input.error {
+          border-color: var(--error);
+          background-color: var(--error-light);
+        }
+
+        .input-icon {
+          position: absolute;
+          right: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--muted-text);
+        }
+
+        /* Error states */
+        .error-message {
+          color: var(--error);
+          font-size: 13px;
+          margin-top: 6px;
+          display: none;
+        }
+
+        .error-message.show {
+          display: block;
+        }
+
+        .error-border {
+          border-color: var(--error) !important;
+        }
+
+        /* Button styling */
+        .primary-btn {
+          width:100%;
+          padding:16px;
+          border-radius:12px;
+          border:0;
+          font-weight:700;
+          font-size:16px;
           background: linear-gradient(180deg, var(--accent), var(--accent-dark));
           color: #2b1f00 !important;
           box-shadow: 0 12px 32px rgba(212,175,55,0.14);
+          cursor:pointer;
           transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
         }
 
-        body.dark .primary-btn,
-        body.dark .home-gold-btn {
+        body.dark .primary-btn {
           color: #1a1400 !important;
           box-shadow: 0 12px 32px rgba(244, 179, 66, 0.2);
         }
 
-        .footer-email {
-          color: var(--accent) !important; /* gold */
-        }
-
-        .footer-email:hover {
-          color: var(--accent-dark) !important; /* darker gold when hovered */
-          text-decoration: underline;
-        }
-
-        .home-gold-btn:hover,
         .primary-btn:hover {
           transform: translateY(-3px);
           box-shadow: 0 16px 36px rgba(184,137,42,0.18);
           color: white !important;
         }
 
-        .primary-btn {
-          width:100%;
-          padding:14px;
-          border-radius:10px;
-          border:0;
-          font-weight:700;
-          font-size:15px;
-          background: linear-gradient(180deg,var(--accent),var(--accent-dark));
-          box-shadow: 0 12px 32px rgba(212,175,55,0.14);
-          cursor:pointer;
-          transition: transform .12s ease, box-shadow .12s ease;
+        .primary-btn:active {
+          transform: translateY(-1px);
         }
 
-        .primary-btn:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 16px 36px rgba(184,137,42,0.18);
-          color:white !important;
+        .btn-spinner {
+          display: none;
+          width: 20px;
+          height: 20px;
+          border: 3px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          border-top-color: white;
+          animation: spin 1s linear infinite;
+          margin-right: 8px;
         }
 
-        .small-muted {
-          color:var(--muted-text);
-          font-size:13px;
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
 
-        .secondary-link {
-          color:var(--accent);
-          font-weight:600;
-          text-decoration:underline;
+        /* Benefits column */
+        .benefits-col {
+          padding: 20px;
+          border-radius: 16px;
+          background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.02));
+          border: 1px solid rgba(212, 175, 55, 0.1);
         }
 
-        .secondary-link:hover {
-          color: var(--accent-dark);
+        body.dark .benefits-col {
+          background: linear-gradient(135deg, rgba(244, 179, 66, 0.08), rgba(244, 179, 66, 0.03));
+          border: 1px solid rgba(244, 179, 66, 0.15);
         }
 
-        .image-col {
-          display:flex;
-          align-items:center;
-          justify-content:center;
+        .benefits-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: var(--text);
+          margin-bottom: 20px;
+          text-align: center;
         }
 
-        .image-col img {
-          max-width:320px;
-          width:100%;
-          height:auto;
-          object-fit:contain;
-          border-radius:8px;
-          filter: brightness(0.95);
+        .benefits-list {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
 
-        body.dark .image-col img {
-          filter: brightness(1.1) contrast(1.1);
+        .benefit-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
         }
 
-        .toggle-btn {
-          position:absolute;
-          right:8px;
-          top:50%;
-          transform:translateY(-50%);
-          border:0;
-          background:transparent;
-          padding:6px;
-          cursor:pointer;
+        .benefit-icon {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
+          background: var(--accent);
+          color: #2b1f00;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          font-weight: bold;
+        }
+
+        body.dark .benefit-icon {
+          color: #1a1400;
+        }
+
+        .benefit-text {
+          flex: 1;
+        }
+
+        .benefit-title {
+          font-weight: 600;
+          color: var(--text);
+          margin-bottom: 4px;
+          font-size: 15px;
+        }
+
+        .benefit-description {
           color: var(--muted-text);
+          font-size: 13px;
+          line-height: 1.5;
         }
 
-        /* Checkbox styling */
+        /* Sign up link section */
+        .signup-section {
+          text-align: center;
+          margin-top: 24px;
+          padding-top: 24px;
+          border-top: 1px solid var(--muted);
+        }
+
+        .signup-text {
+          color: var(--muted-text);
+          font-size: 14px;
+        }
+
+        .signup-link {
+          color: var(--accent);
+          font-weight: 700;
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+
+        .signup-link:hover {
+          color: var(--accent-dark);
+          text-decoration: underline;
+        }
+
+        /* Utility options */
+        .utility-options {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin: 20px 0;
+        }
+
+        .remember-me {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: var(--muted-text);
+          cursor: pointer;
+        }
+
         input[type="checkbox"] {
           accent-color: var(--accent);
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+
+        .forgot-link {
+          color: var(--accent);
+          font-size: 14px;
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+          color: var(--accent-dark);
+          text-decoration: underline;
         }
 
         /* Footer */
@@ -288,9 +418,9 @@
           transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Mobile Menu Button Styles - MATCHING PREVIOUS SIZE */
+        /* Mobile Menu Button Styles */
         #mobile-menu-button {
-            display: none; /* Hidden by default on desktop */
+            display: none;
             align-items: center;
             justify-content: center;
             width: 48px;
@@ -323,7 +453,7 @@
             border-radius: 2px;
         }
 
-        /* Hamburger to X animation - SAME AS BEFORE */
+        /* Hamburger to X animation */
         #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
             transform: rotate(45deg) translate(4px, 4px);
         }
@@ -363,11 +493,91 @@
                 display: none;
             }
         }
+
+        /* Success message */
+        .success-message {
+          background: var(--success-light);
+          border: 1px solid rgba(16, 185, 129, 0.2);
+          border-radius: 12px;
+          padding: 16px;
+          margin-bottom: 24px;
+          display: none;
+          color: var(--success);
+        }
+
+        .success-message.show {
+          display: block;
+        }
+
+        .success-message p {
+          margin: 0;
+          font-size: 14px;
+          font-weight: 500;
+          color: inherit;
+        }
+
+        /* AJAX loading overlay */
+        .loading-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
+          backdrop-filter: blur(4px);
+        }
+
+        .loading-overlay.active {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .loading-overlay-content {
+          background: var(--surface);
+          padding: 2rem;
+          border-radius: 1rem;
+          text-align: center;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          max-width: 90%;
+          width: 400px;
+          transform: translateY(10px);
+          animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+          to { transform: translateY(0); }
+        }
+
+        .overlay-spinner {
+          width: 3rem;
+          height: 3rem;
+          border: 4px solid rgba(212, 175, 55, 0.2);
+          border-radius: 50%;
+          border-top-color: var(--accent);
+          animation: spin 1s linear infinite;
+          margin: 0 auto 1rem;
+        }
     </style>
 </head>
 
 <!-- Apply dark class based on user_chosen_theme from server -->
 <body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+
+<!-- Loading Overlay for AJAX -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-overlay-content">
+        <div class="overlay-spinner"></div>
+        <p class="text-lg font-semibold text-[var(--text)]">Signing in...</p>
+        <p class="text-sm text-muted mt-2">Please wait while we verify your credentials</p>
+    </div>
+</div>
 
 <!-- Header with mobile menu button -->
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
@@ -378,7 +588,7 @@
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
             <div>
-                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">ProMan</a>
+                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">  <h1 class="brand-text">PROMAN</h1></a>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
@@ -386,12 +596,12 @@
         <!-- Desktop Nav - will be hidden on mobile -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
             <a href="http://localhost:7070/"
-               class="home-gold-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
+               class="bg-accent text-[#2b1f00] px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-200 hover:bg-accent-dark hover:text-white hover:-translate-y-0.5">
                 Home
             </a>
         </nav>
 
-        <!-- Mobile Menu Button - SAME SIZE AS BEFORE (48px × 48px) -->
+        <!-- Mobile Menu Button -->
         <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
             <div class="mobile-menu-icon">
                 <span></span>
@@ -404,7 +614,7 @@
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-3 space-y-2">
         <a href="http://localhost:7070/"
-           class="block w-full text-center home-gold-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
+           class="block w-full text-center bg-accent text-[#2b1f00] px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-200 hover:bg-accent-dark hover:text-white">
             HOME
         </a>
     </div>
@@ -421,7 +631,6 @@
             menuButton.setAttribute('aria-expanded', !isExpanded);
             mobileMenu.classList.toggle('hidden');
 
-            // Toggle body overflow to prevent scrolling when menu is open
             if (!isExpanded) {
                 document.body.style.overflow = 'hidden';
             } else {
@@ -429,7 +638,6 @@
             }
         });
 
-        // Close mobile menu when clicking outside
         document.addEventListener('click', (event) => {
             if (!mobileMenu.classList.contains('hidden') &&
                 !menuButton.contains(event.target) &&
@@ -440,7 +648,6 @@
             }
         });
 
-        // Close mobile menu when clicking on a link
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.add('hidden');
@@ -449,7 +656,6 @@
             });
         });
 
-        // Close mobile menu on escape key
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
                 mobileMenu.classList.add('hidden');
@@ -458,86 +664,120 @@
             }
         });
     }
-
-    // Password toggle icon + behavior
-    const toggle = document.getElementById('togglePassword');
-    const pwd = document.getElementById('password');
-    if (toggle && pwd) {
-        const iconEye = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
-        const iconEyeOff = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"/></svg>';
-
-        toggle.innerHTML = iconEye;
-        toggle.addEventListener('click', function () {
-            const isHidden = pwd.type === 'password';
-            pwd.type = isHidden ? 'text' : 'password';
-            toggle.innerHTML = isHidden ? iconEyeOff : iconEye;
-            toggle.setAttribute('aria-pressed', String(isHidden));
-            toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
-        });
-    }
 </script>
 
-<!-- Main: centered, form on left, picture on right -->
+<!-- Main: centered, form on left, benefits on right -->
 <main>
     <div class="wide-card" role="main" aria-label="Sign in container">
-        <div class="form-grid" role="region" aria-label="Login form and image">
+        <div class="form-grid" role="region" aria-label="Login form and benefits">
             <!-- LEFT: form -->
             <div class="form-col" aria-live="polite">
-                <div class="center-brand" aria-hidden="true">
-                    <div class="brand-text">PROMAN</div>
+                <!-- Brand and Welcome -->
+                <div class="brand-section">
+                    <div class="brand-header">
+                        <h1 class="brand-text">PROMAN</h1>
+                    </div>
+                    <h2 class="welcome-text">Welcome Back 👋</h2>
+                    <p class="subtitle">Sign in to access your property management dashboard</p>
                 </div>
 
-                <form action="http://localhost:7070/verify_user" method="POST" style="width:100%; margin-top:6px;">
-                    <div style="margin-bottom:12px;">
-                        <label for="email" class="small-muted" style="display:block;margin-bottom:6px;">Email</label>
-                        <input th:value="${login_email}" id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="form-input" />
-                        <p th:if="${error != null and error != ''}"
-                           th:text="${error}"
-                           class="text-red-500 font-medium mt-2">
-                        </p>
-                    </div>
+                <!-- AJAX Success Message -->
+                <div id="ajaxSuccessMessage" class="success-message">
+                    <p id="ajaxSuccessText"></p>
+                </div>
 
-                    <div style="margin-bottom:8px; position:relative;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <label for="password" class="small-muted">Password</label>
+                <!-- AJAX Error Message -->
+                <div id="ajaxErrorMessage" class="error-message">
+                    <p id="ajaxErrorText"></p>
+                </div>
 
-                            <p th:if="${wrong != null and wrong != ''}"
-                               th:text="${wrong}"
-                               class="text-red-500 font-medium"
-                               style="font-size:13px; margin-top:0;">
-                            </p>
+                <!-- Original Server Success Message (if any) -->
+                <div id="serverSuccessMessage" class="success-message" th:if="${success != null and success != ''}">
+                    <p th:text="${success}"></p>
+                </div>
 
-                            <a href="#" class="small-muted secondary-link" style="font-size:13px;">Forgot password?</a>
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <div class="form-input-wrapper">
+                            <input th:value="${login_email}" id="email" name="email" type="email"
+                                   required autocomplete="email"
+                                   placeholder="you@example.com"
+                                   class="form-input" />
+                            <span class="input-icon">📧</span>
                         </div>
-
-                        <input id="password" name="password" type="password" required placeholder="Enter your password" class="form-input" />
-                        <button type="button" id="togglePassword" aria-label="Show password" class="toggle-btn" title="Show / hide password">
-                            <!-- JS will inject icon -->
-                        </button>
+                        <div id="serverEmailError" class="error-message" th:if="${error != null and error != ''}">
+                            <span th:text="${error}"></span>
+                        </div>
+                        <div id="ajaxEmailError" class="error-message"></div>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin:14px 0;">
-                        <label style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted-text);">
-                            <input type="checkbox" name="remember" id="remember" style="width:16px; height:16px;" />
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="form-input-wrapper">
+                            <input id="password" name="password" type="password"
+                                   required placeholder="Enter your password"
+                                   class="form-input" />
+                            <button type="button" id="togglePassword" class="toggle-btn" aria-label="Show password" title="Show / hide password">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="serverPasswordError" class="error-message" th:if="${wrong != null and wrong != ''}">
+                            <span th:text="${wrong}"></span>
+                        </div>
+                        <div id="ajaxPasswordError" class="error-message"></div>
+                    </div>
+
+                    <!-- Utility Options -->
+                    <div class="utility-options">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember" id="remember" />
                             Remember me
                         </label>
-
-                        <a href="#" class="small-muted">Need help?</a>
+                        <a href="#" class="forgot-link">Forgot password?</a>
                     </div>
 
-                    <div style="display:grid; gap:10px; margin-top:6px;">
-                        <button type="submit" class="primary-btn">Sign in</button>
-                    </div>
-
-                    <div style="text-align:left; margin-top:14px;" class="small-muted">
-                        Don't have an account? <a href="http://localhost:7070/landlord_sign_up" class="secondary-link">Sign up here</a>
-                    </div>
+                    <!-- Submit Button -->
+                    <button type="submit" id="submitBtn" class="primary-btn">
+                        <span id="btnText">Sign in</span>
+                        <span id="btnSpinner" class="btn-spinner"></span>
+                    </button>
                 </form>
+
+                <!-- Sign up link -->
+                <div class="signup-section">
+                    <p class="signup-text">
+                        Don't have an account?
+                        <a href="http://localhost:7070/landlord_sign_up" class="signup-link">Create account</a>
+                    </p>
+                </div>
             </div>
 
-            <!-- RIGHT: image -->
-            <div class="image-col" aria-hidden="true">
-                <img src="/umuzi/img/mypromann.png" alt="ProMan image">
+            <!-- RIGHT: Benefits -->
+            <div class="benefits-col">
+                <h3 class="benefits-title">Why Choose ProMan?</h3>
+                <div class="benefits-list">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🏠</div>
+                        <div class="benefit-text">
+                            <h4 class="benefit-title">Centralized Management</h4>
+                            <p class="benefit-description">Manage all your properties, tenants, and payments from one dashboard</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">💰</div>
+                        <div class="benefit-text">
+                            <h4 class="benefit-title">Automated Payments</h4>
+                            <p class="benefit-description">Track rent payments and send automatic reminders</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -550,5 +790,216 @@
     </div>
 </footer>
 
+<script>
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function () {
+            const isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+
+            // Update icon
+            const iconPath = togglePassword.querySelector('svg path');
+            if (isHidden) {
+                // Show eye-off icon
+                iconPath.setAttribute('d', 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M3 3l18 18');
+                togglePassword.setAttribute('aria-label', 'Hide password');
+            } else {
+                // Show eye icon
+                iconPath.setAttribute('d', 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z');
+                togglePassword.setAttribute('aria-label', 'Show password');
+            }
+        });
+    }
+
+    // Form validation
+    function validateForm() {
+        let isValid = true;
+
+        // Clear previous AJAX errors
+        document.getElementById('ajaxEmailError').classList.remove('show');
+        document.getElementById('ajaxPasswordError').classList.remove('show');
+        document.getElementById('ajaxErrorMessage').classList.remove('show');
+        document.getElementById('ajaxSuccessMessage').classList.remove('show');
+
+        // Remove error styling
+        document.getElementById('email').classList.remove('error');
+        document.getElementById('password').classList.remove('error');
+
+        // Get form values
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        // Validate email
+        if (!email) {
+            isValid = false;
+            document.getElementById('email').classList.add('error');
+            document.getElementById('ajaxEmailError').textContent = 'Email is required';
+            document.getElementById('ajaxEmailError').classList.add('show');
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            isValid = false;
+            document.getElementById('email').classList.add('error');
+            document.getElementById('ajaxEmailError').textContent = 'Please enter a valid email address';
+            document.getElementById('ajaxEmailError').classList.add('show');
+        }
+
+        // Validate password
+        if (!password) {
+            isValid = false;
+            document.getElementById('password').classList.add('error');
+            document.getElementById('ajaxPasswordError').textContent = 'Password is required';
+            document.getElementById('ajaxPasswordError').classList.add('show');
+        }
+
+        return isValid;
+    }
+
+    // AJAX form submission
+    async function submitLogin(formData) {
+        try {
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+
+            if (loadingOverlay) loadingOverlay.classList.add('active');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                if (btnSpinner) btnSpinner.style.display = 'inline-block';
+                if (btnText) btnText.textContent = 'Signing in...';
+            }
+
+            // Send AJAX request
+            const response = await fetch('/verify_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(formData)
+            });
+
+            // Hide loading overlay
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                if (btnSpinner) btnSpinner.style.display = 'none';
+                if (btnText) btnText.textContent = 'Sign in';
+            }
+
+            // Handle response
+            if (response.ok) {
+                // Login successful - redirect to dashboard
+                window.location.href = '/dashboard';
+            } else {
+                // Login failed
+                const errorText = await response.text();
+
+                // Show error message
+                document.getElementById('ajaxErrorText').textContent = 'Invalid email or password';
+                document.getElementById('ajaxErrorMessage').classList.add('show');
+
+                // Highlight fields
+                document.getElementById('email').classList.add('error');
+                document.getElementById('password').classList.add('error');
+            }
+
+        } catch (error) {
+            console.error('Error submitting form:', error);
+
+            // Hide loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+
+            if (loadingOverlay) loadingOverlay.classList.remove('active');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                if (btnSpinner) btnSpinner.style.display = 'none';
+                if (btnText) btnText.textContent = 'Sign in';
+            }
+
+            // Show network error
+            document.getElementById('ajaxErrorText').textContent = 'Network error. Please check your connection and try again.';
+            document.getElementById('ajaxErrorMessage').classList.add('show');
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        // Form submission handling
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Clear previous messages
+                document.getElementById('ajaxErrorMessage').classList.remove('show');
+                document.getElementById('ajaxSuccessMessage').classList.remove('show');
+
+                // Validate form
+                if (!validateForm()) {
+                    return false;
+                }
+
+                // Collect form data
+                const formData = new FormData(this);
+
+                // Submit form via AJAX
+                submitLogin(formData);
+            });
+        }
+
+        // Auto-focus email field if empty
+        if (emailInput && !emailInput.value.trim()) {
+            emailInput.focus();
+        } else if (passwordInput && !passwordInput.value.trim()) {
+            passwordInput.focus();
+        }
+
+        // Auto-hide server messages after 5 seconds
+        const serverSuccessMessage = document.getElementById('serverSuccessMessage');
+        if (serverSuccessMessage && serverSuccessMessage.classList.contains('show')) {
+            setTimeout(() => {
+                serverSuccessMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Add error borders if there are server errors
+        const serverEmailError = document.getElementById('serverEmailError');
+        const serverPasswordError = document.getElementById('serverPasswordError');
+
+        if (serverEmailError && serverEmailError.textContent.trim()) {
+            emailInput.classList.add('error-border');
+        }
+        if (serverPasswordError && serverPasswordError.textContent.trim()) {
+            passwordInput.classList.add('error-border');
+        }
+
+        // Clear AJAX errors when user starts typing
+        if (emailInput) {
+            emailInput.addEventListener('input', function() {
+                this.classList.remove('error');
+                document.getElementById('ajaxEmailError').classList.remove('show');
+                document.getElementById('ajaxErrorMessage').classList.remove('show');
+            });
+        }
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                this.classList.remove('error');
+                document.getElementById('ajaxPasswordError').classList.remove('show');
+                document.getElementById('ajaxErrorMessage').classList.remove('show');
+            });
+        }
+    });
+</script>
 </body>
 </html>
