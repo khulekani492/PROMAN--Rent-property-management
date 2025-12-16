@@ -15,7 +15,7 @@ public class UpdateTenants {
             // --- 1. Data Extraction ---
             System.out.println("Unmarking the payment");
             Tenant undo_tenant_payment = new Tenant();
-
+            ctx.sessionAttribute("current_units_property",null);
             // Getting IDs and Property Info (Necessary for payment logic and subsequent page reload if needed)
             String tenant_name = ctx.formParam("id");
             String tenant_contact = ctx.pathParam("tenantContact");
