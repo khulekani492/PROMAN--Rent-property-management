@@ -116,7 +116,7 @@ public class AddTenant {
 
                     throw new RuntimeException(e);
                 }
-                ctx.sessionAttribute("current_units_property",null);
+                ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(property_name,landlordId));
                 ctx.redirect("/dashboard");
 
             } catch (SQLException e) {
