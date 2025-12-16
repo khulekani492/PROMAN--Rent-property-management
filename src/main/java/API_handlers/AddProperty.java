@@ -1,6 +1,7 @@
 package API_handlers;
 
 import io.javalin.http.Handler;
+import model.database.CRUD.Property_Status;
 import model.database.CRUD.landlord;
 import model.database.CRUD.propertyNames;
 import model.database.residence;
@@ -62,7 +63,8 @@ public class AddProperty {
                 model.put("unit_add", propertyUnit);
                 model.put("name", propertyName);
                 //ctx.render("templates/tenant_form.html",model);
-                ctx.sessionAttribute("current_units_property",null);
+                //ctx.sessionAttribute("current_units_property",null);
+                ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(propertyName,landlordId));
                 ctx.redirect("/add_tenant");
 
             } catch (Exception e) {
