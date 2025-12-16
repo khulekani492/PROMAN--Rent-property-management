@@ -3,6 +3,7 @@ package API_handlers;
 import api_login.Type_of_payments;
 import io.javalin.http.Handler;
 import io.javalin.http.HttpStatus;
+import model.database.CRUD.Property_Status;
 import model.database.CRUD.Tenant;
 import model.database.Transaction;
 
@@ -15,7 +16,7 @@ public class UpdateTenants {
             // --- 1. Data Extraction ---
             System.out.println("Unmarking the payment");
             Tenant undo_tenant_payment = new Tenant();
-            ctx.sessionAttribute("current_units_property",null);
+
             // Getting IDs and Property Info (Necessary for payment logic and subsequent page reload if needed)
             String tenant_name = ctx.formParam("id");
             String tenant_contact = ctx.pathParam("tenantContact");
@@ -29,7 +30,20 @@ public class UpdateTenants {
             
             //Unmark status tenant as paid
             undo_tenant_payment.reset_payment_status(tenantId);
+
+            Property_Status telfon = new Property_Status();
+
+
+            Integer landlord_id =  ctx.sessionAttribute("landlordID");
+            String propertyName =  ctx.sessionAttribute("current_property");
+
+            System.out.println(propertyName + "   property Name");
+            System.out.println(landlord_id + "    landlord Id");
+
+            ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(propertyName,landlord_id));
+
             ctx.sessionAttribute("current_tenant_payment",tenantId);
+
 
                     };
     }
