@@ -62,6 +62,7 @@ public class AddProperty {
                 model.put("unit_add", propertyUnit);
                 model.put("name", propertyName);
                 //ctx.render("templates/tenant_form.html",model);
+                ctx.sessionAttribute("current_units_property",null);
                 ctx.redirect("/add_tenant");
 
             } catch (Exception e) {
