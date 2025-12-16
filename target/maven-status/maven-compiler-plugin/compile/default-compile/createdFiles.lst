@@ -1,11 +1,13 @@
 model/database/CRUD/Month.class
 model/database/Data.class
+model/database/UPDATES/Change_Unit.class
 API/SecurityUtil.class
 model/database/general.class
 API/umuziAPI.class
 model/database/CRUD/tracker/Tenants_rent_day.class
 API_handlers/UpdateUnit.class
 Invalidhandler/NoEmailCreator.class
+Update_api/UpdateUnit.class
 Invalidhandler/SameEmail.class
 API/khuleDevEmailAPI.class
 Invalidhandler/Tenant_name.class
