@@ -29,7 +29,7 @@ public class Record_rent {
                 tenant_name = ctx.formParam("id");
                 contact = ctx.formParam("tenant_contact") ;
                 ctx.sessionAttribute("tenant_contact",contact);
-
+                ctx.sessionAttribute("current_units_property",null);
                 System.out.println("Tenant cellphone : " + contact);
                 System.out.println("DEBUG - Payment parameters:");
                 System.out.println("Rent amount: " + rent_amount);
