@@ -132,7 +132,7 @@ public class umuziAPI {
             Integer tenant_ID = ctx.sessionAttribute("TenantID");
             String tenant_unit = ctx.sessionAttribute("Tenant_unit");
             String amount = ctx.formParam("rent_amount");
-
+            ctx.sessionAttribute("current_units_property",null);
             //Error handling
             Integer money = Integer.parseInt(amount);
 
