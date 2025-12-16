@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Dashboard {
+public class Dashboard implements Runnable {
+
+
     public Handler user_profile() {
         return ctx ->
         {
@@ -203,36 +205,12 @@ public class Dashboard {
                     data.putAll(model2);
                     ctx.render("templates/dashboard.html", data);
                 }
-//                else {
-//                    Map<String, Object> data = new HashMap<>();
-//                    HashMap<String, HashMap<Integer, ArrayList<String>>> allPropertyUnits = new HashMap<>();
-//                    Map<String, Object> model1 = new HashMap<>();
-//                    HashMap<String, String> model = new HashMap<>();
-//                    HashMap<String, String> model2 = new HashMap<>();
-//                    ctx.sessionAttribute("current_property",first_property_name);
-//
-//                    System.out.println("hi");
-//                    ctx.sessionAttribute("property_unit",total_units);
-//                    String themeColor = ctx.sessionAttribute("theme_color");
-//                    allPropertyUnits.put("units", fetch_all);
-//                    System.out.println(fetch_all + "Occupied units");
-//                    model.put("total_properties", String.valueOf(total_properties));
-//                    model.put("occupied_units", String.valueOf(occupied_units));
-//                    model2.put("occupancyRate",String.valueOf(occupancyRate));
-//                    model2.put("vacant",String.valueOf(vacant ) );
-//                    model2.put("expected_profit",expected_profit);
-//                    //using landlord_unique_id to fetch all of their properties ,it accessed with the user_emails
-//                    model1.put("names", landlord_properties);
-//                    model1.put("name",property_name);
-//                    model1.put("user_chosen_theme",themeColor);
-//                    model1.put("user_name",login_user_name);
-//                    data.putAll(allPropertyUnits);
-//                    data.putAll(model1);
-//                    data.putAll(model);
-//                    data.putAll(model2);
-//                    System.out.println(data);
-//                    ctx.render("templates/dashboard.html", data);
-//                }
         };
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Takes over Thread.............Rerouting");
+        new Dashboard().user_profile();
     }
 }
