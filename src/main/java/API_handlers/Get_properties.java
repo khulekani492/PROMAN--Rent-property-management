@@ -20,7 +20,7 @@ public class Get_properties {
             String property_name;
             HashMap<Integer, ArrayList<String>>  fetch_all_memory = ctx.sessionAttribute("current_units_property") ;
             String current_propertyINSession =  ctx.sessionAttribute("current_property");
-            ctx.sessionAttribute("current_units_property",null);
+         //   ctx.sessionAttribute("current_units_property",null);
             landlord user_id = new landlord();
             propertyNames default_properties = new propertyNames();
 
@@ -59,6 +59,7 @@ public class Get_properties {
             } else{
                 System.out.println("landlord First property : " + property_name );
                 fetch_all = fetch_all_memory;
+                System.out.println(fetch_all_memory);
                 System.out.println("In memorry  session is the same" + fetch_all);
             }
 
