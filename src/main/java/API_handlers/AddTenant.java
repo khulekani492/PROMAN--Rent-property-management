@@ -116,7 +116,7 @@ public class AddTenant {
 
                     throw new RuntimeException(e);
                 }
-
+                ctx.sessionAttribute("current_units_property",null);
                 ctx.redirect("/dashboard");
 
             } catch (SQLException e) {
