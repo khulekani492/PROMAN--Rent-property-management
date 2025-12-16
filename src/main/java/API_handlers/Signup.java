@@ -29,20 +29,11 @@ public class Signup {
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
 
-
-                propertyNames default_properties = new propertyNames();
                 landlord authenticate = new landlord();
-//                Integer landlord_id =  authenticate.landlordId(email);
-//                System.out.println(landlord_id);
-//                String  login_user_name = authenticate.landlord_username(landlord_id);
-//                ctx.sessionAttribute("landlordID", landlord_id);
-
-                ctx.sessionAttribute("user_name",user_name);
+                ctx.sessionAttribute("loginUsername",user_name);
                 ctx.sessionAttribute("contact",contact);
                 ctx.sessionAttribute("email",email);
                 ctx.sessionAttribute("password",password);
-//                ctx.sessionAttribute("current_property", "No properties Added");
-
 
                 // hash password
                 String hashedPassword = hashPassword(password);
@@ -56,18 +47,17 @@ public class Signup {
                     ctx.sessionAttribute("user_ID", new_userID);
                     ctx.sessionAttribute("password", hashedPassword);
 
-                    Integer landlord_id =  authenticate.landlordId(email);
-                    System.out.println(landlord_id);
                     //String  login_user_name = authenticate.landlord_username(landlord_id);
-                    ctx.sessionAttribute("landlordID", landlord_id);
+                    ctx.sessionAttribute("landlordID", new_userID);
+                    ctx.sessionAttribute("loginUsername",user_name);
+
                     // set session attributes the username and property_name
                     String landlord_username = ctx.formParam("user_name");
                     Map<String, Object> sessionMap = ctx.sessionAttributeMap();
-                    ctx.json(sessionMap);
+                    System.out.println(sessionMap);
 
                     Map<String, Object> model = new HashMap<>();
                     model.put("user_name", landlord_username);
-
 
                     ctx.redirect("/add_property_unit");
 
