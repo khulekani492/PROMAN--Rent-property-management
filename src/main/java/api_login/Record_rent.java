@@ -1,11 +1,9 @@
 package api_login;
 
+import API_handlers.Dashboard;
 import io.javalin.http.Handler;
 import io.javalin.http.HttpStatus; // Import HttpStatus to return 200 OK
-import model.database.CRUD.Getunits;
-import model.database.CRUD.Tenant;
-import model.database.CRUD.landlord;
-import model.database.CRUD.propertyNames;
+import model.database.CRUD.*;
 import model.database.Transaction;
 
 import java.sql.SQLException;
@@ -29,7 +27,7 @@ public class Record_rent {
                 tenant_name = ctx.formParam("id");
                 contact = ctx.formParam("tenant_contact") ;
                 ctx.sessionAttribute("tenant_contact",contact);
-                ctx.sessionAttribute("current_units_property",null);
+                //ctx.sessionAttribute("current_units_property",null);
                 System.out.println("Tenant cellphone : " + contact);
                 System.out.println("DEBUG - Payment parameters:");
                 System.out.println("Rent amount: " + rent_amount);
@@ -96,13 +94,22 @@ public class Record_rent {
                     _payment.setTenant_Id(tenantId);
                     _payment.record_payment();
 
-                    // Success response
+               //      Success response
+                    Thread make_updates = new Thread(new Dashboard());
+                    make_updates.start();
+                    Property_Status God_has = new Property_Status();
+                    God_has.property_tenants("3 AM",1155);
+
+
+                    ctx.redirect("/dashboard");
+                    System.out.println("Do not know ");
                     ctx.status(200);
                     ctx.json(Map.of(
                             "success", true,
                             "unit", unit,
                             "message", "Payment recorded successfully"
                     ));
+
 
                 } catch (SQLException e) {
                     if("paid".equals(e.getMessage())) {
