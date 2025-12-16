@@ -185,8 +185,8 @@ public class umuziAPI {
 
         app.post("/fetch_property_units",properties.display_property_units());
 
-        app.get("/unit_already_paid/{property_name}/{user_email}/{unit}",properties.display_property_units());
-        app.get("/payment_status/{property_name}/{user_email}/{unit}",properties.display_property_units());
+       // app.get("/unit_already_paid/{property_name}/{user_email}/{unit}",properties.display_property_units());
+        //app.get("/payment_status/{property_name}/{user_email}/{unit}",properties.display_property_units());
 
 
         UpdateTenants tenant_unit_update = new UpdateTenants();
