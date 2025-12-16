@@ -28,7 +28,7 @@ public class Signup {
                 System.out.println(email);
                 String password = ctx.formParam("password");
                 String user_type = ctx.formParam("user_type");
-
+                ctx.sessionAttribute("current_units_property",null);
                 landlord authenticate = new landlord();
                 ctx.sessionAttribute("loginUsername",user_name);
                 ctx.sessionAttribute("contact",contact);
