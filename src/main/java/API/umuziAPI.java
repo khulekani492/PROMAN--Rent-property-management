@@ -16,6 +16,7 @@ import api_login.Validate_login;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import jakarta.servlet.http.HttpSession;
+import model.database.CRUD.Property_Status;
 import model.database.CRUD.Tenant;
 import model.database.UPDATES.Change_Unit;
 
@@ -132,13 +133,7 @@ public class umuziAPI {
             Integer tenant_ID = ctx.sessionAttribute("TenantID");
             String tenant_unit = ctx.sessionAttribute("Tenant_unit");
             String amount = ctx.formParam("rent_amount");
-            ctx.sessionAttribute("current_units_property",null);
             //Error handling
-            Integer money = Integer.parseInt(amount);
-
-
-
-
             String unitN = ctx.formParam("unit_number");
             System.out.println("Unit Number : " + unitN );
             Integer Unit_updated ;
@@ -153,12 +148,15 @@ public class umuziAPI {
 
             String tenant_property = ctx.sessionAttribute("current_property");
 
+            Integer landlordId = ctx.sessionAttribute("landlordID");
+
             Change_Unit updates_property = new Change_Unit(tenant_name,Unit_updated,tenant_property,tenant_ID);
             //Update amount .
             try{
                 updates_property.setTenant_property(tenant_property);
                 updates_property.setTenant_unit(Unit_updated);
                 updates_property.update_unit_rent(amount);
+                ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(tenant_property,landlordId));
                 ctx.redirect("/dashboard");
             } catch (RuntimeException e){
                 System.out.println(e.getMessage());
@@ -222,9 +220,9 @@ public class umuziAPI {
             if(check_Memory == null){
                 check_Memory = "Yes";
             }
+
             System.out.println("property_name "+ property_name);
             ctx.sessionAttribute("property_unit", total_n_units);
-
             model.put("user_name",user_name);
             model.put("unit_add", String.valueOf(total_n_units));
             model.put("user_chosen_theme",theme_color);
