@@ -9,7 +9,7 @@ public class Save_unit {
     public Handler save_property_unit(){
         return  ctx -> {
 
-            String getUsername = ctx.sessionAttribute("user_name");
+            String getUsername = ctx.sessionAttribute("loginUsername");
             String themeColor = ctx.sessionAttribute("theme_color");
             String  property_name = ctx.sessionAttribute("current_property" );
             HashMap<String,String> model = new HashMap<>();
