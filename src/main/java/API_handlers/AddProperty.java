@@ -2,12 +2,11 @@ package API_handlers;
 
 import io.javalin.http.Handler;
 import model.database.CRUD.landlord;
+import model.database.CRUD.propertyNames;
 import model.database.residence;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class AddProperty {
     public Handler addproperty() {
@@ -27,8 +26,8 @@ public class AddProperty {
                 String user_email = ctx.sessionAttribute("email");
 
                 //DE (Data Extraction) get landlordId from the database
-                landlord getUserID = new landlord();
-                Integer landlordId = getUserID.landlordId(user_email);
+               // landlord getUserID = new landlord();
+                Integer landlordId = ctx.sessionAttribute("landlordID");
 
                 //DE create rows of the property units for the landlord
                 residence create_rooms = new residence();
@@ -46,6 +45,13 @@ public class AddProperty {
                     }
 
                 }
+                propertyNames default_properties = new propertyNames();
+                Set<String> landlord_properties = default_properties.fetchAllproperty(landlordId);
+                ctx.sessionAttribute("allProperties", landlord_properties);
+                ArrayList<String> default_property = new ArrayList<>(landlord_properties);
+                System.out.println(ctx.attributeMap());
+
+
                 Map<String, Object> model = new HashMap<>();
                // System.out.println("SET total units to updated " + total_n_units);
                 System.out.println("SET property_name to  updated " + property_name);
