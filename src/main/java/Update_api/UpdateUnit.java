@@ -2,6 +2,7 @@ package Update_api;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import model.database.CRUD.Property_Status;
 import model.database.CRUD.Tenant;
 import model.database.CRUD.landlord;
 import model.database.UPDATES.Change_Unit;
@@ -37,14 +38,15 @@ public class UpdateUnit{
         return ctx -> {
             String new_unit = ctx.formParam("unit_number");
             String amount = ctx.formParam("rent_amount");
-            System.out.println("unit number " + new_unit);
+            System.out.println("U  unit number " + new_unit);
 
             Integer Unit_updated = Integer.parseInt(new_unit);
             String propertyName = ctx.sessionAttribute("current_property");
             System.out.println("PROPERTY NAME");
             String email = ctx.sessionAttribute("email");
             System.out.println("Email : " + email);
-            ctx.sessionAttribute("current_units_property",null);
+            //ctx.sessionAttribute("current_units_property",null);
+
             //Get TenantId
             landlord getUserID = new landlord();
             Integer landlordId = getUserID.landlordId(email);
@@ -59,6 +61,7 @@ public class UpdateUnit{
             create_rooms.setProperty_unit(Unit_updated);
             try {
                 create_rooms.New_unit();
+                ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(propertyName,landlordId));
                 ctx.sessionAttribute("property_unit",Unit_updated);
                // ctx.redirect("/add_tenant");
 
