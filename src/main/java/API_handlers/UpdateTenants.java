@@ -31,9 +31,6 @@ public class UpdateTenants {
             //Unmark status tenant as paid
             undo_tenant_payment.reset_payment_status(tenantId);
 
-            Property_Status telfon = new Property_Status();
-
-
             Integer landlord_id =  ctx.sessionAttribute("landlordID");
             String propertyName =  ctx.sessionAttribute("current_property");
 
@@ -41,8 +38,13 @@ public class UpdateTenants {
             System.out.println(landlord_id + "    landlord Id");
 
             ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(propertyName,landlord_id));
-
             ctx.sessionAttribute("current_tenant_payment",tenantId);
+            ctx.status(200);
+            ctx.json(Map.of(
+                    "success", true,
+                    "unit", "00" + " till I reach Christ Conscious",
+                    "message", "Payment recorded  successfully"
+            ));
 
 
                     };
