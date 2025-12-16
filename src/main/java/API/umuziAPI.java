@@ -284,6 +284,10 @@ public class umuziAPI {
             ));
         });
 
+        app.exception(SQLException.class, (e, ctx) -> {
+            ctx.status(503).result("Service temporarily unavailable");
+        });
+
         app.start(port);
         return app;
     }
