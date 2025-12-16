@@ -20,6 +20,7 @@ public class Validate_login {
         return ctx -> {
             String user_email = ctx.formParam("email");
             String password = ctx.formParam("password");
+            ctx.sessionAttribute("current_units_property",null);
             System.out.println("Password : " + password);
 
             Get_password hashed = new Get_password(user_email);
