@@ -19,7 +19,8 @@ public class Get_properties {
 
             String property_name;
             HashMap<Integer, ArrayList<String>>  fetch_all_memory = ctx.sessionAttribute("current_units_property") ;
-            String current_propertyINSession =  ctx.sessionAttribute("current_property");;
+            String current_propertyINSession =  ctx.sessionAttribute("current_property");
+            ctx.sessionAttribute("current_units_property",null);
             landlord user_id = new landlord();
             propertyNames default_properties = new propertyNames();
 
