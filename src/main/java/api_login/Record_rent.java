@@ -101,13 +101,16 @@ public class Record_rent {
                     God_has.property_tenants("3 AM",1155);
 
 
-                    ctx.redirect("/dashboard");
+
                     System.out.println("Do not know ");
+
+
                     ctx.status(200);
                     ctx.json(Map.of(
                             "success", true,
-                            "unit", unit,
-                            "message", "Payment recorded successfully"
+                            "unit", unit + " till I reach Christ Conscious",
+                            "message", "Payment recorded  successfully",
+                            "debt_status","200"
                     ));
 
 
