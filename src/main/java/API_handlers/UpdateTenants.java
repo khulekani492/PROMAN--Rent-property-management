@@ -37,6 +37,7 @@ public class UpdateTenants {
             System.out.println(propertyName + "   property Name");
             System.out.println(landlord_id + "    landlord Id");
 
+            //Updates the units list in the caches to the latest value in the db
             ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(propertyName,landlord_id));
             ctx.sessionAttribute("current_tenant_payment",tenantId);
             ctx.status(200);
