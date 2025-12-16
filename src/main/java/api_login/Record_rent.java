@@ -76,6 +76,7 @@ public class Record_rent {
                 String property_name = tenant_property.tenant_property_name(tenantId);
                 Integer property_rent = tenant_property.tenant_property_rent(tenantId);
 
+                System.out.println("I got say : " + property_name);
                 ctx.sessionAttribute("check_tenant_id", tenantId);
                 ctx.sessionAttribute("propertyName", property_name);
                 ctx.sessionAttribute("propertyRent", property_rent);
@@ -94,21 +95,13 @@ public class Record_rent {
                     _payment.setTenant_Id(tenantId);
                     _payment.record_payment();
 
-               //      Success response
-                    Thread make_updates = new Thread(new Dashboard());
-                    make_updates.start();
-                    Property_Status God_has = new Property_Status();
-                    God_has.property_tenants("3 AM",1155);
-
-
-
-                    System.out.println("Do not know ");
-
-
+                    Integer landlord_id =  ctx.sessionAttribute("landlordID");
+               // Success response
                     ctx.status(200);
+                    ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(property_name,landlord_id));
                     ctx.json(Map.of(
                             "success", true,
-                            "unit", unit + " till I reach Christ Conscious",
+                            "unit", unit,
                             "message", "Payment recorded  successfully",
                             "debt_status","200"
                     ));

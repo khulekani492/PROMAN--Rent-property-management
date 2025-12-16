@@ -74,7 +74,6 @@ public class Get_properties {
             // Round up to nearest integer
             int occupancyRate  = (int) Math.ceil(roundedOccupancy);
 
-
             //Vacant_rooms
             Integer vacant =  total_units  - occupied_units;
             //Expected profit based off the number of units occupied
