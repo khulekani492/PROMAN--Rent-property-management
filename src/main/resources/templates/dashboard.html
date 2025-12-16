@@ -3490,92 +3490,216 @@ header {
         // FIXED: ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
         // =========================================================================
 
-        const paymentForm = document.getElementById('paymentForm');
-        if (paymentForm) {
-            paymentForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                displayErrorBanner(null, true);
+// =========================================================================
+// FIXED: ASYNCHRONOUS PAYMENT SUBMISSION HANDLER WITH DEBT STATUS UPDATE
+// =========================================================================
 
-                // Show loading on modal submit button
-                showModalLoading();
+const paymentForm = document.getElementById('paymentForm');
+if (paymentForm) {
+    paymentForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        displayErrorBanner(null, true);
 
-                const formData = new FormData(paymentForm);
-                const tenantName = formData.get('id');
-                const unit = formData.get('unit');
-                const tenantContact = formData.get('tenant_contact');
-                const actionType = formData.get('action_type');
+        // Show loading on modal submit button
+        showModalLoading();
 
-                console.log('Payment form submitted:', {
-                    tenantName,
-                    unit,
-                    tenantContact,
-                    actionType
-                });
+        const formData = new FormData(paymentForm);
+        const tenantName = formData.get('id');
+        const unit = formData.get('unit');
+        const tenantContact = formData.get('tenant_contact');
+        const actionType = formData.get('action_type');
 
-                let url = "";
+        console.log('Payment form submitted:', {
+            tenantName,
+            unit,
+            tenantContact,
+            actionType
+        });
 
-                // Include tenantContact in both URLs
-                if (actionType === 'unmark') {
-                    url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
-                } else {
-                    url = `http://localhost:7070/payment_status/${tenantName}/${unit}/${tenantContact}`;
-                }
+        let url = "";
 
-                try {
-                    const response = await fetch(url, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: new URLSearchParams(formData)
-                    });
-
-                    // Hide loading after response
-                    hideModalLoading();
-
-                    if (!response.ok) {
-                        const errorMessage = await response.text();
-                        displayErrorBanner(errorMessage || "Something went wrong.");
-                        return;
-                    }
-
-                    // SUCCESS
-                    const rowIndicator = document.querySelector(
-                        `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
-                    );
-
-                    if (rowIndicator) {
-                        if (actionType === 'unmark') {
-                            rowIndicator.textContent = "✗";
-                            rowIndicator.classList.remove("bg-green-100", "text-green-800");
-                            rowIndicator.classList.add("bg-red-100", "text-red-800");
-                        } else {
-                            rowIndicator.textContent = "✓";
-                            rowIndicator.classList.remove("bg-red-100", "text-red-800");
-                            rowIndicator.classList.add("bg-green-100", "text-green-800");
-                        }
-                    }
-
-                    flashMessage(
-                        actionType === 'unmark'
-                        ? `Payment removed for Unit ${unit}.`
-                        : `Payment recorded for Unit ${unit}.`,
-                        "green"
-                    );
-
-                    closePaymentModal();
-
-                    // Re-initialize table to reflect changes
-                    setTimeout(() => {
-                        initializeTablePagination();
-                    }, 500);
-
-                } catch (error) {
-                    console.error("AJAX Error:", error);
-                    displayErrorBanner("Network error. Check your connection.");
-                    hideModalLoading();
-                }
-            });
+        // Include tenantContact in both URLs
+        if (actionType === 'unmark') {
+            url = `http://localhost:7070/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
+        } else {
+            url = `http://localhost:7070/payment_status/${tenantName}/${unit}/${tenantContact}`;
         }
 
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(formData)
+            });
+
+            // Hide loading after response
+            hideModalLoading();
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                displayErrorBanner(errorMessage || "Something went wrong.");
+                return;
+            }
+
+            // Parse JSON response
+            let data;
+            try {
+                data = await response.json();
+                console.log('Server response:', data);
+            } catch (jsonError) {
+                console.error('JSON parsing error:', jsonError);
+                displayErrorBanner('Invalid server response.');
+                return;
+            }
+
+            // Check if we have a valid response
+            if (!data) {
+                displayErrorBanner('No data received from server.');
+                return;
+            }
+
+            // Update payment indicator
+            const rowIndicator = document.querySelector(
+                `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
+            );
+
+            if (rowIndicator) {
+                if (actionType === 'unmark') {
+                    rowIndicator.textContent = "✗";
+                    rowIndicator.classList.remove("bg-green-100", "text-green-800");
+                    rowIndicator.classList.add("bg-red-100", "text-red-800");
+                } else {
+                    rowIndicator.textContent = "✓";
+                    rowIndicator.classList.remove("bg-red-100", "text-red-800");
+                    rowIndicator.classList.add("bg-green-100", "text-green-800");
+                }
+            }
+
+            // ============================================
+            // NEW: UPDATE DEBT STATUS FROM SERVER RESPONSE
+            // ============================================
+            if (data.debt_status !== null && data.debt_status !== undefined) {
+                console.log('Updating debt display with value:', data.debt_status);
+                updateDebtDisplay(unit, data.debt_status);
+            }
+
+            flashMessage(
+                actionType === 'unmark'
+                ? `Payment removed for Unit ${unit}.`
+                : `Payment recorded for Unit ${unit}.`,
+                "green"
+            );
+
+            closePaymentModal();
+
+            // Re-initialize table to reflect changes
+            setTimeout(() => {
+                initializeTablePagination();
+            }, 500);
+
+        } catch (error) {
+            console.error("AJAX Error:", error);
+            displayErrorBanner("Network error. Check your connection.");
+            hideModalLoading();
+        }
+    });
+}
+
+// =========================================================================
+// FIXED: Update Debt Status Function - CORRECTED VERSION
+// =========================================================================
+
+function updateDebtDisplay(unit, debtAmount) {
+    console.log('🔄 updateDebtDisplay called with:', {
+        unit,
+        debtAmount,
+        type: typeof debtAmount
+    });
+
+    // Format the debt amount
+    const debtAmountNum = parseFloat(debtAmount);
+    const formattedDebt = formatCurrency(debtAmount);
+
+    // ============================================
+    // FIXED: Find the row using the indicator's data-unit
+    // ============================================
+
+    // Find the indicator first, then its parent row
+    const indicator = document.querySelector(`.indicator[data-unit="${unit}"]`);
+
+    if (!indicator) {
+        console.error('❌ Indicator not found for unit:', unit);
+        console.log('Available indicators:',
+            Array.from(document.querySelectorAll('.indicator[data-unit]'))
+                .map(el => ({ unit: el.dataset.unit, id: el.dataset.id }))
+        );
+        return;
+    }
+
+    // Find the parent row
+    const row = indicator.closest('.tenant-row');
+
+    if (!row) {
+        console.error('❌ Row not found for indicator:', indicator);
+        return;
+    }
+
+    console.log('✅ Found row via indicator:', row);
+
+    // ============================================
+    // Update the debt element
+    // ============================================
+    const debtElement = row.querySelector('.tenant-contact.status-badge');
+
+    if (!debtElement) {
+        console.error('❌ Debt element not found in row');
+        return;
+    }
+
+    console.log('✅ Found debt element:', debtElement);
+
+    // UPDATE THE data-tenant-contact ATTRIBUTE with the debt value
+    debtElement.setAttribute('data-tenant-contact', debtAmount);
+    console.log('✅ Set data-tenant-contact to:', debtAmount);
+
+    // Update the text content based on the debt amount
+    if (debtAmountNum > 0) {
+        debtElement.innerHTML = `
+            <i class="fas fa-phone mr-1"></i>
+            Debt: ${formattedDebt}
+        `;
+        debtElement.classList.remove('status-active');
+        debtElement.classList.add('status-vacant');
+        debtElement.title = `Outstanding debt: ${formattedDebt}`;
+    } else {
+        debtElement.innerHTML = `
+            <i class="fas fa-phone mr-1"></i>
+            No Debt
+        `;
+        debtElement.classList.remove('status-vacant');
+        debtElement.classList.add('status-active');
+        debtElement.title = 'No outstanding debt';
+    }
+
+    console.log('✅ Updated debt display:', debtElement.innerHTML);
+}
+
+// =========================================================================
+// Helper function for currency formatting
+// =========================================================================
+
+function formatCurrency(amount) {
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount)) {
+        console.warn('⚠️ Cannot format amount:', amount);
+        return 'R 0.00';
+    }
+
+    return 'R ' + numAmount.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
         // =========================================================================
         // EVENT LISTENERS FOR TABLE INTERACTIONS
         // =========================================================================
