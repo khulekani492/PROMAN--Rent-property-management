@@ -1824,16 +1824,6 @@ body.dark .nav-btn:hover {
     position: relative;
 }
 
-.units-table th:nth-child(6)::before,
-.units-table td:nth-child(6)::before {
-    content: '💰';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.3;
-    font-size: 1.5rem;
-}
 
 body.dark .units-table th:nth-child(6),
 body.dark .units-table td:nth-child(6) {
@@ -2559,9 +2549,14 @@ header {
                                         Tenant
                                     </th>
                                     <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
+                                        <i class="fas fa-credit-card mr-2"></i>
+                                        Payment
+                                    </th>
+                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
                                         <i class="fas fa-home mr-2"></i>
                                         Unit
                                     </th>
+
                                     <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
                                         <i class="fas fa-circle mr-2"></i>
                                         Status
@@ -2571,11 +2566,8 @@ header {
                                         Rent Day
                                     </th>
                                     <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
-                                        <i class="fas fa-clock mr-2"></i>
+<!--                                        <i class="fas fa-clock mr-2"></i>-->
                                         Overdue
-                                    </th>
-                                    <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
-                                        Payment
                                     </th>
                                     <th class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap text-sm md:text-base">
                                         <i class="fas fa-cog mr-2"></i>
@@ -2604,6 +2596,20 @@ header {
                                             </div>
                                         </div>
                                     </td>
+                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap payment-cell">
+    <span th:if="${entry.value[2]} == 'yes'"
+          th:with="isPaid=${entry.value[6]}"
+          th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+          class="indicator open-pay cursor-pointer text-sm md:text-base"
+          th:data-unit="${entry.value[0]}"
+          th:data-rent="${entry.value[1]}"
+          th:data-id="${entry.value[3]}"
+          th:data-property-name="${propertyName}"
+          th:data-tenant-contact="${entry.value[8]}"
+          th:text="${isPaid} ? '✓' : '✗'">✗</span>
+                                        <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800 text-sm md:text-base">
+                                        </span>
+                                    </td>
                                     <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap unit-number-cell text-sm md:text-base" th:text="${entry.value[0]}">Unit </td>
                                     <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap">
                                         <span th:if="${entry.value[2]} == 'yes'" class="status-badge status-active text-xs">
@@ -2617,21 +2623,21 @@ header {
                                     </td>
                                     <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap unit-tenant text-sm md:text-base" th:text="${entry.value[4]}">Rent Day</td>
                                     <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap unit-tenant text-sm md:text-base" th:text="${entry.value[5]}">Overdue Days</td>
-                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap payment-cell">
-    <span th:if="${entry.value[2]} == 'yes'"
-          th:with="isPaid=${entry.value[6]}"
-          th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-          class="indicator open-pay cursor-pointer text-sm md:text-base"
-          th:data-unit="${entry.value[0]}"
-          th:data-rent="${entry.value[1]}"
-          th:data-id="${entry.value[3]}"
-          th:data-property-name="${propertyName}"
-          th:data-tenant-contact="${entry.value[8]}"
-          th:text="${isPaid} ? '✓' : '✗'">✗</span>
-                                        <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800 text-sm md:text-base">
+<!--                                    <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap payment-cell">-->
+<!--    <span th:if="${entry.value[2]} == 'yes'"-->
+<!--          th:with="isPaid=${entry.value[6]}"-->
+<!--          th:classappend="${isPaid} ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"-->
+<!--          class="indicator open-pay cursor-pointer text-sm md:text-base"-->
+<!--          th:data-unit="${entry.value[0]}"-->
+<!--          th:data-rent="${entry.value[1]}"-->
+<!--          th:data-id="${entry.value[3]}"-->
+<!--          th:data-property-name="${propertyName}"-->
+<!--          th:data-tenant-contact="${entry.value[8]}"-->
+<!--          th:text="${isPaid} ? '✓' : '✗'">✗</span>-->
+<!--                                        <span th:if="${entry.value[2]} == 'no'" class="indicator bg-red-100 text-red-800 text-sm md:text-base">-->
 
-                                        </span>
-                                    </td>
+<!--                                        </span>-->
+<!--                                    </td>-->
                                     <td class="px-3 py-2 md:px-4 md:py-3 whitespace-nowrap">
                                         <a th:href="@{/tenant_profile/{id}/{unit}/{propertyRent}/{contact}(id=${entry.value[3]},unit=${entry.value[0]},propertyRent=${entry.value[1]},
                                         contact=${entry.value[8]})}" class="edit-btn">
@@ -2673,7 +2679,7 @@ header {
                         <div class="quick-nav-buttons mb-2">
                             <a href="http://localhost:7070/add_tenant" class="nav-btn">
                                 <i class="fas fa-user-plus"></i>
-                                <span>ADD NEW TENANT</span>
+                                <span>ADD TENANT</span>
                             </a>
                         </div>
                         <!-- NEW: Pagination Controls -->
