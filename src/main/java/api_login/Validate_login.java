@@ -22,7 +22,6 @@ public class Validate_login {
             String password = ctx.formParam("password");
             System.out.println("Password : " + password);
 
-
             Get_password hashed = new Get_password(user_email);
             if("NO USER FOUND".equals(hashed.compare())){
                 ctx.sessionAttribute("login_email",user_email);
@@ -56,15 +55,20 @@ public class Validate_login {
                     ctx.sessionAttribute("landlordID", landlord_id);
                     ctx.sessionAttribute("loginUsername",login_user_name);
 
-                    Set<String> landlord_properties = default_properties.fetchAllproperty(landlord_id);
-                    ctx.sessionAttribute("allProperties", landlord_properties);
-                    ArrayList<String> default_property = new ArrayList<>(landlord_properties);
-                    Integer  total_properties = default_property.size();
+
                     String  first_property_name;
                     try {
-                        first_property_name = default_property.getFirst();;
-                        //ctx.sessionAttribute("current_property",default_property);
+
+                        Set<String> landlord_properties = default_properties.fetchAllproperty(landlord_id);
+                        ctx.sessionAttribute("allProperties", landlord_properties);
+                        ArrayList<String> default_property = new ArrayList<>(landlord_properties);
+                        Integer  total_properties = default_property.size();
+                        first_property_name = default_property.getFirst();
                         System.out.println("Current property in memory : " + first_property_name);
+                        //ctx.sessionAttribute("current_property",default_property);
+
+
+
                     }catch (RuntimeException e) {
                         System.out.println("RUNNNNNNNNNNN");
                         Map<String, Object> data = new HashMap<>();
@@ -82,7 +86,7 @@ public class Validate_login {
                         ctx.sessionAttribute("property_unit",0) ;
 
                         ctx.sessionAttribute("property_unit",0);
-                        model.put("total_properties", String.valueOf(total_properties));
+                        model.put("total_properties", "0");
                         model.put("occupied_units", "0");
 
                         model2.put("occupancyRate", "0");
@@ -91,7 +95,7 @@ public class Validate_login {
 
                         ctx.sessionAttribute("add_property_profile", "No");
                         model1.put("no_units", "No Units. Press +Add New Unit to add tenants ");
-                        model1.put("names", landlord_properties); // Using landlord_unique_id to fetch all properties, accessed with user_emails
+                        model1.put("names", "0"); // Using landlord_unique_id to fetch all properties, accessed with user_emails
                         model1.put("name", "No Properties");
                         model1.put("user_chosen_theme", themeColor);
                         model1.put("no_properties",pro);
