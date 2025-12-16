@@ -44,7 +44,7 @@ public class UpdateUnit{
             System.out.println("PROPERTY NAME");
             String email = ctx.sessionAttribute("email");
             System.out.println("Email : " + email);
-
+            ctx.sessionAttribute("current_units_property",null);
             //Get TenantId
             landlord getUserID = new landlord();
             Integer landlordId = getUserID.landlordId(email);
