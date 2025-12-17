@@ -1,0 +1,598 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Page Not Found — ProMan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* Light theme variables - DEFAULT */
+            --bg: #f5f6f7;
+            --surface: #ffffff;
+            --muted: #eef0f2;
+            --text: #2f3337;
+            --muted-text: #6b7378;
+            --accent: #D4AF37;
+            --accent-dark: #b8892a;
+            --glass: rgba(255,255,255,0.6);
+        }
+
+        /* Dark theme variables - ONLY when .dark class is added */
+        .dark {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --muted: #334155;
+            --text: #f1f5f9;
+            --muted-text: #94a3b8;
+            --accent: #F4B342;
+            --accent-dark: #E0A028;
+            --glass: rgba(30, 41, 59, 0.6);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text-accent { color: var(--accent) !important; }
+        .bg-accent { background-color: var(--accent) !important; }
+        .bg-accent-dark { background-color: var(--accent-dark) !important; }
+        .bg-surface { background-color: var(--surface) !important; }
+        .bg-muted { background-color: var(--muted) !important; }
+        .text-muted { color: var(--muted-text) !important; }
+
+        .hero-surface {
+            background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.9));
+            box-shadow: 0 6px 20px rgba(31,41,55,0.06);
+        }
+        .dark .hero-surface {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9));
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 404 Specific Styles */
+        .error-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .error-number {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .dark .error-number {
+            text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .error-illustration {
+            max-width: 300px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--muted);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+
+        .dark .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(244, 179, 66, 0.2);
+        }
+
+        .search-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--accent);
+            color: #2b1f00;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dark .search-button {
+            color: #1a1400;
+        }
+
+        .search-button:hover {
+            background: var(--accent-dark);
+            color: white;
+        }
+
+        .back-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: #2b1f00;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dark .back-home-btn {
+            color: #1a1400;
+        }
+
+        .back-home-btn:hover {
+            background: var(--accent-dark);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .login-btn{
+            color: var(--text);
+            border-color: var(--muted);
+            background: var(--surface);
+        }
+        .login-btn:hover{
+            background: var(--muted);
+        }
+        .signup-btn{
+            background: var(--accent);
+            color: #2b1f00;
+        }
+        .dark .signup-btn {
+            color: #1a1400;
+        }
+        .signup-btn:hover{
+            background: var(--accent-dark);
+            color: white;
+        }
+
+        /* Mobile Menu Button Styles */
+        #mobile-menu-button {
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #mobile-menu-button:hover {
+            background: var(--muted);
+        }
+
+        .mobile-menu-icon {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 20px;
+        }
+
+        .mobile-menu-icon span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--text);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .brand-text {
+            font-weight: 900;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Hamburger to X animation */
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Header actions container */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Show mobile menu button on mobile/tablet, hide desktop nav */
+        @media (max-width: 1024px) {
+            #mobile-menu-button {
+                display: flex;
+            }
+
+            #nav-links {
+                display: none;
+            }
+        }
+
+        /* Mobile menu styling */
+        #mobile-menu {
+            background: var(--surface);
+            border-top: 1px solid var(--muted);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dark #mobile-menu {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        @media (min-width: 1025px) {
+            #mobile-menu-button {
+                display: none;
+            }
+        }
+
+        /* Animation for 404 page */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="antialiased" th:classappend="${user_chosen_theme == 'dark'} ? 'dark' : ''">
+<!-- Store Thymeleaf variable in JavaScript -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
+    console.log("Server theme from Thymeleaf:", serverTheme);
+    /*]]>*/
+</script>
+
+<header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
+    <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
+        <div class="flex items-center gap-3">
+            <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
+                 class="h-28 md:h-32 lg:h-36 w-auto object-contain">
+            <div>
+                <div>
+                    <h1 class="brand-text">PROMAN</h1>
+                    <div class="text-xs text-muted -mt-1">Property management simplified</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Nav - will be hidden on mobile -->
+        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
+            <a href="http://localhost:7070/login"
+               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+                Log In
+            </a>
+            <a href="http://localhost:7070/landlord_sign_up"
+               class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                Sign Up
+            </a>
+        </nav>
+
+        <!-- Header Actions (Mobile Menu Button) -->
+        <div class="header-actions">
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
+                <div class="mobile-menu-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
+        <a href="http://localhost:7070/login"
+           class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
+            Log In
+        </a>
+        <a href="http://localhost:7070/landlord_sign_up"
+           class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+            Sign Up
+        </a>
+    </div>
+</header>
+
+<main class="error-container">
+    <div class="max-w-6xl px-6 py-12 mx-auto text-center">
+        <!-- 404 Number with Animation -->
+        <div class="mb-8">
+            <div class="error-number floating">404</div>
+        </div>
+
+        <!-- Error Message -->
+        <h1 class="text-3xl md:text-4xl font-bold text-[var(--text)] mb-4">
+            Property Not Found
+        </h1>
+
+        <p class="text-xl text-muted max-w-2xl mx-auto mb-10">
+            The page you're looking for seems to have moved or doesn't exist.
+            Don't worry, we can help you get back on track with your property management.
+        </p>
+
+        <!-- Illustration/Graphic -->
+        <div class="error-illustration pulse">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150" fill="none" class="w-full h-auto">
+                <!-- House outline -->
+                <path d="M100 30 L180 70 L180 130 L20 130 L20 70 Z" stroke="var(--accent)" stroke-width="4" fill="var(--surface)" stroke-linejoin="round"/>
+                <!-- Roof -->
+                <path d="M100 30 L20 70 L180 70 Z" fill="var(--accent-dark)" opacity="0.7"/>
+                <!-- Door -->
+                <rect x="85" y="90" width="30" height="40" rx="2" fill="var(--accent)"/>
+                <!-- Window -->
+                <rect x="40" y="80" width="30" height="30" rx="2" stroke="var(--accent)" stroke-width="2" fill="var(--surface)"/>
+                <rect x="130" y="80" width="30" height="30" rx="2" stroke="var(--accent)" stroke-width="2" fill="var(--surface)"/>
+                <!-- Search magnifying glass -->
+                <circle cx="165" cy="45" r="20" stroke="var(--accent)" stroke-width="3" fill="none" stroke-dasharray="4 4"/>
+                <path d="M175 55 L190 70" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+                <!-- Question mark -->
+                <circle cx="50" cy="45" r="20" fill="var(--surface)" stroke="var(--accent)" stroke-width="3"/>
+                <text x="50" y="55" text-anchor="middle" fill="var(--accent)" font-size="24" font-weight="bold">?</text>
+            </svg>
+        </div>
+
+        <!-- Suggested Actions -->
+        <div class="max-w-3xl mx-auto mb-12">
+            <h2 class="text-2xl font-bold text-[var(--text)] mb-6">
+                Here's what you can do:
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-surface p-6 rounded-xl shadow-lg border-t-4 border-[rgba(212,175,55,0.26)]">
+                    <div class="text-3xl mb-4">🏠</div>
+                    <h3 class="font-bold text-[var(--text)] mb-2">Go to Homepage</h3>
+                    <p class="text-sm text-muted mb-4">Return to the main dashboard</p>
+                    <a href="/" class="back-home-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                        Home
+                    </a>
+                </div>
+
+                <div class="bg-surface p-6 rounded-xl shadow-lg border-t-4 border-[rgba(212,175,55,0.26)]">
+                    <div class="text-3xl mb-4">📊</div>
+                    <h3 class="font-bold text-[var(--text)] mb-2">View Properties</h3>
+                    <p class="text-sm text-muted mb-4">Access your property dashboard</p>
+                    <a href="http://localhost:7070/dashboard" class="back-home-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                        </svg>
+                        Dashboard
+                    </a>
+                </div>
+
+                <div class="bg-surface p-6 rounded-xl shadow-lg border-t-4 border-[rgba(212,175,55,0.26)]">
+                    <div class="text-3xl mb-4">👤</div>
+                    <h3 class="font-bold text-[var(--text)] mb-2">Get Support</h3>
+                    <p class="text-sm text-muted mb-4">Contact our support team</p>
+                    <a href="mailto:support@proman.com" class="back-home-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M2.94 6.412A2 2 0 002 8.108V16a2 2 0 002 2h12a2 2 0 002-2V8.108a2 2 0 00-.94-1.696l-6-3.75a2 2 0 00-2.12 0l-6 3.75zm2.615 2.423a1 1 0 10-1.11 1.664l5 3.333a1 1 0 001.11 0l5-3.333a1 1 0 00-1.11-1.664L10 11.798 5.555 8.835z" clip-rule="evenodd" />
+                        </svg>
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-box mb-10">
+            <p class="text-muted mb-4">Or try searching for what you need:</p>
+            <div class="relative">
+                <input type="text" placeholder="Search properties, tenants, or features..." class="search-input">
+                <button class="search-button">Search</button>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="mt-10">
+            <p class="text-muted mb-4">Quick links:</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="http://localhost:7070/login" class="text-accent hover:underline font-medium">Login</a>
+                <a href="http://localhost:7070/landlord_sign_up" class="text-accent hover:underline font-medium">Sign Up</a>
+                <a href="#about-proman" class="text-accent hover:underline font-medium">About ProMan</a>
+                <a href="#features" class="text-accent hover:underline font-medium">Features</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- About Section -->
+<section id="about-proman" class="py-20 bg-muted">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold text-[var(--text)] sm:text-4xl">
+                About <span class="text-accent">ProMan</span>
+            </h2>
+            <p class="mt-4 text-lg text-muted max-w-2xl mx-auto">
+                A property management solution for property owners to track tenant payments,
+                monitor overdue dates and record tenant debts. All this information
+                available on your own personalized profile.
+            </p>
+        </div>
+
+        <div class="text-center">
+            <a href="/" class="back-home-btn mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Return to ProMan Homepage
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="mt-auto py-8 bg-surface">
+    <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
+        &copy; 2025 ProMan Property Management Solutions.
+        <span class="block mt-2">Page Not Found - Error 404</span>
+    </div>
+</footer>
+
+<script>
+    // =========================================================================
+    // MOBILE MENU FUNCTIONALITY
+    // =========================================================================
+
+    // Mobile Menu Toggle Functionality
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
+
+            // Toggle body overflow to prevent scrolling when menu is open
+            if (!isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!mobileMenu.classList.contains('hidden') &&
+                !menuButton.contains(event.target) &&
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // =========================================================================
+    // SEARCH FUNCTIONALITY
+    // =========================================================================
+    const searchInput = document.querySelector('.search-input');
+    const searchButton = document.querySelector('.search-button');
+
+    if (searchButton) {
+        searchButton.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                // In a real implementation, this would redirect to search results
+                alert(`Searching for: "${query}"\n\nIn a real application, this would redirect to search results.`);
+                // Example: window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            } else {
+                searchInput.focus();
+            }
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchButton.click();
+            }
+        });
+    }
+
+    // =========================================================================
+    // PAGE INITIALIZATION
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Use server theme as primary source
+        const serverTheme = window.serverTheme || 'light';
+        localStorage.setItem('user_chosen_theme', serverTheme);
+
+        // Initialize theme based on localStorage
+        const savedDarkMode = localStorage.getItem('user_chosen_theme');
+
+        // Check if user previously chose dark mode
+        if (savedDarkMode === 'dark') {
+            // User chose dark mode before
+            document.body.classList.add('dark');
+        } else {
+            // Default: LIGHT MODE (no .dark class)
+            document.body.classList.remove('dark');
+            // Ensure light mode is saved as preference
+            localStorage.setItem('user_chosen_theme', 'light');
+        }
+    });
+</script>
+
+</body>
+</html>
