@@ -1,6 +1,7 @@
 package API;
 
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,9 +79,18 @@ public class umuziAPI {
 
             String tenant_name = ctx.pathParam("id");
             ctx.sessionAttribute("Tenant_name",tenant_name);
+
+            String default_name = ctx.sessionAttribute("Tenant_name");
+            ctx.sessionAttribute("original_pathValue_name",default_name);
             String tenant_unit = ctx.pathParam("unit");
             ctx.sessionAttribute("Tenant_unit",tenant_unit);
+            String default_unit = ctx.sessionAttribute("Tenant_unit");
+            ctx.sessionAttribute("original_pathValue_unit",default_unit);
             String property_rent = ctx.pathParam("propertyRent");
+             ctx.sessionAttribute("property_rent",property_rent);
+            String default_rent = ctx.sessionAttribute("property_rent");
+            ctx.sessionAttribute("original_pathValue_rent",default_rent);
+
             String tenant_property = ctx.sessionAttribute("current_property");
 
 
@@ -95,8 +105,20 @@ public class umuziAPI {
             /// System.out.println("Tenant_name " + tenant_name);
 
             Tenant tenant = new Tenant();
+
+            //Error null
             Integer tenant_id = tenant.tenant_ID(tenant_name,tenant_contact);
-            ctx.sessionAttribute("TenantID",tenant_id);
+            if (tenant_id == null) {
+                ctx.render("templates/not_found.html");
+                return;
+                }
+
+            else {
+                ctx.sessionAttribute("TenantID",tenant_id);
+                }
+
+
+
 
             ArrayList<String> next_of_Kin_Information = tenant.tenant_next_of_kin(tenant_id) ;
             String next_kin = next_of_Kin_Information.getFirst();
@@ -240,30 +262,39 @@ public class umuziAPI {
        app.post("/update_tenant",ctx -> {
            String action = ctx.formParam("action");
 
-
            if(action.equals("save") ){
-               System.out.println("Save Logic : "  );
-               UpdateUnit update_tenant = new UpdateUnit();
-               System.out.println(ctx.formParamMap());
-               update_tenant.change_tenant();
-               String tenant_name = ctx.formParam("tenant_name");
-               ctx.sessionAttribute("tenant_name",tenant_name);
+               System.out.println("New updates for existing tenant : user action Save "  );
+               //Updates on tenant information --> Tenant name, Tenant_contact  OR  Rent_day Gets Updated
 
                String propertyUnit = ctx.formParam("unit_number");
-               ctx.sessionAttribute("tenant_unit",Integer.parseInt(propertyUnit));
+               String propertyName = ctx.formParam("property_name");
 
-               String propertyName = ctx.sessionAttribute("property_name");
-               ctx.sessionAttribute("property_name",propertyName);
-               String contact =  ctx.sessionAttribute("kin_contact");
-               System.out.println("kin number " + contact);
+               String tenant_rent_day = ctx.formParam("rent_day");
+               String tenant_name = ctx.formParam("tenant_name");
+               String tenant_contact =  ctx.formParam("tenant_contact");
+               String kin_name = ctx.formParam("kin_name");
+               String kin_contact = ctx.formParam("kin_contact");
+               String move_in = ctx.formParam("move_in");
+               String move_out = ctx.formParam("move_out");
 
-//               ctx.redirect("/dashboard");
+               ctx.sessionAttribute("tenant_name",tenant_name);
+               ctx.sessionAttribute("tenant_unit",propertyUnit);
+               ctx.sessionAttribute("_property_name",propertyName);
+               ctx.sessionAttribute("tenant_contact",tenant_contact);
+               ctx.sessionAttribute("tenant_rent",tenant_rent_day);
+               ctx.sessionAttribute("kin_name",kin_name);
+               ctx.sessionAttribute("kin_contact",kin_contact);
+               ctx.sessionAttribute("move_in",move_in);
+               ctx.sessionAttribute("move_out",move_out);
 
+               ctx.redirect("/updating_tenant");
            }else {
                System.out.println("remove tenant");
            }
-           System.out.println(action + " hundred thousand");
+
        });
+       UpdateUnit new_tenant_updates = new UpdateUnit();
+       app.get("/updating_tenant", new_tenant_updates.update_tenant());
 /**
  * adds tenant information to the database
  */
