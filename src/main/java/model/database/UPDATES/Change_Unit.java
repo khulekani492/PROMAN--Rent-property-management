@@ -18,6 +18,7 @@ public class Change_Unit extends ConnectionAccess {
     public String kin_name;
     public String kin_number;
     public String rent_payment_day;
+    public String contact;
 
     public Change_Unit(String tenant_name, Integer tenant_unit , String tenant_property,Integer tenantId){
         this.tenant_name = tenant_name;
@@ -82,7 +83,7 @@ public class Change_Unit extends ConnectionAccess {
     }
 
 
-    public void vacant_unit(Integer new_vacant_unit) {
+    public void vacant_unit() {
         // 1. Corrected SQL: Removed the comma before WHERE.
         // The placeholder '?' for property_unit is used to FIND the unit,
         // not to set a new value (which is NULL).
@@ -124,9 +125,26 @@ public class Change_Unit extends ConnectionAccess {
             throw new RuntimeException(e);
         }
     }
+
+    public void  update_TenantInformation (){
+        String SQL = """
+                   UPDATE general_users SET name = ?,contact = ? WHERE id = ?""";
+
+        try (PreparedStatement pstm = this.connection.prepareStatement(SQL)) {
+            pstm.setString(1, this.tenant_name);
+            pstm.setString(2,  this.contact);
+            pstm.setInt(3, this.TenantId);
+            pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
     public void additional_tenantINFO(){
         String SQL = """
-                   UPDATE tenants_information SET move_in = ?,move_out = ?,kin_name = ?, kin_number = ? , rent_payment_day = ?WHERE tenant_user_id =?
+                   UPDATE tenants_information SET move_in = ?,move_out = ?,kin_name = ?, kin_number = ? , rent_payment_day = ? WHERE tenant_user_id =?
                    """;
 
         try (PreparedStatement pstm = this.connection.prepareStatement(SQL)) {
