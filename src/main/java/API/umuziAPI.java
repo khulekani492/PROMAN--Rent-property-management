@@ -244,7 +244,8 @@ public class umuziAPI {
            if(action.equals("save") ){
                System.out.println("Save Logic : "  );
                UpdateUnit update_tenant = new UpdateUnit();
-
+               System.out.println(ctx.formParamMap());
+               update_tenant.change_tenant();
                String tenant_name = ctx.formParam("tenant_name");
                ctx.sessionAttribute("tenant_name",tenant_name);
 
@@ -255,7 +256,8 @@ public class umuziAPI {
                ctx.sessionAttribute("property_name",propertyName);
                String contact =  ctx.sessionAttribute("kin_contact");
                System.out.println("kin number " + contact);
-               System.out.println(ctx.formParamMap());
+
+//               ctx.redirect("/dashboard");
 
            }else {
                System.out.println("remove tenant");
