@@ -46,7 +46,6 @@ public class Tenant extends ConnectionAccess {
         }
         return username;
     }
-
     public String tenant_property_name(Integer tenant_Id) {
 
         String sql = """
@@ -69,28 +68,31 @@ public class Tenant extends ConnectionAccess {
         }
         return username;
     }
-//    public Integer tenant_ID(String property_name) {
-//
-//        String sql = """
-//               SELECT general_users.id FROM general_users\s
-//               inner join\s
-//               properties\s
-//               ON properties.tenant_user_id = general_users.id WHERE general_users.name=? ;""";
-//
-//            Integer id = null;
-//        try {
-//            PreparedStatement pstm = this.connection.prepareStatement(sql);{
-//                pstm.setString(1,property_name);
-//                ResultSet result = pstm.executeQuery();
-//                if(result.next()){
-//                    id = result.getInt("id");
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return id;
-//    }
+
+    public String tenant_contact(Integer unit, String property_rent, String property_name) {
+
+        String sql = """
+               SELECT contact FROM general_users\s
+               inner join\s
+               properties\s
+               ON properties.tenant_user_id = general_users.id WHERE properties.property_unit=? AND properties.property_rent =? AND properties.property_name =? ;""";
+
+        String contact = null;
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,unit);
+                pstm.setString(2,property_rent);
+                pstm.setString(3,property_name);
+                ResultSet result = pstm.executeQuery();
+                if(result.next()){
+                    contact = result.getString("tenants_information.contact");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return contact;
+    }
 
     public Integer tenant_ID(String tenant_name,String contact) {
         String sql = "SELECT id FROM general_users WHERE name = ? AND contact = ? AND user_type = 'tenant'";
