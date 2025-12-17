@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class Transaction extends  ConnectionAccess {
     private  Integer  tenant_Id;
     private  Integer amount_paid;
+    private  String  debt ;
     private  boolean status;
 
 
@@ -48,6 +49,16 @@ public class Transaction extends  ConnectionAccess {
 
 
    }
+
+
+   public void setDebtString(String debt){
+        this.debt = debt;
+   }
+
+   public String getDebtString(){
+        return this.debt;
+   }
+
     public  void  record_payment() throws SQLException {
         String SQL = """
                 INSERT INTO rent_book (tenant_user_id,amount_paid,status) VALUES (?,?,?)
