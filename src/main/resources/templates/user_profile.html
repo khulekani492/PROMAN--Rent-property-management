@@ -1003,6 +1003,7 @@
             <form id="propertyForm" method="POST" th:action="@{/update_property_info}">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="form-group">
+                        <p th:text="${failure}" ></p>
                         <h3 class="text-sm font-medium text-[var(--muted-text)] mb-2">Property</h3>
                         <input type="text" name="property_name" required
                                class="w-full text-xl font-bold text-[var(--accent)] bg-transparent border-0 border-b-2 border-transparent focus:outline-none focus:border-b-2 focus:border-[var(--accent)] transition-colors"
@@ -1201,6 +1202,7 @@
       const loadingOverlay = document.getElementById('loadingOverlay');
 
       // Custom confirmation for vacant action
+
       window.confirmVacant = function() {
         return confirm(
           'Are you sure you want to remove this tenant? ' +
