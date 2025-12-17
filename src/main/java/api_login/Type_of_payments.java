@@ -122,7 +122,7 @@ public class Type_of_payments {
                 //Check if the Money left is enough to meet the month rent >
                 if(settle_debt.equals(original_rent)){
                     System.out.println("Paid debt and and met the month rent");
-                    approve_to_rentBook.setAmount_paid(original_rent);
+                    approve_to_rentBook.setAmount_paid(recieved_amount);
                     approve_to_rentBook.setStatus(true);
                     approve_to_rentBook.setTenant_Id(tenantId);
                     approve_to_rentBook.update_tenant_status();
@@ -131,7 +131,7 @@ public class Type_of_payments {
                 }else if( settle_debt > original_rent) {
                     System.out.println("Paid debt and made an advance payments");
                     Integer period = settle_debt % original_rent;
-                    approve_to_rentBook.setAmount_paid(original_rent);
+                    approve_to_rentBook.setAmount_paid(recieved_amount);
                     approve_to_rentBook.setStatus(true);
                     approve_to_rentBook.setTenant_Id(tenantId);
                     approve_to_rentBook.update_tenant_status();
@@ -139,7 +139,7 @@ public class Type_of_payments {
                 }else {
                     System.out.println("Paid debt and did not meet the monthly rent");
                     Integer new_debt = original_rent - settle_debt;
-                    approve_to_rentBook.setAmount_paid(original_rent);
+                    approve_to_rentBook.setAmount_paid(recieved_amount);
                     approve_to_rentBook.setStatus(true);
                     approve_to_rentBook.setTenant_Id(tenantId);
                     approve_to_rentBook.update_tenant_status();
@@ -152,7 +152,19 @@ public class Type_of_payments {
 
 
 
+        } else {
+
+            Integer new_debt = original_rent - recieved_amount;
+            approve_to_rentBook.setAmount_paid(recieved_amount);
+            approve_to_rentBook.setStatus(true);
+            approve_to_rentBook.setTenant_Id(tenantId);
+            approve_to_rentBook.update_tenant_status();
+            approve_to_rentBook.setDebtString(String.valueOf(  new_debt));
+
+            System.out.println("paid less money than original rent");
         }
 
+
     }
+
 }
