@@ -1,4 +1,4 @@
-package api_login;
+                                      package api_login;
 
 import model.database.CRUD.Tenant;
 import model.database.CRUD.landlord;
@@ -24,133 +24,62 @@ public class Type_of_payments {
             //Step 1 assess the tenant existing debt
             //Check if tenant_debt is zero if true approve new payment and set payment_status true
             if (debt.equals(0)) {
+                System.out.println("Tenant has no debt ");
                 approve_to_rentBook.setAmount_paid(recieved_amount);
                 approve_to_rentBook.setStatus(true);
                 approve_to_rentBook.setTenant_Id(tenantId);
                 approve_to_rentBook.update_tenant_status();
+                approve_to_rentBook.setDebtString("0");
 
             }
             //else if the tenant existing debt ia greater than money recieved
-            else if ( debt > recieved_amount) {
+            else if (debt > recieved_amount) {
+                System.out.println("Received MONEY :   " + recieved_amount);
+                System.out.println("Tenant Debt :   " + debt);
                 Integer remaining_debt = debt - recieved_amount; //Minus the debt with the money received
-                System.out.println("Deducts ;" + remaining_debt);
-                new Tenant().update_debt(remaining_debt ,tenantId); //update tenant to the remaining debt
+                System.out.println("Debt exists and is greater than the rent money paid , after deducting debt " + remaining_debt);
+                new Tenant().update_debt(remaining_debt, tenantId); //update tenant to the remaining debt
                 approve_to_rentBook.setAmount_paid(original_rent);
                 approve_to_rentBook.setStatus(true);
                 approve_to_rentBook.setTenant_Id(tenantId);
                 approve_to_rentBook.update_tenant_status();
+                approve_to_rentBook.setDebtString(String.valueOf(remaining_debt));
 
-            } else if (recieved_amount > debt) {
-                Integer money_paid_left = recieved_amount - debt;
-                System.out.println("Settles debt : " + money_paid_left);
-                new Tenant().update_debt(0,tenantId);
-                approve_to_rentBook.setAmount_paid(money_paid_left);
-                approve_to_rentBook.setStatus(true);
-                approve_to_rentBook.setTenant_Id(tenantId);
-                approve_to_rentBook.update_tenant_status();
-                //Check if money left after settling the debt is greater than original_rent --> update tenant.debt
-                if (money_paid_left < original_rent){
-                    new Tenant().update_debt(money_paid_left,tenantId);
-                }
-            }
-            else {
-                System.out.println("MOney less");
-                //When payment_paid equals to debt owed by tenant ,settle debt of the previous, updates the tenant debt of the new month
-//                The amount received is exactly equal to the outstanding debt.
-//                This means the tenant pays precisely the amount they owe, no more, no less.
-                new Tenant().update_debt(original_rent,tenantId); //update to tenant debt
-                approve_to_rentBook.setAmount_paid(recieved_amount);
-                approve_to_rentBook.setStatus(true);
-                approve_to_rentBook.setTenant_Id(tenantId);
-                approve_to_rentBook.update_tenant_status();
-
-            }
-
-        }
-        //Advance_payment_block add tenantId and period the advance payment covers
-        else if (recieved_amount > original_rent) {
-            System.out.println("Amount paid is greater");
-            Record_advance_payment sharedMap_advance_pays = new Record_advance_payment();
-            //Settle debt
-            if (debt.equals(0)) {
-                HashMap<Integer,Integer> add_to_Map = sharedMap_advance_pays.current_property_advancePayments;
-                Integer period = recieved_amount / original_rent;
-                add_to_Map.put(tenantId,period);
-                System.out.println("SHARED MAP: ");
-                System.out.println(add_to_Map);
-
-                approve_to_rentBook.setAmount_paid(recieved_amount);
-                approve_to_rentBook.setStatus(true);
-                approve_to_rentBook.setTenant_Id(tenantId);
-                approve_to_rentBook.update_tenant_status();
-
-            }
-            //else if the tenant existing debt ia greater than money recieved
-            else if ( debt > recieved_amount) {
-                Integer remaining_debt = debt - recieved_amount; //Minus the debt with the money received
-                System.out.println("Deducts :" + remaining_debt);
-                new Tenant().update_debt(remaining_debt,tenantId); //update tenant to the remaining debt
+            } else {
+                Integer remaining_debt =recieved_amount -  debt ; //Minus the debt with the money received
+                System.out.println("Debt exists and is lesser than the rent money paid , after deducting debt " + remaining_debt);
+                System.out.println()
+                ;
+                System.out.println("Received MONEY :   " + recieved_amount);
+                System.out.println("Tenant Debt :   " + debt);
+                System.out.println("new debt " + remaining_debt);
+                new Tenant().update_debt(remaining_debt, tenantId); //update tenant to the remaining debt
                 approve_to_rentBook.setAmount_paid(original_rent);
                 approve_to_rentBook.setStatus(true);
                 approve_to_rentBook.setTenant_Id(tenantId);
                 approve_to_rentBook.update_tenant_status();
-
-            } else if (recieved_amount > debt) {
-                Integer money_paid_left = recieved_amount - debt;
-                System.out.println("Settles debt : " + money_paid_left);
-                new Tenant().update_debt(0,tenantId);
-                approve_to_rentBook.setAmount_paid(money_paid_left);
-                approve_to_rentBook.setStatus(true);
-                approve_to_rentBook.setTenant_Id(tenantId);
-                approve_to_rentBook.update_tenant_status();
-                //Check if money left after settling the debt is greater than original_rent --> update tenant.debt
-                if (money_paid_left < original_rent){
-                    System.out.println("Money Settled and remaining balance does not meet the current");
-                    new Tenant().update_debt(money_paid_left ,tenantId);
-                } else {
-                    System.out.println("Calculates ---> period of pay the money covers");
-                    HashMap<Integer,Integer> add_to_Map = sharedMap_advance_pays.current_property_advancePayments;
-                    Integer period = recieved_amount / original_rent;
-                    add_to_Map.put(tenantId,period);
-                    System.out.println("SHARED MAP: ");
-                    System.out.println("Received: ");
-                    System.out.println(sharedMap_advance_pays);
-                    System.out.println(add_to_Map);
-                }
-            }
-            else {
-                System.out.println("Money less");
-                //When payment_paid equals to debt owed by tenant ,settle debt of the previous, updates the tenant debt of the new month
-//                The amount received is exactly equal to the outstanding debt.
-//                This means the tenant pays precisely the amount they owe, no more, no less.
-                new Tenant().update_debt(original_rent,tenantId); //update to tenant debt
-                approve_to_rentBook.setAmount_paid(recieved_amount);
-                approve_to_rentBook.setStatus(true);
-                approve_to_rentBook.setTenant_Id(tenantId);
-                approve_to_rentBook.update_tenant_status();
+                approve_to_rentBook.setDebtString(String.valueOf(remaining_debt));
 
             }
-        }
-        // if money received is lesser than original_rent , record the outstanding fee
-        else {
-            System.out.println("money received is lesser than original_rent");
-            approve_to_rentBook.setAmount_paid(recieved_amount);
-            approve_to_rentBook.setStatus(true);
-            approve_to_rentBook.setTenant_Id(tenantId);
-            approve_to_rentBook.update_tenant_status();
-            Integer outstanding_fee = original_rent - recieved_amount;
-            Integer  add_debt = debt + outstanding_fee;
-            new Tenant().update_debt(add_debt,tenantId);
+                //Advance_payment_block add tenantId and period the advance payment covers
+
+                //else if the tenant existing debt ia greater than money recieved
+
+
+                // if money received is lesser than original_rent , record the outstanding fee
+
+
+
+
+//            void main () throws SQLException {
+//                Type_of_payments update_debt = new Type_of_payments();
+//                Tenant tenantTest = new Tenant();
+//                // tenantTest.
+//                update_debt.type_of_payment(400, 400, tenantTest.tenant_debt(772), 772, new Transaction());
+//                //Output debt = 800
+//            }
+
         }
 
     }
-        static void main () throws SQLException {
-            Type_of_payments update_debt = new Type_of_payments();
-            Tenant tenantTest = new Tenant();
-            // tenantTest.
-            update_debt.type_of_payment( 400, 400, tenantTest.tenant_debt(772), 772,new Transaction());
-            //Output debt = 800
-        }
-
-    }
-
+}
