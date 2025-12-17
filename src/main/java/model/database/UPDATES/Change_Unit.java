@@ -1,8 +1,10 @@
 package model.database.UPDATES;
 
+import API_handlers.PropertyUnits;
 import model.database.CRUD.Tenant;
 import model.database.ConnectionAccess;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -11,6 +13,11 @@ public class Change_Unit extends ConnectionAccess {
     public Integer tenant_unit;
     public String tenant_property;
     public Integer TenantId ;
+    public Date moveIN;
+    public Date  moveOUT;
+    public String kin_name;
+    public String kin_number;
+    public String rent_payment_day;
 
     public Change_Unit(String tenant_name, Integer tenant_unit , String tenant_property,Integer tenantId){
         this.tenant_name = tenant_name;
@@ -18,6 +25,16 @@ public class Change_Unit extends ConnectionAccess {
         this.tenant_property = tenant_property;
         this.TenantId = tenantId;
     }
+    public Change_Unit(String kin_name,String kin_number, String rent_payment_day,Date moveIN, Date moveOUT, Integer tenantId){
+        this.kin_name = kin_name;
+        this.kin_number = kin_number;
+        this.rent_payment_day = rent_payment_day;
+        this.moveIN = moveIN;
+        this.moveOUT = moveOUT;
+        this.TenantId = tenantId;
+    }
+
+
     public void setTenant_name(String tenant_name) {
         this.tenant_name = tenant_name;
     }
@@ -106,8 +123,23 @@ public class Change_Unit extends ConnectionAccess {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void additional_tenantINFO(){
+        String SQL = """
+                   UPDATE tenants_information SET move_in = ?,move_out = ?,kin_name = ?, kin_number = ? , rent_payment_day = ?WHERE tenant_user_id =?
+                   """;
 
-
+        try (PreparedStatement pstm = this.connection.prepareStatement(SQL)) {
+            pstm.setDate(1, this.moveIN);
+            pstm.setDate(2, this.moveOUT);
+            pstm.setString(3,  this.kin_name);
+            pstm.setString(4, this.kin_number);
+            pstm.setString(5,this.rent_payment_day);
+            pstm.setInt(6,this.TenantId);
+            pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public  static void main(String args[]){
