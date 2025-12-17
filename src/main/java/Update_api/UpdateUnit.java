@@ -24,13 +24,16 @@ public class UpdateUnit{
             Tenant current_tenant = new Tenant();
             Integer  tenantId =  current_tenant.tenant_ID(tenant_name,contact);
             Change_Unit update_tenant_unit = new Change_Unit(tenant_name,propertyUnit,propertyName,tenantId);
+            Change_Unit update_additional_information = new Change_Unit(tenant_name,propertyUnit,propertyName,tenantId);
+
 
             update_tenant_unit.vacant_unit(propertyUnit);
             update_tenant_unit.Change_unit();
+            update_tenant_unit.additional_tenantINFO();
             HashMap<String,String> model  = new HashMap<>();
 
             model.put("update_message","Tenant changed Unit");
-            ctx.render("templates/user_profile.html",model);
+            ctx.redirect("/dashboard");
         };
     }
 
