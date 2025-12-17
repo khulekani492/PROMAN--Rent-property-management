@@ -94,6 +94,7 @@ public class Record_rent {
                 try {
                     _payment.setTenant_Id(tenantId);
                     _payment.record_payment();
+                    System.out.println("No debate ");
 
                     Integer landlord_id =  ctx.sessionAttribute("landlordID");
                // Success response
@@ -103,7 +104,7 @@ public class Record_rent {
                             "success", true,
                             "unit", unit,
                             "message", "Payment recorded  successfully",
-                            "debt_status","200"
+                            "debt_status", _payment.getDebtString()
                     ));
 
 
