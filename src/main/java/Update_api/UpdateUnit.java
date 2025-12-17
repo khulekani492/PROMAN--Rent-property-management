@@ -10,26 +10,50 @@ import model.database.residence;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.sql.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class UpdateUnit{
 
-    public Handler change_tenant(){
+    public Handler update_tenant(){
         return ctx ->{
             String tenant_name = ctx.sessionAttribute("tenant_name");
-            Integer propertyUnit = ctx.sessionAttribute("tenant_unit");
-            String propertyName = ctx.sessionAttribute("current_property");
+            Integer propertyUnit = Integer.parseInt(Objects.requireNonNull(ctx.sessionAttribute("tenant_unit")));
+            String propertyName = ctx.sessionAttribute("_current_property");
             String contact =  ctx.sessionAttribute("tenant_contact");
+            String property_rent = ctx.sessionAttribute("property_rent");
+
             //Get TenantId
-            Tenant current_tenant = new Tenant();
-            Integer  tenantId =  current_tenant.tenant_ID(tenant_name,contact);
+            Integer tenantId = ctx.sessionAttribute("TenantID");
+            if (tenantId == null) {
+                ctx.status(401).result("Session expired or not logged in");
+
+                return;
+            }
+
             Change_Unit update_tenant_unit = new Change_Unit(tenant_name,propertyUnit,propertyName,tenantId);
-            Change_Unit update_additional_information = new Change_Unit(tenant_name,propertyUnit,propertyName,tenantId);
+            try {
+                update_tenant_unit.update_TenantInformation();
+            } catch (RuntimeException e) {
 
+                ctx.sessionAttribute ("failure","Invalid Tenant number");
+                ctx.redirect("/tenant_profile/"+tenant_name +"/"+propertyUnit+"/"+property_rent+"/"+ contact );
+                return;
+            }
 
-            update_tenant_unit.vacant_unit(propertyUnit);
+            String kin_name = ctx.sessionAttribute("kin_name");
+            String kin_number = ctx.sessionAttribute("kin_number");
+            String rent_payment_day = ctx.sessionAttribute("rent_payment_day");
+            Date   moveIn = ctx.sessionAttribute("moveIn");
+            Date   moveOut = ctx.sessionAttribute("moveOut");
+
+            Change_Unit update_additional_information = new Change_Unit(kin_name,kin_number,rent_payment_day,moveIn,moveOut,tenantId);
+            update_tenant_unit.vacant_unit();
             update_tenant_unit.Change_unit();
-            update_tenant_unit.additional_tenantINFO();
+
+            update_additional_information.additional_tenantINFO();
+
             HashMap<String,String> model  = new HashMap<>();
 
             model.put("update_message","Tenant changed Unit");
