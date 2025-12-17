@@ -86,6 +86,7 @@ public class umuziAPI {
 
 
             String tenant_contact = ctx.pathParam("contact");
+            ctx.sessionAttribute("tenant_contact",tenant_contact);
             System.out.println("tenant property : " + tenant_property);
             System.out.println("tenant contact : " + tenant_contact);
 
@@ -107,6 +108,7 @@ public class umuziAPI {
             String themeColor = ctx.sessionAttribute("theme_color");
             model.put("user_chosen_theme",themeColor);
             model.put("unit_number",tenant_unit);
+            model.put("tenant_contact",tenant_contact);
             model.put("tenant_name",tenant_name);
             model.put("rent_amount",property_rent);
             model.put("kin_name",next_kin);
@@ -235,6 +237,31 @@ public class umuziAPI {
             ctx.render("templates/tenant_form.html",model);
 
         });
+       app.post("/update_tenant",ctx -> {
+           String action = ctx.formParam("action");
+
+
+           if(action.equals("save") ){
+               System.out.println("Save Logic : "  );
+               UpdateUnit update_tenant = new UpdateUnit();
+
+               String tenant_name = ctx.formParam("tenant_name");
+               ctx.sessionAttribute("tenant_name",tenant_name);
+
+               String propertyUnit = ctx.formParam("unit_number");
+               ctx.sessionAttribute("tenant_unit",Integer.parseInt(propertyUnit));
+
+               String propertyName = ctx.sessionAttribute("property_name");
+               ctx.sessionAttribute("property_name",propertyName);
+               String contact =  ctx.sessionAttribute("kin_contact");
+               System.out.println("kin number " + contact);
+               System.out.println(ctx.formParamMap());
+
+           }else {
+               System.out.println("remove tenant");
+           }
+           System.out.println(action + " hundred thousand");
+       });
 /**
  * adds tenant information to the database
  */
