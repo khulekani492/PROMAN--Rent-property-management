@@ -276,12 +276,15 @@ public class umuziAPI {
 
                String tenant_rent_day = ctx.formParam("rent_day");
                String tenant_name = ctx.formParam("tenant_name_input");
-               System.out.println("Tenant name :  " + tenant_name);
+               System.out.println("Tenant name :  " + tenant_rent_day);
                String tenant_contact =  ctx.formParam("tenant_contact");
-               System.out.println("");
+
                String kin_name = ctx.formParam("kin_name");
+               System.out.println("KIN NAME " + kin_name);
                String kin_contact = ctx.formParam("kin_contact");
+               System.out.println("KIN contact " + kin_contact);
                String move_in = ctx.formParam("move_in");
+               System.out.println("KIN moveIn " + kin_contact);
                String move_out = ctx.formParam("move_out");
 
                ctx.sessionAttribute("tenant_name",tenant_name);
