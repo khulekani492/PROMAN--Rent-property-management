@@ -2456,10 +2456,7 @@
 
             <!-- Desktop Navigation Links -->
             <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-                <a href="http://localhost:7070/"
-                   class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200 border-muted bg-surface text-text hover:bg-muted">
-                    Home
-                </a>
+
                 <a href="http://localhost:7070/dashboard"
                    class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200 border-muted bg-surface text-text hover:bg-muted">
                     Dashboard
@@ -2498,7 +2495,6 @@
         </a>
     </div>
 </header>
-
 <div id="sidebar-backdrop"></div>
 <div class="main-wrap">
     <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main sidebar">
@@ -2509,22 +2505,16 @@
                 <span class="property-name-text" th:text="${name}">Property Name</span>
             </div>
 
-            <!-- Quick navigation buttons with reduced spacing -->
-            <!--            <div class="quick-nav-buttons mb-2">-->
-            <!--                <a href="http://localhost:7070/add_tenant" class="nav-btn">-->
-            <!--                    <i class="fas fa-user-plus"></i>-->
-            <!--                    <span>ADD NEW TENANT</span>-->
-            <!--                </a>-->
-            <!--            </div>-->
-            <div class="quick-nav-buttons mb-2"> <!-- Added margin-top for spacing -->
-                <a data-tooltip="add new unit"  href="http://localhost:7070/create_new_unit" class="nav-btn">
-                    <i class="fas fa-plus"></i>
+            <!-- Quick navigation buttons with better spacing -->
+            <div class="quick-nav-buttons mb-4" style="margin-top: 1.5rem;"> <!-- Increased vertical spacing -->
+                <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="nav-btn" style="padding: 0.75rem 1.25rem;">
+                    <i class="fas fa-plus mr-2"></i>
                     Create New Unit
                 </a>
             </div>
 
             <!-- Sidebar stats with minimal spacing -->
-            <div class="sidebar-stats" style="margin-top: 0.5rem;">
+            <div class="sidebar-stats" style="margin-top: 1rem;"> <!-- Added top margin for separation -->
                 <div class="card rounded-lg p-3">
                     <div class="flex items-center justify-between">
                         <div>
@@ -2577,7 +2567,6 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
-                    <!--                    <p class="text-sm" style="color:var(&#45;&#45;muted-text); margin-top:6px">+R2,500 from last month</p>-->
                 </div>
             </div>
 
