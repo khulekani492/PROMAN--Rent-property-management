@@ -144,6 +144,21 @@ public class Tenant extends ConnectionAccess {
 
     }
 
+    public void vacant_unit(Integer tenant_Id) {
+        String sql = """
+    UPDATE properties  SET tenant_user_id = null WHERE tenant_user_id = ?
+""";
+        Integer updated_debt = null;
+        try {
+            PreparedStatement pstm = this.connection.prepareStatement(sql);{
+                pstm.setInt(1,tenant_Id);
+                pstm.execute();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     public Integer tenant_debt(Integer tenant_Id) {
 
         String sql = """
