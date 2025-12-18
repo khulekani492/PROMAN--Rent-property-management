@@ -51,6 +51,9 @@ public class AddTenant {
 
                 HashMap<Integer, ArrayList<String>> fetch_all = property_units.property_tenants(property_name,landlordId);
 
+
+                System.out.println("Occupied UNITS " + fetch_all);
+
                 //Validate the chosen unit is still empty
                 System.out.println("Keyset of current_occupied_management");
                 for( int occupied_unit : fetch_all.keySet()){
