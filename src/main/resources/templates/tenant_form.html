@@ -727,19 +727,11 @@
                         <span class="text-accent">Property:</span>
                         <span class="font-bold" th:text="${name}">Property Name</span>
                     </p>
-                    <p class="text-sm text-muted">
-                        Total  Units:
-                        <strong class="text-[var(--text)] font-bold" th:text="${unit_add}">0</strong>
-                    </p>
                 </div>
 
                 <div class="quick-guide mb-4">
                     <h3 class="font-bold text-lg mb-2 text-accent">Important Tips:</h3>
                     <ul class="text-sm space-y-2">
-                        <li class="guide-item">
-                            <span class="guide-check">✓</span>
-                            <span>Unit number must be between 1 and <span class="font-bold" th:text="${unit_add}">0</span></span>
-                        </li>
                         <li class="guide-item">
                             <span class="guide-check">✓</span>
                             <span>Select a Unit and add tenant information.</span>
@@ -804,7 +796,7 @@
         <div class="form-card">
             <h2 class="form-title">Add New Tenant</h2>
 
-            <form id="tenantForm" action="/tenant/save" method="post" novalidate>
+            <form id="tenantForm" action="/add_tenants" method="post" >
                 <!-- Unit Number Field -->
                 <div class="form-row full-width">
                     <div class="form-field">
@@ -812,11 +804,16 @@
                             Unit Number <span class="required-star">*</span>
                             <span class="field-tooltip" title="Select an available unit number">i</span>
                         </label>
-                        <input id="unit_number" name="unit_number" type="number" min="1"
-                               th:attr="max=${unit_add}"
-                               th:value="${unit_add}" required
-                               class="themed-input input-focus"
-                               placeholder="Enter unit number">
+                        <select id="unit_number" name="unit_number"
+                                required
+                                class="themed-input input-focus">
+                            <option value="" disabled selected>Select a unit number</option>
+                            <option th:each="unit : ${Occupied_units}"
+                                    th:value="${unit}"
+                                    th:text="${unit}">
+                            </option>
+                        </select>
+
 
                         <!-- Display occupied units if any -->
                         <th:block th:if="${not #lists.isEmpty(Occupied_units)}">
@@ -825,13 +822,10 @@
                                 <span th:text="${#strings.listJoin(Occupied_units, ', ')}"></span>
                             </p>
                         </th:block>
-
-                        <div id="unit_number_error" class="error-message"></div>
-
                         <!-- Error message display -->
                         <th:block th:if="${error != null and !error.isEmpty()}">
                             <p class="mt-2 text-sm text-red-600">
-                                <strong>Error:</strong> <span th:text="${error}"></span>
+                                <strong>Unit Already Occupied:</strong>
                             </p>
                         </th:block>
                     </div>
@@ -860,10 +854,8 @@
                         <div class="form-field">
                             <label for="cell_number">
                                 Phone Number <span class="required-star">*</span>
-                                <span class="field-tooltip" title="Valid phone number">i</span>
                             </label>
                             <div class="phone-format">
-                                <span class="phone-prefix">+27</span>
                                 <input id="cell_number" name="cell_number" type="tel" required
                                        placeholder="e.g. 71 234 5678"
                                        class="themed-input input-focus phone-input"
@@ -949,7 +941,7 @@
                                 <span class="field-tooltip" title="Valid phone number">i</span>
                             </label>
                             <div class="phone-format">
-                                <span class="phone-prefix">+27</span>
+
                                 <input id="kin_number" name="kin_number" type="tel"
                                        placeholder="e.g. 71 234 5678" required
                                        class="themed-input input-focus phone-input"
@@ -1246,7 +1238,7 @@
             debtInput.value = '0';
         }
 
-        const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
+        const maxUnits = 999;
 
         const showError = (id, msg) => {
             const el = document.getElementById(id);
