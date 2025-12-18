@@ -581,18 +581,17 @@
 
 <!-- Header with mobile menu button -->
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
-    <div class="max-w-6xl px-6 py-3 flex items-center justify-between mx-auto">
+    <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a href="http://localhost:7070/" class="flex items-center">
-                <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
-                     class="h-28 md:h-32 lg:h-36 w-auto object-contain">
-            </a>
+            <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
+                 class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             <div>
-                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent">  <h1 class="brand-text">PROMAN</h1></a>
-                <div class="text-xs text-muted -mt-1">Property management simplified</div>
+                <div>
+                    <h1 class="brand-text">PROMAN</h1>
+                    <div class="text-xs text-muted -mt-1">Property management simplified</div>
+                </div>
             </div>
         </div>
-
         <!-- Desktop Nav - will be hidden on mobile -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
             <a href="http://localhost:7070/"
@@ -614,6 +613,7 @@
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-3 space-y-2">
         <a href="http://localhost:7070/"
+
            class="block w-full text-center bg-accent text-[#2b1f00] px-6 py-3 rounded-lg font-semibold shadow-lg transition-all duration-200 hover:bg-accent-dark hover:text-white">
             HOME
         </a>
