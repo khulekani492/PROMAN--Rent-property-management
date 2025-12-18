@@ -54,6 +54,8 @@ public class Validate_login {
                     Integer landlord_id =  authenticate.landlordId(email);
                     String  login_user_name = authenticate.landlord_username(landlord_id);
                     ctx.sessionAttribute("landlordID", landlord_id);
+
+
                     ctx.sessionAttribute("loginUsername",login_user_name);
 
 

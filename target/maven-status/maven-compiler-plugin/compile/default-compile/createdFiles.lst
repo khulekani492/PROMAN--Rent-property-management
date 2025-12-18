@@ -61,6 +61,7 @@ api_login/Type_of_payments.class
 API_handlers/loginAPIhandler.class
 model/database/CRUD/GetLandlords.class
 model/database/CRUD/Tenant.class
+Update_api/Remove.class
 model/database/Database_access.class
 model/database/CRUD/Getunits.class
 schedule/Overdue_tracker.class

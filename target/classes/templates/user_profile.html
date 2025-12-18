@@ -633,12 +633,10 @@
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a href="http://localhost:7070/" class="flex items-center hover:opacity-90 transition-opacity">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
-            </a>
             <div>
-                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent hover:text-[var(--accent-dark)] transition">ProMan</a>
+                <p class="text-xl font-extrabold text-accent hover:text-[var(--accent-dark)] transition">ProMan</p>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
@@ -659,7 +657,7 @@
 
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
-        <a href="http://localhost:7070/dashboard"
+        <a href="/dashboard"
            class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
             Back To Dashboard
         </a>
@@ -701,7 +699,7 @@
     function sendThemePreference(theme){
         const form=document.createElement('form');
         form.method='POST';
-        form.action='http://localhost:7070/page_theme';
+        form.action='/page_theme';
         const themeInput=document.createElement('input');
         themeInput.type='hidden';
         themeInput.name='user_theme';
@@ -1003,6 +1001,7 @@
             <form id="propertyForm" method="POST" th:action="@{/update_property_info}">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="form-group">
+                        <p th:text="${failure}" ></p>
                         <h3 class="text-sm font-medium text-[var(--muted-text)] mb-2">Property</h3>
                         <input type="text" name="property_name" required
                                class="w-full text-xl font-bold text-[var(--accent)] bg-transparent border-0 border-b-2 border-transparent focus:outline-none focus:border-b-2 focus:border-[var(--accent)] transition-colors"
@@ -1064,6 +1063,7 @@
             </div>
 
             <!-- Current Tenant Info -->
+            <form id="tenantForm" method="POST" th:action="@{/update_tenant}" class="space-y-6">
             <div class="mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="form-group">
@@ -1072,10 +1072,16 @@
                                class="form-input"
                                th:value="${tenant_name}"
                                placeholder="Enter tenant's full name"/>
-                        <div class="form-hint">Full legal name of the tenant</div>
                     </div>
-                </div>
 
+                </div>
+                <div class="form-group">
+                    <label for="tenant_contact" class="form-label required">Tenant Contact</label>
+                    <input type="text" id="tenant_contact" name="tenant_contact" required
+                           class="form-input"
+                           th:value="${tenant_contact}"
+                           placeholder="Enter tenant's full name"/>
+                </div>
                 <!-- Kin Information -->
                 <div class="mb-6 p-4 bg-[var(--accent-light)] rounded-lg border border-[var(--accent)]/20">
                     <h3 class="text-sm font-medium text-[var(--accent)] mb-3 flex items-center gap-2">
@@ -1099,14 +1105,15 @@
                                    class="form-input"
                                    th:value="${kin_contact}"
                                    placeholder="Enter kin's phone number"/>
-                            <div class="form-hint">Phone number with country code</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Edit Tenant Form -->
-            <form id="tenantForm" method="POST" th:action="@{/update_tenant}" class="space-y-6">
+
+                <input type="hidden" name="action" id="actionField">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Move In Date -->
                     <div class="form-group">
@@ -1145,7 +1152,7 @@
 
                 <!-- Form Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-[var(--muted)]">
-                    <button type="submit" name="action" value="save"
+                    <button  type="submit" name="action" value="save"
                             class="btn btn-primary flex-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -1167,20 +1174,13 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 mt-8">
-            <a href="http://localhost:7070/Dashboard"
+            <a href="/dashboard"
                class="btn btn-secondary flex-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Back to Dashboard
             </a>
-
-            <button onclick="window.print()" class="btn btn-secondary flex-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                Print Details
-            </button>
         </div>
     </div>
 </main>
@@ -1192,6 +1192,7 @@
 </footer>
 
 <!-- Form submission loading handler -->
+<!-- Form submission loading handler -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
       const tenantForm = document.getElementById('tenantForm');
@@ -1199,9 +1200,13 @@
       const loadingOverlay = document.getElementById('loadingOverlay');
 
       // Custom confirmation for vacant action
+
       window.confirmVacant = function() {
-        return confirm('Are you sure you want to remove this tenant? This action cannot be undone. The unit will be marked as vacant.');
-      }
+        return confirm(
+          'Are you sure you want to remove this tenant? ' +
+          'This action cannot be undone. The unit will be marked as vacant.'
+        );
+      };
 
       // Handle tenant form submission
       if (tenantForm) {
@@ -1210,7 +1215,6 @@
 
           // Validate form
           if (!validateForm(this)) {
-            // Scroll to first error
             const firstError = this.querySelector('.error');
             if (firstError) {
               firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1224,13 +1228,22 @@
           document.body.style.overflow = 'hidden';
 
           // Determine which button was clicked
-          const submitButton = e.submitter || this.querySelector('button[type="submit"]:focus');
-          if (submitButton && submitButton.name === 'action' && submitButton.value === 'vacant') {
+          const submitButton = e.submitter;
+          const actionField = this.querySelector('#actionField');
+
+          if (submitButton && submitButton.name === 'action') {
+            actionField.value = submitButton.value;
+          }
+
+          // Update loading text based on action
+          if (actionField.value === 'vacant') {
             loadingOverlay.querySelector('p').textContent = 'Removing tenant...';
-            loadingOverlay.querySelector('p + p').textContent = 'Please wait while we process your request';
+            loadingOverlay.querySelector('p + p').textContent =
+              'Please wait while we process your request';
           } else {
             loadingOverlay.querySelector('p').textContent = 'Updating tenant information...';
-            loadingOverlay.querySelector('p + p').textContent = 'Please wait while we save your changes';
+            loadingOverlay.querySelector('p + p').textContent =
+              'Please wait while we save your changes';
           }
 
           // Submit form after validation
@@ -1257,8 +1270,10 @@
 
           loadingOverlay.classList.add('active');
           document.body.style.overflow = 'hidden';
-          loadingOverlay.querySelector('p').textContent = 'Updating property information...';
-          loadingOverlay.querySelector('p + p').textContent = 'Please wait while we save your changes';
+          loadingOverlay.querySelector('p').textContent =
+            'Updating property information...';
+          loadingOverlay.querySelector('p + p').textContent =
+            'Please wait while we save your changes';
 
           // Submit form
           setTimeout(() => {
