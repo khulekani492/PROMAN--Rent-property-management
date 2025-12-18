@@ -239,7 +239,7 @@ public class umuziAPI {
  */     AddProperty propertyInfo = new AddProperty();
         app.post("/add_property", propertyInfo.addproperty());
 
-        app.get("/add_tenant",ctx -> {
+        app.get("/new/add/tenant",ctx -> {
             Map<String, Object> model = new HashMap<>();
             String user_name = ctx.sessionAttribute("user_name");
             Integer total_n_units = ctx.sessionAttribute("property_unit") ;
@@ -251,6 +251,10 @@ public class umuziAPI {
             // Get Occupied units
 
             Integer landlordId = ctx.sessionAttribute("landlordID");
+            if(landlordId == null){
+                ctx.render("templates/not_found.html");
+            }
+
 
             ArrayList<Integer>  available_units = property_units.property_units(property_name,landlordId);
 
