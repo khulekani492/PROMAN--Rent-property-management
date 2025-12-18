@@ -8,34 +8,31 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // This gets rendered server-side by Thymeleaf
         const serverTheme = /*[[${user_chosen_theme}]]*/ 'light';
     </script>
 
     <style>
         :root{
-            /* Default light theme variables */
-            --bg: #f5f6f7;         /* overall smoke-white page background */
-            --surface: #ffffff;    /* card / surface white */
-            --muted: #eef0f2;      /* slightly darker smoke for surfaces */
-            --text: #2f3337;       /* primary text (soft charcoal) */
-            --muted-text: #6b7378; /* secondary text */
-            --accent: #D4AF37;     /* warm gold accent (complements logo) */
-            --accent-dark: #b8892a;/* darker accent for hover */
+            --bg: #f5f6f7;
+            --surface: #ffffff;
+            --muted: #eef0f2;
+            --text: #2f3337;
+            --muted-text: #6b7378;
+            --accent: #D4AF37;
+            --accent-dark: #b8892a;
             --glass: rgba(255,255,255,0.6);
             --error: #dc2626;
             --error-light: #fef2f2;
         }
 
-        /* Dark theme variables */
         body.dark {
-            --bg: #0f172a;          /* dark blue-gray background */
-            --surface: #1e293b;     /* dark surface */
-            --muted: #334155;       /* muted dark */
-            --text: #f1f5f9;        /* light text */
-            --muted-text: #94a3b8;  /* muted light text */
-            --accent: #F4B342;      /* brighter gold for dark mode */
-            --accent-dark: #E0A028; /* darker gold for hover */
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --muted: #334155;
+            --text: #f1f5f9;
+            --muted-text: #94a3b8;
+            --accent: #F4B342;
+            --accent-dark: #E0A028;
             --glass: rgba(30, 41, 59, 0.6);
             --error: #f87171;
             --error-light: #450a0a;
@@ -98,7 +95,7 @@
         }
         .signup-btn{
             background: var(--accent);
-            color: #2b1f00; /* readable on gold */
+            color: #2b1f00;
         }
 
         body.dark .signup-btn {
@@ -110,10 +107,9 @@
             color: white;
         }
 
-        /* Form Card */
         .form-card {
             background: var(--surface);
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
             border: 1px solid var(--muted);
@@ -128,7 +124,7 @@
         input, select, .themed-input {
             background: var(--surface) !important;
             border: 1px solid var(--muted);
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-radius: 8px;
             font-size: 14px;
             width: 100%;
@@ -147,20 +143,19 @@
             box-shadow: 0 0 0 4px rgba(244, 179, 66, 0.15);
         }
 
-        /* Form details */
         label {
             font-weight: 600;
             color: var(--text);
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-size: 14px;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
+            gap: 20px;
+            margin-bottom: 24px;
         }
 
         .form-field {
@@ -168,29 +163,26 @@
             flex-direction: column;
         }
 
-        /* Form section styling */
         .form-section {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
             border-bottom: 1px solid var(--muted);
         }
 
         .form-section:last-of-type {
             border-bottom: none;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        /* Section headers */
         .form-section h3 {
             font-size: 18px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
             color: var(--accent);
             border-bottom: 2px solid var(--accent);
             font-weight: 700;
         }
 
-        /* Error handling */
         .error-message {
             color: var(--error);
             font-size: 0.75rem;
@@ -205,7 +197,7 @@
             background: var(--muted);
             color: var(--text);
             border: 1px solid var(--muted);
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
@@ -221,11 +213,12 @@
             color: #2b1f00;
             font-weight: 700;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s, transform 0.2s;
             width: 100%;
+            font-size: 16px;
         }
 
         body.dark button[type="submit"] {
@@ -238,27 +231,23 @@
             transform: translateY(-2px);
         }
 
-        /* Required star */
         .required-star { color: var(--error); margin-left: 0.15rem; }
-
-        /* Helper text styling */
         .helper-text {
             font-size: 0.75rem;
             color: var(--muted-text);
-            margin-top: 4px;
+            margin-top: 6px;
             min-height: 14px;
         }
 
-        /* Radio button styling */
         .radio-group {
             display: flex;
-            gap: 20px;
+            gap: 24px;
             margin-top: 8px;
         }
         .radio-label {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             font-weight: normal;
             font-size: 14px;
@@ -266,37 +255,33 @@
 
         input[type="radio"] {
             accent-color: var(--accent);
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
         }
 
-        /* Form title */
         .form-title {
-            font-size: 22px;
-            margin-bottom: 1.5rem;
+            font-size: 24px;
+            margin-bottom: 2rem;
             text-align: center;
-            padding-bottom: 12px;
+            padding-bottom: 16px;
             border-bottom: 2px solid var(--accent);
             color: var(--text);
             font-weight: 800;
         }
 
-        /* Action buttons */
         .form-actions {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             justify-content: center;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
 
-        /* Full width fields */
         .full-width {
             grid-column: 1 / -1;
         }
 
-        /* Stepper styling */
         .stepper {
-            padding: 0.75rem 0;
+            padding: 1rem 0;
             font-size: 14px;
             background: var(--surface);
             border-bottom: 1px solid var(--muted);
@@ -307,27 +292,24 @@
             height: 10px;
         }
 
-        /* Main content area */
         main {
-            padding: 1.5rem 0;
+            padding: 2rem 0;
             background: var(--bg);
             transition: background-color 0.3s ease;
         }
 
-        /* Footer */
         footer {
             padding: 2rem 0;
-            margin-top: 2rem;
+            margin-top: 3rem;
             font-size: 0.875rem;
             background: var(--surface);
             border-top: 1px solid var(--muted);
             transition: all 0.3s ease;
         }
 
-        /* Welcome card styling */
         .welcome-card {
             background: var(--surface);
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
             border: 1px solid var(--muted);
@@ -339,7 +321,6 @@
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.2);
         }
 
-        /* Two-column layout */
         @media (max-width: 1023px) {
             .main-content {
                 display: flex;
@@ -347,7 +328,6 @@
                 gap: 1.5rem;
             }
 
-            /* Collapsible welcome card on mobile */
             .welcome-card.collapsible {
                 cursor: pointer;
             }
@@ -375,33 +355,31 @@
             .main-content {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 2rem;
+                gap: 3rem;
                 align-items: start;
             }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 16px;
             }
             .form-actions {
                 flex-direction: column;
             }
             .form-card {
-                padding: 1.25rem;
+                padding: 1.5rem;
             }
             .welcome-card {
-                padding: 1.25rem;
+                padding: 1.5rem;
             }
         }
 
-        /* Quick Guide styling */
         .quick-guide {
             background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.02) 100%);
             border-radius: 0.75rem;
-            padding: 1rem;
+            padding: 1.25rem;
             margin: 1rem 0;
             border: 1px solid rgba(212, 175, 55, 0.1);
         }
@@ -414,8 +392,8 @@
         .guide-item {
             display: flex;
             align-items: flex-start;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
         }
 
         .guide-item:last-child {
@@ -429,13 +407,12 @@
             margin-top: 0.125rem;
         }
 
-        /* Property info styling */
         .property-info-card {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
             border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
         }
 
         body.dark .property-info-card {
@@ -443,7 +420,6 @@
             border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
-        /* Field tooltip */
         .field-tooltip {
             display: inline-flex;
             align-items: center;
@@ -464,7 +440,6 @@
             color: #1a1400;
         }
 
-        /* Loading spinner styles */
         .loading-spinner {
             display: inline-block;
             width: 1.25rem;
@@ -490,7 +465,6 @@
             pointer-events: none;
         }
 
-        /* Loading overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -514,23 +488,22 @@
 
         .loading-overlay-content {
             background: var(--surface);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 1rem;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .overlay-spinner {
-            width: 3rem;
-            height: 3rem;
+            width: 3.5rem;
+            height: 3.5rem;
             border: 4px solid rgba(212, 175, 55, 0.2);
             border-radius: 50%;
             border-top-color: var(--accent);
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
         }
 
-        /* Mobile Menu Button Styles */
         #mobile-menu-button {
             display: none;
             align-items: center;
@@ -565,7 +538,6 @@
             border-radius: 2px;
         }
 
-        /* Hamburger to X animation */
         #mobile-menu-button[aria-expanded="true"] .mobile-menu-icon span:nth-child(1) {
             transform: rotate(45deg) translate(4px, 4px);
         }
@@ -578,7 +550,6 @@
             transform: rotate(-45deg) translate(4px, -4px);
         }
 
-        /* Mobile menu styling */
         #mobile-menu {
             background: var(--surface);
             border-top: 1px solid var(--muted);
@@ -589,7 +560,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        /* Show mobile menu button on mobile/tablet, hide desktop nav */
         @media (max-width: 1024px) {
             #mobile-menu-button {
                 display: flex;
@@ -606,7 +576,6 @@
             }
         }
 
-        /* Phone input formatting */
         .phone-format {
             display: flex;
             align-items: center;
@@ -614,7 +583,7 @@
 
         .phone-prefix {
             background: var(--muted);
-            padding: 10px 12px;
+            padding: 12px 14px;
             border: 1px solid var(--muted);
             border-right: none;
             border-radius: 8px 0 0 8px;
@@ -626,23 +595,20 @@
             border-radius: 0 8px 8px 0 !important;
         }
 
-        /* Error styling */
         .error-border {
             border-color: var(--error) !important;
         }
 
-        /* Success styling */
         .success-border {
             border-color: #10b981 !important;
         }
 
-        /* Date range info */
         .date-range-info {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
             border: 1px solid rgba(59, 130, 246, 0.1);
             border-radius: 6px;
-            padding: 8px 12px;
-            margin-top: 8px;
+            padding: 12px 16px;
+            margin-top: 10px;
             font-size: 0.75rem;
             color: var(--muted-text);
         }
@@ -652,14 +618,13 @@
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
 
-        /* Calendar icon styling */
         .date-input-wrapper {
             position: relative;
         }
 
         .calendar-icon {
             position: absolute;
-            right: 12px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--muted-text);
@@ -675,11 +640,10 @@
             cursor: pointer;
         }
 
-        /* Warning for distant future dates */
         .date-warning {
             color: #f59e0b;
             font-size: 0.75rem;
-            margin-top: 4px;
+            margin-top: 6px;
             display: none;
         }
 
@@ -752,56 +716,9 @@
     </div>
 </header>
 
-<script>
-    // MOBILE MENU FUNCTIONALITY
-    const menuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    if (menuButton && mobileMenu) {
-        menuButton.addEventListener('click', () => {
-            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
-            menuButton.setAttribute('aria-expanded', !isExpanded);
-            mobileMenu.classList.toggle('hidden');
-
-            if (!isExpanded) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!mobileMenu.classList.contains('hidden') &&
-                !menuButton.contains(event.target) &&
-                !mobileMenu.contains(event.target)) {
-                mobileMenu.classList.add('hidden');
-                menuButton.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            }
-        });
-
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-                menuButton.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            });
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-                menuButton.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            }
-        });
-    }
-</script>
-
-
-
-<main class="max-w-6xl mx-auto px-4 py-6">
+<main class="max-w-6xl mx-auto px-4 py-8">
     <div class="main-content">
+        <!-- Welcome Card -->
         <div id="welcomeCard" class="welcome-card collapsible">
             <div class="flex justify-between items-center mb-4 cursor-pointer" onclick="toggleWelcomeCard()">
                 <div class="flex items-center gap-3">
@@ -825,7 +742,7 @@
                         <span class="font-bold" th:text="${name}">Property Name</span>
                     </p>
                     <p class="text-sm text-muted">
-                        Total Available Units:
+                        Total  Units:
                         <strong class="text-[var(--text)] font-bold" th:text="${unit_add}">0</strong>
                     </p>
                 </div>
@@ -885,12 +802,6 @@
                     </div>
                 </div>
 
-                <div th:if="${'No'.equals(add_property_profile)}" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p class="text-xs text-blue-800 font-medium">
-                        Select a unit number between 1 and <span class="font-bold" th:text="${unit_add}">0</span>
-                    </p>
-                </div>
-
                 <div class="mt-4 pt-4 border-t border-muted">
                     <a href="/dashboard"
                        class="inline-flex items-center gap-2 text-accent hover:text-accent-dark text-sm font-medium">
@@ -903,40 +814,46 @@
             </div>
         </div>
 
-        <div class="form-card" role="main" aria-labelledby="form-title">
-            <h2 id="form-title" class="form-title">ADD TENANT TO UNIT</h2>
+        <!-- Form Card -->
+        <div class="form-card">
+            <h2 class="form-title">Add New Tenant</h2>
 
-            <form id="tenantForm" action="http://localhost:7070/add_tenants" th:action="@{/add_tenants}" method="POST">
-                <div class="form-section">
-                    <div class="mb-4">
-                        <h3 class="text-accent">Unit Selection</h3>
-                        <p class="text-sm text-muted">Select which unit this tenant will occupy</p>
-                    </div>
+            <form id="tenantForm" action="/tenant/save" method="post" novalidate>
+                <!-- Unit Number Field -->
+                <div class="form-row full-width">
+                    <div class="form-field">
+                        <label for="unit_number">
+                            Unit Number <span class="required-star">*</span>
+                            <span class="field-tooltip" title="Select an available unit number">i</span>
+                        </label>
+                        <input id="unit_number" name="unit_number" type="number" min="1"
+                               th:attr="max=${unit_add}"
+                               th:value="${unit_add}" required
+                               class="themed-input input-focus"
+                               placeholder="Enter unit number">
 
-                    <div class="form-row full-width">
-                        <div class="form-field">
-                            <label for="unit_number">
-                                Unit Number <span class="required-star">*</span>
-                                <span class="field-tooltip" title="Select an available unit number">i</span>
-                            </label>
-                            <input id="unit_number" name="unit_number" type="number" min="1"
-                                   th:attr="max=${unit_add}"
-                                   th:value="${unit_add}" required
-                                   class="themed-input input-focus"
-                                   placeholder="Enter unit number">
-                            <p class="helper-text">Available units: 1 to <span class="font-bold" th:text="${unit_add}">0</span></p>
-                            <div id="unit_number_error" class="error-message"></div>
-                            <th:block th:if="${error != null and !error.isEmpty()}">
-                                <p class="mt-1 text-sm text-red-600">
-                                    <strong>Error:</strong> <span th:text="${error}"></span>
-                                </p>
-                            </th:block>
-                        </div>
+                        <!-- Display occupied units if any -->
+                        <th:block th:if="${not #lists.isEmpty(Occupied_units)}">
+                            <p class="mt-2 text-sm text-yellow-600">
+                                <strong>Note:</strong> Available Units:
+                                <span th:text="${#strings.listJoin(Occupied_units, ', ')}"></span>
+                            </p>
+                        </th:block>
+
+                        <div id="unit_number_error" class="error-message"></div>
+
+                        <!-- Error message display -->
+                        <th:block th:if="${error != null and !error.isEmpty()}">
+                            <p class="mt-2 text-sm text-red-600">
+                                <strong>Error:</strong> <span th:text="${error}"></span>
+                            </p>
+                        </th:block>
                     </div>
                 </div>
 
+                <!-- Personal Details Section -->
                 <div class="form-section">
-                    <div class="mb-4">
+                    <div class="mb-6">
                         <h3 class="text-accent">Personal Details</h3>
                         <p class="text-sm text-muted">Basic information about the tenant</p>
                     </div>
@@ -969,7 +886,7 @@
                             <p class="helper-text">Enter phone number</p>
                             <div id="cell_number_error" class="error-message"></div>
                             <th:block th:if="${error_tenant != null and !error_tenant.isEmpty()}">
-                                <p class="mt-1 text-sm text-red-600" th:text="${error_tenant}"></p>
+                                <p class="mt-2 text-sm text-red-600" th:text="${error_tenant}"></p>
                             </th:block>
                         </div>
                     </div>
@@ -993,7 +910,7 @@
                                 ⚠️ This date is more than 6 months in the future. Please confirm.
                             </div>
                             <th:block th:if="${Invalid_format != null and !Invalid_format.isEmpty()}">
-                                <p class="mt-1 text-sm text-red-600" th:text="${Invalid_format}"></p>
+                                <p class="mt-2 text-sm text-red-600" th:text="${Invalid_format}"></p>
                             </th:block>
                         </div>
 
@@ -1020,8 +937,9 @@
                     </div>
                 </div>
 
+                <!-- Emergency Contact Section -->
                 <div class="form-section">
-                    <div class="mb-4">
+                    <div class="mb-6">
                         <h3 class="text-accent">Emergency Contact</h3>
                         <p class="text-sm text-muted">Contact person in case of emergencies</p>
                     </div>
@@ -1036,6 +954,7 @@
                                    placeholder="e.g. Naledi Mokoena" required
                                    class="themed-input input-focus" th:value="${tenant_kin_name}">
                             <p class="helper-text">Emergency contact person's name</p>
+                            <div id="kin_name_error" class="error-message"></div>
                         </div>
 
                         <div class="form-field">
@@ -1056,8 +975,9 @@
                     </div>
                 </div>
 
+                <!-- Financial Details Section -->
                 <div class="form-section">
-                    <div class="mb-4">
+                    <div class="mb-6">
                         <h3 class="text-accent">Financial Details</h3>
                         <p class="text-sm text-muted">Rental and payment information</p>
                     </div>
@@ -1075,6 +995,7 @@
                                        class="themed-input input-focus pl-8">
                             </div>
                             <p class="helper-text">Monthly rent amount in Rand</p>
+                            <div id="rent_amount_error" class="error-message"></div>
                         </div>
                     </div>
 
@@ -1088,6 +1009,7 @@
                                    placeholder="8" required
                                    class="themed-input input-focus" th:value="${tenant_rent_day}">
                             <p class="helper-text">Day of month when rent is due (1-31)</p>
+                            <div id="rent_day_error" class="error-message"></div>
                         </div>
 
                         <div class="form-field">
@@ -1103,12 +1025,16 @@
                                        class="themed-input input-focus pl-8">
                             </div>
                             <p class="helper-text">Existing debt (enter 0 if none)</p>
+                            <div id="debt_error" class="error-message"></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Hidden Fields -->
+                <input type="hidden" id="occupiedUnits" th:value="${#strings.listJoin(Occupied_units, ',')}" />
                 <input type="hidden" name="unit" th:value="${unit_add}" />
 
+                <!-- Form Actions -->
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="window.history.back()">Cancel</button>
                     <button type="submit" id="submitButton" class="inline-flex justify-center items-center gap-2">
@@ -1131,6 +1057,50 @@
 </footer>
 
 <script>
+    // MOBILE MENU FUNCTIONALITY
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+            menuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenu.classList.toggle('hidden');
+
+            if (!isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!mobileMenu.classList.contains('hidden') &&
+                !menuButton.contains(event.target) &&
+                !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                menuButton.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
     // MOBILE WELCOME CARD TOGGLE
     function toggleWelcomeCard() {
         if (window.innerWidth < 1024) {
@@ -1173,10 +1143,8 @@
 
     // FIX FOR SPINNER ON BROWSER BACK BUTTON
     window.addEventListener('pageshow', function(event) {
-        // Check if the page is loaded from the BFcache (browser back button scenario)
         if (event.persisted) {
             console.log("Page loaded from BFcache (browser back button). Hiding spinner.");
-            // Reset the loading state
             hideLoading();
         }
     });
@@ -1185,7 +1153,7 @@
     function getDateLimits() {
         const today = new Date();
         const maxDate = new Date();
-        maxDate.setFullYear(today.getFullYear() + 1); // 1 year from today
+        maxDate.setFullYear(today.getFullYear() + 1);
 
         return {
             min: today.toISOString().split('T')[0],
@@ -1220,7 +1188,10 @@
 
     // Initialize everything on page load
     document.addEventListener('DOMContentLoaded', function() {
-        // Use server theme as primary source
+        // Set current year in footer
+        document.getElementById('pro-man-year').textContent = new Date().getFullYear();
+
+        // Use server theme
         const serverTheme = window.serverTheme || 'light';
         localStorage.setItem('user_chosen_theme', serverTheme);
 
@@ -1230,45 +1201,36 @@
         const dateLimits = getDateLimits();
 
         if (moveInInput) {
-            // Set min and max dates (today to 1 year from now)
             moveInInput.min = dateLimits.min;
             moveInInput.max = dateLimits.max;
 
-            // If no value is set, default to today
             if (!moveInInput.value) {
                 moveInInput.value = dateLimits.min;
             }
 
-            // Check if existing value is a future date
             if (moveInInput.value) {
                 const existingDate = new Date(moveInInput.value);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
                 if (existingDate < today) {
-                    // If past date, set to today
                     moveInInput.value = dateLimits.min;
                 } else if (existingDate > new Date(dateLimits.max)) {
-                    // If beyond max date, set to max
                     moveInInput.value = dateLimits.max;
                 }
 
-                // Show warning for far future dates
                 if (isFarFutureDate(moveInInput.value)) {
                     moveInWarning.classList.add('show');
                 }
             }
 
-            // Add event listener for date changes
             moveInInput.addEventListener('change', function() {
-                // Show/hide warning for far future dates
                 if (isFarFutureDate(this.value)) {
                     moveInWarning.classList.add('show');
                 } else {
                     moveInWarning.classList.remove('show');
                 }
 
-                // Validate date is within range
                 const selectedDate = new Date(this.value);
                 const minDate = new Date(dateLimits.min);
                 const maxDate = new Date(dateLimits.max);
@@ -1278,7 +1240,6 @@
                 } else {
                     hideError('move_in_error');
 
-                    // Show friendly date display in helper text
                     const helperText = this.parentElement.querySelector('.helper-text');
                     if (helperText) {
                         const isFuture = isFutureDate(this.value);
@@ -1295,12 +1256,10 @@
         const unitNumberInput = document.getElementById('unit_number');
         const debtInput = document.getElementById('debt_input');
 
-        // Set default value for debt input
         if (debtInput && !debtInput.value) {
             debtInput.value = '0';
         }
 
-        // Get the max unit value
         const maxUnits = parseInt(unitNumberInput.getAttribute('max')) || 1;
 
         const showError = (id, msg) => {
@@ -1308,7 +1267,6 @@
             if (!el) return;
             el.textContent = msg;
             el.classList.add('show');
-            // Add error border to input
             const input = document.getElementById(id.replace('_error', ''));
             if (input) input.classList.add('error-border');
         };
@@ -1318,7 +1276,6 @@
             if (!el) return;
             el.textContent = '';
             el.classList.remove('show');
-            // Remove error border from input
             const input = document.getElementById(id.replace('_error', ''));
             if (input) {
                 input.classList.remove('error-border');
@@ -1328,13 +1285,11 @@
             }
         };
 
-        // Basic phone number validation
         function isValidPhoneNumber(phone) {
             const digits = phone.replace(/\D/g, '');
-            return digits.length >= 10; // Basic validation - at least 10 digits
+            return digits.length >= 10;
         }
 
-        // Format phone number display
         function formatPhoneNumber(value) {
             const digits = value.replace(/\D/g, '');
             if (digits.length <= 3) return digits;
@@ -1361,10 +1316,8 @@
         function validateForm() {
             let isValid = true;
 
-            // Validate unit number
             if (!validateUnitNumber()) isValid = false;
 
-            // Validate name
             const nameInput = document.getElementById('tenant_name');
             if (!nameInput.value.trim()) {
                 showError('tenant_name_error', "Please enter the tenant's full name.");
@@ -1373,7 +1326,6 @@
                 hideError('tenant_name_error');
             }
 
-            // Validate phone
             const phoneInput = document.getElementById('cell_number');
             const phoneVal = phoneInput.value.replace(/\D/g, '');
             if (!phoneVal) {
@@ -1386,7 +1338,6 @@
                 hideError('cell_number_error');
             }
 
-            // Validate move-in date (now allows future dates)
             if (moveInInput && !moveInInput.value) {
                 showError('move_in_error', 'Please select a move-in date.');
                 isValid = false;
@@ -1403,7 +1354,6 @@
                 }
             }
 
-            // Validate employment status
             if (!employmentSelected()) {
                 showError('employment_error', 'Please indicate employment status.');
                 isValid = false;
@@ -1411,7 +1361,6 @@
                 hideError('employment_error');
             }
 
-            // Validate next of kin phone
             const kinPhoneInput = document.getElementById('kin_number');
             const kinVal = kinPhoneInput.value.replace(/\D/g, '');
             if (!kinVal) {
@@ -1424,35 +1373,31 @@
                 hideError('kin_number_error');
             }
 
-            // Validate next of kin name
             const kinNameInput = document.getElementById('kin_name');
             if (!kinNameInput.value.trim()) {
-                const kinNameError = document.getElementById('kin_number_error') || document.createElement('div');
-                kinNameError.textContent = 'Please enter next of kin name.';
+                showError('kin_name_error', 'Please enter next of kin name.');
                 isValid = false;
+            } else {
+                hideError('kin_name_error');
             }
 
             return isValid;
         }
 
-        // Phone input formatting
         function formatPhoneInput(input) {
             input.addEventListener('input', function(e) {
                 const start = this.selectionStart;
                 const raw = this.value.replace(/\D/g, '');
 
-                // Keep first digit as 0
                 let digits = raw;
                 if (!raw.startsWith('0') && raw.length > 0) {
                     digits = '0' + raw;
                 }
 
-                // Limit to 10 digits
                 if (digits.length > 10) {
                     digits = digits.substring(0, 10);
                 }
 
-                // Format with spaces
                 let formatted = '';
                 if (digits.length > 0) formatted = digits.substring(0, 3);
                 if (digits.length > 3) formatted += ' ' + digits.substring(3, 6);
@@ -1460,10 +1405,8 @@
 
                 this.value = formatted;
 
-                // Maintain cursor position
                 try { this.setSelectionRange(start, start); } catch (err) {}
 
-                // Validate and show/hide error
                 const errorId = this.id + '_error';
                 const digitsOnly = formatted.replace(/\D/g, '');
                 if (digitsOnly.length >= 10 && isValidPhoneNumber(digitsOnly)) {
@@ -1475,11 +1418,9 @@
             });
         }
 
-        // Apply phone formatting
         formatPhoneInput(document.getElementById('cell_number'));
         formatPhoneInput(document.getElementById('kin_number'));
 
-        // Real-time validation
         const inputsToValidate = ['tenant_name', 'cell_number', 'move_in', 'kin_number', 'unit_number', 'kin_name'];
         inputsToValidate.forEach(inputId => {
             const input = document.getElementById(inputId);
@@ -1492,14 +1433,12 @@
             }
         });
 
-        // Employment radio validation
         form.querySelectorAll('input[name="employment"]').forEach(r => {
             r.addEventListener('change', function() {
                 hideError('employment_error');
             });
         });
 
-        // Form submission
         form.addEventListener('submit', function(evt) {
             if (isSubmitting) {
                 evt.preventDefault();
@@ -1508,7 +1447,6 @@
 
             if (!validateForm()) {
                 evt.preventDefault();
-                // Scroll to first error
                 const firstError = form.querySelector('.error-message.show');
                 if (firstError) {
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1516,7 +1454,6 @@
                 return false;
             }
 
-            // Confirm if date is far in the future
             if (moveInInput && isFarFutureDate(moveInInput.value)) {
                 const confirmed = confirm('This move-in date is more than 6 months in the future. Are you sure this is correct?');
                 if (!confirmed) {
@@ -1530,14 +1467,12 @@
             return true;
         });
 
-        // Initialize welcome card
         const welcomeCard = document.getElementById('welcomeCard');
         if (window.innerWidth >= 1024) {
             welcomeCard.classList.add('expanded');
         }
     });
 
-    // Handle window resize
     window.addEventListener('resize', function() {
         const welcomeCard = document.getElementById('welcomeCard');
         if (window.innerWidth >= 1024) {
@@ -1547,15 +1482,11 @@
         }
     });
 
-    // Handle page unload
     window.addEventListener('beforeunload', function(e) {
         if (isSubmitting) {
             // Optional confirmation dialog
         }
     });
-
-    // Set current year in footer
-    document.getElementById('pro-man-year').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
