@@ -19,26 +19,30 @@ public class UpdateUnit{
     public Handler update_tenant(){
         return ctx ->{
             String tenant_name = ctx.sessionAttribute("tenant_name");
+            System.out.println("Tenant name from Memory " + tenant_name);
             Integer propertyUnit = Integer.parseInt(Objects.requireNonNull(ctx.sessionAttribute("tenant_unit")));
-            String propertyName = ctx.sessionAttribute("_current_property");
+            String propertyName = ctx.sessionAttribute("current_property");
             String contact =  ctx.sessionAttribute("tenant_contact");
             String property_rent = ctx.sessionAttribute("property_rent");
 
             //Get TenantId
+            Tenant tenant = new Tenant();
             Integer tenantId = ctx.sessionAttribute("TenantID");
             if (tenantId == null) {
-                ctx.status(401).result("Session expired or not logged in");
-
-                return;
+                tenantId =  tenant.tenant_ID(tenant_name,contact);
+                if(tenantId == null){
+                    ctx.render("templates/not_found.html");
+                }
             }
-
+            Integer landlord_id =  ctx.sessionAttribute("landlordID");
             Change_Unit update_tenant_unit = new Change_Unit(tenant_name,propertyUnit,propertyName,tenantId);
+            update_tenant_unit.SetContact(contact);
             try {
                 update_tenant_unit.update_TenantInformation();
-            } catch (RuntimeException e) {
 
-                ctx.sessionAttribute ("failure","Invalid Tenant number");
-                ctx.redirect("/tenant_profile/"+tenant_name +"/"+propertyUnit+"/"+property_rent+"/"+ contact );
+
+            } catch (RuntimeException e) {
+                ctx.render("templates/not_found.html");
                 return;
             }
 
@@ -49,13 +53,16 @@ public class UpdateUnit{
             Date   moveOut = ctx.sessionAttribute("moveOut");
 
             Change_Unit update_additional_information = new Change_Unit(kin_name,kin_number,rent_payment_day,moveIn,moveOut,tenantId);
-            update_tenant_unit.vacant_unit();
-            update_tenant_unit.Change_unit();
 
-            update_additional_information.additional_tenantINFO();
+
+    //        update_additional_information.additional_tenantINFO();
 
             HashMap<String,String> model  = new HashMap<>();
-
+            System.out.println("Stupid boy : ");
+            System.out.println("Property Name : "+  propertyName);
+            System.out.println("Property landlord Id : "+  landlord_id);
+            System.out.println(new Property_Status().property_tenants(propertyName,landlord_id) );
+            ctx.sessionAttribute("current_units_property",new Property_Status().property_tenants(propertyName,landlord_id));
             model.put("update_message","Tenant changed Unit");
             ctx.redirect("/dashboard");
         };
