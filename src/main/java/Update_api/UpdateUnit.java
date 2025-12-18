@@ -47,16 +47,19 @@ public class UpdateUnit{
             }
 
             String kin_name = ctx.sessionAttribute("kin_name");
-            String kin_number = ctx.sessionAttribute("kin_number");
-            String rent_payment_day = ctx.sessionAttribute("rent_payment_day");
-            Date   moveIn = ctx.sessionAttribute("moveIn");
-            Date   moveOut = ctx.sessionAttribute("moveOut");
-
-            Change_Unit update_additional_information = new Change_Unit(kin_name,kin_number,rent_payment_day,moveIn,moveOut,tenantId);
+            System.out.println("Kin Name " + kin_name);
 
 
-    //        update_additional_information.additional_tenantINFO();
+            String kin_number = ctx.sessionAttribute("kin_contact");
+            System.out.println("Kin Number " + kin_number);
+            String rent_payment_day = ctx.sessionAttribute("tenant_rent");
+            System.out.println("tenant Rent " + kin_number);
+            String   moveIn = ctx.sessionAttribute("move_in");
+            System.out.println("Mve IN " + moveIn);
+            String  moveOut = ctx.sessionAttribute("move_out");
 
+            Change_Unit update_additional_information = new Change_Unit(kin_name,kin_number,rent_payment_day,Date.valueOf(moveIn), null ,tenantId);
+            update_additional_information.additional_tenantINFO();
             HashMap<String,String> model  = new HashMap<>();
             System.out.println("Stupid boy : ");
             System.out.println("Property Name : "+  propertyName);
