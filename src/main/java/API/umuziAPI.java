@@ -79,17 +79,11 @@ public class umuziAPI {
 
             String tenant_name = ctx.pathParam("id");
             ctx.sessionAttribute("Tenant_name",tenant_name);
-
-            String default_name = ctx.sessionAttribute("Tenant_name");
-            ctx.sessionAttribute("original_pathValue_name",default_name);
             String tenant_unit = ctx.pathParam("unit");
             ctx.sessionAttribute("Tenant_unit",tenant_unit);
-            String default_unit = ctx.sessionAttribute("Tenant_unit");
-            ctx.sessionAttribute("original_pathValue_unit",default_unit);
             String property_rent = ctx.pathParam("propertyRent");
-             ctx.sessionAttribute("property_rent",property_rent);
-            String default_rent = ctx.sessionAttribute("property_rent");
-            ctx.sessionAttribute("original_pathValue_rent",default_rent);
+            ctx.sessionAttribute("property_rent",property_rent);
+
 
             String tenant_property = ctx.sessionAttribute("current_property");
 
@@ -97,7 +91,7 @@ public class umuziAPI {
 
             String tenant_contact = ctx.pathParam("contact");
             ctx.sessionAttribute("tenant_contact",tenant_contact);
-            System.out.println("tenant property : " + tenant_property);
+            System.out.println("tenant name : " + tenant_name);
             System.out.println("tenant contact : " + tenant_contact);
 
            ///System.out.println("Unit  number : " + tenant_unit);
@@ -108,6 +102,7 @@ public class umuziAPI {
 
             //Error null
             Integer tenant_id = tenant.tenant_ID(tenant_name,tenant_contact);
+            System.out.println("tenant Id " + tenant_id);
             if (tenant_id == null) {
                 ctx.render("templates/not_found.html");
                 return;
@@ -209,7 +204,6 @@ public class umuziAPI {
 
        // app.get("/unit_already_paid/{property_name}/{user_email}/{unit}",properties.display_property_units());
         //app.get("/payment_status/{property_name}/{user_email}/{unit}",properties.display_property_units());
-
 
         UpdateTenants tenant_unit_update = new UpdateTenants();
         app.post("unmark_payment/{id}/{unit}/{tenantContact}", tenant_unit_update.unmark_payment());
