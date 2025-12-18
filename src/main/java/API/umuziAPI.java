@@ -11,6 +11,7 @@ import static API.SessionUtil.fileSessionHandler;
 
 import API_handlers.*;
 import Invalidhandler.*;
+import Update_api.Remove;
 import Update_api.UpdateUnit;
 import api_login.Record_rent;
 import api_login.Validate_login;
@@ -266,7 +267,7 @@ public class umuziAPI {
         });
        app.post("/update_tenant",ctx -> {
            String action = ctx.formParam("action");
-
+           System.out.println("Action " + action);
            if(action.equals("save") ){
                System.out.println("New updates for existing tenant : user action Save "  );
                //Updates on tenant information --> Tenant name, Tenant_contact  OR  Rent_day Gets Updated
@@ -298,13 +299,18 @@ public class umuziAPI {
                ctx.sessionAttribute("move_out",move_out);
 
                ctx.redirect("/updating_tenant");
-           }else {
-               System.out.println("remove tenant");
+           }else if (action.equals("vacant")) {
+               System.out.println("No feelings removing tenant;");
+               ctx.redirect("/vacant_tenant_from_unit");
            }
 
        });
        UpdateUnit new_tenant_updates = new UpdateUnit();
        app.get("/updating_tenant", new_tenant_updates.update_tenant());
+
+       Remove _tenant_moves_out = new Remove();
+       app.get("/vacant_tenant_from_unit",_tenant_moves_out.remove_tenant());
+
 /**
  * adds tenant information to the database
  */
