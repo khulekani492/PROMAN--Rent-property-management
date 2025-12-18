@@ -84,10 +84,7 @@ public class umuziAPI {
             String property_rent = ctx.pathParam("propertyRent");
             ctx.sessionAttribute("property_rent",property_rent);
 
-
             String tenant_property = ctx.sessionAttribute("current_property");
-
-
 
             String tenant_contact = ctx.pathParam("contact");
             ctx.sessionAttribute("tenant_contact",tenant_contact);
