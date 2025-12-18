@@ -94,23 +94,32 @@ public class Tenant extends ConnectionAccess {
         return contact;
     }
 
-    public Integer tenant_ID(String tenant_name,String contact) {
-        String sql = "SELECT id FROM general_users WHERE name = ? AND contact = ? AND user_type = 'tenant'";
+    public Integer tenant_ID(String tenantName, String contact) {
 
-        try {
-            PreparedStatement pstm = this.connection.prepareStatement(sql);
-            pstm.setString(1, tenant_name);
+        String sql = """
+        SELECT id
+        FROM general_users
+        WHERE name = ?
+          AND contact = ?
+          AND user_type = 'tenant'
+        """;
+
+        try (PreparedStatement pstm = connection.prepareStatement(sql)) {
+
+            pstm.setString(1, tenantName);
             pstm.setString(2, contact);
-            ResultSet result = pstm.executeQuery();
 
-            if(result.next()){
-                return result.getInt("id");
-
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // id
+                }
             }
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch tenant ID", e);
         }
-        return null;
+
+        return null; // not found
     }
 
         public void update_debt(Integer new_amount,Integer tenant_Id) {
@@ -256,5 +265,10 @@ public class Tenant extends ConnectionAccess {
         }
 
         return null;
+    }
+
+     public static void main() {
+        Tenant F = new Tenant();
+         System.out.println(F.tenant_ID("Ntwana","0723843495"));
     }
 }
