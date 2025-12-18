@@ -146,7 +146,7 @@ public class Tenant extends ConnectionAccess {
 
     public void vacant_unit(Integer tenant_Id) {
         String sql = """
-    UPDATE properties  SET tenant_user_id = null WHERE tenant_user_id = ?
+    UPDATE properties  SET tenant_user_id = null , occupation ='no' WHERE tenant_user_id = ?
 """;
         Integer updated_debt = null;
         try {
