@@ -814,6 +814,9 @@
                             </option>
                         </select>
 
+                            <p class="mt-2 text-sm text-red-600" th:text="${no_units}" >
+                            </p>
+
 
                         <!-- Display occupied units if any -->
                         <th:block th:if="${not #lists.isEmpty(Occupied_units)}">

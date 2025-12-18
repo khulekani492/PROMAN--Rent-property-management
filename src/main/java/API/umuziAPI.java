@@ -239,7 +239,7 @@ public class umuziAPI {
  */     AddProperty propertyInfo = new AddProperty();
         app.post("/add_property", propertyInfo.addproperty());
 
-        app.get("/new/add/tenant",ctx -> {
+        app.get("/add_tenant",ctx -> {
             Map<String, Object> model = new HashMap<>();
             String user_name = ctx.sessionAttribute("user_name");
             Integer total_n_units = ctx.sessionAttribute("property_unit") ;
@@ -260,23 +260,24 @@ public class umuziAPI {
 
             Integer available_unit ;
 
-            if(available_units == null){
+            System.out.println(" availabe_units " + available_units.size());
+            if(available_units.size() == 0){
+                System.out.println("wait");
                 ctx.sessionAttribute("property_unit", total_n_units);
                 model.put("user_name",user_name);
                 model.put("unit_add", String.valueOf(total_n_units));
                 model.put("user_chosen_theme",theme_color);
                 model.put("name", property_name);
                 model.put("add_property_profile",check_Memory);
-                model.put("Occupied_units","No units available" );
+                model.put("no_units","No units added for this property.Tenants added here will not be saved.");
                 System.out.println(total_n_units + "  property unit ");
                 System.out.println(model + "  Property state for tenant form ");
                 ctx.render("templates/tenant_form.html",model);
                 return;
             }else {
+
                 available_unit = available_units.getFirst();
             }
-
-
 
             Integer  default_available_unit = available_units.getFirst();
 
