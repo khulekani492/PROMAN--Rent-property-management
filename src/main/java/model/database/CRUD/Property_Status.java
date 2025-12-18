@@ -135,6 +135,34 @@ public class Property_Status extends ConnectionAccess {
 
         return rent_and_debt;
     }
+
+    public ArrayList<Integer> property_units(String property_name,Integer landlord){
+        ArrayList<Integer> property_units = new ArrayList<>();
+        String propertyinfo = """
+    SELECT properties.property_unit
+    FROM properties
+    WHERE properties.property_name = ? AND occupation = 'no'
+      AND properties.landlord_user_id = ?
+""";
+
+        try(PreparedStatement pstm = newConnection().prepareStatement(propertyinfo)){
+            pstm.setString(1,property_name);
+            pstm.setInt(2,landlord);
+            ResultSet result = pstm.executeQuery();
+            while (result.next()){
+                property_units.add( result.getInt("property_unit") ) ;
+
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return property_units ;
+    }
+
+
     public String tenant_name(Integer tenantID) {
         String ery = """
       SELECT general_users.name
@@ -167,7 +195,7 @@ public class Property_Status extends ConnectionAccess {
 //        pocket_it.property_tenants();
       //  tools.set(1,pocket_it.tenant_name(772));
        // System.out.println(tools.set(2, pocket_it.tenant_name(772)));
-        System.out.println(pocket_it.property_tenants("The bahamas",771));
+        System.out.println(pocket_it.property_units("Thornville_rooms",771));
 
     }
 }
