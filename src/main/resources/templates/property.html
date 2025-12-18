@@ -636,15 +636,15 @@
 
         <!-- Desktop Nav -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-            <a href="http://localhost:7070/"
+            <a href="/"
                class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
                 Home
             </a>
-            <a href="http://localhost:7070/dashboard"
+            <a href="/dashboard"
                class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
                 Dashboard
             </a>
-            <a href="http://localhost:7070/log_out"
+            <a href="/log_out"
                class="signup-btn px-5 py-1.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
                 Log out
             </a>
@@ -662,18 +662,11 @@
 
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-3 space-y-2">
-        <a href="http://localhost:7070/"
-           class="block w-full text-center login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
-            HOME
-        </a>
-        <a href="http://localhost:7070/dashboard"
+        <a href="/dashboard"
            class="block w-full text-center login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200">
             DASHBOARD
         </a>
-        <a href="http://localhost:7070/"
-           class="block w-full text-center signup-btn px-5 py-1.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-            LOG OUT
-        </a>
+
     </div>
 </header>
 
@@ -824,7 +817,7 @@
             <h2 id="form-title" class="form-title">
                 Property Information
             </h2>
-            <form id="unitForm" action="http://localhost:7070/add_property" method="POST">
+            <form id="unitForm" action="/add_property" method="POST">
                 <div class="form-section">
                     <div class="mb-4">
                         <h3 class="text-xl font-bold mb-2 text-accent">Property Details</h3>

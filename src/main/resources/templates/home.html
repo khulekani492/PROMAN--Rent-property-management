@@ -301,11 +301,11 @@
     <!-- Mobile menu (hidden by default) - Dark mode toggle removed -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
         <!-- Only login/signup links, no dark mode toggle -->
-        <a href="http://localhost:7070/login"
+        <a href="/login"
            class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
             Log In
         </a>
-        <a href="http://localhost:7070/landlord_sign_up"
+        <a href="/landlord_sign_up"
            class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
             Sign Up
         </a>
@@ -320,7 +320,7 @@
     // AJAX function to send theme preference without page reload
     async function sendThemePreference(theme) {
         try {
-            const response = await fetch('http://localhost:7070/page_theme', {
+            const response = await fetch('/page_theme', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -492,7 +492,7 @@
 
             <!-- Added space before button -->
             <div class="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <a href="http://localhost:7070/landlord_sign_up"
+                <a href="/landlord_sign_up"
                    class="inline-flex items-center justify-center px-8 py-3 bg-surface text-accent font-bold text-lg rounded-lg shadow transition transform hover:scale-[1.02]">
                     Get started — it's free
                 </a>

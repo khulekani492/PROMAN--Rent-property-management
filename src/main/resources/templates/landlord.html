@@ -301,11 +301,11 @@
 
         <!-- Desktop Nav - will be hidden on mobile -->
         <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-            <a href="http://localhost:7070/"
+            <a href="/"
                class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
                 HOME
             </a>
-            <a href="http://localhost:7070/login"
+            <a href="/login"
                class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
                 Log In
             </a>
@@ -323,11 +323,11 @@
 
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
-        <a href="http://localhost:7070/"
+        <a href="/"
            class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
             HOME
         </a>
-        <a href="http://localhost:7070/login"
+        <a href="/login"
            class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
             Log In
         </a>
@@ -385,7 +385,7 @@
 
     // DARK MODE
     function sendThemePreference(theme){
-        const form=document.createElement('form'); form.method='POST'; form.action='http://localhost:7070/page_theme';
+        const form=document.createElement('form'); form.method='POST'; form.action='/page_theme';
         const themeInput=document.createElement('input'); themeInput.type='hidden'; themeInput.name='user_theme'; themeInput.value=theme;
         form.appendChild(themeInput); document.body.appendChild(form); form.submit();
         setTimeout(()=>document.body.removeChild(form),100);
@@ -420,7 +420,7 @@
             provider: 'google',
             options: {
                 // This is the URL that Supabase redirects to AFTER the Google sign-in is complete.
-                redirectTo: 'http://localhost:7070/add_property_unit'
+                redirectTo: '/add_property_unit'
             }
         });
         if (error) console.error("OAuth Error:", error);
@@ -528,7 +528,7 @@
                 <div class="w-full h-px bg-muted"></div>
             </div>
 
-            <form id="landlordForm" method="POST" action="http://localhost:7070/user_sign_up" class="space-y-4">
+            <form id="landlordForm" method="POST" action="/user_sign_up" class="space-y-4">
                 <div>
                     <label for="user_name" class="block text-sm font-semibold text-[var(--text)]">Username</label>
                     <input id="user_name" name="user_name" required type="text" autocomplete="username" class="mt-1 block w-full rounded-lg border border-muted bg-surface p-3 shadow-sm input-focus" th:value="${username}"/>
@@ -579,7 +579,7 @@
 
                 <div class="text-center text-sm text-muted pt-2">
                     Already have an account?
-                    <a href="http://localhost:7070/login" class="text-accent font-semibold hover:underline">Log in</a>
+                    <a href="/login" class="text-accent font-semibold hover:underline">Log in</a>
                 </div>
             </form>
         </section>

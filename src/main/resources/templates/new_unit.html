@@ -646,12 +646,9 @@
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
     <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
         <div class="flex items-center gap-3">
-            <a href="http://localhost:7070/" class="flex items-center hover:opacity-90 transition-opacity">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
-            </a>
             <div>
-                <a href="http://localhost:7070/" class="text-xl font-extrabold text-accent hover:text-[var(--accent-dark)] transition">ProMan</a>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
@@ -660,7 +657,7 @@
 
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
-        <a href="http://localhost:7070/dashboard"
+        <a href="/dashboard"
            class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
             Back To Dashboard
         </a>
@@ -751,7 +748,7 @@
 
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <a href="http://localhost:7070/dashboard"
+                    <a href="/dashboard"
                        class="btn btn-secondary">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -803,7 +800,7 @@
     function sendThemePreference(theme){
         const form=document.createElement('form');
         form.method='POST';
-        form.action='http://localhost:7070/page_theme';
+        form.action='/page_theme';
         const themeInput=document.createElement('input');
         themeInput.type='hidden';
         themeInput.name='user_theme';
