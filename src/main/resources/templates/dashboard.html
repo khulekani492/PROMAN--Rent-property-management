@@ -36,6 +36,44 @@
             --error: #dc2626;
             --error-light: #fef2f2;
         }
+        /* Add to your CSS file or in a style tag */
+.sidebar {
+    height: 100vh; /* Or use 100% depending on your layout */
+    position: fixed; /* Or sticky, depending on your needs */
+    overflow-y: auto;
+}
+
+.main-wrap {
+    display: flex;
+    min-height: 100vh;
+}
+
+.content {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: var(--text);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.nav-btn:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+}
 
         body.dark {
             /* Dark Theme */
@@ -2411,6 +2449,25 @@
         body.dark .card-surface {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
+        /* Add to your existing CSS in the <style> section */
+
+/* Fix spacing for property name display */
+.property-name-display {
+    margin-bottom: 1rem !important; /* Add space below property name */
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--muted);
+}
+
+/* Adjust quick nav buttons */
+.quick-nav-buttons {
+    margin-bottom: 1rem;
+}
+
+/* Make sure the nav button has proper spacing */
+.quick-nav-buttons .nav-btn {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem; /* Add space below button */
+}
     </style>
 </head>
 
@@ -2456,12 +2513,11 @@
 
             <!-- Desktop Navigation Links -->
             <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-
                 <a href="http://localhost:7070/dashboard"
                    class="login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200 border-muted bg-surface text-text hover:bg-muted">
                     Dashboard
                 </a>
-                <a href="http://localhost:7070/log_out"
+                <a href="http://localhost:7070/logout"
                    class="signup-btn px-5 py-1.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 bg-accent text-[#2b1f00] hover:bg-accent-dark hover:text-white">
                     Log out
                 </a>
@@ -2489,90 +2545,92 @@
            class="block w-full text-center login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200 border-muted bg-surface text-text hover:bg-muted">
             DASHBOARD
         </a>
-        <a href="http://localhost:7070/log_out"
+        <a href="http://localhost:7070/logout"
            class="block w-full text-center signup-btn px-5 py-1.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 bg-accent text-[#2b1f00] hover:bg-accent-dark hover:text-white">
             LOG OUT
         </a>
     </div>
 </header>
+
 <div id="sidebar-backdrop"></div>
 <div class="main-wrap">
     <aside id="sidebar" class="sidebar" role="navigation" aria-label="Main sidebar">
-        <div class="sidebar-content">
-            <!-- Property name with reduced margin -->
-            <div class="property-name-display" style="margin-bottom: 0.5rem;">
-                <i class="fas fa-building"></i>
-                <span class="property-name-text" th:text="${name}">Property Name</span>
+        <div class="sidebar-content" style="padding: 1.25rem 1rem; display: flex; flex-direction: column; height: 100%;">
+            <!-- Property name with compact spacing -->
+            <div class="property-name-display" style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--muted);">
+                <i class="fas fa-building" style="font-size: 1.1rem;"></i>
+                <span class="property-name-text" th:text="${name}" style="font-weight: 600; font-size: 1.1rem;">Property Name</span>
             </div>
 
-            <!-- Quick navigation buttons with better spacing -->
-            <div class="quick-nav-buttons mb-4" style="margin-top: 1.5rem;"> <!-- Increased vertical spacing -->
-                <a data-tooltip="add new unit" href="http://localhost:7070/create_new_unit" class="nav-btn" style="padding: 0.75rem 1.25rem;">
-                    <i class="fas fa-plus mr-2"></i>
+            <!-- Quick navigation button with spacing - Now with proper flex-grow control -->
+            <div class="quick-nav-buttons mb-3" style="flex-shrink: 0;">
+                <a data-tooltip="Add new unit" href="http://localhost:7070/create_new_unit"
+                   class="nav-btn"
+                   style="padding: 0.75rem; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;">
+                    <i class="fas fa-plus"></i>
                     Create New Unit
                 </a>
             </div>
 
-            <!-- Sidebar stats with minimal spacing -->
-            <div class="sidebar-stats" style="margin-top: 1rem;"> <!-- Added top margin for separation -->
-                <div class="card rounded-lg p-3">
+            <!-- Sidebar stats with compact spacing - Now with auto-grow -->
+            <div class="sidebar-stats" style="gap: 0.75rem; display: flex; flex-direction: column; flex-grow: 1; overflow-y: auto;">
+                <div class="card rounded-lg p-3" style="border-left: 4px solid rgba(59, 130, 246, 0.2); background: var(--surface);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:var(--muted-text)">Property Owner</p>
-                            <p class="text-lg font-bold" style="color:var(--text)" th:text="${user_name}">8</p>
+                            <p class="text-xs" style="color:var(--muted-text); margin-bottom: 0.25rem;">Property Owner</p>
+                            <p class="text-base font-bold" style="color:var(--text)" th:text="${user_name}">Owner Name</p>
                         </div>
-                        <div class="feature-icon">
+                        <div class="feature-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--accent); padding: 0.5rem; border-radius: 0.5rem;">
                             <i class="fas fa-home"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="card rounded-lg p-3" style="border-left-color: rgba(34,197,94,0.18);">
+                <div class="card rounded-lg p-3" style="border-left: 4px solid rgba(34, 197, 94, 0.2); background: var(--surface);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:var(--muted-text)">Occupied Units</p>
-                            <p class="text-lg font-bold" style="color:var(--text)" th:text="${occupied_units}">0</p>
+                            <p class="text-xs" style="color:var(--muted-text); margin-bottom: 0.25rem;">Occupied Units</p>
+                            <p class="text-base font-bold" style="color:var(--text)" th:text="${occupied_units}">0</p>
                         </div>
-                        <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
+                        <div class="feature-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e; padding: 0.5rem; border-radius: 0.5rem;">
                             <i class="fas fa-check-circle"></i>
                         </div>
                     </div>
-                    <p class="text-sm"
-                       style="color:var(--muted-text); margin-top:6px"
-                       th:text="${occupancyRate + '% occupancy rate'}">
+                    <p class="text-xs" style="color:var(--muted-text); margin-top: 0.5rem;" th:text="${occupancyRate + '% occupancy rate'}">
                         0% occupancy rate
                     </p>
                 </div>
 
-                <div class="card rounded-lg p-3" style="border-left-color: rgba(59,130,246,0.18);">
+                <div class="card rounded-lg p-3" style="border-left: 4px solid rgba(59, 130, 246, 0.2); background: var(--surface);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:var(--muted-text)">Vacant Units</p>
-                            <p class="text-lg font-bold" style="color:var(--text)"  th:text="${vacant}">2</p>
+                            <p class="text-xs" style="color:var(--muted-text); margin-bottom: 0.25rem;">Vacant Units</p>
+                            <p class="text-base font-bold" style="color:var(--text)" th:text="${vacant}">2</p>
                         </div>
-                        <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
+                        <div class="feature-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 0.5rem; border-radius: 0.5rem;">
                             <i class="fas fa-bed"></i>
                         </div>
                     </div>
-                    <p class="text-sm" style="color:var(--muted-text); margin-top:6px">Available for rent</p>
+                    <p class="text-xs" style="color:var(--muted-text); margin-top: 0.5rem;">Available for rent</p>
                 </div>
 
-                <div class="card rounded-lg p-3" style="border-left-color: rgba(139,92,60,0.18);">
+                <div class="card rounded-lg p-3" style="border-left: 4px solid rgba(212, 175, 55, 0.2); background: var(--surface);">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm" style="color:var(--muted-text)">Monthly Revenue</p>
-                            <p class="text-lg font-bold" style="color:var(--text)" th:text="'R' + ${expected_profit}">R0</p>
+                            <p class="text-xs" style="color:var(--muted-text); margin-bottom: 0.25rem;">Monthly Revenue</p>
+                            <p class="text-base font-bold" style="color:var(--text)" th:text="'R' + ${expected_profit}">R0</p>
                         </div>
-                        <div class="feature-icon" style="background: rgba(255,255,255,0.06); color:var(--text)">
+                        <div class="feature-icon" style="background: rgba(212, 175, 55, 0.1); color: var(--accent); padding: 0.5rem; border-radius: 0.5rem;">
                             <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-auto pt-6">
+            <!-- Sign out button at bottom - Fixed to stay at bottom -->
+            <div class="mt-auto pt-4" style="border-top: 1px solid var(--muted); padding-top: 1rem; flex-shrink: 0;">
                 <a href="http://localhost:7070/logout"
-                   class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
+                   class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold text-sm shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-95">
                     <i class="fas fa-sign-out-alt"></i>
                     Sign Out
                 </a>
@@ -2931,7 +2989,6 @@
         </div>
     </div>
 </div>
-
 <script>
     // =========================================================================
     // NEW: Table Pagination and Search Functionality
