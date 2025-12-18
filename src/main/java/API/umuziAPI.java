@@ -106,14 +106,28 @@ public class umuziAPI {
                 }
 
             else {
+                System.out.println("Tenant ID NOT NULL");
                 ctx.sessionAttribute("TenantID",tenant_id);
                 }
 
 
 
-
             ArrayList<String> next_of_Kin_Information = tenant.tenant_next_of_kin(tenant_id) ;
-            String next_kin = next_of_Kin_Information.getFirst();
+
+            //Renders the user_profile without any next of kin name
+            if(next_of_Kin_Information == null){
+                System.out.println("HI the tenant has no next of kin information");
+                HashMap<String,String> model = new HashMap<>();
+                String themeColor = ctx.sessionAttribute("theme_color");
+                model.put("user_chosen_theme",themeColor);
+                model.put("unit_number",tenant_unit);
+                model.put("tenant_contact",tenant_contact);
+                model.put("tenant_name",tenant_name);
+                model.put("rent_amount",property_rent);
+                ctx.render("templates/user_profile.html",model);
+                return;
+            }
+            String  next_kin   = next_of_Kin_Information.getFirst();
             String next_kin_number = next_of_Kin_Information.getLast();
             String tenantMoveIN = next_of_Kin_Information.get(1);
             String tenant_rent = next_of_Kin_Information.get(2);
@@ -261,8 +275,10 @@ public class umuziAPI {
                String propertyName = ctx.formParam("property_name");
 
                String tenant_rent_day = ctx.formParam("rent_day");
-               String tenant_name = ctx.formParam("tenant_name");
+               String tenant_name = ctx.formParam("tenant_name_input");
+               System.out.println("Tenant name :  " + tenant_name);
                String tenant_contact =  ctx.formParam("tenant_contact");
+               System.out.println("");
                String kin_name = ctx.formParam("kin_name");
                String kin_contact = ctx.formParam("kin_contact");
                String move_in = ctx.formParam("move_in");
@@ -336,6 +352,11 @@ public class umuziAPI {
         app.exception(SQLException.class, (e, ctx) -> {
             ctx.status(503).result("Service temporarily unavailable");
         });
+
+        app.error(404, ctx -> {
+            ctx.render("templates/not_found.html");
+        });
+
 
         app.start(port);
         return app;
