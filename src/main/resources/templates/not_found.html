@@ -316,16 +316,6 @@
         </div>
 
         <!-- Desktop Nav - will be hidden on mobile -->
-        <nav id="nav-links" class="hidden lg:flex items-center gap-3 text-sm font-medium">
-            <a href="http://localhost:7070/login"
-               class="login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
-                Log In
-            </a>
-            <a href="http://localhost:7070/landlord_sign_up"
-               class="signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-                Sign Up
-            </a>
-        </nav>
 
         <!-- Header Actions (Mobile Menu Button) -->
         <div class="header-actions">
@@ -342,13 +332,9 @@
 
     <!-- Mobile menu (hidden by default) -->
     <div id="mobile-menu" class="lg:hidden hidden px-6 pb-4 space-y-2">
-        <a href="http://localhost:7070/login"
-           class="block w-full text-center login-btn border-2 px-5 py-2 rounded-lg font-semibold shadow-sm transition-all duration-200">
-            Log In
-        </a>
         <a href="http://localhost:7070/landlord_sign_up"
            class="block w-full text-center signup-btn px-6 py-2.5 rounded-lg font-semibold shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
-            Sign Up
+            Dashboard
         </a>
     </div>
 </header>
@@ -436,23 +422,11 @@
             </div>
         </div>
 
-        <!-- Search Box -->
-        <div class="search-box mb-10">
-            <p class="text-muted mb-4">Or try searching for what you need:</p>
-            <div class="relative">
-                <input type="text" placeholder="Search properties, tenants, or features..." class="search-input">
-                <button class="search-button">Search</button>
-            </div>
-        </div>
-
         <!-- Quick Links -->
         <div class="mt-10">
-            <p class="text-muted mb-4">Quick links:</p>
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="http://localhost:7070/login" class="text-accent hover:underline font-medium">Login</a>
-                <a href="http://localhost:7070/landlord_sign_up" class="text-accent hover:underline font-medium">Sign Up</a>
-                <a href="#about-proman" class="text-accent hover:underline font-medium">About ProMan</a>
-                <a href="#features" class="text-accent hover:underline font-medium">Features</a>
+              <a href="#about-proman" class="text-accent hover:underline font-medium">About ProMan</a>
             </div>
         </div>
     </div>
@@ -471,22 +445,13 @@
                 available on your own personalized profile.
             </p>
         </div>
-
-        <div class="text-center">
-            <a href="/" class="back-home-btn mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                </svg>
-                Return to ProMan Homepage
-            </a>
-        </div>
     </div>
 </section>
 
 <footer class="mt-auto py-8 bg-surface">
     <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
         &copy; 2025 ProMan Property Management Solutions.
-        <span class="block mt-2">Page Not Found - Error 404</span>
+        <span class="block mt-2">Page Not Found</span>
     </div>
 </footer>
 
