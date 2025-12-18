@@ -49,7 +49,7 @@ public class AddProperty {
                 propertyNames default_properties = new propertyNames();
                 Set<String> landlord_properties = default_properties.fetchAllproperty(landlordId);
                 ctx.sessionAttribute("allProperties", landlord_properties);
-                ArrayList<String> default_property = new ArrayList<>(landlord_properties);
+
                 System.out.println(ctx.attributeMap());
 
 
