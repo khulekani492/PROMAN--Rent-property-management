@@ -18,10 +18,12 @@ public class UpdateUnit{
 
     public Handler update_tenant(){
         return ctx ->{
-            String tenant_name = ctx.sessionAttribute("tenant_name");
-            System.out.println("Tenant name from Memory " + tenant_name);
+
+
             Integer propertyUnit = Integer.parseInt(Objects.requireNonNull(ctx.sessionAttribute("tenant_unit")));
             String propertyName = ctx.sessionAttribute("current_property");
+            String tenant_name = ctx.sessionAttribute("tenant_name");
+            System.out.println("Tenant name from Memory " + tenant_name);
             String contact =  ctx.sessionAttribute("tenant_contact");
             String property_rent = ctx.sessionAttribute("property_rent");
 
