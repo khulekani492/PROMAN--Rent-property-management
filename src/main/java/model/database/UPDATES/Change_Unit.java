@@ -25,6 +25,7 @@ public class Change_Unit extends ConnectionAccess {
         this.tenant_unit = tenant_unit;
         this.tenant_property = tenant_property;
         this.TenantId = tenantId;
+
     }
     public Change_Unit(String kin_name,String kin_number, String rent_payment_day,Date moveIN, Date moveOUT, Integer tenantId){
         this.kin_name = kin_name;
@@ -49,6 +50,11 @@ public class Change_Unit extends ConnectionAccess {
         this.tenant_unit = tenantUnit;
 
     }
+    public  void  SetContact(String contact){
+        this.contact = contact;
+    }
+
+
     public  void setTenant_property(String property_name){
         this.tenant_property = property_name;
 
@@ -129,7 +135,6 @@ public class Change_Unit extends ConnectionAccess {
     public void  update_TenantInformation (){
         String SQL = """
                    UPDATE general_users SET name = ?,contact = ? WHERE id = ?""";
-
         try (PreparedStatement pstm = this.connection.prepareStatement(SQL)) {
             pstm.setString(1, this.tenant_name);
             pstm.setString(2,  this.contact);
@@ -139,7 +144,18 @@ public class Change_Unit extends ConnectionAccess {
             throw new RuntimeException(e);
         }
     }
-
+    public void  update_TenantName_p (){
+        String SQL = """
+                   UPDATE properties SET name = ?,contact = ? WHERE id = ?""";
+        try (PreparedStatement pstm = this.connection.prepareStatement(SQL)) {
+            pstm.setString(1, this.tenant_name);
+            pstm.setString(2,  this.contact);
+            pstm.setInt(3, this.TenantId);
+            pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     public void additional_tenantINFO(){
