@@ -13,6 +13,7 @@ public class AddProperty {
     public Handler addproperty() {
         return ctx -> {
             try {
+                System.out.println("Adding a unit");
                 String totalUnits = ctx.formParam("property_unit");
                 Integer propertyUnit = Integer.valueOf(totalUnits);
                 String property_Name = ctx.formParam("property_Name");

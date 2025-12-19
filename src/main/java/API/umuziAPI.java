@@ -252,7 +252,10 @@ public class umuziAPI {
 
             Integer landlordId = ctx.sessionAttribute("landlordID");
             if(landlordId == null){
+
+
                 ctx.render("templates/not_found.html");
+                return;
             }
 
 
