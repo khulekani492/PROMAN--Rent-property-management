@@ -255,13 +255,12 @@ public class umuziAPI {
                 ctx.render("templates/not_found.html");
             }
 
-
             ArrayList<Integer>  available_units = property_units.property_units(property_name,landlordId);
 
             Integer available_unit ;
 
             System.out.println(" availabe_units " + available_units.size());
-            if(available_units.size() == 0){
+            if(available_units.isEmpty()){
                 System.out.println("wait");
                 ctx.sessionAttribute("property_unit", total_n_units);
                 model.put("user_name",user_name);
