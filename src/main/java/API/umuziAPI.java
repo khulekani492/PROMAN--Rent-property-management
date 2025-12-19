@@ -255,7 +255,9 @@ public class umuziAPI {
                 ctx.render("templates/not_found.html");
             }
 
+
             ArrayList<Integer>  available_units = property_units.property_units(property_name,landlordId);
+            System.out.println("available units   " +  available_units);
 
             Integer available_unit ;
 
