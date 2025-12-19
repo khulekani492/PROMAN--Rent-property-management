@@ -32,6 +32,14 @@ public class Dashboard implements Runnable {
 
 
                 Integer landlord_id =  ctx.sessionAttribute("landlordID");
+
+                if(landlord_id == null){
+                    HashMap<String,String> model = new HashMap<>();
+                    model.put("not_signed","Please sign in to access your Dashboard.");
+                    ctx.render("templates/login.html",model);
+                    return;
+                }
+
                 System.out.println("landlordId " + landlord_id);
                 String  login_user_name = ctx.sessionAttribute("loginUsername");
                  ctx.sessionAttribute("user_name",login_user_name);
