@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
@@ -386,30 +386,77 @@
             }
         }
 
-        /* Mobile sidebar fixes */
+        /* IMPROVED MOBILE SIDEBAR LAYOUT */
         @media (max-width: 1024px) {
             .sidebar {
-                transform: translateX(-100%);
-                position: fixed;
-                height: calc(100vh - 64px);
-                left: 0;
-                top: 64px;
-                box-shadow: 0 18px 40px rgba(16,24,40,0.12);
                 width: 85%;
                 max-width: 320px;
+                height: calc(100vh - 64px);
+                top: 64px;
+                transform: translateX(-100%);
                 z-index: 60;
-                overflow: hidden; /* Prevent double scroll */
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
             }
 
             .sidebar.overlay-visible {
                 transform: translateX(0);
-                background: var(--sidebar-bg);
             }
 
+            /* Improved sidebar content with better scroll handling */
             .sidebar-content {
-                height: 100%;
-                padding-bottom: 70px; /* Space for Sign Out button */
+                flex: 1;
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
                 overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 80px; /* Extra padding for Sign Out button */
+                min-height: 0; /* Allows proper scrolling */
+            }
+
+            /* FIXED SIGN OUT BUTTON - ALWAYS VISIBLE */
+            .mt-auto.pt-4 {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 85%;
+                max-width: 320px;
+                padding: 1rem;
+                margin: 0;
+                background: var(--sidebar-bg);
+                border-top: 1px solid var(--muted);
+                z-index: 100;
+                box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
+            }
+
+            /* Ensure Sign Out button moves with sidebar */
+            .sidebar.overlay-visible .mt-auto.pt-4 {
+                transform: translateX(0);
+            }
+
+            /* Mobile backdrop */
+            #sidebar-backdrop {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.45);
+                z-index: 55;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                top: 64px;
+                height: calc(100vh - 64px);
+            }
+
+            #sidebar-backdrop.visible {
+                opacity: 1;
+                pointer-events: auto;
             }
 
             .content {
@@ -417,29 +464,6 @@
                 padding: 1.5rem;
                 width: 100%;
                 min-height: calc(100vh - 64px);
-            }
-            #sidebar-backdrop {
-                display: block;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.45);
-                z-index: 55;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity .18s ease;
-                top: 64px;
-                height: calc(100vh - 64px);
-            }
-            #sidebar-backdrop.visible {
-                opacity: 1;
-                pointer-events: auto;
-                position: fixed;
-                top: 64px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.45);
-                z-index: 35;
             }
 
             header .max-w-6xl {
@@ -494,6 +518,54 @@
 
         /* iPhone SE and small device adjustments - Card Collapse */
         @media (max-width: 375px) {
+            .sidebar {
+                width: 90%;
+                max-width: 300px;
+            }
+
+            .sidebar-content {
+                padding: 0.75rem;
+                gap: 0.5rem;
+            }
+
+            /* More compact property display */
+            .property-name-display {
+                padding: 0.625rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .property-name-text {
+                font-size: 0.9375rem;
+            }
+
+            /* Compact cards */
+            .sidebar .card {
+                padding: 0.75rem;
+                margin-bottom: 0.375rem;
+            }
+
+            .sidebar .card p.text-base {
+                font-size: 0.9375rem;
+            }
+
+            .feature-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 0.875rem;
+            }
+
+            /* Sign Out button styling for small screens */
+            .mt-auto.pt-4 {
+                width: 90%;
+                max-width: 300px;
+                padding: 0.75rem;
+            }
+
+            .mt-auto.pt-4 a {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+
             .sidebar .card {
                 position: relative;
                 cursor: pointer;
@@ -622,6 +694,11 @@
             border: 1px solid transparent;
             position: relative;
             overflow: hidden;
+            min-height: 44px; /* Apple's recommended minimum touch target */
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
         }
 
         .nav-item::before {
@@ -1204,22 +1281,47 @@
             transition: all 0.2s ease;
         }
 
-        /* Mobile Sign Out button */
-        @media (max-width: 1024px) {
-            .mt-auto.pt-4 {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 85%;
-                max-width: 320px;
-                padding: 0.75rem 1rem;
-                margin: 0;
-                box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-                background: var(--sidebar-bg);
-                border-top: 1px solid var(--muted);
-                z-index: 100;
-            }
+        /* IMPROVE TOUCH TARGETS FOR QUICK NAV BUTTONS */
+        .quick-nav-buttons .nav-btn {
+            padding: 1rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9375rem;
+        }
+
+        /* ENSURE STATS CARDS ARE TOUCH-FRIENDLY */
+        .sidebar .card:active {
+            transform: scale(0.98);
+        }
+
+        /* SMOOTH ANIMATIONS FOR MOBILE */
+        .sidebar {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #sidebar-backdrop {
+            transition: opacity 0.3s ease;
+        }
+
+        /* PREVENT BODY SCROLLING WHEN SIDEBAR IS OPEN */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        /* IMPROVE SIDEBAR SCROLLBAR */
+        .sidebar-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 2px;
         }
 
         /* IMPROVED: Payment Modal Styling */
@@ -2761,8 +2863,6 @@
            class="block w-full text-center login-btn border-2 px-4 py-1.5 rounded-lg font-semibold shadow-sm transition-all duration-200 border-muted bg-surface text-text hover:bg-muted">
             DASHBOARD
         </a>
-
-
     </div>
 </header>
 
@@ -3638,9 +3738,16 @@
         const backdrop = document.getElementById('sidebar-backdrop');
         const mobileMenuButton = document.getElementById('mobile-menu-button');
 
-        if (sidebar) sidebar.classList.add('overlay-visible');
+        if (sidebar) {
+            sidebar.classList.add('overlay-visible');
+            sidebar.style.willChange = 'transform';
+        }
+
         if (backdrop) backdrop.classList.add('visible');
         if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
+
+        // Prevent body scrolling
+        document.body.classList.add('sidebar-open');
         document.body.style.overflow = 'hidden';
     }
 
@@ -3649,9 +3756,16 @@
         const backdrop = document.getElementById('sidebar-backdrop');
         const mobileMenuButton = document.getElementById('mobile-menu-button');
 
-        if (sidebar) sidebar.classList.remove('overlay-visible');
+        if (sidebar) {
+            sidebar.classList.remove('overlay-visible');
+            sidebar.style.willChange = 'auto';
+        }
+
         if (backdrop) backdrop.classList.remove('visible');
         if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
+
+        // Restore body scrolling
+        document.body.classList.remove('sidebar-open');
         document.body.style.overflow = '';
     }
 
@@ -3884,6 +3998,29 @@
             }
         });
 
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const isExpanded = mobileMenuButton && mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+            if (isExpanded && sidebar && !sidebar.contains(event.target) &&
+                !mobileMenuButton.contains(event.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // Handle window resize with debounce
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth > 1024) {
+                    closeMobileMenu();
+                }
+            }, 250);
+        });
+
         // View Units Table button functionality (toggles property selection panel)
         const viewTableBtn = document.getElementById('viewTableBtn');
         const propertyFormContainer = document.getElementById('propertyFormContainer');
@@ -3968,219 +4105,216 @@
         }
 
         // =========================================================================
-        // FIXED: ASYNCHRONOUS PAYMENT SUBMISSION HANDLER
+        // FIXED: ASYNCHRONOUS PAYMENT SUBMISSION HANDLER WITH DEBT STATUS UPDATE
         // =========================================================================
 
-// =========================================================================
-// FIXED: ASYNCHRONOUS PAYMENT SUBMISSION HANDLER WITH DEBT STATUS UPDATE
-// =========================================================================
+        const paymentForm = document.getElementById('paymentForm');
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                displayErrorBanner(null, true);
 
-const paymentForm = document.getElementById('paymentForm');
-if (paymentForm) {
-    paymentForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        displayErrorBanner(null, true);
+                // Show loading on modal submit button
+                showModalLoading();
 
-        // Show loading on modal submit button
-        showModalLoading();
+                const formData = new FormData(paymentForm);
+                const tenantName = formData.get('id');
+                const unit = formData.get('unit');
+                const tenantContact = formData.get('tenant_contact');
+                const actionType = formData.get('action_type');
 
-        const formData = new FormData(paymentForm);
-        const tenantName = formData.get('id');
-        const unit = formData.get('unit');
-        const tenantContact = formData.get('tenant_contact');
-        const actionType = formData.get('action_type');
+                console.log('Payment form submitted:', {
+                    tenantName,
+                    unit,
+                    tenantContact,
+                    actionType
+                });
 
-        console.log('Payment form submitted:', {
-            tenantName,
-            unit,
-            tenantContact,
-            actionType
-        });
+                let url = "";
 
-        let url = "";
+                // Include tenantContact in both URLs
+                if (actionType === 'unmark') {
+                    url = `/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
+                } else {
+                    url = `/payment_status/${tenantName}/${unit}/${tenantContact}`;
+                }
 
-        // Include tenantContact in both URLs
-        if (actionType === 'unmark') {
-            url = `/unmark_payment/${tenantName}/${unit}/${tenantContact}`;
-        } else {
-            url = `/payment_status/${tenantName}/${unit}/${tenantContact}`;
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: new URLSearchParams(formData)
+                    });
+
+                    // Hide loading after response
+                    hideModalLoading();
+
+                    if (!response.ok) {
+                        const errorMessage = await response.text();
+                        displayErrorBanner(errorMessage || "Something went wrong.");
+                        return;
+                    }
+
+                    // Parse JSON response
+                    let data;
+                    try {
+                        data = await response.json();
+                        console.log('Server response:', data);
+                    } catch (jsonError) {
+                        console.error('JSON parsing error:', jsonError);
+                        displayErrorBanner('Invalid server response.');
+                        return;
+                    }
+
+                    // Check if we have a valid response
+                    if (!data) {
+                        displayErrorBanner('No data received from server.');
+                        return;
+                    }
+
+                    // Update payment indicator
+                    const rowIndicator = document.querySelector(
+                        `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
+                    );
+
+                    if (rowIndicator) {
+                        if (actionType === 'unmark') {
+                            rowIndicator.textContent = "✗";
+                            rowIndicator.classList.remove("bg-green-100", "text-green-800");
+                            rowIndicator.classList.add("bg-red-100", "text-red-800");
+                        } else {
+                            rowIndicator.textContent = "✓";
+                            rowIndicator.classList.remove("bg-red-100", "text-red-800");
+                            rowIndicator.classList.add("bg-green-100", "text-green-800");
+                        }
+                    }
+
+                    // ============================================
+                    // NEW: UPDATE DEBT STATUS FROM SERVER RESPONSE
+                    // ============================================
+                    if (data.debt_status !== null && data.debt_status !== undefined) {
+                        console.log('Updating debt display with value:', data.debt_status);
+                        updateDebtDisplay(unit, data.debt_status);
+                    }
+
+                    flashMessage(
+                        actionType === 'unmark'
+                        ? `Payment removed for Unit ${unit}.`
+                        : `Payment recorded for Unit ${unit}.`,
+                        "green"
+                    );
+
+                    closePaymentModal();
+
+                    // Re-initialize table to reflect changes
+                    setTimeout(() => {
+                        initializeTablePagination();
+                    }, 500);
+
+                } catch (error) {
+                    console.error("AJAX Error:", error);
+                    displayErrorBanner("Network error. Check your connection.");
+                    hideModalLoading();
+                }
+            });
         }
 
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams(formData)
+        // =========================================================================
+        // FIXED: Update Debt Status Function - CORRECTED VERSION
+        // =========================================================================
+
+        function updateDebtDisplay(unit, debtAmount) {
+            console.log('🔄 updateDebtDisplay called with:', {
+                unit,
+                debtAmount,
+                type: typeof debtAmount
             });
 
-            // Hide loading after response
-            hideModalLoading();
-
-            if (!response.ok) {
-                const errorMessage = await response.text();
-                displayErrorBanner(errorMessage || "Something went wrong.");
-                return;
-            }
-
-            // Parse JSON response
-            let data;
-            try {
-                data = await response.json();
-                console.log('Server response:', data);
-            } catch (jsonError) {
-                console.error('JSON parsing error:', jsonError);
-                displayErrorBanner('Invalid server response.');
-                return;
-            }
-
-            // Check if we have a valid response
-            if (!data) {
-                displayErrorBanner('No data received from server.');
-                return;
-            }
-
-            // Update payment indicator
-            const rowIndicator = document.querySelector(
-                `.indicator[data-unit="${unit}"][data-id="${tenantName}"]`
-            );
-
-            if (rowIndicator) {
-                if (actionType === 'unmark') {
-                    rowIndicator.textContent = "✗";
-                    rowIndicator.classList.remove("bg-green-100", "text-green-800");
-                    rowIndicator.classList.add("bg-red-100", "text-red-800");
-                } else {
-                    rowIndicator.textContent = "✓";
-                    rowIndicator.classList.remove("bg-red-100", "text-red-800");
-                    rowIndicator.classList.add("bg-green-100", "text-green-800");
-                }
-            }
+            // Format the debt amount
+            const debtAmountNum = parseFloat(debtAmount);
+            const formattedDebt = formatCurrency(debtAmount);
 
             // ============================================
-            // NEW: UPDATE DEBT STATUS FROM SERVER RESPONSE
+            // FIXED: Find the row using the indicator's data-unit
             // ============================================
-            if (data.debt_status !== null && data.debt_status !== undefined) {
-                console.log('Updating debt display with value:', data.debt_status);
-                updateDebtDisplay(unit, data.debt_status);
+
+            // Find the indicator first, then its parent row
+            const indicator = document.querySelector(`.indicator[data-unit="${unit}"]`);
+
+            if (!indicator) {
+                console.error('❌ Indicator not found for unit:', unit);
+                console.log('Available indicators:',
+                    Array.from(document.querySelectorAll('.indicator[data-unit]'))
+                        .map(el => ({ unit: el.dataset.unit, id: el.dataset.id }))
+                );
+                return;
             }
 
-            flashMessage(
-                actionType === 'unmark'
-                ? `Payment removed for Unit ${unit}.`
-                : `Payment recorded for Unit ${unit}.`,
-                "green"
-            );
+            // Find the parent row
+            const row = indicator.closest('.tenant-row');
 
-            closePaymentModal();
+            if (!row) {
+                console.error('❌ Row not found for indicator:', indicator);
+                return;
+            }
 
-            // Re-initialize table to reflect changes
-            setTimeout(() => {
-                initializeTablePagination();
-            }, 500);
+            console.log('✅ Found row via indicator:', row);
 
-        } catch (error) {
-            console.error("AJAX Error:", error);
-            displayErrorBanner("Network error. Check your connection.");
-            hideModalLoading();
+            // ============================================
+            // Update the debt element
+            // ============================================
+            const debtElement = row.querySelector('.tenant-contact.status-badge');
+
+            if (!debtElement) {
+                console.error('❌ Debt element not found in row');
+                return;
+            }
+
+            console.log('✅ Found debt element:', debtElement);
+
+            // UPDATE THE data-tenant-contact ATTRIBUTE with the debt value
+            debtElement.setAttribute('data-tenant-contact', debtAmount);
+            console.log('✅ Set data-tenant-contact to:', debtAmount);
+
+            // Update the text content based on the debt amount
+            if (debtAmountNum > 0) {
+                debtElement.innerHTML = `
+                    <i class="fas fa-phone mr-1"></i>
+                    Debt: ${formattedDebt}
+                `;
+                debtElement.classList.remove('status-active');
+                debtElement.classList.add('status-vacant');
+                debtElement.title = `Outstanding debt: ${formattedDebt}`;
+            } else {
+                debtElement.innerHTML = `
+                    <i class="fas fa-phone mr-1"></i>
+                    No Debt
+                `;
+                debtElement.classList.remove('status-vacant');
+                debtElement.classList.add('status-active');
+                debtElement.title = 'No outstanding debt';
+            }
+
+            console.log('✅ Updated debt display:', debtElement.innerHTML);
         }
-    });
-}
 
-// =========================================================================
-// FIXED: Update Debt Status Function - CORRECTED VERSION
-// =========================================================================
+        // =========================================================================
+        // Helper function for currency formatting
+        // =========================================================================
 
-function updateDebtDisplay(unit, debtAmount) {
-    console.log('🔄 updateDebtDisplay called with:', {
-        unit,
-        debtAmount,
-        type: typeof debtAmount
-    });
+        function formatCurrency(amount) {
+            const numAmount = parseFloat(amount);
+            if (isNaN(numAmount)) {
+                console.warn('⚠️ Cannot format amount:', amount);
+                return 'R 0.00';
+            }
 
-    // Format the debt amount
-    const debtAmountNum = parseFloat(debtAmount);
-    const formattedDebt = formatCurrency(debtAmount);
+            return 'R ' + numAmount.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
 
-    // ============================================
-    // FIXED: Find the row using the indicator's data-unit
-    // ============================================
-
-    // Find the indicator first, then its parent row
-    const indicator = document.querySelector(`.indicator[data-unit="${unit}"]`);
-
-    if (!indicator) {
-        console.error('❌ Indicator not found for unit:', unit);
-        console.log('Available indicators:',
-            Array.from(document.querySelectorAll('.indicator[data-unit]'))
-                .map(el => ({ unit: el.dataset.unit, id: el.dataset.id }))
-        );
-        return;
-    }
-
-    // Find the parent row
-    const row = indicator.closest('.tenant-row');
-
-    if (!row) {
-        console.error('❌ Row not found for indicator:', indicator);
-        return;
-    }
-
-    console.log('✅ Found row via indicator:', row);
-
-    // ============================================
-    // Update the debt element
-    // ============================================
-    const debtElement = row.querySelector('.tenant-contact.status-badge');
-
-    if (!debtElement) {
-        console.error('❌ Debt element not found in row');
-        return;
-    }
-
-    console.log('✅ Found debt element:', debtElement);
-
-    // UPDATE THE data-tenant-contact ATTRIBUTE with the debt value
-    debtElement.setAttribute('data-tenant-contact', debtAmount);
-    console.log('✅ Set data-tenant-contact to:', debtAmount);
-
-    // Update the text content based on the debt amount
-    if (debtAmountNum > 0) {
-        debtElement.innerHTML = `
-            <i class="fas fa-phone mr-1"></i>
-            Debt: ${formattedDebt}
-        `;
-        debtElement.classList.remove('status-active');
-        debtElement.classList.add('status-vacant');
-        debtElement.title = `Outstanding debt: ${formattedDebt}`;
-    } else {
-        debtElement.innerHTML = `
-            <i class="fas fa-phone mr-1"></i>
-            No Debt
-        `;
-        debtElement.classList.remove('status-vacant');
-        debtElement.classList.add('status-active');
-        debtElement.title = 'No outstanding debt';
-    }
-
-    console.log('✅ Updated debt display:', debtElement.innerHTML);
-}
-
-// =========================================================================
-// Helper function for currency formatting
-// =========================================================================
-
-function formatCurrency(amount) {
-    const numAmount = parseFloat(amount);
-    if (isNaN(numAmount)) {
-        console.warn('⚠️ Cannot format amount:', amount);
-        return 'R 0.00';
-    }
-
-    return 'R ' + numAmount.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
         // =========================================================================
         // EVENT LISTENERS FOR TABLE INTERACTIONS
         // =========================================================================
@@ -4271,6 +4405,29 @@ function formatCurrency(amount) {
             console.log('Payment handlers initialized');
         }
     }
+
+    // =========================================================================
+    // IMPROVED TOUCH EXPERIENCE FOR MOBILE
+    // =========================================================================
+
+    // Improve touch experience on iOS
+    document.addEventListener('touchstart', function() {}, {passive: true});
+
+    // Prevent pull-to-refresh on mobile when sidebar is open
+    let startY;
+    document.addEventListener('touchstart', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && sidebar.classList.contains('overlay-visible')) {
+            startY = e.touches[0].clientY;
+        }
+    }, {passive: true});
+
+    document.addEventListener('touchmove', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && sidebar.classList.contains('overlay-visible') && startY < e.touches[0].clientY) {
+            e.preventDefault();
+        }
+    }, {passive: false});
 </script>
 </body>
 </html>
