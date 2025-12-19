@@ -256,7 +256,10 @@ public class umuziAPI {
                 landlord authenticate = new landlord();
                 String email = ctx.sessionAttribute("email");
                 if (email == null){
-                    ctx.render("templates/not_found.html");
+                    HashMap<String,String> model2 = new HashMap<>();
+                    model.put("not_signed","Please sign in to access your Dashboard.");
+                    ctx.render("templates/login.html",model2);
+                    return;
                 }
                 landlordId =  authenticate.landlordId(email);
                 ctx.sessionAttribute("landlordID", landlordId);
