@@ -1,4 +1,4 @@
-                                      package api_login;
+package api_login;
 
 import model.database.CRUD.Tenant;
 import model.database.CRUD.landlord;
@@ -148,10 +148,7 @@ public class Type_of_payments {
 
                 }
 
-
             }
-
-
 
         } else {
             Integer new_debt = original_rent - recieved_amount;
