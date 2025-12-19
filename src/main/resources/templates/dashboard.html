@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Add Font Awesome for better icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         /* CSS Variables for Light/Dark Themes */
         :root {
@@ -311,40 +312,47 @@
             left: 0;
             top: 64px; /* Start below header */
             z-index: 40;
-            overflow-y: auto;
-            overflow-x: hidden;
             background: var(--sidebar-bg);
             transition: transform .28s ease, box-shadow .28s ease, background-color 0.3s ease;
             border-right: 1px solid var(--muted);
             transform: translateX(0);
             display: flex;
             flex-direction: column;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) transparent;
         }
 
+        /* Remove scrollbar from sidebar itself, only content scrolls */
         .sidebar::-webkit-scrollbar {
-            width: 6px;
+            display: none;
         }
 
-        .sidebar::-webkit-scrollbar-track {
-            background: transparent;
+        .sidebar {
+            scrollbar-width: none; /* Firefox */
         }
 
-        .sidebar::-webkit-scrollbar-thumb {
-            background-color: var(--accent);
-            border-radius: 3px;
-        }
-
-        /* Fix sidebar content to allow scrolling */
+        /* CRITICAL: Make sidebar content scrollable */
         .sidebar-content {
             flex: 1;
             padding: 1rem;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            min-height: 0; /* This is CRITICAL for flex scrolling */
-            overflow-y: auto; /* Allow scrolling within sidebar content */
+            overflow-y: auto; /* This makes it scrollable */
+            -webkit-overflow-scrolling: touch;
+            min-height: 0; /* Important for flex children scrolling */
+        }
+
+        /* Ensure sidebar content scrolls properly */
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 3px;
         }
 
         /* Desktop layout - FIXED */
@@ -369,11 +377,11 @@
                 display: flex;
                 flex-direction: column;
                 height: calc(100vh - 64px);
+                overflow: hidden; /* Prevent double scroll */
             }
 
             .sidebar-content {
                 flex: 1;
-                min-height: 0; /* Allow scrolling */
                 overflow-y: auto;
             }
         }
@@ -390,8 +398,7 @@
                 width: 85%;
                 max-width: 320px;
                 z-index: 60;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
+                overflow: hidden; /* Prevent double scroll */
             }
 
             .sidebar.overlay-visible {
@@ -400,10 +407,9 @@
             }
 
             .sidebar-content {
-                height: auto;
-                min-height: 0;
-                display: block;
-                padding-bottom: 80px; /* Add padding to see Sign Out button */
+                height: 100%;
+                padding-bottom: 70px; /* Space for Sign Out button */
+                overflow-y: auto;
             }
 
             .content {
@@ -1162,11 +1168,58 @@
         .sidebar-stats {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem; /* Reduced from 1rem */
-            margin-top: 0.75rem; /* Reduced from 1.5rem */
-            flex-grow: 1;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            flex: 1;
             min-height: 0; /* Allow proper flex shrinking */
-            overflow-y: auto; /* Allow scrolling of stats */
+        }
+
+        /* Fix Sign Out button positioning - always at bottom */
+        .mt-auto.pt-4 {
+            margin-top: auto;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--muted);
+            flex-shrink: 0; /* Prevent shrinking */
+            background: var(--sidebar-bg);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Sign out button styling */
+        .mt-auto.pt-4 a {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem; /* Reduced padding */
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #2b1f00;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        /* Mobile Sign Out button */
+        @media (max-width: 1024px) {
+            .mt-auto.pt-4 {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 85%;
+                max-width: 320px;
+                padding: 0.75rem 1rem;
+                margin: 0;
+                box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+                background: var(--sidebar-bg);
+                border-top: 1px solid var(--muted);
+                z-index: 100;
+            }
         }
 
         /* IMPROVED: Payment Modal Styling */
@@ -1343,37 +1396,6 @@
             color: var(--text);
             flex-grow: 1;
             letter-spacing: -0.2px;
-        }
-
-        /* Fix Sign Out button positioning */
-        .mt-auto.pt-4 {
-            margin-top: auto;
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--muted);
-            flex-shrink: 0; /* Prevent shrinking */
-            background: var(--sidebar-bg);
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
-            margin-top: 0 !important;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Sign out button styling */
-        .mt-auto.pt-4 a {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.625rem 1rem; /* Reduced padding */
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-            color: #2b1f00;
-            font-weight: 600;
-            font-size: 0.875rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
         }
 
         .property-badge {
@@ -1789,26 +1811,6 @@
             .sidebar .card {
                 padding: 0.625rem;
                 margin-bottom: 0.125rem;
-            }
-
-            /* Make Sign Out button always visible at bottom */
-            .mt-auto.pt-4 {
-                position: fixed; /* Changed from sticky to fixed for mobile */
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                padding: 0.75rem 1rem;
-                margin: 0;
-                box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-                background: var(--sidebar-bg);
-                border-top: 1px solid var(--muted);
-                z-index: 100;
-            }
-
-            /* Adjust sidebar content to account for fixed Sign Out button */
-            .sidebar.overlay-visible .sidebar-content {
-                padding-bottom: 70px; /* Space for fixed Sign Out button */
             }
         }
 
