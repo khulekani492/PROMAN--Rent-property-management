@@ -335,22 +335,9 @@
             /* Prevent content from overflowing */
             max-height: calc(100vh - 64px - 80px); /* Account for header and sign out button */
             overscroll-behavior: contain; /* Prevent scroll chaining */
-            will-change: transform;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform: translateZ(0);
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
 
-        .sidebar-content:active {
-            -webkit-user-select: auto;
-            -moz-user-select: auto;
-            -ms-user-select: auto;
-            user-select: auto;
-        }
+        /* REMOVED: Shake/wiggle animations - Better for accessibility */
 
         /* BETTER SCROLLBAR STYLING */
         .sidebar-content::-webkit-scrollbar {
@@ -368,7 +355,7 @@
             background-color: var(--accent);
             border-radius: 10px;
             opacity: 0.5;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease;
         }
 
         .sidebar-content::-webkit-scrollbar-thumb:hover {
@@ -380,48 +367,6 @@
         .sidebar-content {
             scrollbar-width: thin;
             scrollbar-color: var(--accent) transparent;
-        }
-
-        /* BETTER SCROLL INDICATORS */
-        .sidebar-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 20px;
-            background: linear-gradient(to bottom, var(--sidebar-bg) 0%, transparent 100%);
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar-content::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 20px;
-            background: linear-gradient(to top, var(--sidebar-bg) 0%, transparent 100%);
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar-content.scrolled-top::after {
-            opacity: 1;
-        }
-
-        .sidebar-content.scrolled-bottom::before {
-            opacity: 1;
-        }
-
-        .sidebar-content:not(.scrolled-top):not(.scrolled-bottom)::before,
-        .sidebar-content:not(.scrolled-top):not(.scrolled-bottom)::after {
-            opacity: 1;
         }
 
         /* Ensure Sign Out button stays at bottom */
@@ -467,10 +412,8 @@
             .sidebar {
                 width: 85%;
                 max-width: 320px;
-                height: 100vh;
-                top: 0;
-                padding-top: 64px; /* Account for header */
-                box-sizing: border-box;
+                height: calc(100vh - 64px);
+                top: 64px;
                 transform: translateX(-100%);
                 z-index: 60;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -490,8 +433,7 @@
                 gap: 0.75rem;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
-                height: calc(100vh - 64px - 80px); /* Account for header and sign out */
-                max-height: none;
+                height: 100%;
                 padding-bottom: 80px; /* Space for Sign Out button */
             }
 
@@ -550,12 +492,9 @@
             }
         }
 
-        /* PREVENT SCROLL LEAKAGE */
+        /* PREVENT BODY SCROLLING WHEN SIDEBAR IS OPEN */
         body.sidebar-open {
             overflow: hidden;
-            position: fixed;
-            width: 100%;
-            height: 100%;
         }
 
         /* ENSURE MAIN CONTENT SCROLLS INDEPENDENTLY */
@@ -563,7 +502,7 @@
             overflow-y: auto;
         }
 
-        /* IMPROVED: Better sidebar cards with interactive states */
+        /* IMPROVED: Better sidebar cards with interactive states (NO WIGGLE) */
         .sidebar .card {
             background: var(--surface);
             border: 1px solid var(--muted);
@@ -576,24 +515,9 @@
             padding: 0.75rem; /* Reduced from 1rem */
             border-radius: 0.75rem;
             margin-bottom: 0.25rem; /* Small bottom margin */
-            min-height: 44px; /* Apple recommended minimum touch target */
         }
 
-        .sidebar .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-
-        .sidebar .card:hover::before {
-            transform: translateX(100%);
-        }
+        /* REMOVED: Wiggle animation from card::before */
 
         body.dark .sidebar .card {
             border-left: 4px solid var(--accent);
@@ -754,7 +678,7 @@
             }
         }
 
-        /* IMPROVED: Feature icons with better visual hierarchy */
+        /* IMPROVED: Feature icons with better visual hierarchy (NO WIGGLE) */
         .feature-icon {
             width: 40px; /* Reduced from 48px */
             height: 40px;
@@ -769,7 +693,7 @@
         }
 
         .sidebar-stats .card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.1);
             background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.15));
         }
 
@@ -777,7 +701,7 @@
             background: linear-gradient(135deg, rgba(244, 179, 66, 0.15), rgba(244, 179, 66, 0.08));
         }
 
-        /* IMPROVED: Navigation items with better affordances */
+        /* IMPROVED: Navigation items with better affordances (NO WIGGLE) */
         .nav-item {
             display: flex;
             align-items: center;
@@ -798,17 +722,7 @@
             font-size: 1.1rem;
         }
 
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--accent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+        /* REMOVED: Wiggle animation from nav-item::before */
 
         .nav-item > * {
             position: relative;
@@ -857,13 +771,9 @@
             height: 8px;
             border-radius: 50%;
             background: var(--accent);
-            animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        /* REMOVED: Pulse animation - better for accessibility */
 
         /* IMPROVED: Card surfaces with better depth */
         .card-surface {
@@ -1672,14 +1582,9 @@
             border: 2px solid var(--error-text) !important;
             border-radius: 12px;
             padding: 1rem 1.25rem;
-            animation: shake 0.5s ease;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
+        /* REMOVED: Shake animation from error display */
 
         /* IMPROVED: Form elements with better affordances */
         select, input {
@@ -1774,7 +1679,6 @@
             border: 2px solid var(--accent);
             max-width: 400px;
             width: 90%;
-            animation: pulse 2s infinite;
         }
 
         .overlay-spinner {
@@ -3131,7 +3035,7 @@
                                         </div>
 
                                         <div class="text-center">
-                                            <div class="w-8 h-8 bg-green-50 border border-green-200 rounded-full flex items-center justify-center mx-auto">
+                                            <div class="w-8 h-8 bg-green-50 border border-green-200 rounded-full flex items-center justify-content: center; mx-auto">
                                                 <span class="text-green-600 font-bold">✓</span>
                                             </div>
                                             <div class="text-xs text-gray-700 mt-1">Stops</div>
@@ -3406,134 +3310,17 @@
     // IMPROVED SIDEBAR SCROLLING FUNCTIONS
     // =========================================================================
 
-    // IMPROVED TOUCH SCROLLING FOR SIDEMENU
-    function initializeSidebarTouchScrolling() {
+    function initializeSidebarScrolling() {
         const sidebarContent = document.querySelector('.sidebar-content');
         if (!sidebarContent) return;
 
-        let touchStartY = 0;
-        let isScrolling = false;
-
-        sidebarContent.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-            isScrolling = false;
-        }, { passive: true });
-
-        sidebarContent.addEventListener('touchmove', function(e) {
-            const touchY = e.touches[0].clientY;
-            const diffY = touchY - touchStartY;
-
-            // Check if we're at the top or bottom of the scrollable area
-            const isAtTop = this.scrollTop === 0;
-            const isAtBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 1;
-
-            // If at top and trying to scroll up, prevent it
-            if (isAtTop && diffY > 0) {
-                // Allow slight overscroll but prevent excessive
-                if (Math.abs(diffY) > 10) {
-                    this.style.overflowY = 'hidden';
-                    setTimeout(() => {
-                        this.style.overflowY = 'auto';
-                    }, 100);
-                }
-            }
-            // If at bottom and trying to scroll down, prevent it
-            else if (isAtBottom && diffY < 0) {
-                if (Math.abs(diffY) > 10) {
-                    this.style.overflowY = 'hidden';
-                    setTimeout(() => {
-                        this.style.overflowY = 'auto';
-                    }, 100);
-                }
-            }
-
-            isScrolling = true;
-        }, { passive: false });
-
-        sidebarContent.addEventListener('touchend', function() {
-            isScrolling = false;
-            // Reset any overflow restrictions
-            this.style.overflowY = 'auto';
-        }, { passive: true });
-    }
-
-    // JavaScript to Detect Scroll Position
-    function initializeScrollIndicators() {
-        const sidebarContent = document.querySelector('.sidebar-content');
-        if (!sidebarContent) return;
-
-        function updateScrollIndicators() {
-            const isAtTop = sidebarContent.scrollTop === 0;
-            const isAtBottom = sidebarContent.scrollTop + sidebarContent.clientHeight >= sidebarContent.scrollHeight - 1;
-
-            sidebarContent.classList.toggle('scrolled-top', isAtTop);
-            sidebarContent.classList.toggle('scrolled-bottom', isAtBottom);
-
-            // Remove both classes if content doesn't overflow
-            if (sidebarContent.scrollHeight <= sidebarContent.clientHeight) {
-                sidebarContent.classList.remove('scrolled-top', 'scrolled-bottom');
-            }
-        }
-
-        sidebarContent.addEventListener('scroll', updateScrollIndicators);
-        // Initial check
-        updateScrollIndicators();
-
-        // Also check on resize
-        window.addEventListener('resize', updateScrollIndicators);
-    }
-
-    // IMPROVED TOUCH EXPERIENCE FOR MOBILE
-    function initializeTouchHandling() {
-        const sidebar = document.getElementById('sidebar');
-        const sidebarContent = sidebar.querySelector('.sidebar-content');
-
-        if (!sidebarContent) return;
-
-        let touchStartY = 0;
-        let touchStartX = 0;
-        let isVerticalScroll = false;
-
-        sidebarContent.addEventListener('touchstart', function(e) {
-            if (sidebar.classList.contains('overlay-visible')) {
-                touchStartY = e.touches[0].clientY;
-                touchStartX = e.touches[0].clientX;
-                isVerticalScroll = false;
-            }
-        }, { passive: true });
-
-        sidebarContent.addEventListener('touchmove', function(e) {
-            if (!sidebar.classList.contains('overlay-visible')) return;
-
-            const touchY = e.touches[0].clientY;
-            const touchX = e.touches[0].clientX;
-            const diffY = Math.abs(touchY - touchStartY);
-            const diffX = Math.abs(touchX - touchStartX);
-
-            // Determine if this is primarily vertical scrolling
-            if (!isVerticalScroll && diffY > diffX && diffY > 5) {
-                isVerticalScroll = true;
-            }
-
-            // If we're vertically scrolling inside the sidebar, allow it
-            if (isVerticalScroll) {
-                const isAtTop = this.scrollTop === 0;
-                const isAtBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 1;
-
-                // Prevent body scroll when at boundaries
-                if ((isAtTop && touchY > touchStartY) || (isAtBottom && touchY < touchStartY)) {
-                    e.preventDefault();
-                }
-            }
-        }, { passive: false });
-
-        sidebarContent.addEventListener('touchend', function() {
-            isVerticalScroll = false;
-        }, { passive: true });
+        // Enable smooth scrolling for sidebar
+        sidebarContent.style.overflowY = 'auto';
+        sidebarContent.style.webkitOverflowScrolling = 'touch';
     }
 
     // =========================================================================
-    // NEW: Table Pagination and Search Functionality
+    // TABLE PAGINATION AND SEARCH FUNCTIONALITY
     // =========================================================================
 
     let currentPage = 1;
@@ -3646,7 +3433,7 @@
     }
 
     // =========================================================================
-    // UX IMPROVEMENTS: Toast Notifications
+    // TOAST NOTIFICATIONS
     // =========================================================================
 
     function showToast(message, type = 'success') {
@@ -3674,7 +3461,7 @@
     }
 
     // =========================================================================
-    // UX IMPROVEMENTS: Filter Table Functionality
+    // FILTER TABLE FUNCTIONALITY
     // =========================================================================
 
     function filterTable(filterType) {
@@ -3715,66 +3502,6 @@
             showToast(`Showing ${filterName.toLowerCase()} tenants`, 'success');
         }
     }
-
-    // =========================================================================
-    // UX IMPROVEMENTS: Quick Actions
-    // =========================================================================
-
-    function exportData() {
-        showToast('Exporting data...', 'warning');
-        // In a real app, this would trigger a file download
-        setTimeout(() => {
-            showToast('Data exported successfully!', 'success');
-        }, 1500);
-    }
-
-    function showAllPayments() {
-        showToast('Loading all payment history...', 'warning');
-        // In a real app, this would navigate to payments page
-        setTimeout(() => {
-            showToast('Payment history loaded', 'success');
-        }, 1500);
-    }
-
-    function generateReports() {
-        showToast('Generating monthly report...', 'warning');
-        // In a real app, this would generate and download a report
-        setTimeout(() => {
-            showToast('Report generated successfully!', 'success');
-        }, 2000);
-    }
-
-    // =========================================================================
-    // UX IMPROVEMENTS: Keyboard Shortcuts
-    // =========================================================================
-
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + F to focus search
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-            e.preventDefault();
-            const tenantSearch = document.getElementById('tenantSearch');
-            if (tenantSearch) {
-                tenantSearch.focus();
-                showToast('Search focused. Start typing to filter tenants.', 'info');
-            }
-        }
-
-        // Escape to clear filters
-        if (e.key === 'Escape') {
-            clearSearch('tenantSearch');
-            clearSearch('unitSearch');
-            filterTable('all');
-            showToast('Filters cleared', 'info');
-        }
-
-        // Ctrl/Cmd + D to toggle dark mode
-        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-            e.preventDefault();
-            document.getElementById('dark-mode-toggle').click();
-            const isDark = document.body.classList.contains('dark');
-            showToast(`Dark mode ${isDark ? 'enabled' : 'disabled'}`, 'success');
-        }
-    });
 
     // =========================================================================
     // LOADING STATE MANAGEMENT
@@ -3946,7 +3673,6 @@
 
         if (sidebar) {
             sidebar.classList.add('overlay-visible');
-            sidebar.style.willChange = 'transform';
         }
 
         if (backdrop) backdrop.classList.add('visible');
@@ -3956,11 +3682,8 @@
         document.body.classList.add('sidebar-open');
         document.body.style.overflow = 'hidden';
 
-        // Allow sidebar content to scroll independently
-        const sidebarContent = sidebar.querySelector('.sidebar-content');
-        if (sidebarContent) {
-            sidebarContent.style.overflowY = 'auto';
-        }
+        // Initialize sidebar scrolling when opened
+        initializeSidebarScrolling();
     }
 
     function closeMobileMenu() {
@@ -3970,7 +3693,6 @@
 
         if (sidebar) {
             sidebar.classList.remove('overlay-visible');
-            sidebar.style.willChange = 'auto';
         }
 
         if (backdrop) backdrop.classList.remove('visible');
@@ -3979,12 +3701,6 @@
         // Restore body scrolling
         document.body.classList.remove('sidebar-open');
         document.body.style.overflow = '';
-
-        // Reset sidebar scroll position
-        const sidebarContent = sidebar.querySelector('.sidebar-content');
-        if (sidebarContent) {
-            sidebarContent.scrollTop = 0;
-        }
     }
 
     function toggleMobileMenu() {
@@ -3999,7 +3715,7 @@
     }
 
     // =========================================================================
-    // FIXED: MODAL FUNCTIONS WITH TENANT_CONTACT PARAMETER
+    // MODAL FUNCTIONS
     // =========================================================================
 
     function openPaymentModal(unit, rent, id, propertyName, tenantContact) {
@@ -4031,7 +3747,6 @@
         const modalPropertyName = document.getElementById('modalPropertyName');
         if (modalPropertyName) modalPropertyName.value = propertyName;
 
-        // SET the tenantContact value - FIXED
         const modalTenantContact = document.getElementById('modalTenantContact');
         if (modalTenantContact) {
             modalTenantContact.value = tenantContact || '';
@@ -4099,7 +3814,6 @@
         const modalPropertyName = document.getElementById('modalPropertyName');
         if (modalPropertyName) modalPropertyName.value = propertyName;
 
-        // SET the tenantContact value - FIXED
         const modalTenantContact = document.getElementById('modalTenantContact');
         if (modalTenantContact) {
             modalTenantContact.value = tenantContact || '';
@@ -4137,7 +3851,7 @@
     }
 
     // =========================================================================
-    // FIXED: FLASH MESSAGE FUNCTION
+    // FLASH MESSAGE FUNCTION
     // =========================================================================
 
     function flashMessage(msg, color = 'green') {
@@ -4169,10 +3883,8 @@
         localStorage.setItem('user_chosen_theme', serverTheme);
         initializeIcons();
 
-        // Initialize sidebar scrolling improvements
-        initializeSidebarTouchScrolling();
-        initializeScrollIndicators();
-        initializeTouchHandling();
+        // Initialize sidebar scrolling
+        initializeSidebarScrolling();
 
         // Initialize table pagination and search
         setTimeout(() => {
@@ -4328,7 +4040,7 @@
         }
 
         // =========================================================================
-        // FIXED: ASYNCHRONOUS PAYMENT SUBMISSION HANDLER WITH DEBT STATUS UPDATE
+        // ASYNCHRONOUS PAYMENT SUBMISSION HANDLER WITH DEBT STATUS UPDATE
         // =========================================================================
 
         const paymentForm = document.getElementById('paymentForm');
@@ -4412,9 +4124,7 @@
                         }
                     }
 
-                    // ============================================
-                    // NEW: UPDATE DEBT STATUS FROM SERVER RESPONSE
-                    // ============================================
+                    // UPDATE DEBT STATUS FROM SERVER RESPONSE
                     if (data.debt_status !== null && data.debt_status !== undefined) {
                         console.log('Updating debt display with value:', data.debt_status);
                         updateDebtDisplay(unit, data.debt_status);
@@ -4443,11 +4153,11 @@
         }
 
         // =========================================================================
-        // FIXED: Update Debt Status Function - CORRECTED VERSION
+        // Update Debt Status Function
         // =========================================================================
 
         function updateDebtDisplay(unit, debtAmount) {
-            console.log('🔄 updateDebtDisplay called with:', {
+            console.log('updateDebtDisplay called with:', {
                 unit,
                 debtAmount,
                 type: typeof debtAmount
@@ -4457,19 +4167,11 @@
             const debtAmountNum = parseFloat(debtAmount);
             const formattedDebt = formatCurrency(debtAmount);
 
-            // ============================================
-            // FIXED: Find the row using the indicator's data-unit
-            // ============================================
-
             // Find the indicator first, then its parent row
             const indicator = document.querySelector(`.indicator[data-unit="${unit}"]`);
 
             if (!indicator) {
-                console.error('❌ Indicator not found for unit:', unit);
-                console.log('Available indicators:',
-                    Array.from(document.querySelectorAll('.indicator[data-unit]'))
-                        .map(el => ({ unit: el.dataset.unit, id: el.dataset.id }))
-                );
+                console.error('Indicator not found for unit:', unit);
                 return;
             }
 
@@ -4477,27 +4179,20 @@
             const row = indicator.closest('.tenant-row');
 
             if (!row) {
-                console.error('❌ Row not found for indicator:', indicator);
+                console.error('Row not found for indicator:', indicator);
                 return;
             }
 
-            console.log('✅ Found row via indicator:', row);
-
-            // ============================================
             // Update the debt element
-            // ============================================
             const debtElement = row.querySelector('.tenant-contact.status-badge');
 
             if (!debtElement) {
-                console.error('❌ Debt element not found in row');
+                console.error('Debt element not found in row');
                 return;
             }
 
-            console.log('✅ Found debt element:', debtElement);
-
             // UPDATE THE data-tenant-contact ATTRIBUTE with the debt value
             debtElement.setAttribute('data-tenant-contact', debtAmount);
-            console.log('✅ Set data-tenant-contact to:', debtAmount);
 
             // Update the text content based on the debt amount
             if (debtAmountNum > 0) {
@@ -4518,7 +4213,7 @@
                 debtElement.title = 'No outstanding debt';
             }
 
-            console.log('✅ Updated debt display:', debtElement.innerHTML);
+            console.log('Updated debt display:', debtElement.innerHTML);
         }
 
         // =========================================================================
@@ -4528,7 +4223,7 @@
         function formatCurrency(amount) {
             const numAmount = parseFloat(amount);
             if (isNaN(numAmount)) {
-                console.warn('⚠️ Cannot format amount:', amount);
+                console.warn('Cannot format amount:', amount);
                 return 'R 0.00';
             }
 
@@ -4572,7 +4267,7 @@
 
 
     // =========================================================================
-    // FIXED: PAYMENT CELL CLICK HANDLING
+    // PAYMENT CELL CLICK HANDLING
     // =========================================================================
 
     function initializePaymentHandlers() {
