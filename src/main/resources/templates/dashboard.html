@@ -297,73 +297,162 @@
             }
         }
 
-        /* Main layout - FIXED FOR DESKTOP */
+        /* MAIN LAYOUT FIXES */
         .main-wrap {
             display: flex;
             flex: 1;
-            min-height: calc(100vh - 64px); /* Subtract header height */
+            min-height: calc(100vh - 64px);
+            position: relative;
         }
 
-        /* Fix sidebar scrolling and Sign Out button position */
+        /* SIDEBAR WITH INDEPENDENT SCROLLING */
         .sidebar {
             width: 260px;
-            height: calc(100vh - 64px); /* Subtract header height */
+            height: calc(100vh - 64px);
             position: fixed;
             left: 0;
-            top: 64px; /* Start below header */
+            top: 64px;
             z-index: 40;
             background: var(--sidebar-bg);
-            transition: transform .28s ease, box-shadow .28s ease, background-color 0.3s ease;
             border-right: 1px solid var(--muted);
             transform: translateX(0);
             display: flex;
             flex-direction: column;
+            overflow: hidden; /* Prevent double scrollbars */
         }
 
-        /* Remove scrollbar from sidebar itself, only content scrolls */
-        .sidebar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .sidebar {
-            scrollbar-width: none; /* Firefox */
-        }
-
-        /* CRITICAL: Make sidebar content scrollable */
+        /* SIDEBAR CONTENT - FIXED SCROLLABLE CONTAINER */
         .sidebar-content {
             flex: 1;
-            padding: 1rem;
+            padding: 1.25rem 1rem;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            overflow-y: auto; /* This makes it scrollable */
-            -webkit-overflow-scrolling: touch;
-            min-height: 0; /* Important for flex children scrolling */
+            overflow-y: auto; /* Independent scroll */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            min-height: 0;
+            height: 100%;
+            /* Prevent content from overflowing */
+            max-height: calc(100vh - 64px - 80px); /* Account for header and sign out button */
+            overscroll-behavior: contain; /* Prevent scroll chaining */
+            will-change: transform;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
-        /* Ensure sidebar content scrolls properly */
+        .sidebar-content:active {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+
+        /* BETTER SCROLLBAR STYLING */
         .sidebar-content::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
 
         .sidebar-content::-webkit-scrollbar-track {
             background: transparent;
+            margin: 5px 0;
+            border-radius: 10px;
         }
 
         .sidebar-content::-webkit-scrollbar-thumb {
             background-color: var(--accent);
-            border-radius: 3px;
+            border-radius: 10px;
+            opacity: 0.5;
+            transition: all 0.3s ease;
         }
 
-        /* Desktop layout - FIXED */
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            opacity: 0.8;
+            width: 8px;
+        }
+
+        /* Firefox scrollbar */
+        .sidebar-content {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+
+        /* BETTER SCROLL INDICATORS */
+        .sidebar-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--sidebar-bg) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to top, var(--sidebar-bg) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-content.scrolled-top::after {
+            opacity: 1;
+        }
+
+        .sidebar-content.scrolled-bottom::before {
+            opacity: 1;
+        }
+
+        .sidebar-content:not(.scrolled-top):not(.scrolled-bottom)::before,
+        .sidebar-content:not(.scrolled-top):not(.scrolled-bottom)::after {
+            opacity: 1;
+        }
+
+        /* Ensure Sign Out button stays at bottom */
+        .sidebar-content > .mt-auto.pt-4 {
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+
+        /* FIXED DESKTOP LAYOUT */
         @media (min-width: 1025px) {
             .content {
                 margin-left: 260px;
                 padding: 2.5rem;
                 width: calc(100% - 260px);
-                min-height: calc(100vh - 64px); /* Fill space below header */
+                min-height: calc(100vh - 64px);
                 box-sizing: border-box;
+                overflow-y: auto; /* Main content scrolls independently */
+                height: calc(100vh - 64px);
             }
+
+            .sidebar {
+                height: calc(100vh - 64px);
+                position: fixed;
+                overflow-y: hidden; /* Hide scroll on container */
+            }
+
+            .sidebar-content {
+                height: 100%;
+                overflow-y: auto;
+            }
+
             #sidebar-backdrop { display: none; }
             #mobile-menu-button { display: none; }
 
@@ -371,73 +460,70 @@
             #nav-links {
                 display: flex !important;
             }
-
-            /* Desktop specific fixes */
-            .sidebar {
-                display: flex;
-                flex-direction: column;
-                height: calc(100vh - 64px);
-                overflow: hidden; /* Prevent double scroll */
-            }
-
-            .sidebar-content {
-                flex: 1;
-                overflow-y: auto;
-            }
         }
 
-        /* IMPROVED MOBILE SIDEBAR LAYOUT */
+        /* IMPROVED MOBILE SIDEBAR SCROLLING */
         @media (max-width: 1024px) {
             .sidebar {
                 width: 85%;
                 max-width: 320px;
-                height: calc(100vh - 64px);
-                top: 64px;
+                height: 100vh;
+                top: 0;
+                padding-top: 64px; /* Account for header */
+                box-sizing: border-box;
                 transform: translateX(-100%);
                 z-index: 60;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
+                overflow: hidden; /* Hide container scroll */
             }
 
             .sidebar.overlay-visible {
                 transform: translateX(0);
             }
 
-            /* Improved sidebar content with better scroll handling */
+            /* Sidebar content with independent scroll */
             .sidebar-content {
                 flex: 1;
-                padding: 1rem;
+                padding: 1.25rem 1rem;
                 display: flex;
                 flex-direction: column;
                 gap: 0.75rem;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
-                padding-bottom: 80px; /* Extra padding for Sign Out button */
-                min-height: 0; /* Allows proper scrolling */
+                height: calc(100vh - 64px - 80px); /* Account for header and sign out */
+                max-height: none;
+                padding-bottom: 80px; /* Space for Sign Out button */
             }
 
-            /* FIXED SIGN OUT BUTTON - ALWAYS VISIBLE */
+            /* FIXED SIGN OUT BUTTON - BETTER POSITIONING */
             .mt-auto.pt-4 {
                 position: fixed;
                 bottom: 0;
                 left: 0;
-                right: 0;
                 width: 85%;
                 max-width: 320px;
                 padding: 1rem;
-                margin: 0;
                 background: var(--sidebar-bg);
                 border-top: 1px solid var(--muted);
                 z-index: 100;
                 box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+                transform: translateX(-100%); /* Initially hidden with sidebar */
                 transition: transform 0.3s ease;
+                backdrop-filter: blur(10px);
             }
 
-            /* Ensure Sign Out button moves with sidebar */
+            /* When sidebar is visible, show Sign Out button */
             .sidebar.overlay-visible .mt-auto.pt-4 {
                 transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 1.5rem;
+                width: 100%;
+                min-height: calc(100vh - 64px);
+                overflow-y: auto; /* Main content scrolls */
+                height: calc(100vh - 64px);
             }
 
             /* Mobile backdrop */
@@ -459,16 +545,22 @@
                 pointer-events: auto;
             }
 
-            .content {
-                margin-left: 0;
-                padding: 1.5rem;
-                width: 100%;
-                min-height: calc(100vh - 64px);
-            }
-
             header .max-w-6xl {
                 padding: 0 1rem;
             }
+        }
+
+        /* PREVENT SCROLL LEAKAGE */
+        body.sidebar-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ENSURE MAIN CONTENT SCROLLS INDEPENDENTLY */
+        .content {
+            overflow-y: auto;
         }
 
         /* IMPROVED: Better sidebar cards with interactive states */
@@ -484,6 +576,7 @@
             padding: 0.75rem; /* Reduced from 1rem */
             border-radius: 0.75rem;
             margin-bottom: 0.25rem; /* Small bottom margin */
+            min-height: 44px; /* Apple recommended minimum touch target */
         }
 
         .sidebar .card::before {
@@ -514,6 +607,10 @@
 
         body.dark .sidebar .card:hover {
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .sidebar .card:active {
+            transform: scale(0.98);
         }
 
         /* iPhone SE and small device adjustments - Card Collapse */
@@ -1251,10 +1348,11 @@
             min-height: 0; /* Allow proper flex shrinking */
         }
 
-        /* Fix Sign Out button positioning - always at bottom */
+        /* FIXED SIGN OUT BUTTON - BETTER POSITIONING */
         .mt-auto.pt-4 {
             margin-top: auto;
-            padding: 0.75rem 1rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
             border-top: 1px solid var(--muted);
             flex-shrink: 0; /* Prevent shrinking */
             background: var(--sidebar-bg);
@@ -1262,6 +1360,7 @@
             bottom: 0;
             z-index: 10;
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
         }
 
         /* Sign out button styling */
@@ -1291,11 +1390,6 @@
             font-size: 0.9375rem;
         }
 
-        /* ENSURE STATS CARDS ARE TOUCH-FRIENDLY */
-        .sidebar .card:active {
-            transform: scale(0.98);
-        }
-
         /* SMOOTH ANIMATIONS FOR MOBILE */
         .sidebar {
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1303,25 +1397,6 @@
 
         #sidebar-backdrop {
             transition: opacity 0.3s ease;
-        }
-
-        /* PREVENT BODY SCROLLING WHEN SIDEBAR IS OPEN */
-        body.sidebar-open {
-            overflow: hidden;
-        }
-
-        /* IMPROVE SIDEBAR SCROLLBAR */
-        .sidebar-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-content::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-content::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 2px;
         }
 
         /* IMPROVED: Payment Modal Styling */
@@ -2172,6 +2247,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             transition: all 0.3s ease;
+            min-height: 44px; /* Apple recommended minimum touch target */
         }
 
         .nav-btn i {
@@ -2888,7 +2964,7 @@
             </div>
 
             <!-- Sidebar stats with consistent spacing -->
-            <div class="sidebar-stats" style="gap: 1rem; display: flex; flex-direction: column; flex-grow: 1; overflow-y: auto;">
+            <div class="sidebar-stats" style="gap: 1rem; display: flex; flex-direction: column; flex-grow: 1;">
 
                 <!-- Property Owner Card -->
                 <div class="card rounded-xl p-4" style="border-left: 4px solid rgba(59, 130, 246, 0.3); background: var(--surface); border: 1px solid var(--muted); margin-bottom: 0.5rem;">
@@ -2944,19 +3020,18 @@
                             <i class="fas fa-chart-line" style="font-size: 1.1rem;"></i>
                         </div>
                     </div>
-                    <div class="mt-auto pt-4" style="border-top: 1px solid var(--muted); padding-top: 1.25rem; flex-shrink: 0; margin-top: 1rem;">
-                        <a href="/logout"
-                           class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold text-sm shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-95 hover:shadow-xl">
-                            <i class="fas fa-sign-out-alt" style="font-size: 1rem;"></i>
-                            Sign Out
-                        </a>
-                    </div>
-                </div>
                 </div>
 
+            </div>
 
             <!-- Sign out button at bottom with proper top margin -->
-
+            <div class="mt-auto pt-4" style="border-top: 1px solid var(--muted); padding-top: 1.25rem; flex-shrink: 0; margin-top: 1rem;">
+                <a href="/logout"
+                   class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold text-sm shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-95 hover:shadow-xl">
+                    <i class="fas fa-sign-out-alt" style="font-size: 1rem;"></i>
+                    Sign Out
+                </a>
+            </div>
         </div>
     </aside>
     <main class="content">
@@ -3327,6 +3402,136 @@
     </div>
 </footer>
 <script>
+    // =========================================================================
+    // IMPROVED SIDEBAR SCROLLING FUNCTIONS
+    // =========================================================================
+
+    // IMPROVED TOUCH SCROLLING FOR SIDEMENU
+    function initializeSidebarTouchScrolling() {
+        const sidebarContent = document.querySelector('.sidebar-content');
+        if (!sidebarContent) return;
+
+        let touchStartY = 0;
+        let isScrolling = false;
+
+        sidebarContent.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+            isScrolling = false;
+        }, { passive: true });
+
+        sidebarContent.addEventListener('touchmove', function(e) {
+            const touchY = e.touches[0].clientY;
+            const diffY = touchY - touchStartY;
+
+            // Check if we're at the top or bottom of the scrollable area
+            const isAtTop = this.scrollTop === 0;
+            const isAtBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 1;
+
+            // If at top and trying to scroll up, prevent it
+            if (isAtTop && diffY > 0) {
+                // Allow slight overscroll but prevent excessive
+                if (Math.abs(diffY) > 10) {
+                    this.style.overflowY = 'hidden';
+                    setTimeout(() => {
+                        this.style.overflowY = 'auto';
+                    }, 100);
+                }
+            }
+            // If at bottom and trying to scroll down, prevent it
+            else if (isAtBottom && diffY < 0) {
+                if (Math.abs(diffY) > 10) {
+                    this.style.overflowY = 'hidden';
+                    setTimeout(() => {
+                        this.style.overflowY = 'auto';
+                    }, 100);
+                }
+            }
+
+            isScrolling = true;
+        }, { passive: false });
+
+        sidebarContent.addEventListener('touchend', function() {
+            isScrolling = false;
+            // Reset any overflow restrictions
+            this.style.overflowY = 'auto';
+        }, { passive: true });
+    }
+
+    // JavaScript to Detect Scroll Position
+    function initializeScrollIndicators() {
+        const sidebarContent = document.querySelector('.sidebar-content');
+        if (!sidebarContent) return;
+
+        function updateScrollIndicators() {
+            const isAtTop = sidebarContent.scrollTop === 0;
+            const isAtBottom = sidebarContent.scrollTop + sidebarContent.clientHeight >= sidebarContent.scrollHeight - 1;
+
+            sidebarContent.classList.toggle('scrolled-top', isAtTop);
+            sidebarContent.classList.toggle('scrolled-bottom', isAtBottom);
+
+            // Remove both classes if content doesn't overflow
+            if (sidebarContent.scrollHeight <= sidebarContent.clientHeight) {
+                sidebarContent.classList.remove('scrolled-top', 'scrolled-bottom');
+            }
+        }
+
+        sidebarContent.addEventListener('scroll', updateScrollIndicators);
+        // Initial check
+        updateScrollIndicators();
+
+        // Also check on resize
+        window.addEventListener('resize', updateScrollIndicators);
+    }
+
+    // IMPROVED TOUCH EXPERIENCE FOR MOBILE
+    function initializeTouchHandling() {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarContent = sidebar.querySelector('.sidebar-content');
+
+        if (!sidebarContent) return;
+
+        let touchStartY = 0;
+        let touchStartX = 0;
+        let isVerticalScroll = false;
+
+        sidebarContent.addEventListener('touchstart', function(e) {
+            if (sidebar.classList.contains('overlay-visible')) {
+                touchStartY = e.touches[0].clientY;
+                touchStartX = e.touches[0].clientX;
+                isVerticalScroll = false;
+            }
+        }, { passive: true });
+
+        sidebarContent.addEventListener('touchmove', function(e) {
+            if (!sidebar.classList.contains('overlay-visible')) return;
+
+            const touchY = e.touches[0].clientY;
+            const touchX = e.touches[0].clientX;
+            const diffY = Math.abs(touchY - touchStartY);
+            const diffX = Math.abs(touchX - touchStartX);
+
+            // Determine if this is primarily vertical scrolling
+            if (!isVerticalScroll && diffY > diffX && diffY > 5) {
+                isVerticalScroll = true;
+            }
+
+            // If we're vertically scrolling inside the sidebar, allow it
+            if (isVerticalScroll) {
+                const isAtTop = this.scrollTop === 0;
+                const isAtBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 1;
+
+                // Prevent body scroll when at boundaries
+                if ((isAtTop && touchY > touchStartY) || (isAtBottom && touchY < touchStartY)) {
+                    e.preventDefault();
+                }
+            }
+        }, { passive: false });
+
+        sidebarContent.addEventListener('touchend', function() {
+            isVerticalScroll = false;
+        }, { passive: true });
+    }
+
     // =========================================================================
     // NEW: Table Pagination and Search Functionality
     // =========================================================================
@@ -3747,9 +3952,15 @@
         if (backdrop) backdrop.classList.add('visible');
         if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'true');
 
-        // Prevent body scrolling
+        // Prevent body scrolling but allow sidebar to scroll
         document.body.classList.add('sidebar-open');
         document.body.style.overflow = 'hidden';
+
+        // Allow sidebar content to scroll independently
+        const sidebarContent = sidebar.querySelector('.sidebar-content');
+        if (sidebarContent) {
+            sidebarContent.style.overflowY = 'auto';
+        }
     }
 
     function closeMobileMenu() {
@@ -3768,6 +3979,12 @@
         // Restore body scrolling
         document.body.classList.remove('sidebar-open');
         document.body.style.overflow = '';
+
+        // Reset sidebar scroll position
+        const sidebarContent = sidebar.querySelector('.sidebar-content');
+        if (sidebarContent) {
+            sidebarContent.scrollTop = 0;
+        }
     }
 
     function toggleMobileMenu() {
@@ -3951,6 +4168,11 @@
         const serverTheme = window.serverTheme || 'light';
         localStorage.setItem('user_chosen_theme', serverTheme);
         initializeIcons();
+
+        // Initialize sidebar scrolling improvements
+        initializeSidebarTouchScrolling();
+        initializeScrollIndicators();
+        initializeTouchHandling();
 
         // Initialize table pagination and search
         setTimeout(() => {
@@ -4406,29 +4628,6 @@
             console.log('Payment handlers initialized');
         }
     }
-
-    // =========================================================================
-    // IMPROVED TOUCH EXPERIENCE FOR MOBILE
-    // =========================================================================
-
-    // Improve touch experience on iOS
-    document.addEventListener('touchstart', function() {}, {passive: true});
-
-    // Prevent pull-to-refresh on mobile when sidebar is open
-    let startY;
-    document.addEventListener('touchstart', function(e) {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar && sidebar.classList.contains('overlay-visible')) {
-            startY = e.touches[0].clientY;
-        }
-    }, {passive: true});
-
-    document.addEventListener('touchmove', function(e) {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar && sidebar.classList.contains('overlay-visible') && startY < e.touches[0].clientY) {
-            e.preventDefault();
-        }
-    }, {passive: false});
 </script>
 </body>
 </html>
