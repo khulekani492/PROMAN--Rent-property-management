@@ -69,6 +69,8 @@
         html, body {
             height: 100%;
             scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         body {
@@ -360,7 +362,7 @@
             }
         }
 
-        /* Mobile overlay behavior */
+        /* FIX: Mobile sidebar scrolling */
         @media (max-width: 1024px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -372,7 +374,16 @@
                 width: 85%;
                 max-width: 320px;
                 z-index: 60;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
+
+            .sidebar-content {
+                min-height: min-content;
+                height: auto;
+                display: block;
+            }
+
             body.dark .sidebar {
                 box-shadow: 0 18px 40px rgba(0,0,0,0.4);
             }
@@ -401,6 +412,13 @@
             #sidebar-backdrop.visible {
                 opacity: 1;
                 pointer-events: auto;
+                position: fixed;
+                top: 64px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.45);
+                z-index: 35;
             }
 
             header .max-w-6xl {
@@ -450,6 +468,99 @@
 
         body.dark .sidebar .card:hover {
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* iPhone SE and small device adjustments - Card Collapse */
+        @media (max-width: 375px) {
+            .sidebar .card {
+                position: relative;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                padding-right: 3rem; /* Space for toggle button */
+            }
+
+            .sidebar .card.collapsed {
+                max-height: 70px;
+                overflow: hidden;
+            }
+
+            .sidebar .card .expand-toggle {
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+                background: var(--surface);
+                border: 1px solid var(--muted);
+                border-radius: 4px;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 2;
+            }
+
+            .sidebar .card .expand-toggle i {
+                font-size: 12px;
+                color: var(--text);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar .card:not(.collapsed) .expand-toggle i {
+                transform: rotate(180deg);
+            }
+
+            /* iPhone SE specific for property form */
+            .property-form-container .card-surface {
+                padding-bottom: 70px;
+            }
+
+            .property-form-container .logo-container {
+                margin-bottom: 70px;
+            }
+
+            select#propertySelect {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+
+            /* iPhone SE viewport fixes */
+            .content {
+                padding: 12px !important;
+            }
+
+            .main-wrap {
+                overflow-x: hidden;
+            }
+
+            /* Make table more responsive on small screens */
+            .units-wrapper {
+                margin-left: -12px;
+                margin-right: -12px;
+                width: calc(100% + 24px);
+            }
+
+            /* Reduce padding in cards */
+            .card-surface {
+                padding: 16px;
+            }
+
+            /* Better button sizing */
+            .nav-btn, #viewTableBtn {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+            /* Adjust header */
+            .header-with-date {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .date-display {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         /* IMPROVED: Feature icons with better visual hierarchy */
@@ -1092,6 +1203,35 @@
 
         .property-form-container .card-surface form .grid {
             flex: 1;
+        }
+
+        /* Fix property form container height on mobile */
+        @media (max-width: 768px) {
+            .property-form-container {
+                height: auto;
+                min-height: 400px;
+            }
+
+            .property-form-container .card-surface {
+                position: relative;
+                padding-bottom: 80px; /* Space for the button */
+            }
+
+            .property-form-container .quick-nav-buttons {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 16px;
+                background: var(--surface);
+                border-top: 1px solid var(--muted);
+                margin-top: 0;
+                top: auto !important;
+            }
+
+            .property-form-container .logo-container {
+                margin-bottom: 80px; /* Reserve space for button */
+            }
         }
 
         /* ================= FIX 4: MOVE "ADD NEW PROPERTY" BUTTON UP ================= */
@@ -3934,6 +4074,7 @@ function formatCurrency(amount) {
         // Initial Load Actions
         displayErrorBanner(null, true);
     });
+
 
     // =========================================================================
     // FIXED: PAYMENT CELL CLICK HANDLING
