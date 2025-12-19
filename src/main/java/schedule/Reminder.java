@@ -29,8 +29,8 @@ public class Reminder implements Job {
 
                 for (Integer landlord : current_landlord){
                     //Send email
-                    PersonEmail notification = new PersonEmail(landlordId,landlord_map.get(landlord));
-                    System.out.println(notification.send_email() );
+                  //  PersonEmail notification = new PersonEmail(landlordId,landlord_map.get(landlord));
+                  //  System.out.println(notification.send_email() );
                 }
 
               } catch (Exception e) {
