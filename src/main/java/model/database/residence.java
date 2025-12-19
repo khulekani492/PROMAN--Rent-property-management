@@ -247,14 +247,15 @@ public class residence extends ConnectionAccess implements  Property {
     public void New_unit() throws SQLException {
 
         String sql = """
-                INSERT INTO properties (property_name,property_rent,property_address,property_unit,landlord_user_id) VALUES (?,?,?,?,?)
+                INSERT INTO properties (property_name,property_rent,occupation,property_address,property_unit,landlord_user_id) VALUES (?,?,?,?,?,?)
                 """;
         try (PreparedStatement pstm = newConnection().prepareStatement(sql)){
             pstm.setString(1,this.property_name);
             pstm.setString(2,this.property_rent);
-            pstm.setString(3,this.property_address);
-            pstm.setInt(4,this.property_unit);
-            pstm.setInt(5,this.landlordId);
+            pstm.setString(3,"no");
+            pstm.setString(4,this.property_address);
+            pstm.setInt(5,this.property_unit);
+            pstm.setInt(6,this.landlordId);
             pstm.executeUpdate();
         } catch (SQLException e) {
 
