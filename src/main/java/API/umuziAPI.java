@@ -20,6 +20,7 @@ import io.javalin.rendering.template.JavalinThymeleaf;
 import jakarta.servlet.http.HttpSession;
 import model.database.CRUD.Property_Status;
 import model.database.CRUD.Tenant;
+import model.database.CRUD.landlord;
 import model.database.UPDATES.Change_Unit;
 
 
@@ -252,10 +253,14 @@ public class umuziAPI {
 
             Integer landlordId = ctx.sessionAttribute("landlordID");
             if(landlordId == null){
+                landlord authenticate = new landlord();
+                String email = ctx.sessionAttribute("email");
+                if (email == null){
+                    ctx.render("templates/not_found.html");
+                }
+                landlordId =  authenticate.landlordId(email);
+                ctx.sessionAttribute("landlordID", landlordId);
 
-
-                ctx.render("templates/not_found.html");
-                return;
             }
 
 
