@@ -305,63 +305,78 @@
             position: relative;
         }
 
-        /* SIDEBAR WITH INDEPENDENT SCROLLING */
-        .sidebar {
-            width: 260px;
-            height: calc(100vh - 64px);
-            position: fixed;
-            left: 0;
-            top: 64px;
-            z-index: 40;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--muted);
-            transform: translateX(0);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Prevent double scrollbars */
-        }
+        /* SIDEBAR WITH INDEPENDENT SCROLLING - FIXED WITH WIDTH CONSTRAINTS */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
+    flex-shrink: 0; /* CRITICAL: Never shrink */
+    height: calc(100vh - 64px);
+    position: fixed;
+    left: 0;
+    top: 64px;
+    z-index: 40;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--muted);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
 
         /* SIDEBAR CONTENT - FIXED SCROLLABLE CONTAINER */
-        .sidebar-content {
-            flex: 1;
-            padding: 1.25rem 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            overflow-y: auto; /* Independent scroll */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            min-height: 0;
-            height: 100%;
-            /* Prevent content from overflowing */
-            max-height: calc(100vh - 64px - 80px); /* Account for header and sign out button */
-            overscroll-behavior: contain; /* Prevent scroll chaining */
-        }
+.sidebar-content {
+    flex: 1 1 auto;
+    min-height: 0; /* Allow flex item to shrink for scroll */
+    padding: 1.25rem 1rem;
+    padding-bottom: 100px; /* Space for fixed sign-out */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+/* SIDEBAR ITEMS - Prevent shrinking */
+.sidebar .card,
+.sidebar .nav-item,
+.sidebar .property-name-display,
+.sidebar-stats .card {
+    flex-shrink: 0; /* CRITICAL: Never shrink */
+    min-width: 0; /* Allow text truncation */
+    width: 100%;
+    box-sizing: border-box;
+}
+/* TEXT TRUNCATION - Prevent overflow */
+.sidebar .card p,
+.sidebar .nav-item span,
+.property-name-text,
+.tenant-name,
+.unit-number {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
         /* REMOVED: Shake/wiggle animations - Better for accessibility */
 
-        /* BETTER SCROLLBAR STYLING */
-        .sidebar-content::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
+      .sidebar-content::-webkit-scrollbar {
+    width: 4px;
+}
 
-        .sidebar-content::-webkit-scrollbar-track {
-            background: transparent;
-            margin: 5px 0;
-            border-radius: 10px;
-        }
+.sidebar-content::-webkit-scrollbar-track {
+    background: transparent;
+}
 
-        .sidebar-content::-webkit-scrollbar-thumb {
-            background-color: var(--accent);
-            border-radius: 10px;
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-        }
+.sidebar-content::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 4px;
+}
 
-        .sidebar-content::-webkit-scrollbar-thumb:hover {
-            opacity: 0.8;
-            width: 8px;
-        }
+.sidebar-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
 
         /* Firefox scrollbar */
         .sidebar-content {
@@ -369,11 +384,19 @@
             scrollbar-color: var(--accent) transparent;
         }
 
-        /* Ensure Sign Out button stays at bottom */
-        .sidebar-content > .mt-auto.pt-4 {
-            margin-top: auto;
-            flex-shrink: 0;
-        }
+/* SIGN OUT BUTTON - Fixed at bottom, inside sidebar */
+.sidebar .mt-auto.pt-4 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: var(--sidebar-bg);
+    border-top: 1px solid var(--muted);
+    flex-shrink: 0;
+    z-index: 10;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
 
         /* FIXED DESKTOP LAYOUT */
         @media (min-width: 1025px) {
@@ -411,7 +434,8 @@
         @media (max-width: 1024px) {
             .sidebar {
                 width: 85%;
-                max-width: 320px;
+                min-width: 85%; /* ADDED: Prevent shrinking */
+                max-width: 320px; /* ADDED: Prevent expanding */
                 height: calc(100vh - 64px);
                 top: 64px;
                 transform: translateX(-100%);
@@ -541,7 +565,8 @@
         @media (max-width: 375px) {
             .sidebar {
                 width: 90%;
-                max-width: 300px;
+                min-width: 90%; /* ADDED: Prevent shrinking */
+                max-width: 300px; /* ADDED: Prevent expanding */
             }
 
             .sidebar-content {
@@ -3300,11 +3325,7 @@
         </div>
     </div>
 </div>
-<footer class="mt-12 py-8 bg-surface">
-    <div class="max-w-6xl mx-auto px-6 text-center text-sm text-muted">
-        &copy; 2025 ProMan Property Management Solutions.
-    </div>
-</footer>
+
 <script>
     // =========================================================================
     // IMPROVED SIDEBAR SCROLLING FUNCTIONS
