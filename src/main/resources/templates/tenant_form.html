@@ -602,7 +602,16 @@
         .success-border {
             border-color: #10b981 !important;
         }
-
+  .brand-text {
+            font-weight: 900;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .date-range-info {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
             border: 1px solid rgba(59, 130, 246, 0.1);
@@ -671,7 +680,7 @@
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
             <div>
-                <a class="text-lg font-extrabold text-accent">ProMan</a>
+                <h1 class="brand-text">PROMAN</h1>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
