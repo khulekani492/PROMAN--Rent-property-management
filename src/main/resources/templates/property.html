@@ -264,7 +264,6 @@
             margin-bottom: 1.5rem;
             text-align: center;
             padding-bottom: 12px;
-            border-bottom: 2px solid var(--text);
             color: var(--text);
             font-weight: 800;
         }
@@ -602,7 +601,16 @@
             margin-left: 0.25rem;
             vertical-align: middle;
         }
-
+  .brand-text {
+            font-weight: 900;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         body.dark .field-tooltip {
             color: #1a1400;
         }
@@ -629,7 +637,7 @@
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
             <div>
-                <a class="text-lg font-extrabold text-accent">ProMan</a>
+                <h1 class="brand-text">PROMAN</h1>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
@@ -807,21 +815,21 @@
                     </div>
                 </div>
                 <div class="mt-6 pt-4 border-t border-muted">
-                    <div class="text-xs text-accent font-bold">— ProMan</div>
+                    <div class="text-xs text-accent font-bold">— ProMan </div>
                 </div>
             </div>
         </div>
 
         <!-- Form Card -->
         <div class="form-card" role="main" aria-labelledby="form-title">
-            <h2 id="form-title" class="form-title">
+            <h2 id="form-title" class="form-title" >
                 Property Information
             </h2>
             <form id="unitForm" action="/add_property" method="POST">
-                <div class="form-section">
+                <div class="form-section  " >
                     <div class="mb-4">
-                        <h3 class="text-xl font-bold mb-2 text-accent">Property Details</h3>
-                        <p class="text-sm text-muted">Enter basic information about your property. This will help tenants identify and locate it.</p>
+                        <h3 class="text-xl font-bold mb-2 text-accent "  style="border-bottom: 2px solid #E5C95F;">Property Details</h3>
+                        <p class="text-sm text-muted">Enter basic information about your property.</p>
                     </div>
 
                     <div class="form-row">
