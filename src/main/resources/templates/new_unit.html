@@ -429,7 +429,16 @@
             background-color: rgba(16,185,129,0.1);
             color: #065f46;
         }
-
+ .brand-text {
+            font-weight: 900;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         body.dark .status-paid {
             background-color: rgba(34,197,94,0.15);
             color: #86efac;
@@ -649,6 +658,7 @@
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             <div>
+                <h1 class="brand-text">PROMAN</h1>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
