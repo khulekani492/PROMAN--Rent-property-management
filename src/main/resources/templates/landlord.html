@@ -275,7 +275,16 @@
                 height: 44px;
             }
         }
-
+    .brand-text {
+            font-weight: 900;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         @media (min-width: 1025px) {
             #mobile-menu-button {
                 display: none;
@@ -316,7 +325,7 @@
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             </a>
             <div>
-                <a class="text-xl font-extrabold text-accent">ProMan</a>
+                <h1 class="brand-text">PROMAN</h1>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
@@ -563,7 +572,7 @@
                     <label for="contact" class="block text-sm font-semibold text-[var(--text)]">Contact Number</label>
                     <input id="contact" name="contact" required type="tel"
                            title="Please enter your phone number"
-                           placeholder="e.g., 0831234567, +27831234567, or any valid phone number"
+                           placeholder="e.g., 0831234567"
                            autocomplete="tel"
                            class="mt-1 block w-full rounded-lg border border-muted bg-surface p-3 shadow-sm input-focus"
                            th:value="${contact}"/>
@@ -586,7 +595,7 @@
                         <svg id="submitIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.5H15M8.25 6H12M4.5 12H15M4.5 18H15" />
                         </svg>
-                        <span id="submitText">Create Landlord Account</span>
+                        <span id="submitText">Create Account</span>
                         <div id="submitSpinner" class="loading-spinner hidden"></div>
                     </button>
                 </div>
