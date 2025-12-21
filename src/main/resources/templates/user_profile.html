@@ -269,7 +269,16 @@
         @keyframes slideUp {
             to { transform: translateY(0); }
         }
-
+    .brand-text {
+            font-weight: 900;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .overlay-spinner {
             width: 3rem;
             height: 3rem;
@@ -636,7 +645,7 @@
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
                      class="h-28 md:h-32 lg:h-36 w-auto object-contain">
             <div>
-                <p class="text-xl font-extrabold text-accent hover:text-[var(--accent-dark)] transition">ProMan</p>
+                <h1 class="brand-text">PROMAN</h1>
                 <div class="text-xs text-muted -mt-1">Property management simplified</div>
             </div>
         </div>
