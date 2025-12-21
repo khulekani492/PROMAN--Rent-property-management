@@ -105,6 +105,28 @@
             color: white;
         }
 
+        /* Gold line effect for headings */
+        .gold-line-heading {
+            position: relative;
+            padding-bottom: 20px;
+            text-align: center;
+            width: max-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .gold-line-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--accent-dark));
+            border-radius: 2px;
+        }
+
         /* Dark mode toggle button */
         #dark-mode-toggle {
             transition: all 0.3s ease;
@@ -287,7 +309,7 @@
 </div>
 
 <header class="bg-surface shadow-lg sticky top-0 z-30 transition-colors duration-300">
-    <div class="max-w-6xl px-6 py-4 flex items-center justify-between mx-auto">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
             <a class="flex items-center">
                 <img src="/umuzi/img/mypromann.png" alt="ProMan logo"
@@ -510,21 +532,13 @@
 
         <!-- Form section -->
         <section class="hero-surface p-6 lg:p-8 rounded-2xl shadow-xl border border-muted order-1 lg:order-2">
-            <h2 class="text-3xl font-extrabold border-b pb-2 text-accent text-center mx-auto w-max">
+            <!-- Updated heading with gold line -->
+            <h2 class="text-3xl font-extrabold text-accent text-center mx-auto gold-line-heading">
                 PROMAN
             </h2>
 
-<!--            <div class="mb-6 mt-6">-->
-<!--                <button type="button" onclick="signInWithGoogle()"-->
-<!--                        class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-[#4285F4] px-4 py-3 text-white text-sm font-bold shadow-md hover:bg-[#357AE8] transition transform hover:scale-[1.01]">-->
-<!--                    <img src="https://www.svgrepo.com/show/355037/google.svg" class="h-5 w-5" alt="Google Logo">-->
-<!--                    Sign up with Google-->
-<!--                </button>-->
-<!--            </div>-->
-
-            <div class="flex items-center justify-center mb-6">
+            <div class="flex items-center justify-center mb-6 mt-6">
                 <div class="w-full h-px bg-muted"></div>
-                <div class="px-3 text-sm font-medium text-muted">OR</div>
                 <div class="w-full h-px bg-muted"></div>
             </div>
 
