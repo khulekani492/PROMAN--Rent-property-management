@@ -1185,57 +1185,34 @@
         const serverTheme = window.serverTheme || 'light';
         localStorage.setItem('user_chosen_theme', serverTheme);
 
-        // Set up date input with appropriate limits
+        // Set up date input but ALLOW past and future dates (no min/max enforcement)
         const moveInInput = document.getElementById('move_in');
         const moveInWarning = document.getElementById('move_in_warning');
-        const dateLimits = getDateLimits();
 
         if (moveInInput) {
-            moveInInput.min = dateLimits.min;
-            moveInInput.max = dateLimits.max;
+            // Remove any min/max attributes so both past and future dates are allowed
+            moveInInput.removeAttribute('min');
+            moveInInput.removeAttribute('max');
 
-            if (!moveInInput.value) {
-                moveInInput.value = dateLimits.min;
-            }
-
-            if (moveInInput.value) {
-                const existingDate = new Date(moveInInput.value);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-
-                if (existingDate < today) {
-                    moveInInput.value = dateLimits.min;
-                } else if (existingDate > new Date(dateLimits.max)) {
-                    moveInInput.value = dateLimits.max;
-                }
-
-                if (isFarFutureDate(moveInInput.value)) {
-                    moveInWarning.classList.add('show');
-                }
+            // Do not pre-fill or clamp values — leave existing value if present
+            if (moveInInput.value && isFarFutureDate(moveInInput.value) && moveInWarning) {
+                moveInWarning.classList.add('show');
             }
 
             moveInInput.addEventListener('change', function() {
                 if (isFarFutureDate(this.value)) {
-                    moveInWarning.classList.add('show');
+                    if (moveInWarning) moveInWarning.classList.add('show');
                 } else {
-                    moveInWarning.classList.remove('show');
+                    if (moveInWarning) moveInWarning.classList.remove('show');
                 }
 
-                const selectedDate = new Date(this.value);
-                const minDate = new Date(dateLimits.min);
-                const maxDate = new Date(dateLimits.max);
-
-                if (selectedDate < minDate || selectedDate > maxDate) {
-                    showError('move_in_error', `Please select a date between ${formatDateDisplay(dateLimits.min)} and ${formatDateDisplay(dateLimits.max)}`);
-                } else {
-                    hideError('move_in_error');
-
-                    const helperText = this.parentElement.querySelector('.helper-text');
-                    if (helperText) {
-                        const isFuture = isFutureDate(this.value);
-                        helperText.textContent = `Move-in date: ${formatDateDisplay(this.value)} ${isFuture ? '(future date)' : '(today)'}`;
-                    }
+                const helperText = this.parentElement ? this.parentElement.querySelector('.helper-text') : null;
+                if (helperText) {
+                    const isFuture = isFutureDate(this.value);
+                    helperText.textContent = this.value ? `Move-in date: ${formatDateDisplay(this.value)} ${isFuture ? '(future date)' : '(past or today)'}` : '';
                 }
+
+                hideError('move_in_error');
             });
         }
 
@@ -1331,17 +1308,8 @@
             if (moveInInput && !moveInInput.value) {
                 showError('move_in_error', 'Please select a move-in date.');
                 isValid = false;
-            } else if (moveInInput) {
-                const selectedDate = new Date(moveInInput.value);
-                const minDate = new Date(dateLimits.min);
-                const maxDate = new Date(dateLimits.max);
-
-                if (selectedDate < minDate || selectedDate > maxDate) {
-                    showError('move_in_error', `Please select a date between ${formatDateDisplay(dateLimits.min)} and ${formatDateDisplay(dateLimits.max)}`);
-                    isValid = false;
-                } else {
-                    hideError('move_in_error');
-                }
+            } else {
+                hideError('move_in_error');
             }
 
             if (!employmentSelected()) {
