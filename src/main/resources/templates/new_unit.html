@@ -725,12 +725,19 @@
                     </div>
 
                     <!-- Unit Number -->
+                    <!-- Unit Number -->
                     <div class="form-group">
                         <label for="unit_number" class="form-label required">Unit Number</label>
-                        <input type="text" id="unit_number" name="unit_number" required
+                        <input type="number"
+                               id="unit_number"
+                               name="unit_number"
+                               required
                                class="form-input"
                                th:value="${unit_number}"
-                               placeholder="e.g., A101, B202"/>
+                               placeholder="66"
+                               pattern="\d*"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                               onkeypress="return event.charCode >= 48 && event.charCode <= 57"/>
                         <div class="form-hint">Unit identifier or number</div>
                     </div>
 
