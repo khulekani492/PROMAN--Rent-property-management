@@ -4328,6 +4328,228 @@
             console.log('Payment handlers initialized');
         }
     }
+    // =========================================================================
+// PROPERTY BUTTON AND FILTER FUNCTIONALITY - FIXED VERSION
+// =========================================================================
+
+// Function to show/hide elements based on filter state
+function toggleFilterElements(shouldHide) {
+    console.log('toggleFilterElements called with:', shouldHide);
+
+    // Get the View Units Table button
+    const viewTableBtn = document.getElementById('viewTableBtn');
+    console.log('View Table Button found:', !!viewTableBtn);
+
+    // Get the search filters container
+    const searchFilters = document.querySelector('.table-search-filters');
+    console.log('Search filters container found:', !!searchFilters);
+
+    // Get the overdue counter - using more specific selector
+    const overdueCounter = document.querySelector('#controlsWrapper .bg-white.border');
+    console.log('Overdue counter found:', !!overdueCounter);
+
+    if (shouldHide) {
+        // Hide elements
+        if (viewTableBtn) {
+            viewTableBtn.style.display = 'none';
+            console.log('Hiding View Table Button');
+        }
+        if (searchFilters) {
+            searchFilters.style.display = 'none';
+            console.log('Hiding Search Filters');
+        }
+        if (overdueCounter) {
+            overdueCounter.style.display = 'none';
+            console.log('Hiding Overdue Counter');
+        }
+    } else {
+        // Show elements
+        if (viewTableBtn) {
+            viewTableBtn.style.display = 'flex';
+            console.log('Showing View Table Button');
+        }
+        if (searchFilters) {
+            searchFilters.style.display = 'flex';
+            console.log('Showing Search Filters');
+        }
+        if (overdueCounter) {
+            overdueCounter.style.display = 'block';
+            console.log('Showing Overdue Counter');
+        }
+    }
+}
+
+// Modified filterTable function - FIXED TYPO
+function filterTable(filterType) {
+    console.log('filterTable called with:', filterType);
+
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const activeChip = document.querySelector(`.filter-chip[onclick*="${filterType}"]`);
+
+    // Update active chip
+    filterChips.forEach(chip => {
+        if (chip.getAttribute('onclick') && chip.getAttribute('onclick').includes('filterTable')) {
+            chip.classList.remove('active');
+        }
+    });
+
+    if (activeChip) {
+        activeChip.classList.add('active');
+    }
+
+    // Hide elements when any filter chip is clicked (except "All tenants")
+    if (filterType !== 'all') {
+        console.log('Hiding elements for filter:', filterType);
+        toggleFilterElements(true);
+    } else {
+        console.log('Showing elements for "all" filter');
+        toggleFilterElements(false);
+    }
+
+    // Rest of the existing filter logic...
+    if (filterType === 'paid') {
+        filteredRows = allRows.filter(row => {
+            const indicator = row.querySelector('.indicator');
+            const paymentStatus = indicator ? indicator.textContent.trim() : '';
+            return paymentStatus === '✓' || paymentStatus === '+';
+        });
+    } else if (filterType === 'unpaid') {
+        filteredRows = allRows.filter(row => {
+            const indicator = row.querySelector('.indicator');
+            const paymentStatus = indicator ? indicator.textContent.trim() : '';
+            return paymentStatus === '✗' || paymentStatus === '−'; // FIXED: changed currentStatus to paymentStatus
+        });
+    } else {
+        filteredRows = [...allRows];
+    }
+
+    currentPage = 1;
+    updatePagination();
+
+    // Show filter applied toast
+    if (filterType !== 'all') {
+        const filterName = activeChip ? activeChip.textContent.trim() : filterType;
+        showToast(`Showing ${filterName.toLowerCase()} tenants`, 'success');
+    }
+}
+
+// Function to add "Property" button to filter chips
+function addPropertyButton() {
+    const filterChipsContainer = document.querySelector('.filter-chips');
+    if (!filterChipsContainer) {
+        console.error('Filter chips container not found!');
+        return;
+    }
+
+    console.log('Adding Property button to filter chips');
+
+    // Create Property button
+    const propertyButton = document.createElement('div');
+    propertyButton.className = 'filter-chip property-button';
+    propertyButton.innerHTML = `
+        <i class="fas fa-building"></i>
+        Property
+    `;
+
+    // Remove any onclick attribute to prevent conflicts
+    propertyButton.removeAttribute('onclick');
+
+    // Add click event using event listener
+    propertyButton.addEventListener('click', function() {
+        console.log('Property button clicked');
+
+        // Scroll to property form section
+        const propertyFormContainer = document.getElementById('propertyFormContainer');
+        if (propertyFormContainer) {
+            // Show property form if hidden
+            propertyFormContainer.classList.remove('hidden');
+
+            // Scroll to property form
+            propertyFormContainer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            // Update view table button if it exists
+            const viewTableBtn = document.getElementById('viewTableBtn');
+            const mainContent = document.getElementById('mainContent');
+
+            if (viewTableBtn) {
+                viewTableBtn.innerHTML = `
+                    <i class="fas fa-table mr-2"></i>
+                    View Units Table
+                `;
+                viewTableBtn.style.display = 'flex'; // Ensure it's visible
+            }
+
+            if (mainContent) {
+                mainContent.classList.remove('full-table-view');
+            }
+
+            // Show elements when going to property section
+            toggleFilterElements(false);
+
+            // Show toast notification
+            showToast('Navigated to property selection', 'success');
+        } else {
+            console.error('Property form container not found!');
+        }
+    });
+
+    // Add to filter chips container
+    filterChipsContainer.appendChild(propertyButton);
+    console.log('Property button added successfully');
+}
+
+// Override the existing onclick handlers for filter chips
+function overrideFilterChipClicks() {
+    const filterChips = document.querySelectorAll('.filter-chip[onclick]');
+    console.log('Found filter chips to override:', filterChips.length);
+
+    filterChips.forEach(chip => {
+        const originalOnClick = chip.getAttribute('onclick');
+        if (originalOnClick && originalOnClick.includes('filterTable')) {
+            // Extract the filter type from the onclick
+            const match = originalOnClick.match(/filterTable\('(\w+)'\)/);
+            if (match) {
+                const filterType = match[1];
+
+                // Remove the old onclick
+                chip.removeAttribute('onclick');
+
+                // Add new event listener
+                chip.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Filter chip clicked:', filterType);
+                    filterTable(filterType);
+                });
+
+                console.log('Overrode onclick for chip:', filterType);
+            }
+        }
+    });
+}
+
+// Initialize the functionality
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing filter functionality...');
+
+    // Override existing filter chip clicks first
+    setTimeout(() => {
+        overrideFilterChipClicks();
+    }, 100);
+
+    // Add Property button after DOM is loaded
+    setTimeout(() => {
+        addPropertyButton();
+    }, 200);
+
+    // Initialize with elements visible
+    setTimeout(() => {
+        toggleFilterElements(false);
+    }, 300);
+});
 </script>
 </body>
 </html>
