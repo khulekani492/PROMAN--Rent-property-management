@@ -4,29 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cd5ff09d-31fa-43d9-b03f-e8653f8a5c59" name="Changes" comment="update">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Invalidhandler/SameUnit.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Invalidhandler/SameUnitCreator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/API/umuziAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/API/umuziAPI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/API_handlers/apiHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/API_handlers/apiHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Invalidhandler/SameEmail.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Invalidhandler/SameEmail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/database/general.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/database/general.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/database/residence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/database/residence.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/landlord.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/landlord.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/property.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/property.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/API/umuziAPI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/API/umuziAPI.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/API_handlers/apiHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/API_handlers/apiHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/model/database/general.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/database/general.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/model/database/residence.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/model/database/residence.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/property.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/templates/property.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/original-umuzi-1.0.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/original-umuzi-1.0.0.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/umuzi-1.0.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/umuzi-1.0.0.jar" afterDir="false" />
-    </list>
+    <list default="true" id="cd5ff09d-31fa-43d9-b03f-e8653f8a5c59" name="Changes" comment="update" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -120,7 +98,7 @@
       <option name="ALTERNATIVE_JRE_PATH" value="21 (2)" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="API.umuziAPI" />
-      <module name="Mastende" />
+      <module name="umuzi" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="API.*" />
@@ -163,6 +141,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Application.main" />
+      <item itemvalue="Application.umuziAPI" />
+      <item itemvalue="JUnit.generalTest.testLandlordInitialization" />
+      <item itemvalue="JUnit.generalTest.testTenant" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.umuziAPI" />
