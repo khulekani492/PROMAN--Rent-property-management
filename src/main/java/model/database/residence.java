@@ -225,6 +225,7 @@ public class residence extends ConnectionAccess implements  Property {
         return null; // if not found
     }
 
+    //main method responsible for slow query
     public void setTotal_units() throws SQLException {
 
         String sql = """

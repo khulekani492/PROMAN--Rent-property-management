@@ -38,10 +38,13 @@ public class AddProperty {
                 create_rooms.setlandlord(landlordId);
                 create_rooms.setProperty_Name(property_Name);
                 create_rooms.setProperty_address(property_address);
+
+
                 for (int i = 1 ;i <= propertyUnit;i++){
                     try {
                         create_rooms.setProperty_unit(i);
                         create_rooms.setTotal_units();
+
                     } catch (SQLException e) {
                         System.out.println("please");
                         ctx.redirect("error/same_address");
