@@ -32,6 +32,8 @@ public class AddProperty {
                 Integer landlordId = ctx.sessionAttribute("landlordID");
 
                 //DE create rows of the property units for the landlord
+
+                //Ridiculous query TIME bug!!
                 residence create_rooms = new residence();
                 create_rooms.setlandlord(landlordId);
                 create_rooms.setProperty_Name(property_Name);
